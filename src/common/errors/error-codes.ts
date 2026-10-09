@@ -1,0 +1,60 @@
+/** Codes d'erreur stables exposés au client (le frontend s'appuie dessus, pas sur les messages). */
+export const ErrorCode = {
+  BAD_REQUEST: 'BAD_REQUEST',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  METHOD_NOT_ALLOWED: 'METHOD_NOT_ALLOWED',
+  CONFLICT: 'CONFLICT',
+  PAYLOAD_TOO_LARGE: 'PAYLOAD_TOO_LARGE',
+  UNSUPPORTED_MEDIA_TYPE: 'UNSUPPORTED_MEDIA_TYPE',
+  UNPROCESSABLE: 'UNPROCESSABLE',
+  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
+  TIMEOUT: 'TIMEOUT',
+} as const;
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+
+interface StatusDefault {
+  code: ErrorCode;
+  message: string;
+}
+
+const STATUS_DEFAULTS: Record<number, StatusDefault> = {
+  400: { code: ErrorCode.BAD_REQUEST, message: 'La requête est invalide.' },
+  401: { code: ErrorCode.UNAUTHORIZED, message: 'Authentification requise.' },
+  403: { code: ErrorCode.FORBIDDEN, message: 'Accès refusé.' },
+  404: { code: ErrorCode.NOT_FOUND, message: 'Ressource introuvable.' },
+  405: { code: ErrorCode.METHOD_NOT_ALLOWED, message: 'Méthode non autorisée.' },
+  409: {
+    code: ErrorCode.CONFLICT,
+    message: 'La demande entre en conflit avec l’état actuel de la ressource.',
+  },
+  413: { code: ErrorCode.PAYLOAD_TOO_LARGE, message: 'La requête est trop volumineuse.' },
+  415: { code: ErrorCode.UNSUPPORTED_MEDIA_TYPE, message: 'Type de contenu non pris en charge.' },
+  422: { code: ErrorCode.UNPROCESSABLE, message: 'Les données ne peuvent pas être traitées.' },
+  429: {
+    code: ErrorCode.TOO_MANY_REQUESTS,
+    message: 'Trop de requêtes. Merci de réessayer dans quelques instants.',
+  },
+  500: {
+    code: ErrorCode.INTERNAL_ERROR,
+    message: 'Une erreur interne est survenue. Merci de réessayer plus tard.',
+  },
+  503: {
+    code: ErrorCode.SERVICE_UNAVAILABLE,
+    message: 'Service temporairement indisponible. Merci de réessayer plus tard.',
+  },
+};
+
+export function defaultForStatus(status: number): StatusDefault {
+  return (
+    STATUS_DEFAULTS[status] ??
+    (status >= 500
+      ? STATUS_DEFAULTS[500]!
+      : { code: ErrorCode.BAD_REQUEST, message: STATUS_DEFAULTS[400]!.message })
+  );
+}

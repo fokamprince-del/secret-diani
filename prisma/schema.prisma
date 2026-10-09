@@ -1,0 +1,28 @@
+// Schéma Prisma — « Les Secrets de Diani »
+// Conventions (voir docs/DECISIONS.md) :
+//   - modèles en anglais (PascalCase), tables/colonnes en snake_case via @@map/@map ;
+//   - clés primaires UUID v7 générées par le client Prisma ;
+//   - montants en centimes (Int), devise EUR ;
+//   - created_at / updated_at partout, deleted_at là où l'historique compte.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Paramètres du site modifiables sans déploiement (textes, drapeaux de fonctionnalités…).
+model AppSetting {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  key         String   @unique @db.VarChar(100)
+  value       Json
+  description String?  @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("app_settings")
+}

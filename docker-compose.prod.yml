@@ -1,0 +1,172 @@
+# Production (VPS) — voir docs/RUNBOOK.md.
+#   Fichier d'environnement : .env.production sur le serveur (chmod 600), jamais commité.
+#   Déploiement : IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml --env-file .env.production up -d
+#
+# Réseaux :
+#   edge     : Traefik ↔ API (accès Internet sortant pour Stripe/PayPal…)
+#   egress   : accès Internet sortant du worker (Resend, Bunny, OVH…)
+#   internal : API/worker ↔ Postgres/Redis — SANS accès extérieur, aucun port publié
+name: diani
+
+x-app: &app
+  image: ghcr.io/${GHCR_OWNER:?}/les-secrets-de-diani-backend:${IMAGE_TAG:?}
+  env_file: [.env.production]
+  environment:
+    NODE_ENV: production
+    LOG_PRETTY: 'false'
+    DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:?}@postgres:5432/diani?schema=public&connection_limit=10&pool_timeout=10
+    REDIS_URL: redis://:${REDIS_PASSWORD:?}@redis:6379
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: ['no-new-privileges:true']
+  restart: unless-stopped
+  stop_grace_period: 30s
+  logging:
+    driver: json-file
+    options: { max-size: '20m', max-file: '5' }
+
+services:
+  traefik:
+    image: traefik:v3.7
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      # Seules les IP Cloudflare peuvent fournir X-Forwarded-For (https://www.cloudflare.com/ips/, voir RUNBOOK).
+      - --entrypoints.websecure.forwardedheaders.trustedips=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/13,104.24.0.0/14,172.64.0.0/13,131.0.72.0/22
+      - --entrypoints.websecure.transport.respondingtimeouts.readtimeout=30s
+      - --entrypoints.websecure.transport.respondingtimeouts.writetimeout=60s
+      - --entrypoints.websecure.transport.respondingtimeouts.idletimeout=90s
+      # Fournisseur « file » : Traefik n'a pas accès au socket Docker.
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:?}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --api.dashboard=false
+      - --ping=true
+      - --log.level=WARN
+      # Journal d'accès sans IP ni en-têtes (données personnelles).
+      - --accesslog=true
+      - --accesslog.fields.names.ClientAddr=drop
+      - --accesslog.fields.names.ClientHost=drop
+      - --accesslog.fields.names.ClientPort=drop
+      - --accesslog.fields.names.ClientUsername=drop
+      - --accesslog.fields.names.RequestPath=drop
+      - --accesslog.fields.headers.defaultmode=drop
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?}
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./docker/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - letsencrypt:/letsencrypt
+    networks: [edge]
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: '0.5', memory: 256M }
+
+  api:
+    <<: *app
+    networks: [edge, internal]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    deploy:
+      resources:
+        limits: { cpus: '1.5', memory: 768M }
+
+  worker:
+    <<: *app
+    command: ['node', 'dist/worker.js']
+    networks: [egress, internal]
+    healthcheck:
+      test: ['CMD', 'node', 'dist/worker-healthcheck.js']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    deploy:
+      resources:
+        limits: { cpus: '1.0', memory: 768M }
+
+  migrate:
+    image: ghcr.io/${GHCR_OWNER:?}/les-secrets-de-diani-backend-migrate:${IMAGE_TAG:?}
+    profiles: [migrate]
+    environment:
+      DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:?}@postgres:5432/diani?schema=public
+    networks: [internal]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: diani
+      POSTGRES_USER: diani
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./docker/postgres:/docker-entrypoint-initdb.d:ro
+    networks: [internal]
+    shm_size: 256m
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U diani -d diani']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: '1.5', memory: 1536M }
+
+  redis:
+    image: redis:7-alpine
+    # noeviction : BullMQ exige qu'aucune clé ne soit évincée silencieusement.
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?}
+    volumes: [redis-data:/data]
+    networks: [internal]
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli -a "$$REDIS_PASSWORD" --no-auth-warning ping | grep PONG']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: '0.5', memory: 384M }
+
+networks:
+  edge:
+  egress:
+  internal:
+    internal: true
+
+volumes:
+  pg-data:
+  redis-data:
+  letsencrypt:

@@ -1,0 +1,86 @@
+{
+  "name": "les-secrets-de-diani-backend",
+  "version": "0.1.0",
+  "description": "API du site « Les Secrets de Diani » (traiteur, formations, boutique, contenus).",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "start:worker": "node dist/worker.js",
+    "start:worker:dev": "nest start --watch --entryFile worker",
+    "lint": "eslint \"{src,test,scripts,prisma}/**/*.ts\" --max-warnings=0",
+    "lint:fix": "eslint \"{src,test,scripts,prisma}/**/*.ts\" --fix",
+    "format": "prettier --write \"**/*.{ts,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,json,yml,yaml}\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "test:e2e": "jest --config test/jest-e2e.config.ts --runInBand",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:seed": "prisma db seed",
+    "openapi:export": "ts-node --transpile-only scripts/export-openapi.ts"
+  },
+  "prisma": {
+    "seed": "ts-node --transpile-only prisma/seed.ts"
+  },
+  "dependencies": {
+    "@nestjs/bullmq": "11.0.5",
+    "@nestjs/common": "11.2.7",
+    "@nestjs/config": "4.0.4",
+    "@nestjs/core": "11.2.7",
+    "@nestjs/platform-express": "11.2.7",
+    "@nestjs/swagger": "11.4.7",
+    "@nestjs/throttler": "6.7.1",
+    "@prisma/client": "6.19.3",
+    "@sentry/nestjs": "10.76.2",
+    "bullmq": "5.81.5",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
+    "helmet": "8.3.0",
+    "ioredis": "5.11.1",
+    "nestjs-pino": "5.3.1",
+    "pino": "10.4.0",
+    "pino-http": "11.0.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@nestjs/cli": "11.0.24",
+    "@nestjs/schematics": "11.1.0",
+    "@nestjs/testing": "11.2.7",
+    "@types/express": "5.0.6",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.19.1",
+    "@types/supertest": "6.0.3",
+    "eslint": "10.12.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.0.0",
+    "jest": "30.5.2",
+    "pino-pretty": "13.2.0",
+    "prettier": "3.9.9",
+    "prisma": "6.19.3",
+    "source-map-support": "0.5.21",
+    "supertest": "7.3.1",
+    "ts-jest": "29.4.14",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1"
+  },
+  "overrides": {
+    "@nestjs/swagger": {
+      "js-yaml": "5.4.3"
+    },
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.2"
+    }
+  }
+}

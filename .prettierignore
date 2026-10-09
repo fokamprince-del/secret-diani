@@ -1,0 +1,6 @@
+dist
+coverage
+node_modules
+docs/openapi.json
+docs/CAHIER_DES_CHARGES.md
+package-lock.json

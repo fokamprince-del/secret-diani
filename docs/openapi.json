@@ -1,0 +1,147 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "HealthController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Sonde de vie (le processus répond)",
+        "tags": [
+          "Supervision"
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "operationId": "HealthController_readiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok",
+                    "checks": {
+                      "database": "ok",
+                      "redis": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "indisponible",
+                    "checks": {
+                      "database": "erreur",
+                      "redis": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Sonde de disponibilité (base de données et Redis joignables)",
+        "tags": [
+          "Supervision"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "API Les Secrets de Diani",
+    "description": "API REST du site « Les Secrets de Diani » : traiteur, formations, boutique et contenus. Toutes les erreurs suivent le format `ErrorResponseDto` avec un message en français.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "FieldErrorDto": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "email"
+          },
+          "messages": {
+            "example": [
+              "doit être une adresse e-mail valide"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "field",
+          "messages"
+        ]
+      },
+      "ErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 400
+          },
+          "code": {
+            "type": "string",
+            "example": "VALIDATION_ERROR"
+          },
+          "message": {
+            "type": "string",
+            "example": "Les données envoyées sont invalides."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldErrorDto"
+            }
+          },
+          "requestId": {
+            "type": "string",
+            "example": "01928f6e-7c1a-7b3e-9a6f-2f1c3d4e5f60"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "message",
+          "requestId"
+        ]
+      }
+    }
+  }
+}

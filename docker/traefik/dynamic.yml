@@ -1,0 +1,48 @@
+# Configuration dynamique Traefik (production) — routage vers l'API et durcissement TLS.
+http:
+  routers:
+    api:
+      rule: 'Host(`{{ env "API_DOMAIN" }}`)'
+      entryPoints: [websecure]
+      service: api
+      middlewares: [security-headers, limit-body]
+      tls:
+        certResolver: letsencrypt
+        options: modern
+
+  services:
+    api:
+      loadBalancer:
+        servers:
+          - url: 'http://api:3000'
+        healthCheck:
+          path: /health
+          interval: 10s
+          timeout: 3s
+
+  middlewares:
+    security-headers:
+      headers:
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        frameDeny: true
+        referrerPolicy: no-referrer
+    limit-body:
+      buffering:
+        # Limite haute (téléversements de médias) ; les routes JSON sont limitées plus bas par l'API.
+        maxRequestBodyBytes: 26214400
+
+tls:
+  options:
+    modern:
+      minVersion: VersionTLS12
+      sniStrict: true
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256

@@ -1,0 +1,78 @@
+# Environnement de développement.
+#   make dev          → Postgres + Redis en conteneurs, API lancée localement (rechargement à chaud)
+#   docker compose --profile app up --build → pile complète conteneurisée (api + worker)
+# Les ports ne sont exposés que sur 127.0.0.1.
+name: diani-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: diani
+      POSTGRES_USER: diani
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-diani_dev_password}
+    ports: ['127.0.0.1:5432:5432']
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./docker/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U diani -d diani']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory-policy', 'noeviction']
+    ports: ['127.0.0.1:6379:6379']
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  migrate:
+    profiles: [app]
+    build: { context: ., target: migrate }
+    environment: &app-env
+      NODE_ENV: development
+      PUBLIC_SITE_URL: http://localhost:5173
+      DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:-diani_dev_password}@postgres:5432/diani?schema=public
+      REDIS_URL: redis://redis:6379
+      SWAGGER_ENABLED: 'true'
+      LOG_LEVEL: info
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    profiles: [app]
+    build: { context: ., target: runtime }
+    environment: *app-env
+    ports: ['127.0.0.1:3000:3000']
+    read_only: true
+    tmpfs: [/tmp]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  worker:
+    profiles: [app]
+    build: { context: ., target: runtime }
+    command: ['node', 'dist/worker.js']
+    environment: *app-env
+    read_only: true
+    tmpfs: [/tmp]
+    healthcheck:
+      test: ['CMD', 'node', 'dist/worker-healthcheck.js']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+volumes:
+  pg-data:
+  redis-data:
