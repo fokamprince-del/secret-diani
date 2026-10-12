@@ -1,5 +1,6 @@
 import { RequestMethod } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
+import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
@@ -74,6 +75,8 @@ export function configureApp(app: NestExpressApplication): void {
   const bodyLimit = config.get('BODY_LIMIT');
   app.useBodyParser('json', { limit: bodyLimit, strict: true, reviver: rejectPrototypeKeys });
   app.useBodyParser('urlencoded', { limit: bodyLimit, extended: false, parameterLimit: 100 });
+  // Cookies non signés : le refresh token est un jeton opaque vérifié en base.
+  app.use(cookieParser());
 
   app.setGlobalPrefix(API_PREFIX, {
     exclude: [

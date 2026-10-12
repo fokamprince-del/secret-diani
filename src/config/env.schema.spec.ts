@@ -4,6 +4,16 @@ const base = {
   PUBLIC_SITE_URL: 'http://localhost:5173',
   DATABASE_URL: 'postgresql://user:SuperSecret123@localhost:5432/db',
   REDIS_URL: 'redis://localhost:6379',
+  JWT_ACCESS_SECRET: 'a'.repeat(32),
+  FIELD_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'),
+};
+
+const production = {
+  ...base,
+  NODE_ENV: 'production',
+  PUBLIC_SITE_URL: 'https://a.fr',
+  MAIL_TRANSPORT: 'resend',
+  RESEND_API_KEY: 're_test_0123456789',
 };
 
 describe('validateEnv', () => {
@@ -57,8 +67,27 @@ describe('validateEnv', () => {
         CORS_ORIGINS: 'http://a.fr',
       }),
     ).toThrow(/CORS_ORIGINS/);
-    expect(
-      validateEnv({ ...base, NODE_ENV: 'production', PUBLIC_SITE_URL: 'https://a.fr' }).NODE_ENV,
-    ).toBe('production');
+    expect(validateEnv(production).NODE_ENV).toBe('production');
+  });
+
+  it('exige des secrets d’authentification robustes', () => {
+    expect(() => validateEnv({ ...base, JWT_ACCESS_SECRET: 'court' })).toThrow(
+      /JWT_ACCESS_SECRET : doit contenir au moins 32 caractères/,
+    );
+    expect(() =>
+      validateEnv({ ...base, FIELD_ENCRYPTION_KEY: Buffer.alloc(16).toString('base64') }),
+    ).toThrow(/FIELD_ENCRYPTION_KEY/);
+    expect(() =>
+      validateEnv({ ...base, JWT_ACCESS_SECRET_PREVIOUS: base.JWT_ACCESS_SECRET }),
+    ).toThrow(/JWT_ACCESS_SECRET_PREVIOUS : doit différer/);
+  });
+
+  it('impose Resend (avec sa clé) en production', () => {
+    expect(() => validateEnv({ ...production, MAIL_TRANSPORT: 'outbox' })).toThrow(
+      /MAIL_TRANSPORT/,
+    );
+    const { RESEND_API_KEY: _key, ...withoutKey } = production;
+    expect(() => validateEnv(withoutKey)).toThrow(/RESEND_API_KEY/);
+    expect(validateEnv(base).MAIL_TRANSPORT).toBe('outbox');
   });
 });

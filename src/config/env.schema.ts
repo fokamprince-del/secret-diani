@@ -9,6 +9,13 @@ const booleanFromEnv = (defaultValue: boolean) =>
     .optional()
     .transform((value) => value ?? defaultValue);
 
+/** Clé de 32 octets encodée en base64 (générer avec `openssl rand -base64 32`). */
+const base64Key = z.string().refine((value) => Buffer.from(value, 'base64').length === 32, {
+  message: 'doit être une clé de 32 octets encodée en base64 (openssl rand -base64 32)',
+});
+
+const jwtSecret = z.string().min(32, 'doit contenir au moins 32 caractères');
+
 const urlList = z
   .string()
   .transform((value) =>
@@ -52,9 +59,47 @@ export const envSchema = z
     RATE_LIMIT_MAX: z.coerce.number().int().min(1).default(120),
 
     CATERING_ONLINE_ORDERING: booleanFromEnv(false),
+
+    // --- Authentification (phase 2) ---
+    JWT_ACCESS_SECRET: jwtSecret,
+    // Ancien secret, accepté en vérification seulement pendant une rotation (voir RUNBOOK).
+    JWT_ACCESS_SECRET_PREVIOUS: jwtSecret.optional(),
+    FIELD_ENCRYPTION_KEY: base64Key,
+    FIELD_ENCRYPTION_KEY_PREVIOUS: base64Key.optional(),
+    // Version des CGU/politique de confidentialité acceptée à l'inscription.
+    TERMS_VERSION: z.string().min(1).max(20).default('2026-10'),
+
+    // --- E-mails ---
+    // resend : envoi réel ; outbox : écriture des e-mails dans MAIL_OUTBOX_DIR (développement).
+    MAIL_TRANSPORT: z.enum(['resend', 'outbox']).default('outbox'),
+    MAIL_FROM: z.string().min(3).default('Les Secrets de Diani <ne-pas-repondre@localhost>'),
+    MAIL_REPLY_TO: z.email().optional(),
+    RESEND_API_KEY: z.string().min(10).optional(),
+    MAIL_OUTBOX_DIR: z.string().min(1).default('tmp/mails'),
   })
   .superRefine((env, ctx) => {
+    if (env.MAIL_TRANSPORT === 'resend' && !env.RESEND_API_KEY) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['RESEND_API_KEY'],
+        message: 'obligatoire quand MAIL_TRANSPORT=resend',
+      });
+    }
+    if (env.JWT_ACCESS_SECRET_PREVIOUS === env.JWT_ACCESS_SECRET) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['JWT_ACCESS_SECRET_PREVIOUS'],
+        message: 'doit différer du secret courant',
+      });
+    }
     if (env.NODE_ENV !== 'production') return;
+    if (env.MAIL_TRANSPORT !== 'resend') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['MAIL_TRANSPORT'],
+        message: 'en production, les e-mails doivent partir par Resend',
+      });
+    }
     const origins = env.CORS_ORIGINS ?? [env.PUBLIC_SITE_URL];
     for (const origin of origins) {
       if (!origin.startsWith('https://')) {

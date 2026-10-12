@@ -13,6 +13,7 @@ export function createOpenApiDocument(app: INestApplication): OpenAPIObject {
     )
     .setVersion('1.0')
     .addBearerAuth()
+    .addCookieAuth('diani_rt', { type: 'apiKey', in: 'cookie', name: 'diani_rt' }, 'diani_rt')
     .build();
   return SwaggerModule.createDocument(app, config, { extraModels: [ErrorResponseDto] });
 }

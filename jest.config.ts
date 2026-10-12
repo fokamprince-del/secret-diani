@@ -20,9 +20,24 @@ const config: Config = {
     '!prisma/prisma.service.ts',
     '!common/throttler/redis-throttler.storage.ts',
     '!common/errors/error-response.ts',
+    // Services adossés à Postgres/Redis : couverts par les tests e2e (seuils dans test/jest-e2e.config.ts).
+    '!auth/auth.service.ts',
+    '!auth/login-attempts.service.ts',
+    '!auth/mfa/mfa.service.ts',
+    '!auth/tokens/user-tokens.service.ts',
+    '!auth/password/password.service.ts',
+    '!sessions/sessions.service.ts',
+    '!users/*.service.ts',
+    '!rgpd/rgpd.service.ts',
+    '!audit/audit.service.ts',
+    '!mail/mail.service.ts',
+    '!mail/mail.processor.ts',
+    '!mail/transports/outbox.transport.ts',
+    '!jobs/retention/*.ts',
+    '!cli/**',
+    '!**/dto/**',
   ],
   coverageDirectory: '../coverage/unit',
-  // Seuils renforcés (≥ 80 %) appliqués aux modules auth, paiements et droits d'accès dès leur phase.
   coverageThreshold: { global: { lines: 80, branches: 70 } },
 };
 

@@ -10,3 +10,4 @@ coverage/
 backups/
 .DS_Store
 .idea/
+tmp/

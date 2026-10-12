@@ -15,8 +15,18 @@ const config: Config = {
     '!src/main.ts',
     '!src/worker.ts',
     '!src/worker-healthcheck.ts',
+    '!src/cli/create-admin.ts',
   ],
   coverageDirectory: '<rootDir>/coverage/e2e',
+  // Exigence du cahier des charges : couverture ≥ 80 % sur l'authentification et les comptes
+  // (puis paiements et droits d'accès dans leurs phases). Appliquée quand --coverage est actif (CI).
+  coverageThreshold: {
+    global: {},
+    './src/auth/': { lines: 80 },
+    './src/sessions/': { lines: 80 },
+    './src/users/': { lines: 80 },
+    './src/rgpd/': { lines: 80 },
+  },
 };
 
 export default config;

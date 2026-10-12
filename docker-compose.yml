@@ -42,6 +42,11 @@ services:
       REDIS_URL: redis://redis:6379
       SWAGGER_ENABLED: 'true'
       LOG_LEVEL: info
+      # Secrets de développement uniquement (jamais utilisés ailleurs).
+      JWT_ACCESS_SECRET: dev-only-jwt-secret-change-me-0123456789abcdef
+      FIELD_ENCRYPTION_KEY: ZGV2LW9ubHkta2V5LTMyLWJ5dGVzLWxvbmctLS0tLS0=
+      MAIL_TRANSPORT: outbox
+      MAIL_OUTBOX_DIR: /tmp/mails
     depends_on:
       postgres: { condition: service_healthy }
 

@@ -4,7 +4,7 @@ API REST du site « Les Secrets de Diani » : traiteur, formations en ligne, bou
 
 **Stack :** NestJS 11 · TypeScript strict · PostgreSQL 16 (Prisma) · Redis 7 (cache, limitation de débit, files BullMQ) · Docker · Traefik.
 
-> Cahier des charges : [docs/CAHIER_DES_CHARGES.md](docs/CAHIER_DES_CHARGES.md) · Décisions : [docs/DECISIONS.md](docs/DECISIONS.md) · Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Exploitation : [docs/RUNBOOK.md](docs/RUNBOOK.md)
+> Cahier des charges : [docs/CAHIER_DES_CHARGES.md](docs/CAHIER_DES_CHARGES.md) · Décisions : [docs/DECISIONS.md](docs/DECISIONS.md) · Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Sécurité : [docs/SECURITY.md](docs/SECURITY.md) · RGPD : [docs/RGPD.md](docs/RGPD.md) · Exploitation : [docs/RUNBOOK.md](docs/RUNBOOK.md)
 
 ## Prérequis
 
@@ -15,10 +15,15 @@ API REST du site « Les Secrets de Diani » : traiteur, formations en ligne, bou
 ## Démarrage rapide
 
 ```bash
-cp .env.example .env      # valeurs de développement, sans secret réel
+cp .env.example .env      # puis renseigner les deux secrets ci-dessous
+openssl rand -base64 48   # → JWT_ACCESS_SECRET
+openssl rand -base64 32   # → FIELD_ENCRYPTION_KEY
 make install              # dépendances + client Prisma
 make dev                  # Postgres + Redis (Docker), migrations, API en rechargement à chaud
+make create-admin         # premier compte administrateur (2FA configurée à la première connexion)
 ```
+
+En développement, les e-mails ne partent pas : le worker (`npm run start:worker:dev`) les écrit dans `tmp/mails/`.
 
 - API : http://localhost:3000/api/v1
 - Documentation interactive : http://localhost:3000/api/docs (si `SWAGGER_ENABLED=true`)
@@ -43,7 +48,7 @@ docker compose --profile app up -d --build --wait
 | `make openapi` | Exporte la spécification dans `docs/openapi.json` |
 | `make image` | Construit l'image de production |
 | `make backup` / `make restore file=…` | Sauvegarde chiffrée / restauration (voir RUNBOOK) |
-| `make create-admin` | Création sécurisée d'un administrateur (phase 2) |
+| `make create-admin` | Création sécurisée d'un administrateur (mot de passe saisi sans écho) |
 
 ## Configuration
 
@@ -61,7 +66,7 @@ Toutes les variables sont décrites dans [.env.example](.env.example). Elles son
 | Phase | Contenu | État |
 |---|---|---|
 | 1 | Socle : configuration, Docker, Postgres/Redis, Prisma, journaux, sondes, CI, erreurs | ✅ |
-| 2 | Authentification et comptes | — |
+| 2 | Authentification et comptes : inscription, e-mail, sessions rotatives, 2FA admin, RBAC, RGPD | ✅ (en attente de validation) |
 | 3 | Contenus et médias | — |
 | 4 | Traiteur | — |
 | 5 | Boutique | — |

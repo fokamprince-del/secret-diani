@@ -1,0 +1,65 @@
+import { escapeHtml } from './layout';
+import { renderMail } from './render';
+import type { MailJob } from './template-data';
+
+const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
+  {
+    template: 'verify-email',
+    data: { firstName: 'Awa', link: 'https://site.fr/verifier-email?token=abc' },
+  },
+  { template: 'welcome', data: { firstName: null, siteLink: 'https://site.fr/' } },
+  {
+    template: 'account-exists',
+    data: {
+      loginLink: 'https://site.fr/connexion',
+      resetLink: 'https://site.fr/mot-de-passe-oublie',
+    },
+  },
+  {
+    template: 'password-reset',
+    data: {
+      firstName: 'Awa',
+      link: 'https://site.fr/reinitialiser?token=abc',
+      expiresInMinutes: 30,
+    },
+  },
+  { template: 'password-changed', data: { firstName: null, resetLink: 'https://site.fr/x' } },
+  {
+    template: 'email-change-confirm',
+    data: { link: 'https://site.fr/c?token=t', expiresInMinutes: 60 },
+  },
+  { template: 'email-change-notice', data: { firstName: 'Awa' } },
+  {
+    template: 'admin-login-alert',
+    data: { at: 'lundi', ipTruncated: '203.0.113.0/24', userAgent: null },
+  },
+  { template: 'account-deleted', data: { firstName: null } },
+];
+
+describe('renderMail', () => {
+  it.each(JOBS.map((job) => [job.template, job] as const))(
+    '%s : objet, HTML et texte en français',
+    (_template, job) => {
+      const mail = renderMail(job);
+      expect(mail.subject.length).toBeGreaterThan(5);
+      expect(mail.html).toContain('<html lang="fr">');
+      expect(mail.text).toContain('Les Secrets de Diani');
+      for (const value of Object.values(job.data)) {
+        if (typeof value === 'string' && value.startsWith('https://')) {
+          expect(mail.text).toContain(value);
+          expect(mail.html).toContain(escapeHtml(value));
+        }
+      }
+    },
+  );
+
+  it('échappe les données utilisateur (aucune injection HTML)', () => {
+    const mail = renderMail({
+      template: 'welcome',
+      data: { firstName: '<script>alert(1)</script>', siteLink: 'https://site.fr/?a=1&b="2"' },
+    });
+    expect(mail.html).not.toContain('<script>');
+    expect(mail.html).toContain('&lt;script&gt;');
+    expect(mail.html).toContain('https://site.fr/?a=1&amp;b=&quot;2&quot;');
+  });
+});

@@ -6,14 +6,22 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { createValidationPipe } from './common/pipes/validation.pipe';
 import { RedisThrottlerStorage } from './common/throttler/redis-throttler.storage';
+import { AuditModule } from './audit/audit.module';
+import { AuthModule } from './auth/auth.module';
+import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { CryptoModule } from './common/crypto/crypto.module';
 import { AppConfigModule } from './config/config.module';
 import { AppConfigService } from './config/app-config.service';
 import { HealthModule } from './health/health.module';
 import { JobsModule } from './jobs/jobs.module';
 import { LoggingModule } from './logging/logging.module';
+import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { REDIS_CLIENT } from './redis/redis.constants';
 import { RedisModule } from './redis/redis.module';
+import { RgpdModule } from './rgpd/rgpd.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -36,11 +44,20 @@ import { RedisModule } from './redis/redis.module';
       }),
     }),
     HealthModule,
+    CryptoModule,
+    AuditModule,
+    MailModule,
+    AuthModule,
+    UsersModule,
+    RgpdModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    // Ordre d'exécution : limitation de débit → authentification (refus par défaut) → rôles.
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useExisting: AccessTokenGuard },
+    { provide: APP_GUARD, useExisting: RolesGuard },
     { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
   ],
 })

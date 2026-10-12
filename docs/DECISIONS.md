@@ -81,3 +81,85 @@ Le worker publie un battement de cœur dans Redis toutes les 15 s, que lit sa so
 
 ### D-021 · Sentry
 Activé uniquement si `SENTRY_DSN` est défini, avec `sendDefaultPii: false`. Cookies, en-têtes, corps, chaîne de requête et utilisateur sont retirés de chaque événement avant envoi.
+
+## Phase 2 — Authentification et comptes
+
+### D-022 · @nestjs/jwt 11 plutôt que 12
+La version 12 est publiée en ESM pur : Jest (CommonJS) ne peut pas la charger. La 11.0.2 est la dernière version CommonJS, compatible NestJS 11 et sans vulnérabilité connue. À réévaluer avec la montée NestJS 12 (D-001).
+
+### D-023 · Couche dépôt
+Le client Prisma typé joue le rôle de dépôt : les services l'appellent avec un `select` explicite (jamais d'entité complète renvoyée, donc ni empreinte ni secret exposé par erreur). Une classe dépôt dédiée ne sera introduite que pour des requêtes partagées entre plusieurs services ou du SQL brut (`FOR UPDATE`, séquences de factures).
+
+### D-024 · Durées de vie
+| | Client | Administrateur |
+|---|---|---|
+| Jeton d'accès (JWT HS256) | 15 min | 10 min |
+| Refresh token (inactivité) | 30 jours | 1 h |
+| Session (absolue) | 60 jours | 12 h |
+| Lien de vérification d'e-mail | 24 h | — |
+| Lien de réinitialisation | 30 min | 30 min |
+| Lien de changement d'e-mail | 1 h | 1 h |
+| Défi 2FA | — | 5 min, 5 essais |
+
+### D-025 · Sessions et rotation stricte
+Une session = un appareil = une famille de refresh tokens. Le jeton est opaque (256 bits) et seule son empreinte SHA-256 est stockée. Sa consommation est atomique (`UPDATE … WHERE used_at IS NULL`). **Tout jeton déjà utilisé révoque la famille entière**, sans délai de grâce : c'est l'option la plus sûre.
+**Conséquence pour le frontend :** un seul renouvellement à la fois, tous onglets confondus (Web Locks API ou `BroadcastChannel`), sinon deux onglets qui renouvellent en même temps déconnectent la session.
+Les JWT n'étant pas révocables par nature, la garde consulte une liste Redis des sessions révoquées (TTL = durée maximale d'un jeton d'accès). La révocation est donc immédiate.
+
+### D-026 · Verrouillage progressif
+Trois compteurs Redis, posés sur l'empreinte de l'e-mail saisi, que le compte existe ou non :
+- couple e-mail + IP : 5 échecs, puis verrou de 1, 2, 4, 8 et enfin 15 min au plus ;
+- e-mail, toutes IP confondues : 20 échecs par heure, même progression ;
+- IP, tous comptes confondus : 50 échecs en 15 min, verrou de 15 min.
+
+Aucun verrou n'est définitif, ce qui évite qu'un attaquant puisse bloquer durablement un compte. Les autres IP ne sont pas touchées par le verrou du couple. La même mécanique protège la re-saisie du mot de passe (`user:<id>`) et le second facteur (`mfa:<id>`). En plus : limites de débit par route (connexion 10/min/IP, inscription 5/min, mot de passe oublié 5/min, renvoi d'e-mail 3/min…).
+
+### D-027 · CSRF
+Seules `/auth/refresh` et `/auth/logout` s'authentifient par cookie. Toutes les autres routes utilisent l'en-tête `Authorization`, qu'un site tiers ne peut pas faire envoyer par le navigateur. Les routes à cookie cumulent quatre protections :
+- `SameSite=Strict` ;
+- en-tête `X-CSRF-Token` obligatoire (valeur quelconque), qui impose un pré-vol CORS refusé hors liste blanche ;
+- `Origin` (ou `Referer`) vérifiée contre la liste blanche ;
+- refus de `Sec-Fetch-Site: cross-site`.
+
+Ce schéma « en-tête personnalisé + vérification d'origine » est recommandé par OWASP. Il évite un jeton synchronisé, que le frontend (sur un autre sous-domaine) ne pourrait pas relire après un rechargement de page.
+
+### D-028 · Liens envoyés par e-mail
+Jeton aléatoire de 256 bits stocké haché, plutôt qu'un lien signé (HMAC) : l'usage unique et la révocation sont garantis par la base. Émettre un jeton invalide les précédents du même usage. Les jetons sont consommés de façon atomique.
+
+### D-029 · E-mail non vérifié
+La connexion est refusée tant que l'adresse n'est pas confirmée. Les messages « e-mail non confirmé » et « compte suspendu » ne sont donnés qu'après un mot de passe correct, donc à la seule titulaire : aucune énumération. Une réinitialisation de mot de passe réussie vaut confirmation de l'adresse.
+
+### D-030 · Second facteur administrateur
+- **TOTP** (RFC 6238 : SHA-1, 6 chiffres, 30 s, tolérance ±1 pas) implémenté localement, une quarantaine de lignes vérifiées par les vecteurs de test officiels des RFC 4226 et 6238. Cela évite une dépendance pour une primitive aussi simple.
+- Secret de 160 bits chiffré au repos (AES-256-GCM, clé `FIELD_ENCRYPTION_KEY` hors base, rotation possible).
+- **Anti-rejeu** : le dernier pas accepté est mémorisé, et un code n'est valable qu'une fois.
+- **10 codes de secours** à usage unique (≈ 49 bits chacun), stockés en HMAC-SHA256 avec une clé dérivée (HKDF) de la clé de chiffrement : une fuite de la base seule ne permet pas de les retrouver par force brute.
+- L'enrôlement est imposé à la première connexion. L'URI `otpauth` ne contient pas l'e-mail.
+- **Reporté :** les passkeys (WebAuthn), facultatives selon le cahier des charges, arrivent en phase 9 avec le back-office ; la réinitialisation du 2FA d'un administrateur par un autre administrateur aussi.
+
+### D-031 · Anti-énumération
+Inscription, mot de passe oublié et renvoi de confirmation renvoient le même message en au moins 400 ms, que l'adresse soit connue ou non. À l'inscription, le mot de passe est haché dans tous les cas, pour un coût identique. Une adresse déjà inscrite reçoit un e-mail d'information (« vous avez déjà un compte »), au plus 3 par heure. À la connexion, une empreinte factice est vérifiée quand le compte n'existe pas.
+
+### D-032 · Changement d'adresse e-mail
+Il exige le mot de passe, puis un lien envoyé à la **nouvelle** adresse ; l'ancienne adresse est prévenue. L'unicité est vérifiée à la confirmation (sans rien révéler à la demande). Toutes les sessions sont alors révoquées.
+
+### D-033 · Suppression de compte (RGPD)
+La ligne `users` est anonymisée plutôt que supprimée : les futures commandes et factures (conservation légale de 10 ans) y resteront rattachées sans identité. Adresses, jetons, codes et sessions sont supprimés. L'adresse e-mail redevient libre. Un administrateur ne peut pas supprimer son compte depuis l'espace client.
+
+### D-034 · Journal d'audit immuable
+Le déclencheur PostgreSQL `audit_logs_immutable` interdit `UPDATE`, `TRUNCATE` et tout `DELETE` de moins d'un an (seule la purge l'utilise). La table n'a pas de clé étrangère vers `users`, pour survivre à l'anonymisation. Elle ne contient aucune donnée personnelle : identifiants UUID et IP tronquée seulement.
+
+### D-035 · E-mails
+L'API met les e-mails en file BullMQ, le worker les rend et les envoie, avec 5 tentatives et un délai exponentiel. Une clé d'idempotence (`mail-<idJob>`) évite les doublons chez Resend en cas de relance. En développement, le transport `outbox` écrit les e-mails dans `tmp/mails` ; la production impose Resend. Les gabarits sont du code TypeScript (HTML + texte, données échappées, tests de rendu) : chaque modification passe en revue. Les autres gabarits arrivent en phase 8.
+
+### D-036 · Durées de conservation (purge quotidienne à 3 h 30, heure de Paris)
+Refresh tokens et jetons d'e-mail : 7 jours après expiration ou usage. Sessions : 30 jours après expiration ou révocation. Comptes jamais confirmés : 30 jours. Journal d'audit : 1 an. Voir `docs/RGPD.md`.
+
+### D-037 · Mots de passe courants
+Liste locale d'environ 46 000 mots de passe de 12 caractères ou plus, issus de la liste publique SecLists « xato-net 1M » (compressée, 320 Ko). Aucun appel sortant à la connexion. La vérification par k-anonymat auprès de « Have I Been Pwned » pourra être ajoutée en phase 10 si elle est jugée utile.
+
+### D-038 · Build non incrémental
+`tsconfig.build.json` désactive la compilation incrémentale. Avec `deleteOutDir`, le fichier `.tsbuildinfo` faisait croire que des fichiers déjà supprimés de `dist/` étaient à jour (constaté : `instrument.js` absent d'un second build local). L'image Docker, construite à neuf, n'était pas touchée.
+
+### D-039 · Création d'un administrateur
+Uniquement par la commande `make create-admin` (mot de passe saisi sans écho, jamais en argument ni en variable d'environnement). L'adresse est réputée vérifiée et le second facteur est configuré à la première connexion. **Un compte existant n'est jamais promu** par cette commande : la promotion passera par le back-office (phase 9), auditée.

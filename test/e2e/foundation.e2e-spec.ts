@@ -3,6 +3,7 @@ import { Throttle } from '@nestjs/throttler';
 import { IsEmail, IsInt, IsString, Max, Min, MinLength } from 'class-validator';
 import request from 'supertest';
 import type { App } from 'supertest/types';
+import { Public } from '../../src/common/auth/decorators';
 import { createTestApp } from './utils/test-app';
 
 class ProbeDto {
@@ -20,6 +21,7 @@ class ProbeDto {
 }
 
 /** Contrôleur de test : exerce le socle (validation, erreurs, limitation de débit). */
+@Public()
 @Controller('probe')
 class ProbeController {
   @Post()
@@ -212,6 +214,17 @@ describe('Socle (e2e)', () => {
         message: 'Trop de requêtes. Merci de réessayer dans quelques instants.',
       });
       expect(Number(res.headers['retry-after'])).toBeGreaterThan(0);
+    });
+  });
+
+  describe('refus par défaut', () => {
+    it('les sondes restent publiques, le reste exige un jeton', async () => {
+      await request(app.getHttpServer()).get('/health').expect(200);
+      const res = await request(app.getHttpServer()).get('/api/v1/me').expect(401);
+      expect(res.body).toMatchObject({
+        code: 'UNAUTHORIZED',
+        message: 'Authentification requise.',
+      });
     });
   });
 

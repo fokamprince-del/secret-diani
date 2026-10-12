@@ -7,10 +7,12 @@ import {
 } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import type { Response } from 'express';
+import { Public } from '../common/auth/decorators';
 import { HealthService, ReadinessReport } from './health.service';
 
 /** Sondes d'infrastructure, servies hors du préfixe /api/v1 (`/health`, `/ready`). */
 @ApiTags('Supervision')
+@Public()
 @SkipThrottle()
 @Controller()
 export class HealthController {

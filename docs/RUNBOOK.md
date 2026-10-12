@@ -1,6 +1,6 @@
 # Runbook d'exploitation
 
-> Version phase 1 : sauvegarde et restauration. Le déploiement continu, le rollback automatique et la rotation des secrets seront complétés en phase 10.
+> Version phase 2 : sauvegarde et restauration, comptes administrateurs, rotation des secrets d'authentification. Le déploiement continu et le rollback automatique seront complétés en phase 10.
 
 ## Sauvegardes
 
@@ -34,6 +34,41 @@ BACKUP_AGE_IDENTITY=/chemin/temporaire/diani-backup.key ./scripts/restore.sh bac
 | 2026-10-09 | Dev local (Docker) | Sauvegarde chiffrée (en-tête `age-encryption.org/v1`) puis restauration dans `diani_restore` : migrations présentes, donnée témoin retrouvée. |
 
 À refaire chaque trimestre et après toute modification des scripts.
+
+## Comptes administrateurs
+
+### Créer un administrateur
+Jamais via le seed, jamais avec un mot de passe dans une commande ou une variable d'environnement.
+```
+# Développement
+make create-admin
+# Production (sur le VPS, dans /opt/diani)
+make create-admin-prod
+# soit : docker compose -f docker-compose.prod.yml --env-file .env.production run --rm -it api node dist/cli/create-admin.js
+```
+La commande demande l'e-mail, le prénom et le mot de passe (saisi sans écho, deux fois). À sa première connexion, l'administrateur configure son application d'authentification (TOTP) et reçoit 10 codes de secours **à conserver hors ligne**.
+
+### Administrateur ayant perdu son téléphone
+1. Se connecter avec un code de secours, puis remplacer les codes : `POST /api/v1/auth/2fa/backup-codes` (code TOTP exigé).
+2. Si l'application d'authentification elle-même est perdue : un autre administrateur pourra réinitialiser le 2FA depuis le back-office (phase 9). D'ici là, en base : `UPDATE users SET totp_secret_enc = NULL, totp_enabled_at = NULL, totp_last_step = NULL WHERE email = '…';` puis `DELETE FROM mfa_backup_codes WHERE user_id = '…';`. L'enrôlement est redemandé à la connexion suivante. Consigner l'intervention.
+
+## Rotation des secrets
+
+### `JWT_ACCESS_SECRET` (jetons d'accès)
+1. Générer un nouveau secret : `openssl rand -base64 48`.
+2. Dans `.env.production` : `JWT_ACCESS_SECRET_PREVIOUS=<ancien>` et `JWT_ACCESS_SECRET=<nouveau>`, puis redéployer. Les jetons en cours restent valides.
+3. Après 15 minutes au moins (durée maximale d'un jeton d'accès), retirer `JWT_ACCESS_SECRET_PREVIOUS` et redéployer.
+
+En cas de **compromission**, sauter l'étape de transition : tous les jetons d'accès deviennent invalides, et les utilisateurs les renouvellent de façon transparente avec leur cookie de session.
+
+### `FIELD_ENCRYPTION_KEY` (secrets 2FA, codes de secours)
+1. Générer une nouvelle clé : `openssl rand -base64 32`. La stocker hors serveur (gestionnaire de mots de passe), jamais avec les sauvegardes de la base.
+2. `FIELD_ENCRYPTION_KEY_PREVIOUS=<ancienne>` et `FIELD_ENCRYPTION_KEY=<nouvelle>`, puis redéployer : les secrets existants restent lisibles.
+3. Conserver `FIELD_ENCRYPTION_KEY_PREVIOUS` tant que des secrets TOTP chiffrés avec l'ancienne clé existent. Leur rechiffrement sera outillé en phase 9. Chaque administrateur remplace aussi ses codes de secours.
+
+## Variables d'environnement ajoutées en phase 2
+
+À ajouter dans `.env.production` (chmod 600) avant le déploiement : `JWT_ACCESS_SECRET`, `FIELD_ENCRYPTION_KEY`, `MAIL_TRANSPORT=resend`, `RESEND_API_KEY`, `MAIL_FROM`, et éventuellement `MAIL_REPLY_TO` et `TERMS_VERSION`. Voir `.env.example`. L'API et le worker refusent de démarrer si l'une d'elles manque.
 
 ## Sondes
 

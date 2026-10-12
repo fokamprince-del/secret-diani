@@ -33,7 +33,7 @@
 
 1. **Express** : helmet (CSP, HSTS…), CORS en liste blanche, analyse JSON (limite de taille, refus des clés `__proto__`/`constructor`/`prototype`).
 2. **pino-http** : identifiant de requête (UUID v7, renvoyé dans `X-Request-Id`) et journal d'accès sans donnée personnelle.
-3. **Gardes globales** : limitation de débit (Redis). L'authentification et les rôles, avec refus par défaut, arrivent en phase 2.
+3. **Gardes globales**, dans cet ordre : limitation de débit (Redis) → authentification « refus par défaut » (jeton d'accès JWT valide et session non révoquée, sauf routes `@Public()`) → rôles (`@Roles('admin')`, second facteur exigé). Les routes à cookie (`/auth/refresh`, `/auth/logout`) ajoutent la garde CSRF.
 4. **ValidationPipe global** : DTO stricts, messages en français.
 5. **Intercepteur de délai** (30 s), puis **contrôleur → service → dépôt (Prisma)**.
 6. **Filtre d'exceptions global** : toute erreur est convertie au format unique `ErrorResponseDto`.
@@ -57,7 +57,15 @@ src/
   redis/                  client Redis partagé
   jobs/                   configuration BullMQ, battement de cœur du worker
   health/                 sondes /health et /ready
-  <domaine>/              un module par domaine (auth, catalog-traiteur, shop, …) — phases 2 à 9
+  audit/                  journal d'audit immuable, consultation admin
+  auth/                   inscription, connexion, 2FA, mots de passe, gardes (JWT, rôles, CSRF)
+  sessions/               sessions et refresh tokens rotatifs, appareils connectés
+  users/                  profil et adresses
+  rgpd/                   export et suppression des données du compte
+  mail/                   gabarits, file d'envoi (API) et envoi Resend (worker)
+  jobs/retention/         purge quotidienne des données expirées (worker)
+  cli/                    commande de création d'un administrateur
+  <domaine>/              un module par domaine (catalog-traiteur, shop, …) — phases 3 à 9
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
 docker/                   initialisation Postgres, configuration Traefik
@@ -69,5 +77,12 @@ scripts/                  sauvegarde, restauration, export OpenAPI
 | MLD (cahier des charges) | Modèle Prisma | Table | Phase |
 |---|---|---|---|
 | — (paramètres du site) | `AppSetting` | `app_settings` | 1 |
+| `utilisateur` | `User` | `users` | 2 |
+| `session` | `Session` | `sessions` | 2 |
+| `refresh_token` | `RefreshToken` | `refresh_tokens` | 2 |
+| — (liens envoyés par e-mail) | `UserToken` | `user_tokens` | 2 |
+| — (codes de secours 2FA) | `MfaBackupCode` | `mfa_backup_codes` | 2 |
+| `adresse` | `Address` | `addresses` | 2 |
+| `audit_log` | `AuditLog` | `audit_logs` | 2 |
 
 _Complété au fil des phases._
