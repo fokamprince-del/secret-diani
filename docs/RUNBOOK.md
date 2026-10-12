@@ -1,6 +1,6 @@
 # Runbook d'exploitation
 
-> Version phase 2 : sauvegarde et restauration, comptes administrateurs, rotation des secrets d'authentification. Le déploiement continu et le rollback automatique seront complétés en phase 10.
+> Version phase 3 : sauvegarde et restauration, rôles de base de données, comptes administrateurs, rotation des secrets. Le déploiement continu et le rollback automatique seront complétés en phase 10.
 
 ## Sauvegardes
 
@@ -24,7 +24,7 @@ BACKUP_AGE_IDENTITY=/chemin/temporaire/diani-backup.key ./scripts/restore.sh bac
 ```
 - La sauvegarde est restaurée dans une base séparée `diani_restore`, jamais directement en production.
 - Vérifier les données, puis décider de la bascule : arrêter `api` et `worker`, renommer les bases (`ALTER DATABASE`), redémarrer.
-- Réappliquer les délais de sécurité sur la nouvelle base (`docker/postgres/10-timeouts.sql`), car `pg_dump` ne les sauvegarde pas.
+- Le script réapplique lui-même ce que `pg_dump` ne sauvegarde pas : les droits du rôle applicatif `diani_app` (sans eux, l'API n'a plus accès à rien après la bascule) et les délais de sécurité (`docker/postgres/10-timeouts.sql`).
 - Supprimer la clé privée du serveur immédiatement après la restauration.
 
 ### Essai de restauration — journal
@@ -34,6 +34,24 @@ BACKUP_AGE_IDENTITY=/chemin/temporaire/diani-backup.key ./scripts/restore.sh bac
 | 2026-10-09 | Dev local (Docker) | Sauvegarde chiffrée (en-tête `age-encryption.org/v1`) puis restauration dans `diani_restore` : migrations présentes, donnée témoin retrouvée. |
 
 À refaire chaque trimestre et après toute modification des scripts.
+
+## Base de données : rôles
+
+| Rôle | Utilisé par | Droits |
+|---|---|---|
+| `diani` (`POSTGRES_USER`) | conteneur `migrate`, sauvegarde, restauration, interventions manuelles | propriétaire du schéma (superutilisateur de l'image Postgres) |
+| `diani_app` | `api` et `worker` (`DATABASE_URL`) | lecture et écriture des données seulement : ni DDL, ni TRUNCATE, ni accès à `_prisma_migrations` |
+
+Les droits de `diani_app` sont versionnés dans la migration `20261013000000_app_role`, appliqués aussi aux tables créées par les migrations suivantes. Un attaquant qui obtiendrait l'exécution de SQL via l'API ne pourrait donc ni désactiver les déclencheurs du journal d'audit, ni modifier le schéma (test : `account.e2e` › « le rôle de l'API ne peut ni désactiver les déclencheurs ni modifier le schéma »).
+
+### Mise en place
+1. Générer le mot de passe **en hexadécimal** (le base64 contient `/`, `+` et `=`, qui cassent l'URL de connexion) : `openssl rand -hex 32`.
+2. L'ajouter à `.env.production` : `POSTGRES_APP_PASSWORD=…`.
+3. **Volume neuf** : rien d'autre à faire, `docker/postgres/20-app-role.sh` crée le rôle au premier démarrage de Postgres.
+   **Base existante** (volume créé avant ce rôle) : appliquer les migrations (`migrate`), puis `make db-app-role`, puis redémarrer `api` et `worker`.
+
+### Rotation du mot de passe de `diani_app`
+Nouveau mot de passe dans `.env.production`, puis `make db-app-role` (idempotent) et redémarrage de `api` et `worker` (`up -d`). Les connexions déjà ouvertes restent valides jusqu'au redémarrage.
 
 ## Comptes administrateurs
 

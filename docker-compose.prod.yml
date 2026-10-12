@@ -14,7 +14,8 @@ x-app: &app
   environment:
     NODE_ENV: production
     LOG_PRETTY: 'false'
-    DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:?}@postgres:5432/diani?schema=public&connection_limit=10&pool_timeout=10
+    # Rôle à privilèges minimaux (données seulement, ni DDL ni propriété) : voir RUNBOOK.
+    DATABASE_URL: postgresql://diani_app:${POSTGRES_APP_PASSWORD:?}@postgres:5432/diani?schema=public&connection_limit=10&pool_timeout=10
     REDIS_URL: redis://:${REDIS_PASSWORD:?}@redis:6379
   read_only: true
   tmpfs: [/tmp]
@@ -107,6 +108,7 @@ services:
     image: ghcr.io/${GHCR_OWNER:?}/les-secrets-de-diani-backend-migrate:${IMAGE_TAG:?}
     profiles: [migrate]
     environment:
+      # Seules les migrations utilisent le rôle propriétaire du schéma.
       DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:?}@postgres:5432/diani?schema=public
     networks: [internal]
     read_only: true
@@ -141,6 +143,8 @@ services:
       POSTGRES_DB: diani
       POSTGRES_USER: diani
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      # Lu par docker/postgres/20-app-role.sh (rôle de connexion de l'API et du worker).
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?}
     volumes:
       - pg-data:/var/lib/postgresql/data
       - ./docker/postgres:/docker-entrypoint-initdb.d:ro

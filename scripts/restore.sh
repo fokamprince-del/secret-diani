@@ -26,6 +26,16 @@ age --decrypt --identity "$BACKUP_AGE_IDENTITY" "$file" \
   | docker compose -f "$COMPOSE_FILE" exec -T postgres \
       sh -c "pg_restore --no-owner --no-privileges --exit-on-error -U \"\$POSTGRES_USER\" -d $RESTORE_DB"
 
+# La sauvegarde est faite sans droits (--no-privileges) : on réapplique ceux du rôle applicatif
+# diani_app (sinon l'API n'a plus accès à rien après la bascule) et les délais de sécurité.
+root="$(dirname "$0")/.."
+for sql in "$root/prisma/migrations/20261013000000_app_role/migration.sql" \
+           "$root/docker/postgres/10-timeouts.sql"; do
+  echo "Application de $(basename "$(dirname "$sql")")/$(basename "$sql")…"
+  docker compose -f "$COMPOSE_FILE" exec -T postgres \
+    sh -c "psql -v ON_ERROR_STOP=1 -q -U \"\$POSTGRES_USER\" -d $RESTORE_DB" < "$sql"
+done
+
 echo "Vérification : migrations présentes dans la base restaurée"
 docker compose -f "$COMPOSE_FILE" exec -T postgres \
   sh -c "psql -U \"\$POSTGRES_USER\" -d $RESTORE_DB -c 'SELECT migration_name, finished_at FROM _prisma_migrations ORDER BY finished_at DESC LIMIT 5;'"

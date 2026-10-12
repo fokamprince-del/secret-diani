@@ -163,3 +163,15 @@ Liste locale d'environ 46 000 mots de passe de 12 caractères ou plus, issus de 
 
 ### D-039 · Création d'un administrateur
 Uniquement par la commande `make create-admin` (mot de passe saisi sans écho, jamais en argument ni en variable d'environnement). L'adresse est réputée vérifiée et le second facteur est configuré à la première connexion. **Un compte existant n'est jamais promu** par cette commande : la promotion passera par le back-office (phase 9), auditée.
+
+## Audit de conformité (12/10/2026)
+
+### D-040 · Rôle de base de données à privilèges minimaux
+**Constat de l'audit :** l'API et le worker se connectaient avec `diani`, superutilisateur de l'image Postgres et propriétaire des tables. Une injection SQL (aucune trouvée) aurait permis de désactiver les déclencheurs du journal d'audit, voire d'exécuter des commandes sur le conteneur (`COPY … TO PROGRAM`).
+**Choix :** rôle `diani_app` (SELECT, INSERT, UPDATE, DELETE ; ni DDL, ni TRUNCATE, ni `_prisma_migrations`) pour l'API et le worker ; le rôle propriétaire reste réservé aux migrations, sauvegardes et restaurations.
+- Droits versionnés dans une migration (avec `ALTER DEFAULT PRIVILEGES` pour les tables futures), identiques dans tous les environnements, CI comprise.
+- Le mot de passe (attribut LOGIN) n'est jamais dans une migration : script d'initialisation `docker/postgres/20-app-role.sh` (variable psql, donc échappée) ou `make db-app-role`.
+- Les tests e2e tournent sous `diani_app` : une requête qui aurait besoin de plus de droits échoue en CI, pas en production.
+- `restore.sh` réapplique les droits, puisque les sauvegardes sont faites sans eux (`--no-privileges`).
+- En développement, `.env` garde le rôle propriétaire : `make migrate` et l'API partagent la même URL. Écart assumé, sans incidence sur la production.
+

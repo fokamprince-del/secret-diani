@@ -11,7 +11,7 @@
 | S | Vol d'un refresh token | Cookie `HttpOnly; Secure; SameSite=Strict` limité à `/api/v1/auth`, rotation à chaque usage, réutilisation → famille révoquée | `auth.e2e` › renouvellement |
 | **T**ampering | JWT forgé ou modifié | HS256 imposé (`alg: none` refusé), émetteur et audience vérifiés, secret ≥ 32 caractères | `access-token.service.spec`, `auth.e2e` › jeton altéré |
 | T | Mass assignment (`role: admin`) | `whitelist` + `forbidNonWhitelisted`, DTO stricts | `auth.e2e` › mass assignment, `account.e2e` › champs protégés |
-| T | Modification du journal d'audit | Déclencheur PostgreSQL : UPDATE, TRUNCATE et DELETE récents interdits | `account.e2e` › journal immuable |
+| T | Modification du journal d'audit | Déclencheur PostgreSQL : UPDATE, TRUNCATE et DELETE récents interdits ; l'API se connecte avec `diani_app`, qui n'est ni superutilisateur ni propriétaire et ne peut donc pas désactiver le déclencheur | `account.e2e` › journal immuable, rôle de l'API |
 | **R**epudiation | Contestation d'une action sensible | `audit_logs` : connexions, échecs, verrouillages, mots de passe, e-mails, 2FA, sessions, export et suppression | `admin-mfa.e2e`, `account.e2e` |
 | **I**nformation disclosure | Énumération des comptes | Messages et codes identiques, durée minimale de 400 ms, empreinte factice | `auth.e2e` › anti-énumération, durée de réponse |
 | I | IDOR (adresses, sessions d'un autre compte) | Filtre systématique sur l'utilisateur authentifié, 404 indiscernable | `account.e2e` › anti-IDOR |

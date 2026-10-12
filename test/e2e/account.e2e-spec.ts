@@ -228,7 +228,26 @@ describe('Compte, adresses, sessions et RGPD (e2e)', () => {
       await expect(prisma.auditLog.delete({ where: { id: entry.id } })).rejects.toThrow(
         /conservation/,
       );
-      await expect(prisma.$executeRaw`TRUNCATE audit_logs`).rejects.toThrow(/immuable/);
+      // Refusé deux fois : privilège TRUNCATE non accordé au rôle de l'API, puis déclencheur.
+      await expect(prisma.$executeRaw`TRUNCATE audit_logs`).rejects.toThrow(
+        /permission denied|immuable/,
+      );
+    });
+    it('le rôle de l’API ne peut ni désactiver les déclencheurs ni modifier le schéma', async () => {
+      const [role] = await prisma.$queryRaw<{ rolsuper: boolean; owner: boolean }[]>`
+        SELECT r.rolsuper, t.tableowner = current_user AS owner
+        FROM pg_roles r, pg_tables t
+        WHERE r.rolname = current_user AND t.tablename = 'audit_logs'`;
+      expect(role).toEqual({ rolsuper: false, owner: false });
+      await expect(
+        prisma.$executeRaw`ALTER TABLE audit_logs DISABLE TRIGGER audit_logs_immutable`,
+      ).rejects.toThrow(/must be owner/);
+      await expect(
+        prisma.$executeRaw`DROP TRIGGER audit_logs_immutable ON audit_logs`,
+      ).rejects.toThrow(/must be owner/);
+      await expect(prisma.$executeRaw`CREATE TABLE intrusion (id int)`).rejects.toThrow(
+        /permission denied/,
+      );
     });
     it('ne contient aucune adresse e-mail ni IP complète', async () => {
       const entries = await prisma.auditLog.findMany({ take: 500 });
