@@ -4,7 +4,7 @@ API REST du site « Les Secrets de Diani » : traiteur, formations en ligne, bou
 
 **Stack :** NestJS 11 · TypeScript strict · PostgreSQL 16 (Prisma) · Redis 7 (cache, limitation de débit, files BullMQ) · Docker · Traefik.
 
-> Cahier des charges : [docs/CAHIER_DES_CHARGES.md](docs/CAHIER_DES_CHARGES.md) · Décisions : [docs/DECISIONS.md](docs/DECISIONS.md) · Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Sécurité : [docs/SECURITY.md](docs/SECURITY.md) · RGPD : [docs/RGPD.md](docs/RGPD.md) · Exploitation : [docs/RUNBOOK.md](docs/RUNBOOK.md)
+> Cahier des charges : [docs/CAHIER_DES_CHARGES.md](docs/CAHIER_DES_CHARGES.md) · Décisions : [docs/DECISIONS.md](docs/DECISIONS.md) · Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Sécurité : [docs/SECURITY.md](docs/SECURITY.md) · RGPD : [docs/RGPD.md](docs/RGPD.md) · Violation de données : [docs/INCIDENT.md](docs/INCIDENT.md) · Exploitation : [docs/RUNBOOK.md](docs/RUNBOOK.md)
 
 ## Prérequis
 
@@ -45,7 +45,7 @@ docker compose --profile app up -d --build --wait
 | `make migrate` | Applique les migrations (non destructif) |
 | `make migrate-new name=…` | Crée une migration à partir du schéma Prisma |
 | `make seed` | Données de référence (idempotent) |
-| `make openapi` | Exporte la spécification dans `docs/openapi.json` |
+| `make openapi` | Exporte la spécification dans `docs/openapi.json` (à commiter : la CI vérifie qu'elle reflète le code) |
 | `make image` | Construit l'image de production |
 | `make backup` / `make restore file=…` | Sauvegarde chiffrée / restauration (voir RUNBOOK) |
 | `make create-admin` | Création sécurisée d'un administrateur (mot de passe saisi sans écho) |

@@ -33,6 +33,9 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
+      # docs/openapi.json alimente le client typé du frontend : il doit refléter le code.
+      - name: Spécification OpenAPI à jour
+        run: npm run openapi:check
 
   unit:
     name: Tests unitaires

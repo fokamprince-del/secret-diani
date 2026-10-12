@@ -25,7 +25,8 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:seed": "prisma db seed",
-    "openapi:export": "ts-node --transpile-only scripts/export-openapi.ts"
+    "openapi:export": "ts-node --transpile-only scripts/export-openapi.ts",
+    "openapi:check": "npm run openapi:export && git diff --exit-code -- docs/openapi.json"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"

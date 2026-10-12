@@ -1,6 +1,6 @@
 # Registre des traitements (RGPD / CNIL)
 
-> Tenu à jour à chaque phase. Responsable de traitement : Les Secrets de Diani. Les procédures en cas de violation de données seront décrites dans `docs/INCIDENT.md` (phase 10).
+> Tenu à jour à chaque phase. Responsable de traitement : Les Secrets de Diani. Procédure en cas de violation de données : `docs/INCIDENT.md`.
 
 ## T1 — Comptes clients (phase 2)
 
