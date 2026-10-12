@@ -12,15 +12,19 @@ import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { CryptoModule } from './common/crypto/crypto.module';
 import { AppConfigModule } from './config/config.module';
+import { ContentCacheModule } from './content/cache/content-cache.module';
+import { ContentModule } from './content/content.module';
 import { AppConfigService } from './config/app-config.service';
 import { HealthModule } from './health/health.module';
 import { JobsModule } from './jobs/jobs.module';
 import { LoggingModule } from './logging/logging.module';
 import { MailModule } from './mail/mail.module';
+import { MediaModule } from './media/media.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { REDIS_CLIENT } from './redis/redis.constants';
 import { RedisModule } from './redis/redis.module';
 import { RgpdModule } from './rgpd/rgpd.module';
+import { StorageModule } from './storage/storage.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -50,6 +54,10 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     RgpdModule,
+    StorageModule,
+    ContentCacheModule,
+    MediaModule,
+    ContentModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

@@ -20,13 +20,15 @@ COPY src ./src
 RUN npm run build
 
 # --- Dépendances de production uniquement -------------------------------------------------
-# Sans les dépendances facultatives (CLI Prisma, TypeScript, moteurs de migration) ;
-# seul le client Prisma déjà généré est repris.
+# Sans les dépendances facultatives (CLI Prisma, TypeScript, moteurs de migration) ni scripts
+# d'installation. Sont repris de l'étape `deps` (même base Alpine) : le client Prisma déjà
+# généré et les binaires précompilés de sharp (@img : libvips pour linuxmusl).
 FROM ${NODE_IMAGE} AS prod-deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --omit=optional --ignore-scripts --no-fund --no-audit
 COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=deps /app/node_modules/@img ./node_modules/@img
 
 # --- Migrations (CLI Prisma) --------------------------------------------------------------
 FROM ${NODE_IMAGE} AS migrate

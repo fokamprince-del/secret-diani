@@ -4,7 +4,14 @@ const config: Config = {
   rootDir: '..',
   moduleFileExtensions: ['js', 'json', 'ts'],
   testRegex: String.raw`test/e2e/.*\.e2e-spec\.ts$`,
-  transform: { [String.raw`^.+\.ts$`]: ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }] },
+  // Paquets publiés uniquement en ESM (dépendances de sanitize-html) : transpilés pour Jest
+  // (Node 24 les charge nativement en production).
+  transform: {
+    [String.raw`^.+\.[tj]s$`]: ['ts-jest', { tsconfig: '<rootDir>/tsconfig.jest.json' }],
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(htmlparser2|domhandler|domutils|dom-serializer|entities|domelementtype)/)',
+  ],
   testEnvironment: 'node',
   globalSetup: '<rootDir>/test/e2e/global-setup.ts',
   setupFiles: ['<rootDir>/test/e2e/load-env.ts'],

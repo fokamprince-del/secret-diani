@@ -75,6 +75,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+      # Stockage S3 de test (les services GitHub ne permettent pas de passer une commande).
+      - name: Démarrer SeaweedFS (S3)
+        run: |
+          docker run -d --name s3-test -p 58333:8333 chrislusf/seaweedfs:4.48 server -s3 -dir=/data
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:58333/healthz && exit 0; sleep 2; done
+          docker logs s3-test; exit 1
       - run: npm ci --no-fund
       - run: npx prisma generate
       - run: npm run test:e2e -- --coverage

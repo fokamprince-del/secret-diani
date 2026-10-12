@@ -189,9 +189,12 @@ describe('Administration : 2FA obligatoire et RBAC (e2e)', () => {
         .post('/auth/2fa/verify')
         .send({ mfaToken: second, backupCode: backup })
         .expect(401);
-      expect(await prisma.auditLog.count({ where: { action: 'auth.mfa_backup_code_used' } })).toBe(
-        1,
-      );
+      const admin = await prisma.user.findUniqueOrThrow({ where: { email: adminEmail } });
+      expect(
+        await prisma.auditLog.count({
+          where: { action: 'auth.mfa_backup_code_used', actorId: admin.id },
+        }),
+      ).toBe(1);
     });
 
     it('exige soit un code, soit un code de secours', async () => {
@@ -266,8 +269,9 @@ describe('Administration : 2FA obligatoire et RBAC (e2e)', () => {
         .expect(200);
       expect(next.body.items[0].id < page.body.items[1].id).toBe(true);
 
+      const { id: adminId } = await prisma.user.findUniqueOrThrow({ where: { email: adminEmail } });
       const filtered = await http
-        .get('/admin/audit-logs?action=auth.mfa_enabled', adminToken)
+        .get(`/admin/audit-logs?action=auth.mfa_enabled&actorId=${adminId}`, adminToken)
         .expect(200);
       expect(filtered.body.items).toHaveLength(1);
       expect(JSON.stringify(filtered.body)).not.toContain(adminEmail);

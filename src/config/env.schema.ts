@@ -76,8 +76,40 @@ export const envSchema = z
     MAIL_REPLY_TO: z.email().optional(),
     RESEND_API_KEY: z.string().min(10).optional(),
     MAIL_OUTBOX_DIR: z.string().min(1).default('tmp/mails'),
+
+    // --- Stockage objets compatible S3 (OVH Object Storage ; MinIO en local) ---
+    S3_ENDPOINT: z.url({ protocol: /^https?$/ }),
+    S3_REGION: z.string().min(1).default('gra'),
+    S3_ACCESS_KEY_ID: z.string().min(3),
+    S3_SECRET_ACCESS_KEY: z.string().min(8),
+    // Originaux et documents (accès par URL signée uniquement).
+    S3_BUCKET_PRIVATE: z.string().min(3),
+    // Variantes d'images publiques (servies par le CDN).
+    S3_BUCKET_PUBLIC: z.string().min(3),
+    S3_FORCE_PATH_STYLE: booleanFromEnv(true),
+    // Développement et tests uniquement : crée les buckets au démarrage.
+    S3_AUTO_CREATE_BUCKETS: booleanFromEnv(false),
+    // URL publique du bucket public (ou du CDN devant lui), sans barre finale.
+    MEDIA_PUBLIC_BASE_URL: z.url({ protocol: /^https?$/ }),
+
+    // --- Antivirus (facultatif) : démon clamd joignable en TCP ---
+    CLAMAV_HOST: z.string().min(1).optional(),
+    CLAMAV_PORT: z.coerce.number().int().min(1).max(65535).default(3310),
+
+    // --- Revalidation du frontend (ISR) après une modification de contenu ---
+    FRONTEND_REVALIDATE_URL: z.url({ protocol: /^https?$/ }).optional(),
+    FRONTEND_REVALIDATE_SECRET: z.string().min(32).optional(),
+    // Durée du cache Redis des contenus publics.
+    CONTENT_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).max(86400).default(300),
   })
   .superRefine((env, ctx) => {
+    if (env.FRONTEND_REVALIDATE_URL && !env.FRONTEND_REVALIDATE_SECRET) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['FRONTEND_REVALIDATE_SECRET'],
+        message: 'obligatoire quand FRONTEND_REVALIDATE_URL est défini',
+      });
+    }
     if (env.MAIL_TRANSPORT === 'resend' && !env.RESEND_API_KEY) {
       ctx.addIssue({
         code: 'custom',
@@ -93,6 +125,13 @@ export const envSchema = z
       });
     }
     if (env.NODE_ENV !== 'production') return;
+    if (env.S3_AUTO_CREATE_BUCKETS) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['S3_AUTO_CREATE_BUCKETS'],
+        message: 'interdit en production (buckets créés et configurés manuellement, voir RUNBOOK)',
+      });
+    }
     if (env.MAIL_TRANSPORT !== 'resend') {
       ctx.addIssue({
         code: 'custom',

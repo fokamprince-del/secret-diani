@@ -22,6 +22,20 @@ export const AuditAction = {
   PROFILE_UPDATED: 'account.profile_updated',
   DATA_EXPORTED: 'account.data_exported',
   ACCOUNT_DELETED: 'account.deleted',
+  // Contenus et médias (phase 3)
+  MEDIA_UPLOADED: 'media.uploaded',
+  MEDIA_UPDATED: 'media.updated',
+  MEDIA_DELETED: 'media.deleted',
+  ARTICLE_CREATED: 'content.article_created',
+  ARTICLE_UPDATED: 'content.article_updated',
+  ARTICLE_PUBLISHED: 'content.article_published',
+  ARTICLE_UNPUBLISHED: 'content.article_unpublished',
+  ARTICLE_DELETED: 'content.article_deleted',
+  CATEGORY_CHANGED: 'content.category_changed',
+  PAGE_UPDATED: 'content.page_updated',
+  FAQ_CHANGED: 'content.faq_changed',
+  REVIEW_CHANGED: 'content.review_changed',
+  REVIEW_MODERATED: 'content.review_moderated',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

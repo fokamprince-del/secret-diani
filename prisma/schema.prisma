@@ -215,3 +215,202 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+// =============================================================================
+// Phase 3 — Contenus éditoriaux et médias
+// =============================================================================
+
+enum MediaKind {
+  image
+  document
+
+  @@map("media_kind")
+}
+
+enum MediaStatus {
+  /// Emplacement réservé, fichier pas encore reçu (upload par URL pré-signée).
+  pending
+  /// Fichier reçu, contrôles et variantes en cours (worker).
+  processing
+  ready
+  /// Refusé par les contrôles (type réel, taille, antivirus) : voir rejection_reason.
+  rejected
+
+  @@map("media_status")
+}
+
+/// MLD : media. Fichiers renommés aléatoirement ; images ré-encodées (WebP/AVIF, sans EXIF).
+model Media {
+  id              String      @id @default(uuid(7)) @db.Uuid
+  kind            MediaKind
+  status          MediaStatus @default(pending)
+  /// Nom d'origine, conservé pour l'administration uniquement (jamais utilisé comme chemin).
+  originalName    String      @map("original_name") @db.VarChar(255)
+  /// Type MIME vérifié par les octets magiques (pas celui déclaré par le navigateur).
+  mimeType        String?     @map("mime_type") @db.VarChar(100)
+  sizeBytes       Int?        @map("size_bytes")
+  sha256          String?     @db.Char(64)
+  /// Clé de l'original dans le stockage privé (supprimé après traitement pour les images).
+  storageKey      String      @unique @map("storage_key") @db.VarChar(255)
+  width           Int?
+  height          Int?
+  /// Texte alternatif par défaut (vide = image décorative).
+  alt             String      @default("") @db.VarChar(300)
+  /// Variantes publiques : [{ format, width, height, key, url, bytes }].
+  variants        Json        @default("[]")
+  /// Aperçu flou minuscule (data URI) pour le chargement progressif.
+  blurDataUrl     String?     @map("blur_data_url") @db.VarChar(2000)
+  /// Résultat de l'analyse antivirus : clean | skipped (antivirus non configuré).
+  scanResult      String?     @map("scan_result") @db.VarChar(20)
+  rejectionReason String?     @map("rejection_reason") @db.VarChar(300)
+  uploadedById    String?     @map("uploaded_by_id") @db.Uuid
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt       DateTime?   @map("deleted_at") @db.Timestamptz(3)
+
+  articleCovers Article[]
+
+  @@index([kind, status, createdAt])
+  @@index([deletedAt])
+  @@map("media")
+}
+
+model ArticleCategory {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  slug        String   @unique @db.VarChar(120)
+  name        String   @db.VarChar(120)
+  description String?  @db.VarChar(500)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  articles Article[]
+
+  @@index([position])
+  @@map("article_categories")
+}
+
+enum ArticleStatus {
+  draft
+  published
+
+  @@map("article_status")
+}
+
+/// MLD : article (Conseils & astuces). « Programmé » = publié avec une date de publication future.
+model Article {
+  id                String        @id @default(uuid(7)) @db.Uuid
+  slug              String        @unique @db.VarChar(160)
+  /// Anciens slugs d'un article déjà publié (redirection permanente, liens SEO conservés).
+  previousSlugs     String[]      @default([]) @map("previous_slugs") @db.VarChar(160)
+  title             String        @db.VarChar(200)
+  excerpt           String        @db.VarChar(500)
+  /// Source Markdown (le HTML brut y est désactivé).
+  bodyMarkdown      String        @map("body_markdown")
+  /// HTML rendu côté serveur et assaini (liste blanche de balises).
+  bodyHtml          String        @map("body_html")
+  /// Table des matières : [{ id, title, level }].
+  toc               Json          @default("[]")
+  readingMinutes    Int           @default(1) @map("reading_minutes")
+  status            ArticleStatus @default(draft)
+  publishedAt       DateTime?     @map("published_at") @db.Timestamptz(3)
+  seoTitle          String?       @map("seo_title") @db.VarChar(70)
+  seoDescription    String?       @map("seo_description") @db.VarChar(160)
+  coverMediaId      String?       @map("cover_media_id") @db.Uuid
+  coverAlt          String        @default("") @map("cover_alt") @db.VarChar(300)
+  categoryId        String?       @map("category_id") @db.Uuid
+  /// Formation mise en avant en fin d'article (slug, relié en phase 7).
+  relatedCourseSlug String?       @map("related_course_slug") @db.VarChar(160)
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime?     @map("deleted_at") @db.Timestamptz(3)
+
+  coverMedia Media?           @relation(fields: [coverMediaId], references: [id], onDelete: SetNull)
+  category   ArticleCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([status, publishedAt])
+  @@index([categoryId, status, publishedAt])
+  @@index([coverMediaId])
+  @@index([deletedAt])
+  @@index([previousSlugs], map: "articles_previous_slugs_idx", type: Gin)
+  @@map("articles")
+}
+
+/// MLD : page_statique (À propos, mentions légales, CGV, confidentialité…).
+model StaticPage {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  slug           String   @unique @db.VarChar(120)
+  title          String   @db.VarChar(200)
+  bodyMarkdown   String   @map("body_markdown")
+  bodyHtml       String   @map("body_html")
+  toc            Json     @default("[]")
+  published      Boolean  @default(false)
+  seoTitle       String?  @map("seo_title") @db.VarChar(70)
+  seoDescription String?  @map("seo_description") @db.VarChar(160)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("static_pages")
+}
+
+enum FaqCategory {
+  general
+  traiteur
+  formations
+  boutique
+  livraison
+  paiement
+  retours
+
+  @@map("faq_category")
+}
+
+/// MLD : faq — ordonnable (position), par catégorie.
+model Faq {
+  id             String      @id @default(uuid(7)) @db.Uuid
+  category       FaqCategory @default(general)
+  question       String      @db.VarChar(300)
+  answerMarkdown String      @map("answer_markdown")
+  answerHtml     String      @map("answer_html")
+  position       Int         @default(0)
+  published      Boolean     @default(true)
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([category, position])
+  @@map("faqs")
+}
+
+enum ReviewStatus {
+  pending
+  approved
+  rejected
+
+  @@map("review_status")
+}
+
+/// MLD : avis — traiteur uniquement, saisis par l'administration avec leur provenance, modérés.
+model Review {
+  id               String       @id @default(uuid(7)) @db.Uuid
+  /// Nom affiché tel qu'autorisé par la cliente (ex. « Awa D. »).
+  authorName       String       @map("author_name") @db.VarChar(80)
+  rating           Int
+  content          String       @db.VarChar(2000)
+  /// Contexte affiché (ex. « Anniversaire, 40 personnes »).
+  occasion         String?      @db.VarChar(120)
+  receivedOn       DateTime     @map("received_on") @db.Date
+  /// Provenance interne, jamais publiée (ex. « message WhatsApp du 12/09 ») : aucun avis inventé.
+  sourceNote       String       @map("source_note") @db.VarChar(300)
+  /// La cliente a accepté la publication (obligatoire).
+  consentConfirmed Boolean      @map("consent_confirmed")
+  status           ReviewStatus @default(pending)
+  position         Int          @default(0)
+  moderatedById    String?      @map("moderated_by_id") @db.Uuid
+  moderatedAt      DateTime?    @map("moderated_at") @db.Timestamptz(3)
+  createdById      String?      @map("created_by_id") @db.Uuid
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([status, position])
+  @@map("reviews")
+}

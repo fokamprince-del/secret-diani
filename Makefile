@@ -20,8 +20,8 @@ dev: infra-up ## Démarre Postgres + Redis, applique les migrations et lance l'A
 	npx prisma migrate deploy
 	npm run start:dev
 
-infra-up: ## Démarre Postgres et Redis de développement
-	$(COMPOSE_DEV) up -d --wait postgres redis
+infra-up: ## Démarre Postgres, Redis et le stockage S3 (SeaweedFS) de développement
+	$(COMPOSE_DEV) up -d --wait postgres redis s3
 
 infra-down: ## Arrête l'infrastructure de développement (les données sont conservées)
 	$(COMPOSE_DEV) down

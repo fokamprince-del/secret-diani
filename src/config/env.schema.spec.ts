@@ -6,6 +6,12 @@ const base = {
   REDIS_URL: 'redis://localhost:6379',
   JWT_ACCESS_SECRET: 'a'.repeat(32),
   FIELD_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'),
+  S3_ENDPOINT: 'http://localhost:9000',
+  S3_ACCESS_KEY_ID: 'minio',
+  S3_SECRET_ACCESS_KEY: 'minio-secret',
+  S3_BUCKET_PRIVATE: 'diani-private',
+  S3_BUCKET_PUBLIC: 'diani-public',
+  MEDIA_PUBLIC_BASE_URL: 'http://localhost:9000/diani-public',
 };
 
 const production = {
@@ -89,5 +95,18 @@ describe('validateEnv', () => {
     const { RESEND_API_KEY: _key, ...withoutKey } = production;
     expect(() => validateEnv(withoutKey)).toThrow(/RESEND_API_KEY/);
     expect(validateEnv(base).MAIL_TRANSPORT).toBe('outbox');
+  });
+
+  it('interdit la création automatique des buckets en production', () => {
+    expect(() => validateEnv({ ...production, S3_AUTO_CREATE_BUCKETS: 'true' })).toThrow(
+      /S3_AUTO_CREATE_BUCKETS/,
+    );
+    expect(validateEnv(base).S3_FORCE_PATH_STYLE).toBe(true);
+  });
+
+  it('exige le secret de revalidation avec l’URL du frontend', () => {
+    expect(() =>
+      validateEnv({ ...base, FRONTEND_REVALIDATE_URL: 'https://site.fr/api/revalidate' }),
+    ).toThrow(/FRONTEND_REVALIDATE_SECRET/);
   });
 });

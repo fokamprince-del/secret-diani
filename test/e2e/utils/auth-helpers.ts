@@ -22,7 +22,7 @@ export function uniqueEmail(prefix = 'cliente'): string {
   return `${prefix}-${randomUUID().slice(0, 8)}@example.com`;
 }
 
-type Method = 'get' | 'post' | 'patch' | 'delete';
+type Method = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
 /** Client HTTP lié à une IP (X-Forwarded-For, TRUST_PROXY_HOPS=1 en test). */
 export function client(app: INestApplication<App>, ip: string = nextIp()) {
@@ -35,6 +35,7 @@ export function client(app: INestApplication<App>, ip: string = nextIp()) {
     ip,
     get: (path: string, token?: string) => call('get', path, token),
     post: (path: string, token?: string) => call('post', path, token),
+    put: (path: string, token?: string) => call('put', path, token),
     patch: (path: string, token?: string) => call('patch', path, token),
     delete: (path: string, token?: string) => call('delete', path, token),
   };

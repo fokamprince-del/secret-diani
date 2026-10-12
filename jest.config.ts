@@ -4,7 +4,14 @@ const config: Config = {
   rootDir: 'src',
   moduleFileExtensions: ['js', 'json', 'ts'],
   testRegex: String.raw`\.spec\.ts$`,
-  transform: { [String.raw`^.+\.ts$`]: ['ts-jest', { tsconfig: '<rootDir>/../tsconfig.json' }] },
+  // Paquets publiés uniquement en ESM (dépendances de sanitize-html) : transpilés pour Jest
+  // (Node 24 les charge nativement en production).
+  transform: {
+    [String.raw`^.+\.[tj]s$`]: ['ts-jest', { tsconfig: '<rootDir>/../tsconfig.jest.json' }],
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(htmlparser2|domhandler|domutils|dom-serializer|entities|domelementtype)/)',
+  ],
   testEnvironment: 'node',
   collectCoverageFrom: [
     '**/*.ts',
@@ -36,6 +43,15 @@ const config: Config = {
     '!jobs/retention/*.ts',
     '!cli/**',
     '!**/dto/**',
+    // Phase 3 : services adossés à Postgres/Redis/S3, couverts par les tests e2e.
+    '!storage/**',
+    '!media/media.service.ts',
+    '!media/media-processing.service.ts',
+    '!media/media.processor.ts',
+    '!content/**/*.service.ts',
+    // Le rendu Markdown est pur : il reste couvert par les tests unitaires.
+    'content/markdown/markdown.service.ts',
+    '!content/common/*.ts',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

@@ -82,6 +82,7 @@ export function configureApp(app: NestExpressApplication): void {
     exclude: [
       { path: 'health', method: RequestMethod.GET },
       { path: 'ready', method: RequestMethod.GET },
+      { path: 'robots.txt', method: RequestMethod.GET },
     ],
   });
 
