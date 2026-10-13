@@ -85,6 +85,17 @@ export const envSchema = z
       )
       .optional(),
 
+    // --- Vidéos des formations : Bunny Stream (phase 7) ---
+    // Nom d'hôte de la zone de diffusion (ex. vz-1234abcd-567.b-cdn.net) et clé
+    // d'authentification par jeton de cette zone. Sans eux, les leçons n'ont pas de vidéo.
+    BUNNY_STREAM_CDN_HOST: z
+      .string()
+      .regex(/^[a-z0-9-]+(\.[a-z0-9-]+)+$/, 'nom d’hôte attendu (ex. vz-1234abcd-567.b-cdn.net)')
+      .optional(),
+    BUNNY_STREAM_TOKEN_KEY: z.string().min(16).optional(),
+    // Lier l'URL signée à l'IP de la cliente (plus strict, mais coupe la lecture si l'IP change).
+    BUNNY_STREAM_BIND_IP: booleanFromEnv(false),
+
     // --- Anti-robot des formulaires publics (Cloudflare Turnstile) ---
     // Sans clé (développement, tests), la vérification est ignorée ; obligatoire en production.
     TURNSTILE_SECRET_KEY: z.string().min(10).optional(),
@@ -160,6 +171,13 @@ export const envSchema = z
         path: ['PAYPAL_CLIENT_ID'],
         message:
           'PayPal exige PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET et PAYPAL_WEBHOOK_ID ensemble',
+      });
+    }
+    if (Boolean(env.BUNNY_STREAM_CDN_HOST) !== Boolean(env.BUNNY_STREAM_TOKEN_KEY)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['BUNNY_STREAM_TOKEN_KEY'],
+        message: 'Bunny Stream exige l’hôte de diffusion ET la clé de jeton',
       });
     }
     if (env.JWT_ACCESS_SECRET_PREVIOUS === env.JWT_ACCESS_SECRET) {
