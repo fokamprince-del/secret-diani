@@ -30,6 +30,10 @@ export interface AuditQuery {
   limit: number;
   action?: string;
   actorId?: string;
+  targetType?: string;
+  targetId?: string;
+  from?: Date;
+  to?: Date;
 }
 
 /** Journal d'audit immuable (la base interdit UPDATE et DELETE, voir migration). */
@@ -66,6 +70,16 @@ export class AuditService {
       where: {
         ...(query.action ? { action: query.action } : {}),
         ...(query.actorId ? { actorId: query.actorId } : {}),
+        ...(query.targetType ? { targetType: query.targetType } : {}),
+        ...(query.targetId ? { targetId: query.targetId } : {}),
+        ...(query.from || query.to
+          ? {
+              createdAt: {
+                ...(query.from ? { gte: query.from } : {}),
+                ...(query.to ? { lt: query.to } : {}),
+              },
+            }
+          : {}),
         ...(query.cursor ? { id: { lt: query.cursor } } : {}),
       },
       orderBy: { id: 'desc' },

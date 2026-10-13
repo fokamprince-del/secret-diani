@@ -9,6 +9,11 @@ export interface MailTemplateData {
   'email-change-notice': { firstName: string | null };
   'admin-login-alert': { at: string; ipTruncated: string | null; userAgent: string | null };
   'account-deleted': { firstName: string | null };
+  /** Action de l'administration sur la sécurité du compte (phase 9). */
+  'account-security-changed': {
+    firstName: string | null;
+    change: 'locked' | 'unlocked' | 'mfa_reset' | 'sessions_revoked';
+  };
   // Traiteur (phase 4)
   'catering-request-received': {
     firstName: string;

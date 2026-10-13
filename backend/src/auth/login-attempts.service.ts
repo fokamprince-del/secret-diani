@@ -88,6 +88,12 @@ export class LoginAttemptsService {
     return locked;
   }
 
+  /** Levée par l'administration du verrou posé sur un e-mail (le verrou par IP expire seul). */
+  async resetSubject(subject: string): Promise<void> {
+    const keys = this.keys(subject, '');
+    await this.redis.del(keys.subject, `${keys.subject}:lock`);
+  }
+
   /** Après un succès : remise à zéro des compteurs du sujet (pas de celui de l'IP). */
   async reset(subject: string, ip: string): Promise<void> {
     const keys = this.keys(subject, ip);

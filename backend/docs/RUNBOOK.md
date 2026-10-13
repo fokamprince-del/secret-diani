@@ -77,7 +77,7 @@ La commande demande l'e-mail, le prénom et le mot de passe (saisi sans écho, d
 ### Administrateur ayant perdu son téléphone
 
 1. Se connecter avec un code de secours, puis remplacer les codes : `POST /api/v1/auth/2fa/backup-codes` (code TOTP exigé).
-2. Si l'application d'authentification elle-même est perdue : un autre administrateur pourra réinitialiser le 2FA depuis le back-office (phase 9). D'ici là, en base : `UPDATE users SET totp_secret_enc = NULL, totp_enabled_at = NULL, totp_last_step = NULL WHERE email = '…';` puis `DELETE FROM mfa_backup_codes WHERE user_id = '…';`. L'enrôlement est redemandé à la connexion suivante. Consigner l'intervention.
+2. Si l'application d'authentification elle-même est perdue : un autre administrateur réinitialise le 2FA depuis le back-office (`POST /api/v1/admin/users/:id/mfa/reset`) ; l'enrôlement est redemandé à la connexion suivante. S'il n'y a pas d'autre administrateur : créer un administrateur de secours (`make create-admin-prod`), puis faire la réinitialisation depuis son compte. L'action est journalisée.
 
 ## Rotation des secrets
 
@@ -93,7 +93,9 @@ En cas de **compromission**, sauter l'étape de transition : tous les jetons d'a
 
 1. Générer une nouvelle clé : `openssl rand -base64 32`. La stocker hors serveur (gestionnaire de mots de passe), jamais avec les sauvegardes de la base.
 2. `FIELD_ENCRYPTION_KEY_PREVIOUS=<ancienne>` et `FIELD_ENCRYPTION_KEY=<nouvelle>`, puis redéployer : les secrets existants restent lisibles.
-3. Conserver `FIELD_ENCRYPTION_KEY_PREVIOUS` tant que des secrets TOTP chiffrés avec l'ancienne clé existent. Leur rechiffrement sera outillé en phase 9. Chaque administrateur remplace aussi ses codes de secours.
+3. Rechiffrer les secrets TOTP : `make reencrypt-secrets-prod`. Le rapport doit afficher « illisibles : 0 » (sinon, ne pas aller plus loin : réinitialiser le 2FA des comptes concernés depuis le back-office, puis relancer).
+4. Chaque administrateur remplace ses codes de secours (`POST /api/v1/auth/2fa/backup-codes`) : ils sont protégés par une empreinte liée à la clé et ne se rechiffrent pas.
+5. Les liens de suivi de commande et de désinscription déjà envoyés sont signés avec l'ancienne clé. Hors compromission, garder `FIELD_ENCRYPTION_KEY_PREVIOUS` au moins 3 mois (les liens de désinscription des anciennes newsletters restent ainsi valides), puis la retirer et redéployer. En cas de **compromission**, la retirer tout de suite après les étapes 3 et 4.
 
 ## Variables d'environnement ajoutées en phase 2
 
@@ -161,6 +163,13 @@ Le seuil d'**alerte** « stock bas » se règle par variante (Boutique → Stock
 - Formation pilote : remplacer la vidéo factice (`video-pilote-a-remplacer`) et la fiche de démonstration, puis la publier.
 - Une formation se publie dès qu'elle a au moins une leçon publiée ; une leçon marquée « exemple gratuit » est visible sans compte.
 - Le certificat porte le prénom et le nom du profil : rappeler aux clientes de les renseigner.
+
+## Back-office : paramètres et comptes
+
+- **Paramètres du site** (`/api/v1/admin/settings`) : acomptes, conditions traiteur, durée de réservation du stock, mentions des factures, coordonnées, réseaux sociaux, bandeau d'annonce, ouverture de la boutique et des ventes de formations. Effet immédiat, sans déploiement ; « revenir à la valeur par défaut » est toujours possible. Le guide pas à pas pour Diani est dans `docs/GUIDE_ADMIN.md`.
+- **Fermer temporairement la boutique** (vacances) : `features.shop_open` à `false`. Le catalogue reste visible, la validation du panier est refusée avec un message aimable.
+- **Compte compromis ou abusif** : suspendre le compte (toutes ses sessions sont coupées), consigner la raison dans le suivi interne ; réactiver une fois la situation réglée.
+- **Demande d'accès à ses données reçue par e-mail ou courrier** : vérifier l'identité de la personne, puis exporter ses données depuis sa fiche (`GET /api/v1/admin/users/:id/export`) et les lui transmettre par un canal sûr, sous un mois.
 
 ## E-mails : domaine d'envoi (Resend)
 

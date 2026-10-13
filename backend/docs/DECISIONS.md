@@ -412,3 +412,29 @@ La case « recevoir les nouvelles » du compte et la newsletter sont une seule e
 
 ### D-082 · Envoi de la newsletter
 L'API ne compose ni n'envoie de campagnes : l'administration exporte les abonné·es **confirmé·es** en CSV (avec la preuve du consentement, export journalisé) vers l'outil d'envoi choisi par Diani (Brevo, Resend Broadcasts…), qui gère alors sa propre désinscription. Les e-mails transactionnels restent sur Resend. Un envoi intégré pourra venir plus tard sans changer le modèle.
+
+## Phase 9 — Administration et audit
+
+### D-083 · Paramètres du site : un registre typé
+Chaque paramètre est déclaré là où il sert (`*.settings.ts` : clé, schéma Zod, valeur par défaut sûre, description) et rassemblé dans un **registre** (`settings.registry.ts`). L'administration ne lit et n'écrit que les clés du registre : liste avec valeur en vigueur, valeur par défaut et **schéma JSON** (le back-office en génère le formulaire), modification validée par le schéma (erreurs en français, champ par champ : `value.text`), retour à la valeur par défaut. Toute modification invalide le cache public, revalide les pages concernées (étiquettes par groupe) et est journalisée (clé seulement). Une valeur invalide en base retombe sur la valeur par défaut, sans casser le site. Les anciens paramètres non typés (nom de la marque, autrice, Instagram, logo) passent dans ce registre ; Instagram rejoint `site.social_links`.
+
+### D-084 · Rôles : pas de promotion par l'API
+Le back-office ne change pas le rôle d'un compte : un administrateur se crée en ligne de commande, sur le serveur (`make create-admin-prod`). Une session d'administration volée ne peut donc pas fabriquer d'autres administrateurs.
+
+### D-085 · Actions sur les comptes
+Recherche (e-mail, prénom, nom ; comptes supprimés seulement sur demande), fiche (statistiques, 5 dernières commandes, jamais de secret), **suspension** (connexion refusée, toutes les sessions révoquées sur-le-champ), **réactivation** (qui lève aussi le verrou anti-force brute posé sur l'adresse), **réinitialisation du 2FA** (secret et codes de secours effacés, sessions révoquées, nouvel enrôlement exigé pour un administrateur), **déconnexion de tous les appareils**, **export des données** (demande d'accès reçue hors ligne). Chaque action est journalisée et la personne est prévenue par e-mail (`account-security-changed`). Une administratrice n'agit jamais ainsi sur son propre compte (espace personnel, ré-authentification) ; un compte supprimé est en lecture seule. Les accès aux formations s'accordent depuis `/admin/courses/accesses` (phase 7).
+
+### D-086 · Interrupteurs de vente
+`features.shop_open` et `features.course_sales_open` (ouverts par défaut) ferment la validation du panier et l'achat des packs (503 `FEATURE_DISABLED`, message en français) sans masquer les pages, ni toucher aux commandes et accès existants. Le frontend lit l'état dans `GET /api/v1/site/settings` pour masquer les boutons. Le parcours avancé du traiteur reste piloté par `CATERING_ONLINE_ORDERING` (variable d'environnement), parce qu'il dépend d'un déploiement.
+
+### D-087 · Tableau de bord
+`GET /api/v1/admin/dashboard?days=N` (1 à 365, 30 par défaut). Période en **jours civils de Paris** (la borne est calculée par PostgreSQL), ventes par date de paiement (brut, remboursé, net ; boutique et formations séparées), série quotidienne complète (zéro les jours sans vente), choses à faire (commandes à expédier, demandes traiteur en attente, événements des 14 prochains jours, messages, appels), nouvelles clientes, accès, newsletter, stocks bas (disponible ≤ seuil de la variante). Uniquement des comptages indexés, aucune donnée personnelle, pas de cache (données de l'administration).
+
+### D-088 · Rotation de la clé de chiffrement outillée
+`make reencrypt-secrets-prod` rechiffre avec la clé courante les secrets TOTP encore chiffrés avec l'ancienne : idempotent, mise à jour conditionnée à la valeur lue (sûr pendant que l'API tourne), rapport « vérifiés / rechiffrés / illisibles », code de sortie non nul si un secret est illisible. Les codes de secours, liens de suivi de commande et liens de désinscription sont des empreintes ou signatures HMAC (clés dérivées) : ils ne se rechiffrent pas, d'où la procédure du RUNBOOK avant de retirer l'ancienne clé.
+
+### D-089 · OpenAPI de l'administration des formations
+Réponses décrites en détail (packs, formation complète avec modules, leçons, fiches, quiz et bonnes réponses, accès, demandes d'appel) et typées dans le contrôleur : le compilateur vérifie qu'elles correspondent aux requêtes. Clôt D-076.
+
+### D-090 · Clés d'accès (passkeys) reportées
+Le cahier des charges les laisse facultatives. Le TOTP obligatoire couvre le risque pour les administrateurs ; WebAuthn demanderait un enregistrement et une vérification côté frontend. À reconsidérer après la mise en ligne.

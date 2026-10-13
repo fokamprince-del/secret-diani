@@ -27,6 +27,13 @@ import { UserTokensService } from './tokens/user-tokens.service';
     RolesGuard,
     CsrfGuard,
   ],
-  exports: [AuthService, PasswordService, AccessTokenGuard, RolesGuard, SessionsModule],
+  exports: [
+    AuthService,
+    PasswordService,
+    LoginAttemptsService,
+    AccessTokenGuard,
+    RolesGuard,
+    SessionsModule,
+  ],
 })
 export class AuthModule {}

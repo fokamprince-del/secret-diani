@@ -23,6 +23,7 @@ const config: Config = {
     '!src/worker.ts',
     '!src/worker-healthcheck.ts',
     '!src/cli/create-admin.ts',
+    '!src/cli/reencrypt-secrets.ts',
   ],
   coverageDirectory: '<rootDir>/coverage/e2e',
   // Exigence du cahier des charges : couverture ≥ 80 % sur l'authentification et les comptes
@@ -41,6 +42,8 @@ const config: Config = {
     './src/courses/': { lines: 80 },
     './src/contact/': { lines: 80 },
     './src/newsletter/': { lines: 80 },
+    './src/admin/': { lines: 80 },
+    './src/settings/': { lines: 80 },
   },
 };
 

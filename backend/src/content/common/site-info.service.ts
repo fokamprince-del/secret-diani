@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from '../../config/app-config.service';
-import { PrismaService } from '../../prisma/prisma.service';
+import { SettingsService } from '../../settings/settings.service';
+import { AUTHOR_NAME, LOGO_URL, SITE_NAME, SOCIAL_LINKS } from '../../settings/site.settings';
 
 export interface SiteInfo {
   name: string;
@@ -19,7 +20,7 @@ export class SiteInfoService {
   private readonly siteUrl: string;
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly settings: SettingsService,
     config: AppConfigService,
   ) {
     this.siteUrl = config.get('PUBLIC_SITE_URL').replace(/\/$/, '');
@@ -30,22 +31,18 @@ export class SiteInfoService {
   }
 
   async get(): Promise<SiteInfo> {
-    const settings = await this.prisma.appSetting.findMany({
-      where: {
-        key: { in: ['site.name', 'site.author_name', 'site.instagram_url', 'site.logo_url'] },
-      },
-      select: { key: true, value: true },
-    });
-    const value = (key: string): string | null => {
-      const found = settings.find((setting) => setting.key === key)?.value;
-      return typeof found === 'string' && found.trim() ? found.trim() : null;
-    };
+    const [name, authorName, social, logoUrl] = await this.settings.getMany([
+      SITE_NAME,
+      AUTHOR_NAME,
+      SOCIAL_LINKS,
+      LOGO_URL,
+    ]);
     return {
-      name: value('site.name') ?? 'Les Secrets de Diani',
+      name,
       url: this.siteUrl,
-      authorName: value('site.author_name') ?? 'Diani',
-      instagramUrl: value('site.instagram_url'),
-      logoUrl: value('site.logo_url'),
+      authorName,
+      instagramUrl: social.instagram || null,
+      logoUrl: logoUrl || null,
     };
   }
 }

@@ -65,8 +65,9 @@ src/
   rgpd/                   export et suppression des données du compte
   mail/                   gabarits, file d'envoi (API) et envoi Resend (worker)
   jobs/retention/         purge quotidienne des données expirées (worker)
-  cli/                    commande de création d'un administrateur
-  settings/               paramètres du site modifiables sans déploiement (lecture typée, valeurs par défaut)
+  cli/                    commandes : création d'un administrateur, rechiffrement des secrets 2FA
+  settings/               paramètres du site modifiables sans déploiement : registre typé, administration, lecture publique
+  admin/                  back-office : tableau de bord, gestion des comptes (phase 9)
   common/captcha/         vérification anti-robot Cloudflare Turnstile des formulaires publics
   content/ media/         contenus éditoriaux, médiathèque (phase 3)
   catering/               traiteur : catalogue, demandes, acompte, créneaux (phase 4)

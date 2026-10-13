@@ -128,6 +128,33 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       },
     ]),
 
+  'account-security-changed': (data) => {
+    const texts = {
+      locked: [
+        'Votre compte a été suspendu',
+        'Votre compte a été suspendu par l’équipe des Secrets de Diani : la connexion n’est plus possible pour le moment.',
+      ],
+      unlocked: [
+        'Votre compte est de nouveau actif',
+        'Votre compte a été réactivé : vous pouvez de nouveau vous connecter.',
+      ],
+      mfa_reset: [
+        'Double authentification réinitialisée',
+        'La double authentification de votre compte a été réinitialisée : vous la configurerez de nouveau à votre prochaine connexion. Vous avez été déconnecté·e de tous vos appareils.',
+      ],
+      sessions_revoked: [
+        'Vous avez été déconnecté·e',
+        'Par sécurité, vous avez été déconnecté·e de tous vos appareils. Reconnectez-vous avec votre mot de passe.',
+      ],
+    } as const;
+    const [title, text] = texts[data.change];
+    return mail(title, title, [
+      { paragraph: greeting(data.firstName) },
+      { paragraph: text },
+      { paragraph: 'Une question, ou ce n’est pas normal ? Répondez simplement à cet e-mail.' },
+    ]);
+  },
+
   'account-deleted': (data) =>
     mail('Votre compte a été supprimé', 'Compte supprimé', [
       { paragraph: greeting(data.firstName) },

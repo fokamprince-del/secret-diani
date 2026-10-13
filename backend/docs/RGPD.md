@@ -36,6 +36,7 @@
 | Rectification | `PATCH /api/v1/me`, `/api/v1/me/addresses`, changement d'e-mail confirmé |
 | Effacement | `DELETE /api/v1/me` (mot de passe exigé) : anonymisation, suppression des adresses, sessions et jetons |
 | Retrait du consentement aux e-mails | `PATCH /api/v1/me` (`marketingConsent: false`) ; lien de désinscription en un clic (phase 8) |
+| Demande reçue hors ligne (e-mail, courrier) | Après vérification de l'identité : export depuis le back-office (`GET /api/v1/admin/users/:id/export`, journalisé) ; effacement par la personne elle-même ou, à défaut, suspension puis traitement manuel consigné |
 
 ## T2 — Demandes et commandes traiteur (phase 4)
 

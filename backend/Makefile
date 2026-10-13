@@ -7,7 +7,8 @@ COMPOSE_PROD = docker compose -f docker-compose.prod.yml
 
 .PHONY: help install dev infra-up infra-down migrate migrate-new seed lint typecheck test \
         test-unit test-e2e test-infra-up test-infra-down openapi build image \
-        backup restore db-app-role create-admin create-admin-prod
+        backup restore db-app-role create-admin create-admin-prod \
+        reencrypt-secrets reencrypt-secrets-prod
 
 help: ## Affiche cette aide
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -79,3 +80,9 @@ db-app-role: ## Production : (re)pose le mot de passe du rôle applicatif diani_
 
 create-admin-prod: ## Production : crée un administrateur depuis le conteneur API (voir RUNBOOK)
 	$(COMPOSE_PROD) --env-file .env.production run --rm -it api node dist/cli/create-admin.js
+
+reencrypt-secrets: ## Rechiffre les secrets 2FA avec la clé courante (après rotation de FIELD_ENCRYPTION_KEY)
+	npx ts-node --transpile-only src/cli/reencrypt-secrets.ts
+
+reencrypt-secrets-prod: ## Production : rechiffrement des secrets 2FA depuis le conteneur API (voir RUNBOOK)
+	$(COMPOSE_PROD) --env-file .env.production run --rm api node dist/cli/reencrypt-secrets.js

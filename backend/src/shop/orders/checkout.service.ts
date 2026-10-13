@@ -10,6 +10,7 @@ import { AppConfigService } from '../../config/app-config.service';
 import { fieldError } from '../../content/common/content.helpers';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SettingsService } from '../../settings/settings.service';
+import { SHOP_OPEN } from '../../settings/site.settings';
 import { type CartOwner, CartService } from '../cart/cart.service';
 import { orderReference } from '../domain/order-status';
 import { cartTotals, shippingOptions } from '../domain/pricing';
@@ -60,6 +61,13 @@ export class CheckoutService {
     dto: CheckoutDto,
     client: ClientContext,
   ): Promise<CheckoutResultDto> {
+    if (!(await this.settings.get(SHOP_OPEN))) {
+      throw new AppException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        ErrorCode.FEATURE_DISABLED,
+        'La boutique est momentanément fermée : les commandes reprennent très bientôt.',
+      );
+    }
     await this.captcha.verify(dto.captchaToken, client.ip);
 
     const cart = await this.cart.find(owner);
