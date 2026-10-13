@@ -1,0 +1,77 @@
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: color-mix(in srgb, var(--creme) 92%, transparent);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  border-bottom: 1px solid var(--filet);
+}
+
+.barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-5);
+  min-height: var(--hauteur-header);
+}
+
+.nav {
+  display: none;
+}
+
+.liens {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 0.2rem + 1.6vw, 2rem);
+}
+
+.lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+  color: var(--cacao);
+  font-size: 0.9875rem;
+  font-weight: 500;
+  /* Soulignement qui se dessine au survol (inverse des liens de texte). */
+  background-size: 0% 1px;
+  background-position: 0 calc(100% - 10px);
+}
+
+.lien:hover,
+.lien[aria-current='page'] {
+  background-size: 100% 1px;
+  background-position: 0 calc(100% - 10px);
+  color: var(--terra-d);
+}
+
+.lien[aria-current='page'] {
+  background-image: linear-gradient(var(--or), var(--or));
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--e-1);
+}
+
+.action {
+  display: inline-grid;
+  place-items: center;
+  width: var(--cible);
+  height: var(--cible);
+  border-radius: 50%;
+  color: var(--cacao);
+  transition: background-color var(--duree-courte) ease;
+}
+
+.action:hover {
+  background-color: var(--sable);
+  color: var(--cacao);
+}
+
+@media (min-width: 64rem) {
+  .nav {
+    display: block;
+  }
+}

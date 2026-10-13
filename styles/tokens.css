@@ -1,0 +1,90 @@
+/*
+ * Jetons de design « Les Secrets de Diani » — repris tels quels du prototype.
+ * Un seul thème clair assumé.
+ *
+ * Contrastes sur --creme (vérifiés par tests/unit/contrast.test.ts) :
+ *   --texte 7,0:1 · --terra-d 6,2:1 · --cacao 10,9:1  → texte courant
+ *   --terra 4,3:1 · --texte-s 4,5:1 (limite)          → grands textes (≥ 24 px) et filets seulement
+ *   --blanc sur --terra 4,8:1                         → boutons
+ *   --or                                              → décoratif, ne porte jamais de texte
+ */
+:root {
+  color-scheme: light;
+
+  /* Couleurs */
+  --creme: #f9eee8;
+  --sable: #f0e2d9;
+  --peche: #e9cdb8;
+  --nude: #dab6aa;
+  --terra: #9b6155;
+  --terra-d: #82493f;
+  --cacao: #5e2f1b;
+  --texte: #5a504a;
+  --texte-s: #7a6b63;
+  --or: #b8935a;
+  --blanc: #fffbf8;
+
+  /* Rôles */
+  --fond: var(--creme);
+  --fond-alt: var(--sable);
+  --surface: var(--blanc);
+  --titre: var(--cacao);
+  --lien: var(--terra-d);
+  --filet: color-mix(in srgb, var(--nude) 55%, transparent);
+  --erreur: #9a3324;
+  --succes: #3f6b45;
+
+  /* Typographie (familles injectées par next/font) */
+  --font-titre: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-titre-italique: var(--font-playfair-italique), var(--font-titre);
+  --font-texte: var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-manuscrit: var(--font-allura), 'Allura', 'Brush Script MT', cursive;
+
+  --taille-texte: 1.0625rem; /* 17 px */
+  --taille-petit: 0.9375rem; /* 15 px, informations secondaires uniquement */
+  --interligne: 1.7;
+  --mesure: 65ch;
+
+  --t-display: clamp(2.375rem, 1.55rem + 3.6vw, 4.25rem);
+  --t-h1: clamp(2.125rem, 1.6rem + 2.4vw, 3.5rem);
+  --t-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.625rem);
+  --t-h3: clamp(1.3125rem, 1.2rem + 0.5vw, 1.625rem);
+
+  /* Espacements */
+  --e-1: 0.25rem;
+  --e-2: 0.5rem;
+  --e-3: 0.75rem;
+  --e-4: 1rem;
+  --e-5: 1.5rem;
+  --e-6: 2rem;
+  --e-7: 3rem;
+  --e-8: 4rem;
+  --section: clamp(3.5rem, 2.5rem + 5vw, 7rem);
+
+  /* Gabarit */
+  --rayon: 14px;
+  --rayon-pilule: 999px;
+  --gouttiere: clamp(18px, 5vw, 64px);
+  --largeur-max: 1180px;
+  --hauteur-header: 4.5rem;
+  --cible: 44px;
+
+  /* Ombres très douces, teintées brun (jamais de noir) */
+  --ombre: 0 1px 2px rgb(94 47 27 / 0.04), 0 10px 30px -12px rgb(94 47 27 / 0.12);
+
+  /* Mouvement : bref et au service de l'action */
+  --duree-courte: 160ms;
+  --duree: 260ms;
+  --duree-longue: 400ms;
+  --courbe: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --focus-anneau: 2px solid var(--terra-d);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duree-courte: 0ms;
+    --duree: 0ms;
+    --duree-longue: 0ms;
+  }
+}

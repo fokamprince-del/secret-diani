@@ -1,0 +1,136 @@
+# Intégration continue — phase 1 (socle).
+# lint → types → tests → build → e2e + axe → Lighthouse CI → image Docker.
+# Le déploiement (VPS derrière Traefik, même hôte que l'API) est ajouté en phase 8.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24'
+  NEXT_TELEMETRY_DISABLED: '1'
+  NEXT_PUBLIC_SITE_URL: http://localhost:5173
+  NEXT_PUBLIC_API_URL: http://localhost:3000
+
+jobs:
+  quality:
+    name: Lint, format, typage et client d'API
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      # Le client typé doit correspondre exactement à openapi/openapi.json.
+      - name: Client d'API à jour
+        run: npm run api:check
+
+  unit:
+    name: Tests unitaires (composants, axe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - run: npm test
+
+  build:
+    name: Build de production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - run: npm run build
+      - uses: actions/upload-artifact@v5
+        with:
+          name: next-build
+          path: .next/standalone
+          include-hidden-files: true
+          retention-days: 1
+
+  e2e:
+    name: Parcours e2e et accessibilité (Playwright + axe)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - uses: actions/download-artifact@v6
+        with:
+          name: next-build
+          path: .next/standalone
+      - run: npx playwright install --with-deps chromium
+      # Les parcours marqués @api exigent le backend : ils sont lancés à partir de la phase 3.
+      - run: npm run test:e2e -- --grep-invert @api
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse CI (mobile)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - uses: actions/download-artifact@v6
+        with:
+          name: next-build
+          path: .next/standalone
+      - run: npm run lhci
+
+  docker:
+    name: Image Docker
+    needs: [quality, unit, e2e, lighthouse]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          tags: diani-frontend:ci
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ env.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

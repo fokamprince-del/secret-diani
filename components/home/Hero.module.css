@@ -1,0 +1,108 @@
+.hero {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: min(88svh, 52rem);
+  overflow: hidden;
+  background-color: var(--sable);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+}
+
+/* Voile crème en bas du visuel pour garantir le contraste du texte. */
+.media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 20%,
+    color-mix(in srgb, var(--creme) 70%, transparent) 62%,
+    var(--creme) 100%
+  );
+}
+
+.contenu {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: var(--e-5);
+  padding-block: var(--e-8) clamp(3rem, 2rem + 6vw, 6.5rem);
+}
+
+.filet {
+  width: 3rem;
+  height: 1px;
+  background-color: var(--or);
+}
+
+.titre {
+  max-width: 16ch;
+  font-size: var(--t-display);
+  line-height: 1.06;
+}
+
+.texte {
+  max-width: 44ch;
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  color: var(--texte);
+}
+
+.action {
+  margin-top: var(--e-2);
+}
+
+/* Moment mémorable : entrée échelonnée du filet, du titre, du texte puis du bouton. */
+@media (prefers-reduced-motion: no-preference) {
+  .filet,
+  .titre,
+  .texte,
+  .action {
+    animation: entree 700ms var(--courbe) both;
+  }
+
+  .filet {
+    animation-name: trace;
+    transform-origin: left;
+  }
+
+  /*
+   * Le titre est l'élément LCP : il glisse sans partir de l'opacité 0 (Chrome ignore un élément
+   * invisible et retarderait la mesure jusqu'à la fin de l'animation).
+   */
+  .titre {
+    animation-name: glisse;
+    animation-delay: 0ms;
+  }
+
+  .texte {
+    animation-delay: 260ms;
+  }
+
+  .action {
+    animation-delay: 400ms;
+  }
+}
+
+@keyframes entree {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes glisse {
+  from {
+    opacity: 0.35;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes trace {
+  from {
+    transform: scaleX(0);
+  }
+}
