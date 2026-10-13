@@ -1,3 +1,5 @@
+// Doit rester le premier import (voir config/env-file.ts).
+import './config/env-file';
 import './instrument';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';

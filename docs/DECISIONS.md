@@ -70,7 +70,7 @@ La CI bloque sur **toute** vulnérabilité des dépendances de production et sur
 Accepté : `sprintf-js` (modérée, aucun correctif publié), présent uniquement dans l'outillage de couverture de Jest, sans entrée non fiable.
 
 ### D-018 · Swagger
-Désactivé par défaut (`SWAGGER_ENABLED=false`), donc absent en production. La spécification est exportée dans `docs/openapi.json` (`npm run openapi:export`). La CSP n'est assouplie que sur `/api/docs`.
+Désactivé par défaut (`SWAGGER_ENABLED=false`) et **refusé en production** : l'API ne démarre pas si la variable y vaut `true` (ajout de l'audit, constat N3). La spécification est exportée dans `docs/openapi.json` (`npm run openapi:export`). La CSP n'est assouplie que sur `/api/docs`.
 
 ### D-019 · CORS
 Liste blanche d'origines en correspondance exacte (`CORS_ORIGINS`, par défaut `PUBLIC_SITE_URL`, https obligatoire en production), avec `credentials: true`. Une origine inconnue ne reçoit aucun en-tête CORS.

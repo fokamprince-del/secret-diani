@@ -1,4 +1,6 @@
 /* eslint-disable no-console -- commande en ligne : la console est son interface. */
+// Doit rester le premier import (voir config/env-file.ts).
+import '../config/env-file';
 import { PrismaClient } from '@prisma/client';
 import { createInterface } from 'node:readline/promises';
 import { Writable } from 'node:stream';

@@ -104,6 +104,13 @@ describe('validateEnv', () => {
     expect(validateEnv(base).S3_FORCE_PATH_STYLE).toBe(true);
   });
 
+  it('interdit la documentation Swagger en production', () => {
+    expect(() => validateEnv({ ...production, SWAGGER_ENABLED: 'true' })).toThrow(
+      /SWAGGER_ENABLED/,
+    );
+    expect(validateEnv({ ...production, SWAGGER_ENABLED: 'false' }).SWAGGER_ENABLED).toBe(false);
+  });
+
   it('exige le secret de revalidation avec l’URL du frontend', () => {
     expect(() =>
       validateEnv({ ...base, FRONTEND_REVALIDATE_URL: 'https://site.fr/api/revalidate' }),

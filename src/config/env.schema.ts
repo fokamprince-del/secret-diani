@@ -132,6 +132,13 @@ export const envSchema = z
         message: 'interdit en production (buckets créés et configurés manuellement, voir RUNBOOK)',
       });
     }
+    if (env.SWAGGER_ENABLED) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SWAGGER_ENABLED'],
+        message: 'interdit en production (la spécification est publiée dans docs/openapi.json)',
+      });
+    }
     if (env.MAIL_TRANSPORT !== 'resend') {
       ctx.addIssue({
         code: 'custom',
