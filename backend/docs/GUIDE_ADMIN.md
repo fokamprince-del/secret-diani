@@ -25,6 +25,7 @@ Il affiche, sur la période choisie (7, 30, 90 jours…) :
 | Changer un prix ou une photo du traiteur ou de la boutique | Traiteur › Produits ; Boutique › Produits |
 | Changer le montant des acomptes traiteur ou le seuil des 50 € | Paramètres › Traiteur |
 | Modifier les conditions de commande traiteur | Paramètres › Traiteur › Conditions (une phrase par ligne) |
+| Changer l'image du haut de l'accueil, les textes des trois univers ou le mot de Diani | Paramètres › Accueil (une image se choisit dans la médiathèque ; jamais un portrait en haut de l'accueil) |
 | Afficher un bandeau (promotion, fermeture exceptionnelle) | Paramètres › Site › Bandeau d'annonce |
 | Fermer la boutique pendant les vacances | Paramètres › Fonctionnalités › Boutique ouverte : non |
 | Suspendre la vente des formations | Paramètres › Fonctionnalités › Achat des packs : non |

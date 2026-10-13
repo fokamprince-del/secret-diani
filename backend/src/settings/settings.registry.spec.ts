@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SETTINGS_REGISTRY } from './settings.registry';
+import { HERO_IMAGE, UNIVERSES } from './home.settings';
 import { ANNOUNCEMENT, CONTACT_EMAIL, SOCIAL_LINKS } from './site.settings';
 
 describe('registre des paramètres du site', () => {
@@ -12,6 +13,8 @@ describe('registre des paramètres du site', () => {
         'site.name',
         'site.whatsapp_number',
         'site.announcement',
+        'home.universes',
+        'home.diani_word',
         'features.shop_open',
         'features.course_sales_open',
         'catering.deposit_below_cents',
@@ -38,6 +41,7 @@ describe('registre des paramètres du site', () => {
     expect(SETTINGS_REGISTRY.get('features.shop_open')!.cacheTags).toContain('shop');
     expect(SETTINGS_REGISTRY.get('site.name')!.cacheTags).toContain('articles');
     expect(SETTINGS_REGISTRY.get('legal.seller')!.cacheTags).toEqual([]);
+    expect(SETTINGS_REGISTRY.get('home.universes')!.cacheTags).toEqual(['site']);
   });
 });
 
@@ -72,5 +76,21 @@ describe('paramètres du site', () => {
     expect(CONTACT_EMAIL.schema.safeParse('').success).toBe(true);
     expect(CONTACT_EMAIL.schema.safeParse('contact@lessecretsdediani.fr').success).toBe(true);
     expect(CONTACT_EMAIL.schema.safeParse('pas-un-email').success).toBe(false);
+  });
+});
+
+describe('paramètres de l’accueil', () => {
+  it('image : identifiant de la médiathèque ou vide, rien d’autre', () => {
+    expect(HERO_IMAGE.schema.safeParse('').success).toBe(true);
+    expect(HERO_IMAGE.schema.safeParse('01928f6e-7c1a-7b3e-9a6f-2f1c3d4e5f60').success).toBe(true);
+    expect(HERO_IMAGE.schema.safeParse('https://exemple.com/image.jpg').success).toBe(false);
+  });
+
+  it('univers : texte court obligatoire pour chacun des trois', () => {
+    const universes = structuredClone(UNIVERSES.defaultValue);
+    universes.shop.text = '   ';
+    expect(UNIVERSES.schema.safeParse(universes).success).toBe(false);
+    universes.shop.text = 'x'.repeat(281);
+    expect(UNIVERSES.schema.safeParse(universes).success).toBe(false);
   });
 });

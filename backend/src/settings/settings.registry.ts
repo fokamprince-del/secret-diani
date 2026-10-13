@@ -1,13 +1,15 @@
 import * as catering from '../catering/catering.settings';
 import type { ContentTag } from '../content/cache/content-cache.service';
 import * as shop from '../shop/shop.settings';
+import * as home from './home.settings';
 import type { SettingDefinition } from './settings.service';
 import * as site from './site.settings';
 
-export type SettingGroup = 'site' | 'features' | 'catering' | 'shop' | 'legal';
+export type SettingGroup = 'site' | 'home' | 'features' | 'catering' | 'shop' | 'legal';
 
 export const SETTING_GROUP_LABELS: Record<SettingGroup, string> = {
   site: 'Site',
+  home: 'Accueil',
   features: 'Fonctionnalités',
   catering: 'Traiteur',
   shop: 'Boutique',
@@ -20,6 +22,7 @@ export const SETTING_GROUP_LABELS: Record<SettingGroup, string> = {
  */
 const GROUP_TAGS: Record<SettingGroup, ContentTag[]> = {
   site: ['site', 'articles', 'pages', 'faq', 'catering', 'shop', 'courses'],
+  home: ['site'],
   features: ['site', 'shop', 'courses'],
   catering: ['catering'],
   shop: ['shop'],
@@ -53,7 +56,12 @@ function groupOf(key: string): SettingGroup {
  * (`*.settings.ts`). Une clé absente de ce registre n'est ni lisible ni modifiable par l'API.
  */
 export const SETTINGS_REGISTRY: ReadonlyMap<string, RegisteredSetting> = new Map(
-  [...Object.values(site), ...Object.values(catering), ...Object.values(shop)]
+  [
+    ...Object.values(site),
+    ...Object.values(home),
+    ...Object.values(catering),
+    ...Object.values(shop),
+  ]
     .filter(isDefinition)
     .map((definition) => {
       const group = groupOf(definition.key);

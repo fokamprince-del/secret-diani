@@ -133,6 +133,89 @@ describe('Administration (e2e)', () => {
       await admin.http.delete('/admin/settings/site.contact_email', admin.accessToken).expect(200);
     });
 
+    it('accueil : textes et images modifiables, image non prête jamais exposée', async () => {
+      const before = await pub().get('/site/home').expect(200);
+      expect(before.headers['cache-control']).toContain('s-maxage');
+      expect(before.body).toMatchObject({
+        heroImage: null,
+        dianiWord: null,
+        universes: { catering: { image: null }, courses: { image: null }, shop: { image: null } },
+      });
+      expect(before.body.universes.catering.text.length).toBeGreaterThan(10);
+
+      const image = (status: 'ready' | 'processing') =>
+        prisma.media.create({
+          data: {
+            kind: 'image',
+            status,
+            originalName: 'ambiance.jpg',
+            storageKey: `originals/accueil-${status}-${Date.now()}`,
+            width: 1600,
+            height: 900,
+            alt: '',
+            variants: [
+              {
+                format: 'webp',
+                width: 640,
+                height: 360,
+                key: 'k',
+                url: 'https://cdn/640.webp',
+                bytes: 1,
+              },
+              {
+                format: 'avif',
+                width: 640,
+                height: 360,
+                key: 'k',
+                url: 'https://cdn/640.avif',
+                bytes: 1,
+              },
+            ],
+          },
+        });
+      const [ready, processing] = await Promise.all([image('ready'), image('processing')]);
+
+      await admin.http
+        .put('/admin/settings/home.hero_image_id', admin.accessToken)
+        .send({ value: ready.id })
+        .expect(200);
+      const universes = (await pub().get('/site/home')).body.universes;
+      await admin.http
+        .put('/admin/settings/home.universes', admin.accessToken)
+        .send({
+          value: {
+            catering: { text: 'Nos plateaux', imageId: processing.id },
+            courses: { text: universes.courses.text, imageId: '' },
+            shop: { text: universes.shop.text, imageId: ready.id },
+          },
+        })
+        .expect(200);
+      await admin.http
+        .put('/admin/settings/home.diani_word', admin.accessToken)
+        .send({ value: { text: 'Bienvenue chez moi.', signature: 'Diani' } })
+        .expect(200);
+      await admin.http
+        .put('/admin/settings/home.hero_image_id', admin.accessToken)
+        .send({ value: 'https://ailleurs.example/image.jpg' })
+        .expect(400);
+
+      const after = await pub().get('/site/home').expect(200);
+      expect(after.body.heroImage).toMatchObject({
+        width: 1600,
+        height: 900,
+        url: 'https://cdn/640.webp',
+        sources: { avif: [{ url: 'https://cdn/640.avif', width: 640 }] },
+      });
+      expect(after.body.universes.catering).toEqual({ text: 'Nos plateaux', image: null });
+      expect(after.body.universes.shop.image).toMatchObject({ url: 'https://cdn/640.webp' });
+      expect(after.body.dianiWord).toEqual({ text: 'Bienvenue chez moi.', signature: 'Diani' });
+
+      for (const key of ['home.hero_image_id', 'home.universes', 'home.diani_word']) {
+        await admin.http.delete(`/admin/settings/${key}`, admin.accessToken).expect(200);
+      }
+      await prisma.media.deleteMany({ where: { id: { in: [ready.id, processing.id] } } });
+    });
+
     it('un prix modifié s’applique au calcul serveur (acompte traiteur)', async () => {
       await admin.http
         .put('/admin/settings/catering.deposit_below_cents', admin.accessToken)

@@ -8003,6 +8003,28 @@
         ]
       }
     },
+    "/api/v1/site/home": {
+      "get": {
+        "operationId": "SiteSettingsController_home",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicHomeDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Contenus de l’accueil (image d’ambiance, univers, mot de Diani)",
+        "tags": [
+          "Site"
+        ]
+      }
+    },
     "/api/v1/admin/settings": {
       "get": {
         "operationId": "AdminSettingsController_list",
@@ -16756,6 +16778,94 @@
           "features"
         ]
       },
+      "HomeUniverseDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Texte court de présentation de l’univers"
+          },
+          "image": {
+            "nullable": true,
+            "description": "Absente : fond uni",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "HomeUniversesDto": {
+        "type": "object",
+        "properties": {
+          "catering": {
+            "$ref": "#/components/schemas/HomeUniverseDto"
+          },
+          "courses": {
+            "$ref": "#/components/schemas/HomeUniverseDto"
+          },
+          "shop": {
+            "$ref": "#/components/schemas/HomeUniverseDto"
+          }
+        },
+        "required": [
+          "catering",
+          "courses",
+          "shop"
+        ]
+      },
+      "DianiWordDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string",
+            "example": "Diani"
+          }
+        },
+        "required": [
+          "text",
+          "signature"
+        ]
+      },
+      "PublicHomeDto": {
+        "type": "object",
+        "properties": {
+          "heroImage": {
+            "nullable": true,
+            "description": "Image d’ambiance",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "universes": {
+            "$ref": "#/components/schemas/HomeUniversesDto"
+          },
+          "dianiWord": {
+            "nullable": true,
+            "description": "Absent : section masquée",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DianiWordDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "universes"
+        ]
+      },
       "SettingDto": {
         "type": "object",
         "properties": {
@@ -16767,6 +16877,7 @@
             "type": "string",
             "enum": [
               "site",
+              "home",
               "features",
               "catering",
               "shop",
