@@ -1,17 +1,24 @@
 # Intégration continue — phase 1 (socle).
 # Le déploiement continu (push ghcr.io, SSH, migrations, test de fumée, rollback) est ajouté en phase 10.
-name: CI
+name: CI backend
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
+    paths: ['backend/**', '.github/workflows/backend.yml']
   pull_request:
+    paths: ['backend/**', '.github/workflows/backend.yml']
 
 permissions:
   contents: read
 
+# Monorepo : chaque commande s'exécute dans le dossier de l'application.
+defaults:
+  run:
+    working-directory: backend
+
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -28,6 +35,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+          cache-dependency-path: backend/package-lock.json
       - run: npm ci --no-fund
       - run: npx prisma generate
       - run: npm run format:check
@@ -47,6 +55,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+          cache-dependency-path: backend/package-lock.json
       - run: npm ci --no-fund
       - run: npx prisma generate
       - run: npm run test:cov
@@ -78,6 +87,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+          cache-dependency-path: backend/package-lock.json
       # Stockage S3 de test (les services GitHub ne permettent pas de passer une commande).
       - name: Démarrer SeaweedFS (S3)
         run: |
@@ -113,7 +123,7 @@ jobs:
       - name: Build de l'image d'exécution
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: backend
           target: runtime
           load: true
           tags: diani-api:ci
