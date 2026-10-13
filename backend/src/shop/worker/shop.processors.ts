@@ -1,26 +1,8 @@
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, OnApplicationBootstrap } from '@nestjs/common';
 import type { Job, Queue } from 'bullmq';
-import { InvoicesService } from '../invoices/invoices.service';
 import { OrderExpiryService } from '../orders/order-expiry.service';
-import {
-  DOCUMENTS_QUEUE,
-  type DocumentJobData,
-  EXPIRE_ORDERS_JOB,
-  SHOP_MAINTENANCE_QUEUE,
-} from '../shop.constants';
-
-/** Factures PDF (relances automatiques de BullMQ en cas d'échec du stockage). */
-@Processor(DOCUMENTS_QUEUE)
-export class DocumentsProcessor extends WorkerHost {
-  constructor(private readonly invoices: InvoicesService) {
-    super();
-  }
-
-  async process(job: Job<DocumentJobData>): Promise<void> {
-    if (job.name === 'invoice-pdf') await this.invoices.renderPdf(job.data.invoiceId);
-  }
-}
+import { EXPIRE_ORDERS_JOB, SHOP_MAINTENANCE_QUEUE } from '../shop.constants';
 
 /** Chaque minute : les commandes non payées dans le délai libèrent leur stock. */
 @Processor(SHOP_MAINTENANCE_QUEUE)

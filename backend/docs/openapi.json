@@ -5795,6 +5795,1536 @@
           "Administration — boutique (commandes)"
         ]
       }
+    },
+    "/api/v1/courses/packs": {
+      "get": {
+        "operationId": "CoursesController_packs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PackDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Packs (prix, contenus, avantages, formations incluses)",
+        "tags": [
+          "Formations"
+        ]
+      }
+    },
+    "/api/v1/courses": {
+      "get": {
+        "operationId": "CoursesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CourseCardDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Formations publiées (formations phares en premier)",
+        "tags": [
+          "Formations"
+        ]
+      }
+    },
+    "/api/v1/courses/{slug}": {
+      "get": {
+        "operationId": "CoursesController_detail",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Fiche d’une formation : programme, pack requis, données structurées",
+        "tags": [
+          "Formations"
+        ]
+      }
+    },
+    "/api/v1/courses/{slug}/lessons/{lessonSlug}": {
+      "get": {
+        "description": "Leçon d’exemple : ouverte à tous. Sinon, compte et pack requis (403 COURSE_ACCESS_REQUIRED, avec le pack à proposer).",
+        "operationId": "CoursesController_lesson",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lessonSlug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Pack requis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Leçon : vidéo signée, conseils, fiches, quiz (sans les réponses), progression",
+        "tags": [
+          "Formations"
+        ]
+      }
+    },
+    "/api/v1/courses/packs/{slug}/checkout": {
+      "post": {
+        "description": "L’accès n’est ouvert qu’à la confirmation du paiement par le prestataire.",
+        "operationId": "CoursesController_buy",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackCheckoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResultDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Pack déjà détenu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Acheter un pack (compte requis) : commande à payer ensuite par /payments/checkout",
+        "tags": [
+          "Formations"
+        ]
+      }
+    },
+    "/api/v1/me/courses": {
+      "get": {
+        "operationId": "MyLearningController_myCourses",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MyCourseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mes formations : progression et bouton « Reprendre »",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/courses/{slug}": {
+      "get": {
+        "operationId": "MyLearningController_myCourse",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyCourseDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/lessons/{id}/progress": {
+      "put": {
+        "operationId": "MyLearningController_progress",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveProgressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Leçon terminée ou non",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "completed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reprise de lecture (toutes les ~15 s) et fin de vidéo",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/lessons/{id}/quiz": {
+      "post": {
+        "operationId": "MyLearningController_quiz",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitQuizDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Valider le quiz (correction côté serveur)",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/lessons/{id}/resources/{resourceId}": {
+      "get": {
+        "operationId": "MyLearningController_resource",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Fiche PDF : URL signée de 5 minutes (409 tant qu’une fiche filigranée est en préparation)",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/certificates": {
+      "get": {
+        "operationId": "MyLearningController_myCertificates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CertificateDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/certificates/{id}/download": {
+      "get": {
+        "operationId": "MyLearningController_downloadCertificate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/courses/{slug}/certificate": {
+      "post": {
+        "operationId": "MyLearningController_claim",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir le certificat d’une formation terminée (nom et prénom requis)",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/perks": {
+      "get": {
+        "operationId": "MyLearningController_myPerks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerksDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Avantages des packs : appels personnalisés restants, fournisseurs offerts…",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/me/call-requests": {
+      "get": {
+        "operationId": "MyLearningController_myCalls",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CallRequestDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compte — formations"
+        ]
+      },
+      "post": {
+        "operationId": "MyLearningController_requestCall",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCallRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Demander un appel personnalisé (dans la limite des appels inclus)",
+        "tags": [
+          "Compte — formations"
+        ]
+      }
+    },
+    "/api/v1/certificates/{number}": {
+      "get": {
+        "operationId": "CertificatesController_verify",
+        "parameters": [
+          {
+            "name": "number",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "DIANI-2026-7K3QF9XA",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateVerificationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Vérification publique d’un certificat par son numéro",
+        "tags": [
+          "Formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/packs": {
+      "get": {
+        "operationId": "AdminCoursesController_listPacks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCoursesController_createPack",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/packs/{id}": {
+      "patch": {
+        "operationId": "AdminCoursesController_updatePack",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePackDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un pack (prix, contenus, appels inclus, visibilité)",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/accesses": {
+      "get": {
+        "operationId": "AdminCoursesController_accesses",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Accès d’une cliente (historique compris)",
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCoursesController_grant",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Offrir ou accorder un accès à un pack (e-mail à la cliente)",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/accesses/{id}/revoke": {
+      "post": {
+        "operationId": "AdminCoursesController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retirer un accès",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/stats": {
+      "get": {
+        "operationId": "AdminCoursesController_stats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CourseStatsDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Inscrites, commencées, terminées et taux de complétion par formation",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/call-requests": {
+      "get": {
+        "operationId": "AdminCoursesController_calls",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "requested",
+                "scheduled",
+                "done",
+                "cancelled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Demandes d’appel personnalisé",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/call-requests/{id}": {
+      "patch": {
+        "operationId": "AdminCoursesController_updateCall",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCallRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/modules/{id}": {
+      "patch": {
+        "operationId": "AdminCoursesController_renameModule",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModuleInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCoursesController_removeModule",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer un module vide",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/modules/{id}/lessons": {
+      "post": {
+        "operationId": "AdminCoursesController_addLesson",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLessonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/modules/{id}/lessons/order": {
+      "put": {
+        "operationId": "AdminCoursesController_reorderLessons",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner les leçons d’un module (glisser-déposer)",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/lessons/{id}": {
+      "patch": {
+        "operationId": "AdminCoursesController_updateLesson",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLessonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier une leçon (vidéo, conseils, publication, déplacement de module)",
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCoursesController_removeLesson",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/lessons/{id}/resources": {
+      "put": {
+        "operationId": "AdminCoursesController_setResources",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetResourcesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Fiches PDF de la leçon (liste complète, dans l’ordre)",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/lessons/{id}/quiz": {
+      "put": {
+        "operationId": "AdminCoursesController_setQuiz",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetQuizDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quiz de la leçon (remplace l’existant)",
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCoursesController_removeQuiz",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses": {
+      "get": {
+        "operationId": "AdminCoursesController_listCourses",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCoursesController_createCourse",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/order": {
+      "put": {
+        "operationId": "AdminCoursesController_reorderCourses",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner les formations (glisser-déposer)",
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/{id}": {
+      "get": {
+        "operationId": "AdminCoursesController_getCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Formation complète (modules, leçons, fiches, quiz avec réponses)",
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminCoursesController_updateCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCourseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCoursesController_removeCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/{id}/publish": {
+      "post": {
+        "operationId": "AdminCoursesController_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/{id}/unpublish": {
+      "post": {
+        "operationId": "AdminCoursesController_unpublish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/{id}/modules": {
+      "post": {
+        "operationId": "AdminCoursesController_addModule",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModuleInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
+    },
+    "/api/v1/admin/courses/{id}/modules/order": {
+      "put": {
+        "operationId": "AdminCoursesController_reorderModules",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — formations"
+        ]
+      }
     }
   },
   "info": {
@@ -10026,7 +11556,8 @@
             "type": "string",
             "enum": [
               "delivery",
-              "pickup"
+              "pickup",
+              "digital"
             ]
           },
           "shippingRateName": {
@@ -10186,7 +11717,8 @@
             "type": "string",
             "enum": [
               "delivery",
-              "pickup"
+              "pickup",
+              "digital"
             ]
           },
           "priceCents": {
@@ -10955,7 +12487,8 @@
             "type": "string",
             "enum": [
               "delivery",
-              "pickup"
+              "pickup",
+              "digital"
             ]
           },
           "countries": {
@@ -11246,7 +12779,8 @@
             "type": "string",
             "enum": [
               "delivery",
-              "pickup"
+              "pickup",
+              "digital"
             ]
           },
           "shippingRateName": {
@@ -11648,6 +13182,1461 @@
         "required": [
           "reason"
         ]
+      },
+      "CourseRefDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "title"
+        ]
+      },
+      "PackDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "example": "premium"
+          },
+          "name": {
+            "type": "string",
+            "example": "Premium"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 19999,
+            "description": "Prix TTC en centimes"
+          },
+          "rank": {
+            "type": "number",
+            "description": "Niveau : un pack inclut tous les packs de niveau inférieur"
+          },
+          "features": {
+            "description": "Contenus et avantages, à afficher en liste",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callsIncluded": {
+            "type": "number",
+            "description": "Appels personnalisés inclus"
+          },
+          "courses": {
+            "description": "Formations accessibles avec ce pack (packs inférieurs compris)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CourseRefDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "summary",
+          "priceCents",
+          "rank",
+          "features",
+          "callsIncluded",
+          "courses"
+        ]
+      },
+      "PackRefDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "number"
+          },
+          "priceCents": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "rank",
+          "priceCents"
+        ]
+      },
+      "CourseCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "cover": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "Formation phare"
+          },
+          "pack": {
+            "description": "Pack minimal qui donne accès à la formation",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PackRefDto"
+              }
+            ]
+          },
+          "lessonCount": {
+            "type": "number"
+          },
+          "durationMinutes": {
+            "type": "number",
+            "description": "Durée totale des vidéos (minutes)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "summary",
+          "cover",
+          "featured",
+          "pack",
+          "lessonCount",
+          "durationMinutes"
+        ]
+      },
+      "OutlineLessonDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "nullable": true
+          },
+          "freePreview": {
+            "type": "boolean",
+            "description": "Leçon d’exemple consultable gratuitement"
+          },
+          "hasQuiz": {
+            "type": "boolean",
+            "description": "Quiz à la fin de la leçon"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "durationSeconds",
+          "freePreview",
+          "hasQuiz"
+        ]
+      },
+      "OutlineModuleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutlineLessonDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "lessons"
+        ]
+      },
+      "CourseDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "cover": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "Formation phare"
+          },
+          "pack": {
+            "description": "Pack minimal qui donne accès à la formation",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PackRefDto"
+              }
+            ]
+          },
+          "lessonCount": {
+            "type": "number"
+          },
+          "durationMinutes": {
+            "type": "number",
+            "description": "Durée totale des vidéos (minutes)"
+          },
+          "descriptionHtml": {
+            "type": "string",
+            "description": "Description en HTML assaini"
+          },
+          "modules": {
+            "description": "Programme (titres seulement)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutlineModuleDto"
+            }
+          },
+          "seo": {
+            "$ref": "#/components/schemas/SeoDto"
+          },
+          "jsonLd": {
+            "type": "object",
+            "description": "Données structurées schema.org (Course)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "summary",
+          "cover",
+          "featured",
+          "pack",
+          "lessonCount",
+          "durationMinutes",
+          "descriptionHtml",
+          "modules",
+          "seo",
+          "jsonLd"
+        ]
+      },
+      "PlaybackDto": {
+        "type": "object",
+        "properties": {
+          "hlsUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Playlist HLS signée (hls.js) ; null si la vidéo est indisponible"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "Fin de validité de l’URL"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "hlsUrl",
+          "expiresAt",
+          "durationSeconds"
+        ]
+      },
+      "ResourceViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "example": "Fiche recette"
+          },
+          "sizeBytes": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "sizeBytes"
+        ]
+      },
+      "QuizChoiceViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      },
+      "QuizQuestionViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "multiple": {
+            "type": "boolean",
+            "description": "Plusieurs bonnes réponses possibles"
+          },
+          "choices": {
+            "description": "Choix proposés (jamais la bonne réponse)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuizChoiceViewDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "prompt",
+          "multiple",
+          "choices"
+        ]
+      },
+      "QuizViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "passScorePercent": {
+            "type": "number"
+          },
+          "maxAttempts": {
+            "type": "number",
+            "nullable": true
+          },
+          "attemptsUsed": {
+            "type": "number",
+            "description": "Tentatives déjà faites"
+          },
+          "bestScore": {
+            "type": "number",
+            "nullable": true
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuizQuestionViewDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "passScorePercent",
+          "maxAttempts",
+          "attemptsUsed",
+          "bestScore",
+          "passed",
+          "questions"
+        ]
+      },
+      "LessonProgressViewDto": {
+        "type": "object",
+        "properties": {
+          "positionSeconds": {
+            "type": "number",
+            "description": "Position de reprise (secondes)"
+          },
+          "videoCompleted": {
+            "type": "boolean"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "positionSeconds",
+          "videoCompleted",
+          "completed"
+        ]
+      },
+      "LessonNavDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "title"
+        ]
+      },
+      "LessonDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "course": {
+            "$ref": "#/components/schemas/CourseRefDto"
+          },
+          "moduleTitle": {
+            "type": "string"
+          },
+          "video": {
+            "$ref": "#/components/schemas/PlaybackDto"
+          },
+          "tipsHtml": {
+            "type": "string",
+            "description": "Bloc « Conseils & astuces » (HTML assaini)"
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceViewDto"
+            }
+          },
+          "quiz": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuizViewDto"
+              }
+            ]
+          },
+          "progress": {
+            "nullable": true,
+            "description": "Null pour une leçon d’exemple consultée sans compte",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonProgressViewDto"
+              }
+            ]
+          },
+          "previous": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonNavDto"
+              }
+            ]
+          },
+          "next": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonNavDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "summary",
+          "course",
+          "moduleTitle",
+          "video",
+          "tipsHtml",
+          "resources",
+          "quiz",
+          "progress",
+          "previous",
+          "next"
+        ]
+      },
+      "PackCheckoutDto": {
+        "type": "object",
+        "properties": {
+          "billingAddress": {
+            "description": "Adresse de facturation",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CheckoutAddressDto"
+              }
+            ]
+          },
+          "acceptTerms": {
+            "type": "boolean",
+            "description": "Acceptation des conditions générales de vente"
+          },
+          "captchaToken": {
+            "type": "string",
+            "description": "Jeton Cloudflare Turnstile (obligatoire en production)"
+          }
+        },
+        "required": [
+          "billingAddress",
+          "acceptTerms"
+        ]
+      },
+      "MyCourseDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "cover": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "progressPercent": {
+            "type": "number",
+            "description": "Progression (%)"
+          },
+          "resume": {
+            "nullable": true,
+            "description": "Bouton « Reprendre »",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonNavDto"
+              }
+            ]
+          },
+          "certificateNumber": {
+            "type": "string",
+            "nullable": true,
+            "description": "Numéro du certificat, si obtenu"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "cover",
+          "progressPercent",
+          "resume",
+          "certificateNumber"
+        ]
+      },
+      "MyLessonStateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "nullable": true
+          },
+          "freePreview": {
+            "type": "boolean",
+            "description": "Leçon d’exemple consultable gratuitement"
+          },
+          "hasQuiz": {
+            "type": "boolean",
+            "description": "Quiz à la fin de la leçon"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "durationSeconds",
+          "freePreview",
+          "hasQuiz",
+          "completed"
+        ]
+      },
+      "MyModuleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "progressPercent": {
+            "type": "number"
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyLessonStateDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "progressPercent",
+          "lessons"
+        ]
+      },
+      "MyCourseDetailDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "cover": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "progressPercent": {
+            "type": "number",
+            "description": "Progression (%)"
+          },
+          "resume": {
+            "nullable": true,
+            "description": "Bouton « Reprendre »",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonNavDto"
+              }
+            ]
+          },
+          "certificateNumber": {
+            "type": "string",
+            "nullable": true,
+            "description": "Numéro du certificat, si obtenu"
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyModuleDto"
+            }
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "cover",
+          "progressPercent",
+          "resume",
+          "certificateNumber",
+          "modules"
+        ]
+      },
+      "SaveProgressDto": {
+        "type": "object",
+        "properties": {
+          "positionSeconds": {
+            "type": "number",
+            "description": "Position de lecture (secondes), envoyée toutes les ~15 s"
+          },
+          "videoCompleted": {
+            "type": "boolean",
+            "description": "La vidéo a été vue jusqu’au bout"
+          }
+        },
+        "required": [
+          "positionSeconds"
+        ]
+      },
+      "QuizAnswerDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "choiceIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "questionId",
+          "choiceIds"
+        ]
+      },
+      "SubmitQuizDto": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuizAnswerDto"
+            }
+          }
+        },
+        "required": [
+          "answers"
+        ]
+      },
+      "GradedQuestionDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "correct": {
+            "type": "boolean"
+          },
+          "correctChoiceIds": {
+            "description": "Bonnes réponses (révélées après validation)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "questionId",
+          "correct",
+          "correctChoiceIds",
+          "explanation"
+        ]
+      },
+      "QuizResultDto": {
+        "type": "object",
+        "properties": {
+          "scorePercent": {
+            "type": "number"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GradedQuestionDto"
+            }
+          },
+          "attemptsRemaining": {
+            "type": "number",
+            "nullable": true,
+            "description": "Tentatives restantes (null = illimité)"
+          },
+          "lessonCompleted": {
+            "type": "boolean",
+            "description": "Leçon terminée après cette tentative"
+          }
+        },
+        "required": [
+          "scorePercent",
+          "passed",
+          "questions",
+          "attemptsRemaining",
+          "lessonCompleted"
+        ]
+      },
+      "CertificateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string",
+            "example": "DIANI-2026-7K3QF9XA"
+          },
+          "courseTitle": {
+            "type": "string"
+          },
+          "holderName": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "pdfAvailable": {
+            "type": "boolean",
+            "description": "PDF prêt au téléchargement"
+          },
+          "verificationUrl": {
+            "type": "string",
+            "description": "Page publique de vérification"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "courseTitle",
+          "holderName",
+          "issuedAt",
+          "pdfAvailable",
+          "verificationUrl"
+        ]
+      },
+      "PerksDto": {
+        "type": "object",
+        "properties": {
+          "callsIncluded": {
+            "type": "number",
+            "description": "Appels personnalisés inclus dans les packs détenus"
+          },
+          "callsUsed": {
+            "type": "number"
+          },
+          "callsRemaining": {
+            "type": "number"
+          },
+          "features": {
+            "description": "Avantages des packs détenus (fournisseurs offerts…)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "callsIncluded",
+          "callsUsed",
+          "callsRemaining",
+          "features"
+        ]
+      },
+      "CallRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "requested",
+              "scheduled",
+              "done",
+              "cancelled"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "message",
+          "scheduledAt",
+          "createdAt"
+        ]
+      },
+      "CreateCallRequestDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Sujet et disponibilités",
+            "example": "Organisation d’un buffet ; mardi ou jeudi soir"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "CertificateVerificationDto": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "holderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "courseTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "number",
+          "valid",
+          "holderName",
+          "courseTitle",
+          "issuedAt"
+        ]
+      },
+      "CreatePackDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Premium"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object",
+            "maxLength": 500
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 19999
+          },
+          "rank": {
+            "type": "number",
+            "example": 3,
+            "description": "Niveau (unique) : un pack inclut les niveaux inférieurs"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callsIncluded": {
+            "type": "number",
+            "default": 0
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "name",
+          "priceCents",
+          "rank"
+        ]
+      },
+      "UpdatePackDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Premium"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object",
+            "maxLength": 500
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 19999
+          },
+          "rank": {
+            "type": "number",
+            "example": 3,
+            "description": "Niveau (unique) : un pack inclut les niveaux inférieurs"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callsIncluded": {
+            "type": "number",
+            "default": 0
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "GrantAccessDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "packId": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "gift",
+              "admin"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "Fin de l’accès (vide = sans limite)"
+          },
+          "note": {
+            "type": "object",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "userId",
+          "packId",
+          "source"
+        ]
+      },
+      "RevokeAccessDto": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "example": "Accès offert par erreur"
+          }
+        },
+        "required": [
+          "note"
+        ]
+      },
+      "CourseStatsDto": {
+        "type": "object",
+        "properties": {
+          "courseId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "enrolled": {
+            "type": "number",
+            "description": "Clientes ayant accès"
+          },
+          "started": {
+            "type": "number",
+            "description": "Clientes ayant commencé (au moins une leçon ouverte)"
+          },
+          "completed": {
+            "type": "number",
+            "description": "Certificats délivrés"
+          },
+          "completionRate": {
+            "type": "number",
+            "description": "Taux de complétion (%) des inscrites"
+          }
+        },
+        "required": [
+          "courseId",
+          "title",
+          "enrolled",
+          "started",
+          "completed",
+          "completionRate"
+        ]
+      },
+      "UpdateCallRequestDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "requested",
+              "scheduled",
+              "done",
+              "cancelled"
+            ]
+          },
+          "scheduledAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "adminNote": {
+            "type": "object",
+            "maxLength": 1000
+          }
+        }
+      },
+      "ModuleInputDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "CreateLessonDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object",
+            "maxLength": 500
+          },
+          "videoId": {
+            "type": "string",
+            "description": "Identifiant de la vidéo Bunny Stream",
+            "nullable": true
+          },
+          "videoDurationSeconds": {
+            "type": "number",
+            "nullable": true
+          },
+          "tipsMarkdown": {
+            "type": "string",
+            "description": "Conseils & astuces (Markdown)",
+            "maxLength": 20000
+          },
+          "freePreview": {
+            "type": "boolean",
+            "default": false,
+            "description": "Leçon d’exemple gratuite"
+          },
+          "published": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "UpdateLessonDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object",
+            "maxLength": 500
+          },
+          "videoId": {
+            "type": "string",
+            "description": "Identifiant de la vidéo Bunny Stream",
+            "nullable": true
+          },
+          "videoDurationSeconds": {
+            "type": "number",
+            "nullable": true
+          },
+          "tipsMarkdown": {
+            "type": "string",
+            "description": "Conseils & astuces (Markdown)",
+            "maxLength": 20000
+          },
+          "freePreview": {
+            "type": "boolean",
+            "default": false,
+            "description": "Leçon d’exemple gratuite"
+          },
+          "published": {
+            "type": "boolean",
+            "default": true
+          },
+          "moduleId": {
+            "type": "string",
+            "description": "Déplacer la leçon dans un autre module de la formation"
+          }
+        }
+      },
+      "ResourceInputDto": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string",
+            "description": "Document PDF de la médiathèque"
+          },
+          "title": {
+            "type": "string",
+            "example": "Fiche recette"
+          },
+          "watermark": {
+            "type": "boolean",
+            "default": false,
+            "description": "Filigrane au nom de la cliente"
+          }
+        },
+        "required": [
+          "mediaId",
+          "title"
+        ]
+      },
+      "SetResourcesDto": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "description": "Liste complète, dans l’ordre",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceInputDto"
+            }
+          }
+        },
+        "required": [
+          "resources"
+        ]
+      },
+      "QuizChoiceInputDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "label",
+          "isCorrect"
+        ]
+      },
+      "QuizQuestionInputDto": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "object",
+            "maxLength": 1000
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuizChoiceInputDto"
+            }
+          }
+        },
+        "required": [
+          "prompt",
+          "choices"
+        ]
+      },
+      "SetQuizDto": {
+        "type": "object",
+        "properties": {
+          "passScorePercent": {
+            "type": "number",
+            "default": 70
+          },
+          "maxAttempts": {
+            "type": "number",
+            "nullable": true,
+            "description": "Vide = illimité"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuizQuestionInputDto"
+            }
+          }
+        },
+        "required": [
+          "questions"
+        ]
+      },
+      "CreateCourseDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "descriptionMarkdown": {
+            "type": "string",
+            "description": "Markdown",
+            "maxLength": 20000
+          },
+          "packId": {
+            "type": "string",
+            "description": "Pack minimal qui donne accès à la formation"
+          },
+          "coverMediaId": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverAlt": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "featured": {
+            "type": "boolean",
+            "default": false,
+            "description": "Formation phare"
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "title",
+          "summary",
+          "packId"
+        ]
+      },
+      "UpdateCourseDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "descriptionMarkdown": {
+            "type": "string",
+            "description": "Markdown",
+            "maxLength": 20000
+          },
+          "packId": {
+            "type": "string",
+            "description": "Pack minimal qui donne accès à la formation"
+          },
+          "coverMediaId": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverAlt": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "featured": {
+            "type": "boolean",
+            "default": false,
+            "description": "Formation phare"
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160
+          }
+        }
       }
     }
   }

@@ -16,6 +16,7 @@ import { CryptoModule } from './common/crypto/crypto.module';
 import { AppConfigModule } from './config/config.module';
 import { ContentCacheModule } from './content/cache/content-cache.module';
 import { ContentModule } from './content/content.module';
+import { CoursesModule } from './courses/courses.module';
 import { AppConfigService } from './config/app-config.service';
 import { HealthModule } from './health/health.module';
 import { JobsModule } from './jobs/jobs.module';
@@ -68,6 +69,7 @@ import { UsersModule } from './users/users.module';
     CateringModule,
     ShopModule,
     PaymentsModule,
+    CoursesModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

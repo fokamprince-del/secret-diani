@@ -181,6 +181,9 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       { paragraph: `Sous-total : ${data.subtotal} — Livraison : ${data.shipping}` },
       { paragraph: `Total payé : ${data.total}` },
       { paragraph: data.deliveryLine },
+      ...(data.coursesLink
+        ? [{ button: { label: 'Accéder à mes formations', url: data.coursesLink } }]
+        : []),
       { paragraph: 'Votre facture est disponible depuis le suivi de votre commande.' },
       { button: { label: 'Suivre ma commande', url: data.trackingLink } },
     ]),
@@ -217,6 +220,40 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
           'Le montant apparaîtra sur votre compte sous quelques jours ouvrés, selon votre banque ou PayPal.',
       },
       { button: { label: 'Voir ma commande', url: data.trackingLink } },
+    ]),
+
+  'course-access-granted': (data) =>
+    mail(`Bienvenue dans le pack ${data.packName}`, 'Vos formations vous attendent', [
+      { paragraph: greeting(data.firstName) },
+      {
+        paragraph: `Votre accès au pack ${data.packName} est ouvert : toutes les formations qu’il comprend sont disponibles dans votre espace membre.`,
+      },
+      { button: { label: 'Commencer ma formation', url: data.link } },
+    ]),
+
+  'course-completed': (data) =>
+    mail(`Formation terminée : ${data.courseTitle}`, 'Bravo, formation terminée !', [
+      { paragraph: greeting(data.firstName) },
+      { paragraph: `Vous avez terminé la formation « ${data.courseTitle} ». Félicitations !` },
+      {
+        paragraph: data.certificateNumber
+          ? `Votre certificat n° ${data.certificateNumber} est disponible dans votre espace membre.`
+          : 'Pour recevoir votre certificat, complétez votre prénom et votre nom dans votre profil, puis demandez-le depuis la formation.',
+      },
+      {
+        button: {
+          label: data.certificateNumber ? 'Voir mon certificat' : 'Compléter mon profil',
+          url: data.link,
+        },
+      },
+    ]),
+
+  'call-request-admin': (data) =>
+    mail('Nouvelle demande d’appel personnalisé', 'Demande d’appel personnalisé', [
+      { paragraph: `${data.customerName} (${data.email}) demande un appel personnalisé.` },
+      { paragraph: `Message : ${data.message}` },
+      { paragraph: `Appels restants après cette demande : ${data.remaining}.` },
+      { paragraph: 'La demande est visible dans l’administration (Formations → Appels).' },
     ]),
 
   'payment-alert': (data) =>

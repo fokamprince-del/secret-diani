@@ -2,6 +2,7 @@ import { type FaqCategory, PrismaClient } from '@prisma/client';
 import { MarkdownService } from '../src/content/markdown/markdown.service';
 import type { AppConfigService } from '../src/config/app-config.service';
 import { seedCatering } from './seed-data/catering';
+import { seedCourses } from './seed-data/courses';
 import { seedShop } from './seed-data/shop';
 
 /**
@@ -152,6 +153,7 @@ async function main(): Promise<void> {
 
   await seedCatering(prisma);
   await seedShop(prisma);
+  await seedCourses(prisma, markdown);
 
   console.log('Seed terminé.');
 }

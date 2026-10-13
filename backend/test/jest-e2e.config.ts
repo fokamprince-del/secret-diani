@@ -37,6 +37,8 @@ const config: Config = {
     './src/shop/': { lines: 80 },
     // Exigence du cahier des charges : paiements ≥ 80 %.
     './src/payments/': { lines: 80 },
+    // Exigence du cahier des charges : droits d'accès ≥ 80 %.
+    './src/courses/': { lines: 80 },
   },
 };
 

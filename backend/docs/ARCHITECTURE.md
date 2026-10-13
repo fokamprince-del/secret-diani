@@ -72,6 +72,8 @@ src/
   catering/               traiteur : catalogue, demandes, acompte, créneaux (phase 4)
   shop/                   boutique : catalogue, panier, stock, livraison, commandes, factures (phase 5)
   payments/               paiements : Stripe Checkout, PayPal, webhooks, remboursements, réconciliation (phase 6)
+  courses/                formations : packs, leçons, vidéo signée, quiz, progression, certificats (phase 7)
+  documents/              worker : factures, certificats et fiches filigranées en PDF
   <domaine>/              un module par domaine (catalog-traiteur, shop, …) — phases 3 à 9
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
@@ -124,5 +126,18 @@ scripts/                  sauvegarde, restauration, export OpenAPI
 | `paiement` | `Payment` | `payments` | 6 |
 | `remboursement` | `Refund` | `refunds` | 6 |
 | `webhook_event` | `WebhookEvent` | `webhook_events` | 6 |
+| `pack_formation` | `CoursePack` | `course_packs` | 7 |
+| `formation` | `Course` | `courses` | 7 |
+| `module` | `CourseModule` | `course_modules` | 7 |
+| `lecon` | `Lesson` | `lessons` | 7 |
+| `ressource` | `LessonResource` | `lesson_resources` | 7 |
+| `quiz` | `Quiz` | `quizzes` | 7 |
+| `question_quiz` | `QuizQuestion` | `quiz_questions` | 7 |
+| `reponse_quiz` | `QuizChoice` | `quiz_choices` | 7 |
+| `donner_acces` | `CourseAccess` | `course_accesses` | 7 |
+| `progresser` | `LessonProgress` | `lesson_progress` | 7 |
+| — (tentatives de quiz) | `QuizAttempt` | `quiz_attempts` | 7 |
+| `certificat` | `Certificate` | `certificates` | 7 |
+| — (appels personnalisés) | `CallRequest` | `call_requests` | 7 |
 
 _Complété au fil des phases._

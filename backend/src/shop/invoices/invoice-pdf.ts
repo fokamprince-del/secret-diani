@@ -15,7 +15,8 @@ export interface InvoicePdfInput {
   lines: { description: string; quantity: number; unitPriceCents: number }[];
   subtotalCents: number;
   shippingCents: number;
-  shippingLabel: string;
+  /** Ligne de livraison ; null pour un contenu numérique (pack de formation). */
+  shippingLabel: string | null;
   totalCents: number;
   vatMention: string;
 }
@@ -112,12 +113,14 @@ export function renderInvoicePdf(input: InvoicePdfInput): Promise<Buffer> {
         formatEuros(line.unitPriceCents * line.quantity),
       );
     }
-    row(
-      input.shippingLabel,
-      '1',
-      formatEuros(input.shippingCents),
-      formatEuros(input.shippingCents),
-    );
+    if (input.shippingLabel) {
+      row(
+        input.shippingLabel,
+        '1',
+        formatEuros(input.shippingCents),
+        formatEuros(input.shippingCents),
+      );
+    }
 
     doc
       .moveTo(left, doc.y + 2)

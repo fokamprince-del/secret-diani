@@ -8,6 +8,7 @@ import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
   IsOptional,
   IsString,
@@ -362,9 +363,9 @@ export class CreateShippingRateDto {
   @MaxLength(120)
   name!: string;
 
-  @ApiProperty({ enum: ShippingMethod })
-  @IsEnum(ShippingMethod)
-  method!: ShippingMethod;
+  @ApiProperty({ enum: ['delivery', 'pickup'] })
+  @IsIn(['delivery', 'pickup'])
+  method!: 'delivery' | 'pickup';
 
   @ApiPropertyOptional({
     type: [String],

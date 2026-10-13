@@ -1,6 +1,6 @@
 # Sécurité
 
-> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2), traiteur (phase 4), boutique (phase 5) et paiements (phase 6) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
+> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2), traiteur (phase 4), boutique (phase 5), paiements (phase 6) et formations (phase 7) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
 
 ## Modèle de menaces — authentification et comptes (STRIDE)
 
@@ -69,6 +69,21 @@
 | **E**levation of privilege | Remboursement par une cliente, ou au-delà du payé | Rôle admin + 2FA ; montant contrôlé sous verrou (payé − remboursé − en cours) | `payments.e2e` › remboursements |
 
 **Argent encaissé sans contrepartie** : double paiement ou stock épuisé après expiration → remboursement automatique intégral (`payments.e2e` › remboursements automatiques).
+
+## Modèle de menaces — formations (phase 7, STRIDE)
+
+| Menace | Scénario | Mesures | Preuves (tests) |
+|---|---|---|---|
+| **S**poofing | Accès à une leçon payante sans pack | Accès vérifié à chaque requête (leçon, progression, quiz, fiche) ; leçon d'exemple seule ouverte ; pack inférieur ≠ supérieur | `courses.e2e` › leçon payante, Essentiel n'ouvre pas Premium |
+| S | Accès ouvert sans paiement réel | Accès créé seulement dans la transaction de confirmation du paiement (webhook signé) ; retiré au remboursement intégral | `courses.e2e` › accès après le webhook uniquement, remboursement |
+| **T**ampering | Réussir un quiz sans connaître les réponses | Correction côté serveur ; réponses jamais envoyées avant correction, masquées tant qu'il reste des tentatives ; tentatives limitées | `courses-domain.spec`, `courses.e2e` › quiz |
+| T | Progression ou position falsifiées | Position bornée à la durée de la vidéo ; débit limité ; seule la cliente concernée écrit sa progression | `courses.e2e` › reprise de lecture |
+| **R**epudiation | Contestation d'un accès offert ou retiré | Accès avec source, auteur et note ; journal d'audit (accordé, retiré, certificat émis, appel demandé) | `courses.e2e` › accès accordés |
+| **I**nformation disclosure | Vidéo partagée par lien | URL signée par jeton de répertoire, durée = vidéo + 30 min (4 h max), liaison IP facultative | `courses-domain.spec`, `courses.e2e` › vidéo signée |
+| I | Fiche PDF partagée | URL signée de 5 min ; filigrane nom + e-mail sur chaque page | `courses-pdf.spec`, `courses.e2e` › filigrane |
+| I | Énumération des titulaires de certificats | Numéro aléatoire de 40 bits ; certificat révoqué à la suppression du compte (nom masqué) | `courses-domain.spec`, `courses.e2e` › RGPD |
+| **D**enial of service | Abus des appels inclus | Quota calculé sous verrou ; 3 demandes / heure | `courses.e2e` › avantages |
+| **E**levation of privilege | Cliente sur l'administration des formations | Rôle admin + 2FA | `courses.e2e` › accès accordés (403) |
 
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 

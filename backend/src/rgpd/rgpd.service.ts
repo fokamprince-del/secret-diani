@@ -120,6 +120,51 @@ export class RgpdService {
       },
     });
     // Commandes boutique du compte (conservées 10 ans avec leur facture, même après suppression).
+    // Formations : accès, progression, quiz, certificats, demandes d'appel.
+    const [courseAccesses, lessonProgress, quizAttempts, certificates, callRequests] =
+      await Promise.all([
+        this.prisma.courseAccess.findMany({
+          where: { userId },
+          select: {
+            source: true,
+            expiresAt: true,
+            revokedAt: true,
+            createdAt: true,
+            pack: { select: { name: true } },
+          },
+        }),
+        this.prisma.lessonProgress.findMany({
+          where: { userId },
+          take: 2000,
+          select: {
+            positionSeconds: true,
+            videoCompletedAt: true,
+            quizBestScore: true,
+            quizPassedAt: true,
+            completedAt: true,
+            lesson: { select: { title: true, course: { select: { title: true } } } },
+          },
+        }),
+        this.prisma.quizAttempt.findMany({
+          where: { userId },
+          take: 2000,
+          select: { scorePercent: true, passed: true, createdAt: true },
+        }),
+        this.prisma.certificate.findMany({
+          where: { userId },
+          select: {
+            number: true,
+            holderName: true,
+            courseTitle: true,
+            issuedAt: true,
+            revokedAt: true,
+          },
+        }),
+        this.prisma.callRequest.findMany({
+          where: { userId },
+          select: { status: true, message: true, scheduledAt: true, createdAt: true },
+        }),
+      ]);
     const orders = await this.prisma.order.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -165,6 +210,13 @@ export class RgpdService {
       addresses,
       sessions,
       securityEvents: events,
+      courses: {
+        accesses: courseAccesses,
+        progress: lessonProgress,
+        quizAttempts,
+        certificates,
+        callRequests,
+      },
       orders: orders.map(({ number, invoice, ...order }) => ({
         reference: orderReference(number),
         invoiceNumber: invoice?.number ?? null,
@@ -200,6 +252,12 @@ export class RgpdService {
       this.prisma.address.deleteMany({ where: { userId: current.id } }),
       this.prisma.userToken.deleteMany({ where: { userId: current.id } }),
       this.prisma.mfaBackupCode.deleteMany({ where: { userId: current.id } }),
+      // Certificats révoqués : la vérification publique ne montre plus le nom.
+      this.prisma.certificate.updateMany({
+        where: { userId: current.id },
+        data: { holderName: 'Compte supprimé', revokedAt: new Date() },
+      }),
+      this.prisma.callRequest.deleteMany({ where: { userId: current.id } }),
       this.prisma.session.deleteMany({ where: { userId: current.id } }),
       this.prisma.user.update({
         where: { id: current.id },

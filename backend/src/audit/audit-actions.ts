@@ -62,6 +62,13 @@ export const AuditAction = {
   REFUND_SUCCEEDED: 'payment.refund_succeeded',
   REFUND_FAILED: 'payment.refund_failed',
   WEBHOOK_REJECTED: 'payment.webhook_rejected',
+  // Formations (phase 7)
+  COURSE_CATALOG_CHANGED: 'course.catalog_changed',
+  COURSE_ACCESS_GRANTED: 'course.access_granted',
+  COURSE_ACCESS_REVOKED: 'course.access_revoked',
+  CERTIFICATE_ISSUED: 'course.certificate_issued',
+  CALL_REQUESTED: 'course.call_requested',
+  CALL_REQUEST_UPDATED: 'course.call_request_updated',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

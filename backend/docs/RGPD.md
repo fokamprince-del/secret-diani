@@ -83,6 +83,26 @@ Droit d'accès : `GET /api/v1/me/export` inclut les commandes du compte (avec le
 | Événements des prestataires (`webhook_events`) | Contenu vérifié conservé **90 jours** (rejeu, enquête), puis purgé ; il peut contenir l'e-mail de la cliente |
 | Paiements et remboursements | Conservés avec la commande (10 ans, pièces comptables) |
 
+## T4 — Formations et progression (phase 7)
+
+| Rubrique | Contenu |
+|---|---|
+| Finalité | Donner accès aux formations achetées, suivre la progression, corriger les quiz, délivrer les certificats, organiser les appels personnalisés |
+| Base légale | Exécution du contrat (achat d'un pack) |
+| Personnes concernées | Clientes et clients ayant un compte |
+| Données | Accès (pack, source, dates), position de lecture, leçons terminées, réponses et scores des quiz, certificats (nom, formation, date, numéro), demandes d'appel (message, date prévue, note de l'administration) |
+| Destinataires | Diani (administration) ; sous-traitants : hébergeur, Bunny.net (diffusion vidéo : IP technique de la lecture), OVH (stockage des fiches et certificats), Resend |
+| Publication | Page publique de vérification d'un certificat : nom, formation et date, accessibles avec le numéro (aléatoire, non énumérable) |
+
+| Donnée | Durée | Mécanisme |
+|---|---|---|
+| Progression, quiz, accès | Durée du compte | Suppression avec le compte |
+| Certificats | Durée du compte | Révoqués à la suppression du compte (nom remplacé, vérification « non valide ») |
+| Demandes d'appel | Durée du compte | Supprimées avec le compte |
+| Copies filigranées des fiches | Durée du compte | Régénérées si la fiche change |
+
+Droit d'accès : `GET /api/v1/me/export` inclut accès, progression, tentatives, certificats et demandes d'appel.
+
 ## Traitements à venir
 
-T4 Formations et progression (phase 7) · T5 Contact et newsletter (phase 8).
+T5 Contact et newsletter (phase 8).

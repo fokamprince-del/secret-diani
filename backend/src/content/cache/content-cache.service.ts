@@ -20,6 +20,7 @@ export type ContentTag =
   | 'media'
   | 'catering'
   | 'shop'
+  | 'courses'
   | 'sitemap';
 
 /**

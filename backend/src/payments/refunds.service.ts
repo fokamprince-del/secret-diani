@@ -296,6 +296,13 @@ export class RefundsService {
           },
         });
         full = order.refundedCents >= order.totalCents;
+        if (full) {
+          // Pack de formation remboursé : l'accès acheté avec cette commande est retiré.
+          await tx.courseAccess.updateMany({
+            where: { orderId: refund.orderId, revokedAt: null },
+            data: { revokedAt: new Date(), note: 'Commande remboursée' },
+          });
+        }
         if (full && canTransition(order.status, 'refunded')) {
           await tx.order.update({ where: { id: refund.orderId }, data: { status: 'refunded' } });
           await tx.orderEvent.create({

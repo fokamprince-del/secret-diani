@@ -50,6 +50,8 @@ export interface MailTemplateData {
     total: string;
     deliveryLine: string;
     trackingLink: string;
+    /** Espace membre, quand la commande contient un pack de formation. */
+    coursesLink?: string | null;
   };
   'order-shipped': {
     firstName: string;
@@ -69,6 +71,16 @@ export interface MailTemplateData {
     trackingLink: string;
   };
   'payment-alert': { title: string; lines: string[] };
+  // Formations (phase 7)
+  'course-access-granted': { firstName: string | null; packName: string; link: string };
+  'course-completed': {
+    firstName: string | null;
+    courseTitle: string;
+    /** Null : nom et prénom à compléter avant l'émission du certificat. */
+    certificateNumber: string | null;
+    link: string;
+  };
+  'call-request-admin': { customerName: string; email: string; message: string; remaining: number };
 }
 
 export type MailTemplate = keyof MailTemplateData;

@@ -74,6 +74,11 @@ const config: Config = {
     '!payments/webhooks/*.service.ts',
     '!payments/worker/**',
     '!payments/gateways/paypal.gateway.ts',
+    // Phase 7 : services des formations adossés à Postgres/Redis/S3 (e2e) ; la logique pure
+    // (courses/domain), les rendus PDF et le filigrane restent ici.
+    '!courses/**/*.service.ts',
+    'courses/video/video.service.ts',
+    '!documents/**',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

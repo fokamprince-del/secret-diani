@@ -149,6 +149,19 @@ Le seuil d'**alerte** « stock bas » se règle par variante (Boutique → Stock
 - Les webhooks en échec restent dans `webhook_events` (statut `failed`, message d'erreur) et dans la file des échecs de BullMQ ; le prestataire les renvoie aussi de lui-même (Stripe pendant 3 jours).
 - La réconciliation quotidienne (4 h 15) rattrape un paiement dont le webhook aurait été perdu ; ses écarts arrivent par e-mail (« Paiements : écarts de réconciliation »).
 
+## Formations : mise en place
+
+### Bunny Stream (vidéos)
+1. bunny.net → Stream → créer une bibliothèque (région Europe), y téléverser les vidéos (format vertical 9:16 accepté).
+2. Zone de diffusion de la bibliothèque → **Security** : activer « Token authentication » et copier la clé → `BUNNY_STREAM_TOKEN_KEY` ; nom d'hôte de la zone (`vz-….b-cdn.net`) → `BUNNY_STREAM_CDN_HOST`. Désactiver l'accès direct non signé.
+3. Dans l'administration, renseigner pour chaque leçon l'identifiant de la vidéo (GUID Bunny) et sa durée en secondes.
+
+### Avant d'ouvrir les ventes
+- Vérifier les trois packs (prix, contenus, appels inclus) créés par le seed.
+- Formation pilote : remplacer la vidéo factice (`video-pilote-a-remplacer`) et la fiche de démonstration, puis la publier.
+- Une formation se publie dès qu'elle a au moins une leçon publiée ; une leçon marquée « exemple gratuit » est visible sans compte.
+- Le certificat porte le prénom et le nom du profil : rappeler aux clientes de les renseigner.
+
 ## Sondes
 
 | URL | Rôle | Attendu |

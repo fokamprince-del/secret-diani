@@ -59,6 +59,7 @@ export class InvoicesService {
         lastName: true,
         billingAddress: true,
         shippingRateName: true,
+        shippingMethod: true,
         subtotalCents: true,
         shippingCents: true,
         totalCents: true,
@@ -107,7 +108,8 @@ export class InvoicesService {
         },
         lines: {
           items: lines,
-          shippingLabel: `Livraison : ${order.shippingRateName}`,
+          shippingLabel:
+            order.shippingMethod === 'digital' ? null : `Livraison : ${order.shippingRateName}`,
         } as unknown as Prisma.InputJsonValue,
         subtotalCents: order.subtotalCents,
         shippingCents: order.shippingCents,
@@ -125,7 +127,10 @@ export class InvoicesService {
     if (!invoice || invoice.pdfKey) return;
     const seller = invoice.seller as unknown as Seller & { orderReference: string };
     const buyer = invoice.buyer as unknown as { name: string; address: StoredAddress };
-    const lines = invoice.lines as unknown as { items: InvoiceLine[]; shippingLabel: string };
+    const lines = invoice.lines as unknown as {
+      items: InvoiceLine[];
+      shippingLabel: string | null;
+    };
     const input: InvoicePdfInput = {
       number: invoice.number,
       issuedAt: invoice.issuedAt,

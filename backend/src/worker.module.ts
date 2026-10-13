@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuditModule } from './audit/audit.module';
 import { CryptoModule } from './common/crypto/crypto.module';
+import { DocumentsWorkerModule } from './documents/documents-worker.module';
 import { AppConfigModule } from './config/config.module';
 import { RevalidateWorkerModule } from './content/cache/revalidate-worker.module';
 import { JobsModule } from './jobs/jobs.module';
@@ -37,6 +38,7 @@ import { StorageModule } from './storage/storage.module';
     CryptoModule,
     SettingsModule,
     PaymentsWorkerModule,
+    DocumentsWorkerModule,
   ],
   providers: [WorkerHeartbeatService],
 })

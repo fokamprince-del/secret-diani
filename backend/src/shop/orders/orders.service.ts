@@ -68,6 +68,8 @@ const ORDER_SELECT = {
   items: {
     orderBy: { position: 'asc' },
     select: {
+      kind: true,
+      packId: true,
       variantId: true,
       productName: true,
       variantLabel: true,
@@ -186,6 +188,21 @@ export class OrdersService {
           },
         });
         invoiceId = (await this.invoices.issue(tx, orderId, seller, now)).id;
+        // Packs de formation : les accès ne sont créés qu'ici, paiement confirmé (jamais avant).
+        if (order.userId) {
+          for (const item of order.items) {
+            if (item.kind !== 'pack' || !item.packId) continue;
+            const active = await tx.courseAccess.findFirst({
+              where: { userId: order.userId, packId: item.packId, revokedAt: null },
+              select: { id: true },
+            });
+            if (!active) {
+              await tx.courseAccess.create({
+                data: { userId: order.userId, packId: item.packId, source: 'purchase', orderId },
+              });
+            }
+          }
+        }
         if (order.cartId) {
           await tx.shopCartItem.deleteMany({
             where: { cartId: order.cartId, variantId: { in: lines.map((line) => line.variantId) } },
@@ -492,10 +509,16 @@ export class OrdersService {
         subtotal: formatEuros(order.subtotalCents),
         shipping: order.shippingCents === 0 ? 'offerte' : formatEuros(order.shippingCents),
         total: formatEuros(order.totalCents),
-        deliveryLine: shipping
-          ? `${order.shippingRateName} : ${shipping.firstName} ${shipping.lastName}, ${shipping.line1}, ${shipping.postalCode} ${shipping.city}`
-          : `${order.shippingRateName}${pickup ? ` : ${pickup}` : ''}`,
+        deliveryLine:
+          order.shippingMethod === 'digital'
+            ? 'Formation en ligne : accès immédiat depuis votre espace membre.'
+            : shipping
+              ? `${order.shippingRateName} : ${shipping.firstName} ${shipping.lastName}, ${shipping.line1}, ${shipping.postalCode} ${shipping.city}`
+              : `${order.shippingRateName}${pickup ? ` : ${pickup}` : ''}`,
         trackingLink: this.trackingLink(orderId),
+        coursesLink: order.items.some((item) => item.kind === 'pack')
+          ? `${this.siteUrl}/espace-membre`
+          : null,
       });
       await this.stock.refreshLowStockAlert(
         order.items.flatMap((item) => (item.variantId ? [item.variantId] : [])),

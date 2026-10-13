@@ -115,6 +115,28 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
     template: 'payment-alert',
     data: { title: 'litige ouvert', lines: ['Commande CMD-000042 : litige de 45,89 € (Stripe).'] },
   },
+  {
+    template: 'course-access-granted',
+    data: { firstName: 'Awa', packName: 'Premium', link: 'https://site.fr/espace-membre' },
+  },
+  {
+    template: 'course-completed',
+    data: {
+      firstName: 'Awa',
+      courseTitle: 'Crème au beurre parfaite',
+      certificateNumber: 'DIANI-2026-7K3QF9XA',
+      link: 'https://site.fr/espace-membre/certificats',
+    },
+  },
+  {
+    template: 'call-request-admin',
+    data: {
+      customerName: 'Awa Diallo',
+      email: 'awa@example.com',
+      message: 'Mardi soir',
+      remaining: 2,
+    },
+  },
 ];
 
 describe('renderMail', () => {

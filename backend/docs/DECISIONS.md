@@ -357,3 +357,38 @@ Webhook de litige (Stripe `charge.dispute.created`, PayPal `CUSTOMER.DISPUTE.CRE
 
 ### D-066 · Versions et dépendances
 SDK `stripe` 22.6.2 (et non la 23.0.0, publiée il y a moins de deux semaines, majeure), avec transport `fetch` injectable. PayPal par l'API REST v2 directement (`fetch`, hôtes fixes sandbox / production) : pas de SDK supplémentaire. Le parcours avancé du traiteur (acompte en ligne) réutilisera ces paiements lorsqu'il sera ouvert (D-045).
+
+## Phase 7 — Formations
+
+### D-067 · Packs inclusifs par niveau
+Chaque pack a un **niveau** unique (Essentiel 1, Intermédiaire 2, Premium 3) ; une formation est rattachée au pack minimal qui l'ouvre, et un pack donne accès à toutes les formations de niveau inférieur ou égal (Premium ⊇ Intermédiaire ⊇ Essentiel). Ajouter un pack ou déplacer une formation ne demande aucun développement. Un seul accès actif par cliente et par pack (index unique partiel) ; l'historique des accès retirés est conservé.
+
+### D-068 · Achat d'un pack
+Compte obligatoire. L'achat crée une commande « numérique » (méthode `digital`, sans adresse de livraison ni ligne de livraison sur la facture) payée par les paiements existants (phase 6). L'accès n'est créé que **dans la transaction qui confirme le paiement** (`OrdersService.markPaid`), jamais avant ; testé : commande créée et page de paiement ouverte → toujours 403. Achat refusé si la cliente possède déjà ce pack ou un pack supérieur ; une commande en attente pour le même pack est réutilisée. Remboursement intégral → accès retiré.
+
+### D-069 · Vidéo Bunny Stream
+URL HLS signée par **jeton de répertoire** Bunny CDN (SHA-256, algorithme de la documentation Bunny) : le jeton couvre la playlist et tous ses segments, pour la durée de la vidéo + 30 minutes (4 h au plus). Jamais d'URL permanente ; liaison facultative à l'IP de la cliente (`BUNNY_STREAM_BIND_IP`, désactivée par défaut : elle coupe la lecture quand l'IP change, fréquent sur mobile). Sans configuration Bunny, la leçon n'a pas de vidéo (pas d'erreur).
+
+### D-070 · Leçons, progression et quiz
+- Accès vérifié **à chaque requête** (leçon, progression, quiz, fiche) ; la leçon d'exemple (`freePreview`) est ouverte sans compte ; un refus indique le pack à proposer (`COURSE_ACCESS_REQUIRED`).
+- Reprise de lecture : position envoyée toutes les ~15 s (12 par minute au plus), ramenée à la durée de la vidéo.
+- Leçon terminée = vidéo vue (si elle en a une) **et** quiz réussi (s'il y en a un).
+- Quiz : correction côté serveur ; une question est juste si l'ensemble coché est exactement l'ensemble des bonnes réponses. Les bonnes réponses ne quittent jamais le serveur avant correction ; avec un nombre de tentatives limité, elles ne sont révélées qu'une fois le quiz réussi ou les tentatives épuisées (sinon la première correction donnerait la réponse de l'essai suivant). Meilleur score conservé.
+
+### D-071 · Fiches PDF et filigrane
+Fiches issues de la médiathèque (PDF vérifiés, bucket privé), téléchargées par URL signée de 5 minutes. Filigrane facultatif par fiche (nom et e-mail de la cliente, en diagonale et en pied de page) : produit **une fois** par le worker (`@cantoo/pdf-lib`, fork maintenu de pdf-lib), stocké par cliente et par version du fichier ; tant qu'il n'est pas prêt, la cliente reçoit 409 « en préparation ». Les dépendances du fork sont déclarées en « >= » : le lockfile les fige.
+
+### D-072 · Certificats
+Émis automatiquement quand toutes les leçons publiées sont terminées, si le nom et le prénom sont renseignés (figés à l'émission) ; sinon l'e-mail de fin de formation invite à compléter le profil, puis à demander le certificat. Numéro `DIANI-AAAA-XXXXXXXX` aléatoire (40 bits, alphabet sans caractères ambigus) : impossible d'énumérer les titulaires sur la page publique de vérification. PDF produit par le worker. Suppression du compte : certificat révoqué, nom retiré de la vérification publique. Une formation ayant délivré des certificats ne se supprime pas (elle se dépublie).
+
+### D-073 · Avantages des packs
+Appels personnalisés inclus = somme des appels des packs détenus (chaque achat apporte les siens) ; une demande d'appel décompte un appel (sauf annulée), sous verrou du compte (deux demandes simultanées ne dépassent pas le quota), et prévient l'administration. Les autres avantages (fournisseurs offerts…) sont la liste des contenus des packs détenus.
+
+### D-074 · Documents produits par le worker
+Factures, certificats et fiches filigranées passent par une même file `documents` et un module worker dédié (`DocumentsWorkerModule`), au lieu du worker de la boutique.
+
+### D-075 · Données de référence des formations
+Le seed crée les trois packs du cahier des charges (prix, contenus, appels inclus) et une **formation pilote** complète (vidéo factice, fiche PDF générée et déposée dans le stockage, conseils, quiz de 3 questions, leçon d'exemple) en **brouillon** : la vidéo factice ne doit pas être vue des clientes avant d'être remplacée.
+
+### D-076 · Réponses de l'administration des formations
+Les écrans d'édition reçoivent la formation complète (modules, leçons, fiches, quiz avec les bonnes réponses) ; ces réponses ne sont pas encore décrites en détail dans l'OpenAPI (schéma générique). À préciser avec le back-office (phase 9).

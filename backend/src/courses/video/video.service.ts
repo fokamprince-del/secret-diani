@@ -29,7 +29,12 @@ export class VideoService {
     this.bindIp = config.get('BUNNY_STREAM_BIND_IP');
   }
 
-  playback(videoId: string | null, durationSeconds: number | null, ip: string, now = new Date()): Playback {
+  playback(
+    videoId: string | null,
+    durationSeconds: number | null,
+    ip: string,
+    now = new Date(),
+  ): Playback {
     if (!videoId || !this.host || !this.key) return { hlsUrl: null, expiresAt: null };
     const lifetime = Math.min((durationSeconds ?? 3600) + MARGIN_SECONDS, MAX_SECONDS);
     const expiresAt = new Date(now.getTime() + lifetime * 1000);

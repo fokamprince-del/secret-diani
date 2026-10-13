@@ -46,7 +46,7 @@ export class SeoService {
   sitemap(): Promise<SitemapEntry[]> {
     return this.cache.getOrSet('sitemap', async () => {
       const now = new Date();
-      const [pages, articles, products] = await Promise.all([
+      const [pages, articles, products, courses] = await Promise.all([
         this.prisma.staticPage.findMany({
           where: { published: true },
           select: { slug: true, updatedAt: true },
@@ -61,6 +61,12 @@ export class SeoService {
           where: { deletedAt: null, visible: true, variants: { some: { active: true } } },
           orderBy: { position: 'asc' },
           take: 1000,
+          select: { slug: true, updatedAt: true },
+        }),
+        this.prisma.course.findMany({
+          where: { status: 'published', deletedAt: null, pack: { visible: true } },
+          orderBy: { position: 'asc' },
+          take: 500,
           select: { slug: true, updatedAt: true },
         }),
       ]);
@@ -86,6 +92,12 @@ export class SeoService {
         ...products.map((product) => ({
           loc: this.site.url(`/boutique/${product.slug}`),
           lastModified: product.updatedAt.toISOString(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.8,
+        })),
+        ...courses.map((course) => ({
+          loc: this.site.url(`/formations/${course.slug}`),
+          lastModified: course.updatedAt.toISOString(),
           changeFrequency: 'weekly' as const,
           priority: 0.8,
         })),
