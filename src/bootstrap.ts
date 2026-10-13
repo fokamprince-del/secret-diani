@@ -1,7 +1,7 @@
 import { RequestMethod } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
-import type { NextFunction, Request, Response } from 'express';
+import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { AppConfigService } from './config/app-config.service';
@@ -71,6 +71,10 @@ export function configureApp(app: NestExpressApplication): void {
     exposedHeaders: ['X-Request-Id', 'Retry-After'],
     maxAge: 600,
   });
+
+  // Webhooks de paiement : corps BRUT (les octets exacts signés par le prestataire), analysé
+  // avant le JSON global, qui ignore ensuite ces requêtes.
+  app.use(`/${API_PREFIX}/payments/webhooks`, express.raw({ type: () => true, limit: '512kb' }));
 
   const bodyLimit = config.get('BODY_LIMIT');
   app.useBodyParser('json', { limit: bodyLimit, strict: true, reviver: rejectPrototypeKeys });

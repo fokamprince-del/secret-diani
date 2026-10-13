@@ -1,6 +1,6 @@
 # Sécurité
 
-> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2), traiteur (phase 4) et boutique (phase 5) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
+> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2), traiteur (phase 4), boutique (phase 5) et paiements (phase 6) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
 
 ## Modèle de menaces — authentification et comptes (STRIDE)
 
@@ -53,6 +53,23 @@
 | D | CSRF sur le panier invité (cookie) | `SameSite=Strict` + en-tête obligatoire + origine vérifiée | `shop.e2e` › en-tête CSRF exigé |
 | **E**levation of privilege | Cliente sur l'administration, invitée qui se fait passer pour connectée | Rôle admin + 2FA ; jeton invalide sur une route facultative → 401 (jamais invité) | `guards.spec` › `@OptionalAuth()`, `shop.e2e` |
 
+## Modèle de menaces — paiements (phase 6, STRIDE)
+
+| Menace | Scénario | Mesures | Preuves (tests) |
+|---|---|---|---|
+| **S**poofing | Faux webhook « paiement réussi » | Signature vérifiée sur le corps brut (Stripe : SDK officiel ; PayPal : API de vérification + identifiant du webhook), horodatage de 5 min, liste d'IP facultative | `payments.e2e` › webhook mal signé, modifié, trop ancien |
+| S | Valider une commande sans payer (retour PayPal forgé) | La capture est faite par le serveur auprès de PayPal ; seule une capture « COMPLETED » au bon montant fait foi | `payments.e2e` › PayPal, paiement refusé |
+| **T**ampering | Montant payé inférieur au prix (session modifiée) | Montants de la session issus de la commande figée ; total vérifié à la création et à la confirmation ; écart → aucune validation + alerte | `payments.e2e` › montant incohérent |
+| T | Pollution de prototype par un webhook PayPal | Analyse JSON refusant `__proto__`, `constructor`, `prototype` | `payments.e2e` › webhook PayPal |
+| **R**epudiation | Contestation d'un paiement ou d'un remboursement | `payments`, `refunds`, `webhook_events` (contenu vérifié, 90 jours) ; audit : début, réussite, échec, écart, litige, remboursements, webhooks refusés | `payments.e2e` |
+| R | Webhook rejoué | Unicité (prestataire, identifiant d'événement) ; confirmation et remboursement idempotents | `payments.e2e` › rejeu, deux webhooks simultanés |
+| **I**nformation disclosure | Données de carte | Jamais reçues ni stockées (pages hébergées, PCI DSS SAQ A) ; seuls les identifiants du prestataire sont gardés | — |
+| **D**enial of service | Inondation des webhooks | Limite de 600/min, traitement asynchrone, réponse immédiate | — |
+| D | Paiement perdu (webhook non reçu) | Réconciliation quotidienne avec les prestataires | `payments.e2e` › réconciliation |
+| **E**levation of privilege | Remboursement par une cliente, ou au-delà du payé | Rôle admin + 2FA ; montant contrôlé sous verrou (payé − remboursé − en cours) | `payments.e2e` › remboursements |
+
+**Argent encaissé sans contrepartie** : double paiement ou stock épuisé après expiration → remboursement automatique intégral (`payments.e2e` › remboursements automatiques).
+
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 
 | Exigence | État | Référence |
@@ -87,6 +104,8 @@
 | `JWT_ACCESS_SECRET` | Signature des jetons d'accès | `JWT_ACCESS_SECRET_PREVIOUS` accepté en vérification (voir RUNBOOK) |
 | `FIELD_ENCRYPTION_KEY` | Secrets 2FA, clé HMAC des codes de secours | `FIELD_ENCRYPTION_KEY_PREVIOUS` accepté en déchiffrement (voir RUNBOOK) |
 | `RESEND_API_KEY` | Envoi des e-mails (worker) | Régénérer dans Resend, redéployer |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Paiements Stripe, signature des webhooks | Clé restreinte (`rk_…`) recommandée ; nouvelle clé dans le tableau de bord Stripe, mise à jour de `.env.production`, redéploiement, révocation de l'ancienne. Secret du webhook : « Renouveler le secret » (Stripe accepte les deux pendant 24 h) |
+| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` | Paiements PayPal, vérification des webhooks | Nouveau secret dans l'application REST PayPal, redéploiement ; le jeton OAuth en cache (Redis) expire de lui-même |
 | `TURNSTILE_SECRET_KEY` | Vérification anti-robot des formulaires publics | Faire tourner la clé dans Cloudflare (Turnstile), mettre à jour `.env.production`, redéployer |
 
 `FIELD_ENCRYPTION_KEY` n'est jamais dans la base ni dans ses sauvegardes : perdre cette clé rend les secrets 2FA illisibles (les administrateurs devront alors refaire leur enrôlement).

@@ -22,6 +22,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { LoggingModule } from './logging/logging.module';
 import { MailModule } from './mail/mail.module';
 import { MediaModule } from './media/media.module';
+import { PaymentsModule } from './payments/payments.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { REDIS_CLIENT } from './redis/redis.constants';
 import { RedisModule } from './redis/redis.module';
@@ -66,6 +67,7 @@ import { UsersModule } from './users/users.module';
     ContentModule,
     CateringModule,
     ShopModule,
+    PaymentsModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

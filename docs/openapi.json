@@ -5612,6 +5612,189 @@
           "Administration — boutique (commandes)"
         ]
       }
+    },
+    "/api/v1/payments/methods": {
+      "get": {
+        "operationId": "PaymentsController_methods",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Moyens de paiement disponibles",
+        "tags": [
+          "Paiements"
+        ]
+      }
+    },
+    "/api/v1/payments/checkout": {
+      "post": {
+        "description": "Accès par le jeton signé reçu à la validation du panier. Aucune donnée de carte ne transite par l’API. La commande n’est validée qu’après la confirmation du prestataire.",
+        "operationId": "PaymentsController_checkout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartedPaymentDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Délai dépassé ou déjà payée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Payer une commande : redirection vers Stripe Checkout ou PayPal",
+        "tags": [
+          "Paiements"
+        ]
+      }
+    },
+    "/api/v1/payments/paypal/capture": {
+      "post": {
+        "operationId": "PaymentsController_capture",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapturePayPalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResultDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retour de PayPal : le serveur capture le paiement validé et confirme la commande",
+        "tags": [
+          "Paiements"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}/payments": {
+      "get": {
+        "operationId": "AdminPaymentsController_payments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminPaymentDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Paiements et remboursements d’une commande",
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}/refunds": {
+      "post": {
+        "description": "Montant contrôlé (jamais plus que le payé moins le remboursé). Un remboursement intégral passe la commande en « remboursée » et peut remettre les articles en stock. La cliente est prévenue par e-mail.",
+        "operationId": "AdminPaymentsController_refund",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRefundDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrderDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Rembourser (total ou partiel) chez le prestataire",
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
     }
   },
   "info": {
@@ -11225,6 +11408,245 @@
         },
         "required": [
           "status"
+        ]
+      },
+      "PaymentMethodsDto": {
+        "type": "object",
+        "properties": {
+          "stripe": {
+            "type": "boolean",
+            "description": "Carte bancaire, Apple Pay, Google Pay… via Stripe Checkout"
+          },
+          "paypal": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "stripe",
+          "paypal"
+        ]
+      },
+      "StartPaymentDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Jeton de la commande reçu à la validation du panier (lien signé)"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe",
+              "paypal"
+            ]
+          }
+        },
+        "required": [
+          "token",
+          "provider"
+        ]
+      },
+      "StartedPaymentDto": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe",
+              "paypal"
+            ]
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "Page de paiement hébergée par le prestataire (redirection)"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "La page de paiement expire à cette date"
+          }
+        },
+        "required": [
+          "paymentId",
+          "provider",
+          "redirectUrl",
+          "expiresAt"
+        ]
+      },
+      "CapturePayPalDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Jeton de la commande (paramètre « suivi » de l’URL de retour)"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "PaymentResultDto": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "paid",
+              "already_processed",
+              "unknown_payment",
+              "amount_mismatch",
+              "refunded_stock_unavailable",
+              "refunded_duplicate"
+            ]
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderDto"
+          }
+        },
+        "required": [
+          "outcome",
+          "order"
+        ]
+      },
+      "AdminRefundDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "amountCents": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "succeeded",
+              "failed"
+            ]
+          },
+          "restocked": {
+            "type": "boolean"
+          },
+          "actorId": {
+            "type": "string",
+            "nullable": true,
+            "description": "NULL : remboursement automatique"
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "amountCents",
+          "reason",
+          "status",
+          "restocked",
+          "actorId",
+          "failureReason",
+          "createdAt"
+        ]
+      },
+      "AdminPaymentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe",
+              "paypal"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "succeeded",
+              "failed",
+              "abandoned",
+              "refunded",
+              "partially_refunded",
+              "disputed"
+            ]
+          },
+          "amountCents": {
+            "type": "number"
+          },
+          "refundedCents": {
+            "type": "number"
+          },
+          "providerPaymentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Référence chez le prestataire"
+          },
+          "succeededAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminRefundDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "status",
+          "amountCents",
+          "refundedCents",
+          "providerPaymentId",
+          "succeededAt",
+          "failureReason",
+          "createdAt",
+          "refunds"
+        ]
+      },
+      "CreateRefundDto": {
+        "type": "object",
+        "properties": {
+          "amountCents": {
+            "type": "number",
+            "description": "Montant en centimes ; absent = tout le restant remboursable"
+          },
+          "reason": {
+            "type": "string",
+            "example": "Article arrivé abîmé"
+          },
+          "restock": {
+            "type": "boolean",
+            "default": false,
+            "description": "Remettre les articles en stock (remboursement intégral seulement)"
+          }
+        },
+        "required": [
+          "reason"
         ]
       }
     }

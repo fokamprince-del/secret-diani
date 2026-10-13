@@ -321,3 +321,39 @@ Séparateur « ; », UTF-8 avec BOM (Excel français), et **neutralisation des f
 
 ### D-057 · Données de référence de la boutique
 Le seed crée les trois kits du cahier des charges (prix indicatifs) **masqués et sans stock** : composition, poids, photos et stock sont à compléter. Aucun tarif de livraison n'est inventé ; tant qu'il n'en existe pas, aucune commande ne peut être validée.
+
+## Phase 6 — Paiements
+
+### D-058 · Pages de paiement hébergées
+Stripe Checkout et PayPal (commande en « capture ») : la cliente paie sur la page du prestataire, aucune donnée de carte ne transite par nos serveurs (PCI DSS, questionnaire SAQ A). Les montants envoyés au prestataire sont ceux de la commande figée en base, ligne par ligne (frais de port compris) ; la session est refusée si le total calculé par le prestataire diffère. L'accès au paiement passe par le lien signé de la commande (D-052), avec ou sans compte.
+
+### D-059 · Une commande n'est validée qu'après un événement confirmé
+Preuves acceptées : webhook Stripe signé (`checkout.session.completed` payé), capture PayPal faite par le serveur lui-même (retour de la cliente, webhook `CHECKOUT.ORDER.APPROVED` ou réconciliation), webhook PayPal vérifié. Le montant et la devise reçus sont comparés au paiement attendu : un écart ne valide rien et alerte l'administration. La confirmation est idempotente (paiement réclamé par mise à jour conditionnelle, commande verrouillée).
+
+### D-060 · Webhooks
+- Corps **brut** (analyseur dédié au chemin des webhooks, avant le JSON global) : la signature porte sur les octets exacts.
+- Stripe : signature HMAC et horodatage (5 min) vérifiés par le SDK officiel. PayPal : vérification par l'API PayPal (`verify-webhook-signature`, identifiant du webhook) et horodatage de 5 min vérifié localement ; PayPal injoignable → 503 (PayPal renvoie plus tard).
+- Idempotence : table `webhook_events`, unicité (prestataire, identifiant d'événement) ; un rejeu reçoit 200 sans nouveau traitement.
+- Traitement **asynchrone** par le worker (file `payments`, 5 tentatives exponentielles, file des échecs) ; réponse immédiate au prestataire. Un événement en échec renvoyé par le prestataire est retraité.
+- Liste d'adresses autorisées facultative (`WEBHOOK_ALLOWED_IPS`, IP ou CIDR) en plus des signatures, comme le demande le cahier (« si possible »).
+- Contenu conservé 90 jours (rejeu, enquête), puis purgé.
+
+### D-061 · Réservation du stock pendant le paiement
+Stripe impose au moins 30 minutes de validité à une page de paiement, quand la réservation du stock dure 15 minutes (D-050). À l'ouverture d'une page, la réservation est **prolongée jusqu'à l'expiration de la page + 5 minutes** : un paiement abouti trouve toujours son stock. Une page encore valide est réutilisée (double clic, retour arrière).
+
+### D-062 · Remboursements automatiques
+- Paiement confirmé alors que la commande a expiré et que le stock manque : remboursement intégral automatique, e-mail à la cliente.
+- **Double paiement** (Stripe et PayPal pour la même commande) : le second est remboursé automatiquement ; il ne compte pas dans les remboursements de la commande, qui reste payée une fois (bogue trouvé par les tests e2e).
+- Un remboursement automatique en échec alerte l'administration (`payment-alert`).
+
+### D-063 · Remboursements par l'administration
+Total ou partiel, sur le premier paiement réussi de la commande. Le montant est contrôlé sous verrou (payé − remboursé − en cours). L'appel au prestataire porte une clé d'idempotence ; la finalisation est idempotente (réponse directe ou webhook `refund.updated`). Remboursement intégral : commande « remboursée », remise en stock sur demande. Un remboursement fait depuis le tableau de bord du prestataire est enregistré (webhook) pour que la commande et l'export restent justes. Remise en stock d'un remboursement partiel : par l'écran Stock (inventaire).
+
+### D-064 · Réconciliation quotidienne
+Chaque jour à 4 h 15 : les sessions Stripe payées des 48 dernières heures et les commandes PayPal en attente des 3 derniers jours sont confrontées à la base (un webhook perdu ne laisse jamais une commande payée en attente ; une validation PayPal non capturée est capturée). Les pages expirées passent en « abandonnées ». Les écarts sont envoyés à l'administration.
+
+### D-065 · Litiges
+Webhook de litige (Stripe `charge.dispute.created`, PayPal `CUSTOMER.DISPUTE.CREATED`) : paiement « en litige », journal d'audit, alerte e-mail. La réponse au litige se fait dans le tableau de bord du prestataire.
+
+### D-066 · Versions et dépendances
+SDK `stripe` 22.6.2 (et non la 23.0.0, publiée il y a moins de deux semaines, majeure), avec transport `fetch` injectable. PayPal par l'API REST v2 directement (`fetch`, hôtes fixes sandbox / production) : pas de SDK supplémentaire. Le parcours avancé du traiteur (acompte en ligne) réutilisera ces paiements lorsqu'il sera ouvert (D-045).

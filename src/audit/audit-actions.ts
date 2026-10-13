@@ -52,6 +52,16 @@ export const AuditAction = {
   SHOP_ORDER_STATUS_CHANGED: 'shop.order_status_changed',
   SHOP_INVOICE_ISSUED: 'shop.invoice_issued',
   SHOP_ORDERS_EXPORTED: 'shop.orders_exported',
+  // Paiements (phase 6)
+  PAYMENT_STARTED: 'payment.started',
+  PAYMENT_SUCCEEDED: 'payment.succeeded',
+  PAYMENT_FAILED: 'payment.failed',
+  PAYMENT_AMOUNT_MISMATCH: 'payment.amount_mismatch',
+  PAYMENT_DISPUTED: 'payment.disputed',
+  REFUND_REQUESTED: 'payment.refund_requested',
+  REFUND_SUCCEEDED: 'payment.refund_succeeded',
+  REFUND_FAILED: 'payment.refund_failed',
+  WEBHOOK_REJECTED: 'payment.webhook_rejected',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

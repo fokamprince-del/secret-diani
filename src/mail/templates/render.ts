@@ -202,6 +202,31 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       ...data.lines.map((line) => ({ paragraph: `– ${line}` })),
       { paragraph: 'Pensez au réassort depuis l’administration (Boutique → Stock).' },
     ]),
+
+  'order-refunded': (data) =>
+    mail(`Remboursement de votre commande ${data.reference}`, 'Remboursement effectué', [
+      { paragraph: greeting(data.firstName) },
+      {
+        paragraph: data.full
+          ? `Votre commande ${data.reference} a été intégralement remboursée (${data.amount}).`
+          : `Un remboursement de ${data.amount} a été effectué sur votre commande ${data.reference}.`,
+      },
+      { paragraph: `Motif : ${data.reason}` },
+      {
+        paragraph:
+          'Le montant apparaîtra sur votre compte sous quelques jours ouvrés, selon votre banque ou PayPal.',
+      },
+      { button: { label: 'Voir ma commande', url: data.trackingLink } },
+    ]),
+
+  'payment-alert': (data) =>
+    mail(`Paiements : ${data.title}`, data.title, [
+      ...data.lines.map((line) => ({ paragraph: line })),
+      {
+        paragraph:
+          'Détail dans l’administration (Boutique → Commandes) et le tableau de bord du prestataire.',
+      },
+    ]),
 };
 
 export function renderMail(job: Pick<MailJob, 'template' | 'data'>): RenderedMail {

@@ -26,7 +26,8 @@
 ```
 
 - **api** : sert l'API REST (`/api/v1/...`) et les sondes (`/health`, `/ready`). Aucun traitement lourd : les e-mails, PDF, images et webhooks partent en file d'attente.
-- **worker** : même image que l'API, point d'entrée `dist/worker.js`. Consomme les files BullMQ.
+- **worker** : même image que l'API, point d'entrée `dist/worker.js`. Consomme les files BullMQ (e-mails, images, factures, webhooks de paiement, tâches planifiées).
+- **Appels sortants de l'API** : Stripe et PayPal (ouverture des pages de paiement, capture, vérification des webhooks PayPal) et Cloudflare Turnstile, vers des hôtes fixes, jamais vers une URL fournie par l'utilisateur.
 - **migrate** : conteneur ponctuel (`prisma migrate deploy`) lancé à chaque déploiement.
 
 ## Cycle d'une requête
@@ -70,6 +71,7 @@ src/
   content/ media/         contenus éditoriaux, médiathèque (phase 3)
   catering/               traiteur : catalogue, demandes, acompte, créneaux (phase 4)
   shop/                   boutique : catalogue, panier, stock, livraison, commandes, factures (phase 5)
+  payments/               paiements : Stripe Checkout, PayPal, webhooks, remboursements, réconciliation (phase 6)
   <domaine>/              un module par domaine (catalog-traiteur, shop, …) — phases 3 à 9
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
@@ -119,5 +121,8 @@ scripts/                  sauvegarde, restauration, export OpenAPI
 | — (historique d'une commande) | `OrderEvent` | `order_events` | 5 |
 | — (réservation de stock pendant le paiement) | `StockReservation` | `stock_reservations` | 5 |
 | — (facture et sa numérotation) | `Invoice`, `InvoiceSequence` | `invoices`, `invoice_sequences` | 5 |
+| `paiement` | `Payment` | `payments` | 6 |
+| `remboursement` | `Refund` | `refunds` | 6 |
+| `webhook_event` | `WebhookEvent` | `webhook_events` | 6 |
 
 _Complété au fil des phases._

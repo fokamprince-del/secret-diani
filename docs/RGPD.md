@@ -74,6 +74,15 @@ Droit d'accès : `GET /api/v1/me/export` inclut les demandes envoyées avec l'ad
 
 Droit d'accès : `GET /api/v1/me/export` inclut les commandes du compte (avec le numéro de facture). Une commande passée sans compte est retrouvée par Diani dans l'administration (recherche par e-mail).
 
+### Paiements (phase 6, rattachés à T3)
+
+| Rubrique | Contenu |
+|---|---|
+| Données | Montant, devise, moyen (Stripe ou PayPal), identifiants techniques du prestataire (session, paiement, remboursement), statuts et dates. **Aucune donnée de carte bancaire** : saisie sur les pages hébergées de Stripe ou PayPal |
+| Destinataires | Stripe Payments Europe (Irlande) et PayPal (Europe) S.à r.l. et Cie, S.C.A. (Luxembourg), responsables de traitement pour leur propre part (lutte contre la fraude, obligations bancaires) |
+| Événements des prestataires (`webhook_events`) | Contenu vérifié conservé **90 jours** (rejeu, enquête), puis purgé ; il peut contenir l'e-mail de la cliente |
+| Paiements et remboursements | Conservés avec la commande (10 ans, pièces comptables) |
+
 ## Traitements à venir
 
 T4 Formations et progression (phase 7) · T5 Contact et newsletter (phase 8).

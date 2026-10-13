@@ -59,6 +59,16 @@ export interface MailTemplateData {
     trackingLink: string;
   };
   'stock-low': { lines: string[] };
+  // Paiements (phase 6)
+  'order-refunded': {
+    firstName: string;
+    reference: string;
+    amount: string;
+    reason: string;
+    full: boolean;
+    trackingLink: string;
+  };
+  'payment-alert': { title: string; lines: string[] };
 }
 
 export type MailTemplate = keyof MailTemplateData;

@@ -10,12 +10,17 @@ import { redisOptionsFromUrl } from '../../../src/redis/redis-options';
 export const PASSWORD = 'Ganache-Mangue-Passion-2026';
 export const API = '/api/v1';
 
-let ipCounter = 0;
+/**
+ * Point de départ aléatoire par fichier de test : chaque fichier repart de zéro (registre de
+ * modules isolé), alors que les compteurs de limitation de débit de Redis, eux, persistent
+ * d'un fichier à l'autre. Plage 198.18.0.0/15 (réservée aux tests, RFC 2544).
+ */
+let ipCounter = Math.floor(Math.random() * 120_000);
 
 /** Adresse IP fictive unique : chaque test simule un client distinct (limitation de débit par IP). */
 export function nextIp(): string {
-  ipCounter += 1;
-  return `198.18.${Math.floor(ipCounter / 250)}.${(ipCounter % 250) + 1}`;
+  ipCounter = (ipCounter + 1) % 131_072;
+  return `198.${18 + (ipCounter >> 16)}.${(ipCounter >> 8) & 255}.${ipCounter & 255}`;
 }
 
 export function uniqueEmail(prefix = 'cliente'): string {

@@ -19,6 +19,8 @@ export const RETENTION = {
   cateringRequestsDays: 3 * 365,
   /** Paniers expirés (invité : 30 jours sans modification ; compte : 1 an). */
   expiredCartsDays: 0,
+  /** Événements de webhook traités (contenu du prestataire, peut contenir un e-mail). */
+  webhookEventsDays: 90,
 } as const;
 
 export type PurgeReport = Record<keyof typeof RETENTION, number>;
@@ -82,6 +84,13 @@ export class RetentionService {
       where: { expiresAt: { lt: before(RETENTION.expiredCartsDays) } },
     });
 
+    const webhookEvents = await this.prisma.webhookEvent.deleteMany({
+      where: {
+        status: { in: ['processed', 'ignored'] },
+        receivedAt: { lt: before(RETENTION.webhookEventsDays) },
+      },
+    });
+
     const report: PurgeReport = {
       refreshTokensDays: refreshTokens.count,
       sessionsDays: sessions.count,
@@ -90,6 +99,7 @@ export class RetentionService {
       auditLogsDays: auditLogs.count,
       cateringRequestsDays: cateringRequests,
       expiredCartsDays: expiredCarts.count,
+      webhookEventsDays: webhookEvents.count,
     };
     this.logger.log({ report }, 'Purge des données expirées terminée');
     return report;

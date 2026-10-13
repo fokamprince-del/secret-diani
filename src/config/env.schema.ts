@@ -60,6 +60,31 @@ export const envSchema = z
 
     CATERING_ONLINE_ORDERING: booleanFromEnv(false),
 
+    // --- Paiements (phase 6) : chaque prestataire est facultatif, au moins un en production ---
+    STRIPE_SECRET_KEY: z
+      .string()
+      .regex(/^(sk|rk)_(test|live)_[A-Za-z0-9]+$/, 'clé secrète Stripe attendue (sk_… ou rk_…)')
+      .optional(),
+    STRIPE_WEBHOOK_SECRET: z
+      .string()
+      .regex(/^whsec_[A-Za-z0-9]+$/, 'secret de signature des webhooks Stripe attendu (whsec_…)')
+      .optional(),
+    PAYPAL_CLIENT_ID: z.string().min(10).optional(),
+    PAYPAL_CLIENT_SECRET: z.string().min(10).optional(),
+    PAYPAL_WEBHOOK_ID: z.string().min(5).optional(),
+    PAYPAL_ENVIRONMENT: z.enum(['sandbox', 'live']).default('sandbox'),
+    // Adresses autorisées à appeler les webhooks (IP ou CIDR, séparées par des virgules).
+    // Vide : seules les signatures font foi (elles sont toujours vérifiées).
+    WEBHOOK_ALLOWED_IPS: z
+      .string()
+      .transform((value) =>
+        value
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0),
+      )
+      .optional(),
+
     // --- Anti-robot des formulaires publics (Cloudflare Turnstile) ---
     // Sans clé (développement, tests), la vérification est ignorée ; obligatoire en production.
     TURNSTILE_SECRET_KEY: z.string().min(10).optional(),
@@ -121,6 +146,22 @@ export const envSchema = z
         message: 'obligatoire quand MAIL_TRANSPORT=resend',
       });
     }
+    if (Boolean(env.STRIPE_SECRET_KEY) !== Boolean(env.STRIPE_WEBHOOK_SECRET)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: [env.STRIPE_SECRET_KEY ? 'STRIPE_WEBHOOK_SECRET' : 'STRIPE_SECRET_KEY'],
+        message: 'Stripe exige la clé secrète ET le secret des webhooks',
+      });
+    }
+    const paypal = [env.PAYPAL_CLIENT_ID, env.PAYPAL_CLIENT_SECRET, env.PAYPAL_WEBHOOK_ID];
+    if (paypal.some(Boolean) && !paypal.every(Boolean)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['PAYPAL_CLIENT_ID'],
+        message:
+          'PayPal exige PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET et PAYPAL_WEBHOOK_ID ensemble',
+      });
+    }
     if (env.JWT_ACCESS_SECRET_PREVIOUS === env.JWT_ACCESS_SECRET) {
       ctx.addIssue({
         code: 'custom',
@@ -141,6 +182,13 @@ export const envSchema = z
         code: 'custom',
         path: ['SWAGGER_ENABLED'],
         message: 'interdit en production (la spécification est publiée dans docs/openapi.json)',
+      });
+    }
+    if (!env.STRIPE_SECRET_KEY && !env.PAYPAL_CLIENT_ID) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['STRIPE_SECRET_KEY'],
+        message: 'en production, au moins un moyen de paiement (Stripe ou PayPal) est requis',
       });
     }
     if (!env.TURNSTILE_SECRET_KEY) {

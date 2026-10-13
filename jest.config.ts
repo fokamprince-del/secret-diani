@@ -68,6 +68,12 @@ const config: Config = {
     '!shop/orders/order-expiry.service.ts',
     '!shop/invoices/invoices.service.ts',
     '!shop/worker/**',
+    // Phase 6 : services de paiement adossés à Postgres/Redis et aux prestataires (e2e, faux
+    // prestataires) ; conversions, liste d'IP et interprétation des preuves restent ici.
+    '!payments/*.service.ts',
+    '!payments/webhooks/*.service.ts',
+    '!payments/worker/**',
+    '!payments/gateways/paypal.gateway.ts',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

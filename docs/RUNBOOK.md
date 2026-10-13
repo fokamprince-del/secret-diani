@@ -132,6 +132,23 @@ Les paramètres suivants se trouvent dans la table `app_settings` (écran d'admi
 
 Le seuil d'**alerte** « stock bas » se règle par variante (Boutique → Stock) ; l'e-mail part une fois, puis de nouveau après un réassort au-dessus du seuil.
 
+## Paiements : mise en place
+
+### Stripe
+1. Tableau de bord Stripe → Développeurs → Clés API : créer une **clé restreinte** (`rk_live_…`) avec les droits *Checkout Sessions* (écriture), *Refunds* (écriture), *PaymentIntents* (lecture) → `STRIPE_SECRET_KEY`.
+2. Développeurs → Webhooks → Ajouter un point de terminaison : `https://<domaine de l'API>/api/v1/payments/webhooks/stripe`, événements : `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `charge.refunded`, `refund.updated`, `charge.dispute.created`. Copier le secret de signature → `STRIPE_WEBHOOK_SECRET`.
+3. Facultatif : liste d'IP des webhooks Stripe (documentation Stripe « IP addresses ») dans `WEBHOOK_ALLOWED_IPS`, en même temps que celles de PayPal si PayPal est activé.
+
+### PayPal
+1. developer.paypal.com → Apps & Credentials (mode **Live**) → créer une application REST → `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` ; `PAYPAL_ENVIRONMENT=live`.
+2. Dans l'application → Webhooks → ajouter `https://<domaine de l'API>/api/v1/payments/webhooks/paypal`, événements : `CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.DENIED`, `PAYMENT.CAPTURE.DECLINED`, `PAYMENT.CAPTURE.REFUNDED`, `PAYMENT.CAPTURE.REVERSED`, `CUSTOMER.DISPUTE.CREATED`. Copier l'identifiant du webhook → `PAYPAL_WEBHOOK_ID`.
+
+### Vérifier
+- `GET /api/v1/payments/methods` indique les moyens actifs.
+- Une commande test en mode test (clés `sk_test_…`, PayPal sandbox), puis le remboursement depuis l'administration, avant de passer aux clés de production.
+- Les webhooks en échec restent dans `webhook_events` (statut `failed`, message d'erreur) et dans la file des échecs de BullMQ ; le prestataire les renvoie aussi de lui-même (Stripe pendant 3 jours).
+- La réconciliation quotidienne (4 h 15) rattrape un paiement dont le webhook aurait été perdu ; ses écarts arrivent par e-mail (« Paiements : écarts de réconciliation »).
+
 ## Sondes
 
 | URL | Rôle | Attendu |

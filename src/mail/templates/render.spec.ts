@@ -100,6 +100,21 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
     template: 'stock-low',
     data: { lines: ['Kit Débutant (Standard, KIT-DEBUTANT) : 2 disponible(s)'] },
   },
+  {
+    template: 'order-refunded',
+    data: {
+      firstName: 'Awa',
+      reference: 'CMD-000042',
+      amount: '45,89 €',
+      reason: 'Article épuisé pendant le paiement',
+      full: true,
+      trackingLink: 'https://site.fr/commande/suivi?token=abc',
+    },
+  },
+  {
+    template: 'payment-alert',
+    data: { title: 'litige ouvert', lines: ['Commande CMD-000042 : litige de 45,89 € (Stripe).'] },
+  },
 ];
 
 describe('renderMail', () => {

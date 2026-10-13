@@ -18,6 +18,8 @@ function createService(raw: Record<string, string>): AppConfigService {
     MAIL_TRANSPORT: 'resend',
     RESEND_API_KEY: 're_test_0123456789',
     TURNSTILE_SECRET_KEY: '0x4AAAAAAA-test-secret',
+    STRIPE_SECRET_KEY: 'sk_live_0123456789',
+    STRIPE_WEBHOOK_SECRET: 'whsec_0123456789',
     ...raw,
   });
   const config = { get: (key: keyof Env) => env[key] } as unknown as ConfigService<Env, true>;

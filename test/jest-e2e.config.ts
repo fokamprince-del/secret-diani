@@ -35,6 +35,8 @@ const config: Config = {
     './src/rgpd/': { lines: 80 },
     './src/catering/': { lines: 80 },
     './src/shop/': { lines: 80 },
+    // Exigence du cahier des charges : paiements ≥ 80 %.
+    './src/payments/': { lines: 80 },
   },
 };
 
