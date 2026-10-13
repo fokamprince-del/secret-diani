@@ -1,0 +1,117 @@
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-2);
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--rayon-pilule);
+  font-family: var(--font-texte);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-decoration: none;
+  background-image: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duree-courte) ease,
+    color var(--duree-courte) ease,
+    border-color var(--duree-courte) ease,
+    transform var(--duree-courte) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bouton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.bouton:disabled,
+.bouton[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.icone {
+  flex: none;
+  transition: transform var(--duree) var(--courbe);
+}
+
+.bouton:hover .icone {
+  transform: translateX(3px);
+}
+
+/* Principal : terracotta, texte clair (4,8:1). Un seul par écran autant que possible. */
+.principal {
+  background-color: var(--terra);
+  color: var(--blanc);
+}
+
+.principal:hover:not(:disabled) {
+  background-color: var(--terra-d);
+  color: var(--blanc);
+}
+
+/* Secondaire : filet fin, sans aplat. */
+.secondaire {
+  background-color: transparent;
+  border-color: var(--terra-d);
+  color: var(--terra-d);
+}
+
+.secondaire:hover:not(:disabled) {
+  background-color: var(--sable);
+  color: var(--cacao);
+}
+
+/* Discret : lien d'action dans un texte ou une barre d'outils. */
+.discret {
+  min-height: var(--cible);
+  padding-inline: var(--e-3);
+  background-color: transparent;
+  color: var(--terra-d);
+}
+
+.discret:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--sable) 70%, transparent);
+}
+
+.pleineLargeur {
+  width: 100%;
+}
+
+.chargement {
+  position: relative;
+  color: transparent !important;
+}
+
+.chargement::after {
+  content: '';
+  position: absolute;
+  width: 1.1em;
+  height: 1.1em;
+  border: 2px solid var(--blanc);
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: tourne 700ms linear infinite;
+}
+
+.secondaire.chargement::after,
+.discret.chargement::after {
+  border-color: var(--terra-d);
+  border-right-color: transparent;
+}
+
+@keyframes tourne {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chargement::after {
+    animation-duration: 2s;
+  }
+}

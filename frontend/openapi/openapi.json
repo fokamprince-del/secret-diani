@@ -1,0 +1,5044 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "HealthController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Sonde de vie (le processus répond)",
+        "tags": [
+          "Supervision"
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "operationId": "HealthController_readiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok",
+                    "checks": {
+                      "database": "ok",
+                      "redis": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "indisponible",
+                    "checks": {
+                      "database": "erreur",
+                      "redis": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Sonde de disponibilité (base de données et Redis joignables)",
+        "tags": [
+          "Supervision"
+        ]
+      }
+    },
+    "/api/v1/admin/audit-logs": {
+      "get": {
+        "operationId": "AuditController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "action",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "auth.login_failed",
+              "type": "string"
+            }
+          },
+          {
+            "name": "actorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page d’entrées et curseur suivant"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter le journal d’audit (du plus récent au plus ancien)",
+        "tags": [
+          "Administration — audit"
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "description": "Réponse identique que l’adresse soit libre ou non (anti-énumération). Un e-mail de confirmation est envoyé.",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Créer un compte",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/email/verify": {
+      "post": {
+        "operationId": "AuthController_verifyEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Confirmer l’adresse e-mail (lien reçu par e-mail)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/email/resend": {
+      "post": {
+        "operationId": "AuthController_resendVerification",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Renvoyer l’e-mail de confirmation (3 envois par heure au plus)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "Client : jeton d’accès + cookie de session. Administrateur : défi de second facteur (mfa_required ou mfa_enrollment_required).",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AuthenticatedResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/MfaChallengeResponseDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants incorrects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "E-mail non confirmé ou compte suspendu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Se connecter",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/2fa/enroll": {
+      "post": {
+        "operationId": "AuthController_startMfaEnrollment",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaEnrollmentResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Administrateur, première connexion : générer le secret TOTP",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/2fa/enroll/confirm": {
+      "post": {
+        "operationId": "AuthController_confirmMfaEnrollment",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaEnrolledResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Administrateur, première connexion : valider le premier code et ouvrir la session",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/2fa/verify": {
+      "post": {
+        "operationId": "AuthController_verifyMfa",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaVerifyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Code invalide ou défi expiré",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Administrateur : valider le code TOTP (ou un code de secours)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/2fa/backup-codes": {
+      "post": {
+        "operationId": "AuthController_regenerateBackupCodes",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TotpCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackupCodesResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Administrateur : remplacer les codes de secours",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "description": "Le refresh token (cookie) est à usage unique et renouvelé à chaque appel. Un jeton déjà utilisé révoque toute la session.",
+        "operationId": "AuthController_refresh",
+        "parameters": [
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF des routes à cookie)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session expirée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "diani_rt": []
+          }
+        ],
+        "summary": "Renouveler le jeton d’accès",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF des routes à cookie)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "diani_rt": []
+          }
+        ],
+        "summary": "Se déconnecter de cet appareil",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "operationId": "AuthController_logoutAll",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Se déconnecter de tous les appareils",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/password/forgot": {
+      "post": {
+        "operationId": "AuthController_forgotPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Mot de passe oublié : recevoir un lien (valable 30 minutes)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/password/reset": {
+      "post": {
+        "description": "Toutes les sessions sont déconnectées.",
+        "operationId": "AuthController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Choisir un nouveau mot de passe (lien reçu par e-mail)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/password/change": {
+      "post": {
+        "description": "Les autres appareils sont déconnectés ; la session courante est conservée.",
+        "operationId": "AuthController_changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Changer mon mot de passe",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/email/change": {
+      "post": {
+        "operationId": "AuthController_requestEmailChange",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Changer mon adresse e-mail (confirmation par la nouvelle adresse)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/email/change/confirm": {
+      "post": {
+        "description": "Toutes les sessions sont déconnectées.",
+        "operationId": "AuthController_confirmEmailChange",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Confirmer la nouvelle adresse e-mail",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/me/sessions": {
+      "get": {
+        "operationId": "SessionsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Sessions actives, la session courante est signalée"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister mes sessions actives (appareils connectés)",
+        "tags": [
+          "Compte — sessions"
+        ]
+      }
+    },
+    "/api/v1/me/sessions/{id}": {
+      "delete": {
+        "operationId": "SessionsController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Session révoquée"
+          },
+          "404": {
+            "description": "Session introuvable (ou appartenant à un autre compte)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Déconnecter un de mes appareils",
+        "tags": [
+          "Compte — sessions"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "UsersController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mon profil",
+        "tags": [
+          "Compte — profil"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier mon profil (nom, téléphone, consentement aux e-mails)",
+        "tags": [
+          "Compte — profil"
+        ]
+      },
+      "delete": {
+        "description": "Mot de passe exigé. Les données personnelles sont effacées ; les factures sont conservées 10 ans (obligation légale).",
+        "operationId": "RgpdController_deleteAccount",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer mon compte (droit à l’effacement)",
+        "tags": [
+          "Compte — données personnelles (RGPD)"
+        ]
+      }
+    },
+    "/api/v1/me/addresses": {
+      "get": {
+        "operationId": "AddressesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mes adresses",
+        "tags": [
+          "Compte — adresses"
+        ]
+      },
+      "post": {
+        "operationId": "AddressesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ajouter une adresse",
+        "tags": [
+          "Compte — adresses"
+        ]
+      }
+    },
+    "/api/v1/me/addresses/{id}": {
+      "patch": {
+        "operationId": "AddressesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier une adresse",
+        "tags": [
+          "Compte — adresses"
+        ]
+      },
+      "delete": {
+        "operationId": "AddressesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer une adresse",
+        "tags": [
+          "Compte — adresses"
+        ]
+      }
+    },
+    "/api/v1/me/export": {
+      "get": {
+        "operationId": "RgpdController_exportData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Fichier JSON de toutes les données du compte"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Télécharger mes données (droit d’accès et de portabilité)",
+        "tags": [
+          "Compte — données personnelles (RGPD)"
+        ]
+      }
+    },
+    "/api/v1/admin/media": {
+      "post": {
+        "description": "Type réel vérifié (octets magiques), renommage aléatoire, analyse antivirus, variantes WebP/AVIF sans EXIF. Le média passe à « ready » une fois traité par le worker.",
+        "operationId": "MediaController_upload",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "alt": {
+                    "type": "string",
+                    "maxLength": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Envoyer un fichier (image ≤ 15 Mo, PDF ≤ 30 Mo)",
+        "tags": [
+          "Administration — médias"
+        ]
+      },
+      "get": {
+        "operationId": "MediaController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "image",
+                "document"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "processing",
+                "ready",
+                "rejected"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page de médias et curseur suivant"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Médiathèque (du plus récent au plus ancien)",
+        "tags": [
+          "Administration — médias"
+        ]
+      }
+    },
+    "/api/v1/admin/media/uploads": {
+      "post": {
+        "description": "Renvoie une URL PUT signée (10 min). Après l’envoi, appeler POST /admin/media/{id}/complete.",
+        "operationId": "MediaController_createUpload",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUploadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignedUploadDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Préparer un envoi direct au stockage (gros fichiers)",
+        "tags": [
+          "Administration — médias"
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}/complete": {
+      "post": {
+        "operationId": "MediaController_complete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Signaler la fin d’un envoi direct (lance le traitement)",
+        "tags": [
+          "Administration — médias"
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}": {
+      "get": {
+        "operationId": "MediaController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — médias"
+        ]
+      },
+      "patch": {
+        "operationId": "MediaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMediaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier le texte alternatif",
+        "tags": [
+          "Administration — médias"
+        ]
+      },
+      "delete": {
+        "operationId": "MediaController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer un média (refusé s’il est utilisé)",
+        "tags": [
+          "Administration — médias"
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}/download": {
+      "get": {
+        "operationId": "MediaController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "URL de téléchargement signée d’un document PDF (5 min)",
+        "tags": [
+          "Administration — médias"
+        ]
+      }
+    },
+    "/api/v1/content/articles": {
+      "get": {
+        "operationId": "ArticlesController_list",
+        "parameters": [
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Slug de catégorie",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier article de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 12,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleListDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Articles publiés, du plus récent au plus ancien (filtre par catégorie)",
+        "tags": [
+          "Contenus — articles (Conseils & astuces)"
+        ]
+      }
+    },
+    "/api/v1/content/articles/{slug}": {
+      "get": {
+        "description": "Ancienne adresse d’un article : réponse 301 vers la nouvelle (en-tête Location, X-Canonical-Slug).",
+        "operationId": "ArticlesController_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleDetailDto"
+                }
+              }
+            }
+          },
+          "301": {
+            "description": "L’article a changé d’adresse"
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Article publié",
+        "tags": [
+          "Contenus — articles (Conseils & astuces)"
+        ]
+      }
+    },
+    "/api/v1/admin/articles": {
+      "get": {
+        "operationId": "AdminArticlesController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "state",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "scheduled",
+                "published"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Recherche dans le titre",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArticleListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Tous les articles (brouillons, programmés, publiés)",
+        "tags": [
+          "Administration — articles"
+        ]
+      },
+      "post": {
+        "operationId": "AdminArticlesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateArticleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArticleDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un article (brouillon)",
+        "tags": [
+          "Administration — articles"
+        ]
+      }
+    },
+    "/api/v1/admin/articles/{id}": {
+      "get": {
+        "operationId": "AdminArticlesController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArticleDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — articles"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminArticlesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateArticleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArticleDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un article (un article publié garde son ancienne adresse)",
+        "tags": [
+          "Administration — articles"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminArticlesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — articles"
+        ]
+      }
+    },
+    "/api/v1/admin/articles/{id}/publish": {
+      "post": {
+        "operationId": "AdminArticlesController_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishArticleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArticleDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publier maintenant ou programmer (date future)",
+        "tags": [
+          "Administration — articles"
+        ]
+      }
+    },
+    "/api/v1/admin/articles/{id}/unpublish": {
+      "post": {
+        "operationId": "AdminArticlesController_unpublish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArticleDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Repasser en brouillon",
+        "tags": [
+          "Administration — articles"
+        ]
+      }
+    },
+    "/api/v1/content/article-categories": {
+      "get": {
+        "operationId": "CategoriesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Catégories ayant des articles publiés (filtres de la page Conseils)",
+        "tags": [
+          "Contenus — articles (Conseils & astuces)"
+        ]
+      }
+    },
+    "/api/v1/admin/article-categories": {
+      "get": {
+        "operationId": "AdminCategoriesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — articles"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCategoriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — articles"
+        ]
+      }
+    },
+    "/api/v1/admin/article-categories/{id}": {
+      "patch": {
+        "operationId": "AdminCategoriesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — articles"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCategoriesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer une catégorie (ses articles restent publiés, sans catégorie)",
+        "tags": [
+          "Administration — articles"
+        ]
+      }
+    },
+    "/api/v1/content/pages": {
+      "get": {
+        "operationId": "PagesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageLinkDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Pages publiées (liens du pied de page)",
+        "tags": [
+          "Contenus — pages"
+        ]
+      }
+    },
+    "/api/v1/content/pages/{slug}": {
+      "get": {
+        "operationId": "PagesController_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Page publiée (À propos, mentions légales, CGV, confidentialité…)",
+        "tags": [
+          "Contenus — pages"
+        ]
+      }
+    },
+    "/api/v1/admin/pages": {
+      "get": {
+        "operationId": "AdminPagesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminPageDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — pages"
+        ]
+      }
+    },
+    "/api/v1/admin/pages/{slug}": {
+      "get": {
+        "operationId": "AdminPagesController_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — pages"
+        ]
+      },
+      "put": {
+        "operationId": "AdminPagesController_upsert",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer ou modifier une page (le slug est son adresse sur le site)",
+        "tags": [
+          "Administration — pages"
+        ]
+      }
+    },
+    "/api/v1/content/faq": {
+      "get": {
+        "operationId": "FaqController_list",
+        "parameters": [
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "general",
+                "traiteur",
+                "formations",
+                "boutique",
+                "livraison",
+                "paiement",
+                "retours"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqListDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Questions fréquentes publiées, dans l’ordre choisi",
+        "tags": [
+          "Contenus — FAQ"
+        ]
+      }
+    },
+    "/api/v1/admin/faq": {
+      "get": {
+        "operationId": "AdminFaqController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminFaqDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — FAQ"
+        ]
+      },
+      "post": {
+        "operationId": "AdminFaqController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFaqDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFaqDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — FAQ"
+        ]
+      }
+    },
+    "/api/v1/admin/faq/order": {
+      "put": {
+        "operationId": "AdminFaqController_reorder",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminFaqDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner (glisser-déposer)",
+        "tags": [
+          "Administration — FAQ"
+        ]
+      }
+    },
+    "/api/v1/admin/faq/{id}": {
+      "patch": {
+        "operationId": "AdminFaqController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFaqDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFaqDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — FAQ"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminFaqController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — FAQ"
+        ]
+      }
+    },
+    "/api/v1/content/reviews": {
+      "get": {
+        "operationId": "ReviewsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 6,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewListDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Avis approuvés, dans l’ordre choisi, avec la note moyenne",
+        "tags": [
+          "Contenus — avis clients (traiteur)"
+        ]
+      }
+    },
+    "/api/v1/admin/reviews": {
+      "get": {
+        "operationId": "AdminReviewsController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "rejected"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminReviewDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — avis"
+        ]
+      },
+      "post": {
+        "operationId": "AdminReviewsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Saisir un avis reçu (provenance et consentement obligatoires), à modérer",
+        "tags": [
+          "Administration — avis"
+        ]
+      }
+    },
+    "/api/v1/admin/reviews/order": {
+      "put": {
+        "operationId": "AdminReviewsController_reorder",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminReviewDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner (glisser-déposer)",
+        "tags": [
+          "Administration — avis"
+        ]
+      }
+    },
+    "/api/v1/admin/reviews/{id}": {
+      "patch": {
+        "operationId": "AdminReviewsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un avis (texte ou note modifiés → nouvelle modération)",
+        "tags": [
+          "Administration — avis"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminReviewsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — avis"
+        ]
+      }
+    },
+    "/api/v1/admin/reviews/{id}/moderate": {
+      "post": {
+        "operationId": "AdminReviewsController_moderate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModerateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Approuver ou refuser un avis",
+        "tags": [
+          "Administration — avis"
+        ]
+      }
+    },
+    "/api/v1/seo/sitemap": {
+      "get": {
+        "operationId": "SeoController_sitemap",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SitemapEntryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Entrées du sitemap (JSON, pour `app/sitemap.ts` du frontend)",
+        "tags": [
+          "SEO"
+        ]
+      }
+    },
+    "/api/v1/seo/sitemap.xml": {
+      "get": {
+        "operationId": "SeoController_sitemapXml",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Document XML sitemaps.org"
+          }
+        },
+        "summary": "Sitemap du site au format XML",
+        "tags": [
+          "SEO"
+        ]
+      }
+    },
+    "/api/v1/seo/robots.txt": {
+      "get": {
+        "operationId": "SeoController_robots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "robots.txt du site (espaces privés exclus de l’indexation)",
+        "tags": [
+          "SEO"
+        ]
+      }
+    },
+    "/api/v1/seo/organization": {
+      "get": {
+        "operationId": "SeoController_organization",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "JSON-LD à insérer tel quel"
+          }
+        },
+        "summary": "Données structurées schema.org de la marque (Organization)",
+        "tags": [
+          "SEO"
+        ]
+      }
+    },
+    "/robots.txt": {
+      "get": {
+        "operationId": "ApiRobotsController_robots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "robots.txt du domaine de l’API (hors préfixe)",
+        "tags": [
+          "SEO"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "API Les Secrets de Diani",
+    "description": "API REST du site « Les Secrets de Diani » : traiteur, formations, boutique et contenus. Toutes les erreurs suivent le format `ErrorResponseDto` avec un message en français.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "diani_rt": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "diani_rt"
+      }
+    },
+    "schemas": {
+      "FieldErrorDto": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "email"
+          },
+          "messages": {
+            "example": [
+              "doit être une adresse e-mail valide"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "field",
+          "messages"
+        ]
+      },
+      "ErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 400
+          },
+          "code": {
+            "type": "string",
+            "example": "VALIDATION_ERROR"
+          },
+          "message": {
+            "type": "string",
+            "example": "Les données envoyées sont invalides."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldErrorDto"
+            }
+          },
+          "requestId": {
+            "type": "string",
+            "example": "01928f6e-7c1a-7b3e-9a6f-2f1c3d4e5f60"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "message",
+          "requestId"
+        ]
+      },
+      "AuthUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "client",
+              "admin"
+            ]
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role",
+          "firstName",
+          "lastName",
+          "mfaEnabled"
+        ]
+      },
+      "AuthenticatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "authenticated"
+            ]
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Jeton d’accès (à garder en mémoire, jamais dans localStorage)"
+          },
+          "expiresIn": {
+            "type": "number",
+            "example": 900,
+            "description": "Validité du jeton d’accès, en secondes"
+          },
+          "user": {
+            "$ref": "#/components/schemas/AuthUserDto"
+          }
+        },
+        "required": [
+          "status",
+          "accessToken",
+          "expiresIn",
+          "user"
+        ]
+      },
+      "MfaChallengeResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "mfa_required",
+              "mfa_enrollment_required"
+            ],
+            "description": "Administrateur : second facteur à saisir, ou à configurer (première connexion)"
+          },
+          "mfaToken": {
+            "type": "string",
+            "description": "Jeton de défi, valable 5 minutes"
+          }
+        },
+        "required": [
+          "status",
+          "mfaToken"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128,
+            "description": "12 caractères minimum ; les mots de passe courants sont refusés."
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Awa",
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Diallo",
+            "maxLength": 100
+          },
+          "acceptTerms": {
+            "type": "boolean",
+            "description": "Acceptation des CGU et de la politique de confidentialité"
+          },
+          "marketingConsent": {
+            "type": "boolean",
+            "description": "Accepte de recevoir des nouvelles par e-mail"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "acceptTerms"
+        ]
+      },
+      "MessageResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Opération effectuée."
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "TokenDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Jeton reçu par e-mail"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "EmailDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "MfaTokenDto": {
+        "type": "object",
+        "properties": {
+          "mfaToken": {
+            "type": "string",
+            "description": "Jeton de défi reçu après le mot de passe (valable 5 minutes)"
+          }
+        },
+        "required": [
+          "mfaToken"
+        ]
+      },
+      "MfaEnrollmentResponseDto": {
+        "type": "object",
+        "properties": {
+          "secret": {
+            "type": "string",
+            "description": "Secret à saisir dans l’application d’authentification"
+          },
+          "otpauthUrl": {
+            "type": "string",
+            "description": "URI otpauth:// à afficher sous forme de QR code"
+          }
+        },
+        "required": [
+          "secret",
+          "otpauthUrl"
+        ]
+      },
+      "MfaCodeDto": {
+        "type": "object",
+        "properties": {
+          "mfaToken": {
+            "type": "string",
+            "description": "Jeton de défi reçu après le mot de passe (valable 5 minutes)"
+          },
+          "code": {
+            "type": "string",
+            "example": "123456",
+            "description": "Code à 6 chiffres de l’application"
+          }
+        },
+        "required": [
+          "mfaToken",
+          "code"
+        ]
+      },
+      "MfaEnrolledResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "authenticated"
+            ]
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Jeton d’accès (à garder en mémoire, jamais dans localStorage)"
+          },
+          "expiresIn": {
+            "type": "number",
+            "example": 900,
+            "description": "Validité du jeton d’accès, en secondes"
+          },
+          "user": {
+            "$ref": "#/components/schemas/AuthUserDto"
+          },
+          "backupCodes": {
+            "description": "Codes de secours, affichés une seule fois",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "status",
+          "accessToken",
+          "expiresIn",
+          "user",
+          "backupCodes"
+        ]
+      },
+      "MfaVerifyDto": {
+        "type": "object",
+        "properties": {
+          "mfaToken": {
+            "type": "string",
+            "description": "Jeton de défi reçu après le mot de passe (valable 5 minutes)"
+          },
+          "code": {
+            "type": "string",
+            "example": "123456"
+          },
+          "backupCode": {
+            "type": "string",
+            "example": "abcde-fghij",
+            "description": "Code de secours (usage unique)"
+          }
+        },
+        "required": [
+          "mfaToken"
+        ]
+      },
+      "TotpCodeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "BackupCodesResponseDto": {
+        "type": "object",
+        "properties": {
+          "backupCodes": {
+            "description": "Codes de secours à usage unique : affichés une seule fois",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "backupCodes"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Jeton reçu par e-mail"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "token",
+          "password"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "ChangeEmailDto": {
+        "type": "object",
+        "properties": {
+          "newEmail": {
+            "type": "string",
+            "example": "nouvelle-adresse@example.com"
+          },
+          "currentPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "newEmail",
+          "currentPassword"
+        ]
+      },
+      "ProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "client",
+              "admin"
+            ]
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          },
+          "marketingConsent": {
+            "type": "boolean",
+            "description": "Consentement aux e-mails d’information"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role",
+          "firstName",
+          "lastName",
+          "phone",
+          "emailVerified",
+          "mfaEnabled",
+          "marketingConsent",
+          "createdAt"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "phone": {
+            "type": "object",
+            "nullable": true,
+            "example": "+33 6 12 34 56 78"
+          },
+          "marketingConsent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "shipping",
+              "billing"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "line1": {
+            "type": "string"
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "label",
+          "firstName",
+          "lastName",
+          "line1",
+          "line2",
+          "postalCode",
+          "city",
+          "country",
+          "phone",
+          "isDefault"
+        ]
+      },
+      "CreateAddressDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "shipping",
+              "billing"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "example": "Maison",
+            "maxLength": 50
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "line1": {
+            "type": "string",
+            "example": "12 rue des Lilas",
+            "maxLength": 200
+          },
+          "line2": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "75011"
+          },
+          "city": {
+            "type": "string",
+            "example": "Paris",
+            "maxLength": 100
+          },
+          "country": {
+            "type": "string",
+            "example": "FR",
+            "default": "FR",
+            "description": "Code pays ISO 3166-1 alpha-2"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+33 6 12 34 56 78"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "type",
+          "firstName",
+          "lastName",
+          "line1",
+          "postalCode",
+          "city"
+        ]
+      },
+      "UpdateAddressDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "shipping",
+              "billing"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "example": "Maison",
+            "maxLength": 50
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "line1": {
+            "type": "string",
+            "example": "12 rue des Lilas",
+            "maxLength": 200
+          },
+          "line2": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "75011"
+          },
+          "city": {
+            "type": "string",
+            "example": "Paris",
+            "maxLength": 100
+          },
+          "country": {
+            "type": "string",
+            "example": "FR",
+            "default": "FR",
+            "description": "Code pays ISO 3166-1 alpha-2"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+33 6 12 34 56 78"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "DeleteAccountDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "Mot de passe actuel (confirmation)"
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "MediaVariantDto": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": [
+              "avif",
+              "webp"
+            ]
+          },
+          "width": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "format",
+          "width",
+          "url"
+        ]
+      },
+      "MediaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "image",
+              "document"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "processing",
+              "ready",
+              "rejected"
+            ]
+          },
+          "originalName": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "sizeBytes": {
+            "type": "number",
+            "nullable": true
+          },
+          "width": {
+            "type": "number",
+            "nullable": true
+          },
+          "height": {
+            "type": "number",
+            "nullable": true
+          },
+          "alt": {
+            "type": "string"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaVariantDto"
+            }
+          },
+          "blurDataUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "scanResult": {
+            "type": "string",
+            "nullable": true,
+            "description": "clean | skipped"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "originalName",
+          "mimeType",
+          "sizeBytes",
+          "width",
+          "height",
+          "alt",
+          "variants",
+          "blurDataUrl",
+          "rejectionReason",
+          "scanResult",
+          "createdAt"
+        ]
+      },
+      "CreateUploadDto": {
+        "type": "object",
+        "properties": {
+          "alt": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "Texte alternatif (vide si l’image est décorative)"
+          },
+          "filename": {
+            "type": "string",
+            "example": "plateau-decouverte.jpg",
+            "maxLength": 255
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp",
+              "image/avif",
+              "application/pdf"
+            ]
+          },
+          "size": {
+            "type": "number",
+            "description": "Taille exacte du fichier, en octets",
+            "example": 2500000
+          }
+        },
+        "required": [
+          "filename",
+          "contentType",
+          "size"
+        ]
+      },
+      "PresignedUploadDto": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "$ref": "#/components/schemas/MediaDto"
+          },
+          "uploadUrl": {
+            "type": "string",
+            "description": "URL d’envoi (PUT), valable 10 minutes"
+          },
+          "headers": {
+            "type": "object",
+            "description": "En-têtes à envoyer tels quels avec le PUT",
+            "example": {
+              "Content-Type": "image/jpeg"
+            }
+          }
+        },
+        "required": [
+          "media",
+          "uploadUrl",
+          "headers"
+        ]
+      },
+      "DownloadUrlDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL signée, valable 5 minutes"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "UpdateMediaDto": {
+        "type": "object",
+        "properties": {
+          "alt": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "alt"
+        ]
+      },
+      "ImageSourceDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "width": {
+            "type": "number",
+            "description": "Largeur en pixels (descripteur srcset « w »)"
+          }
+        },
+        "required": [
+          "url",
+          "width"
+        ]
+      },
+      "ImageSourcesDto": {
+        "type": "object",
+        "properties": {
+          "avif": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageSourceDto"
+            }
+          },
+          "webp": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageSourceDto"
+            }
+          }
+        },
+        "required": [
+          "avif",
+          "webp"
+        ]
+      },
+      "PublicImageDto": {
+        "type": "object",
+        "properties": {
+          "alt": {
+            "type": "string",
+            "description": "Texte alternatif (vide = image décorative)"
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "blurDataUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Data URI WebP de quelques octets"
+          },
+          "sources": {
+            "$ref": "#/components/schemas/ImageSourcesDto"
+          },
+          "url": {
+            "type": "string",
+            "description": "Plus grande variante WebP (repli, Open Graph)"
+          }
+        },
+        "required": [
+          "alt",
+          "width",
+          "height",
+          "blurDataUrl",
+          "sources",
+          "url"
+        ]
+      },
+      "CategoryRefDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name"
+        ]
+      },
+      "ArticleCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "readingMinutes": {
+            "type": "number"
+          },
+          "publishedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "cover": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "category": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CategoryRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "excerpt",
+          "readingMinutes",
+          "publishedAt",
+          "cover",
+          "category"
+        ]
+      },
+      "ArticleListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArticleCardDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "TocEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Ancre du titre dans le HTML"
+          },
+          "title": {
+            "type": "string"
+          },
+          "level": {
+            "type": "number",
+            "enum": [
+              2,
+              3
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "level"
+        ]
+      },
+      "SeoDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Balise <title> (≤ 70 caractères conseillés)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Meta description (≤ 160 caractères)"
+          },
+          "canonicalUrl": {
+            "type": "string",
+            "description": "URL canonique sur le site"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "canonicalUrl"
+        ]
+      },
+      "ArticleDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "readingMinutes": {
+            "type": "number"
+          },
+          "publishedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "cover": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "category": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CategoryRefDto"
+              }
+            ]
+          },
+          "bodyHtml": {
+            "type": "string",
+            "description": "HTML assaini (liste blanche de balises)"
+          },
+          "toc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TocEntryDto"
+            }
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "seo": {
+            "$ref": "#/components/schemas/SeoDto"
+          },
+          "relatedCourseSlug": {
+            "type": "string",
+            "nullable": true
+          },
+          "relatedArticles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArticleCardDto"
+            }
+          },
+          "jsonLd": {
+            "type": "object",
+            "description": "Données structurées schema.org (Article), à insérer telles quelles"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "excerpt",
+          "readingMinutes",
+          "publishedAt",
+          "cover",
+          "category",
+          "bodyHtml",
+          "toc",
+          "updatedAt",
+          "seo",
+          "relatedCourseSlug",
+          "relatedArticles",
+          "jsonLd"
+        ]
+      },
+      "AdminArticleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "previousSlugs": {
+            "description": "Anciennes adresses redirigées",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "bodyMarkdown": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "scheduled",
+              "published"
+            ],
+            "description": "État calculé"
+          },
+          "publishedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "readingMinutes": {
+            "type": "number"
+          },
+          "categoryId": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverMediaId": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverAlt": {
+            "type": "string"
+          },
+          "seoTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "relatedCourseSlug": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "previousSlugs",
+          "title",
+          "excerpt",
+          "bodyMarkdown",
+          "status",
+          "state",
+          "publishedAt",
+          "readingMinutes",
+          "categoryId",
+          "coverMediaId",
+          "coverAlt",
+          "seoTitle",
+          "seoDescription",
+          "relatedCourseSlug",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminArticleListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminArticleDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "CreateArticleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Réussir sa crème au beurre",
+            "maxLength": 200
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le titre si absent",
+            "example": "reussir-sa-creme-au-beurre"
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Résumé affiché dans les listes"
+          },
+          "bodyMarkdown": {
+            "type": "string",
+            "description": "Contenu en Markdown (le HTML brut est ignoré)",
+            "maxLength": 60000
+          },
+          "categoryId": {
+            "type": "object",
+            "nullable": true
+          },
+          "coverMediaId": {
+            "type": "object",
+            "nullable": true,
+            "description": "Image de couverture (média prêt)"
+          },
+          "coverAlt": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "Texte alternatif de la couverture"
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70,
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160,
+            "nullable": true
+          },
+          "relatedCourseSlug": {
+            "type": "object",
+            "nullable": true,
+            "description": "Formation mise en avant en fin d’article"
+          }
+        },
+        "required": [
+          "title",
+          "excerpt",
+          "bodyMarkdown"
+        ]
+      },
+      "UpdateArticleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Réussir sa crème au beurre",
+            "maxLength": 200
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le titre si absent",
+            "example": "reussir-sa-creme-au-beurre"
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Résumé affiché dans les listes"
+          },
+          "bodyMarkdown": {
+            "type": "string",
+            "description": "Contenu en Markdown (le HTML brut est ignoré)",
+            "maxLength": 60000
+          },
+          "categoryId": {
+            "type": "object",
+            "nullable": true
+          },
+          "coverMediaId": {
+            "type": "object",
+            "nullable": true,
+            "description": "Image de couverture (média prêt)"
+          },
+          "coverAlt": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "Texte alternatif de la couverture"
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70,
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160,
+            "nullable": true
+          },
+          "relatedCourseSlug": {
+            "type": "object",
+            "nullable": true,
+            "description": "Formation mise en avant en fin d’article"
+          }
+        }
+      },
+      "PublishArticleDto": {
+        "type": "object",
+        "properties": {
+          "publishAt": {
+            "type": "string",
+            "description": "Date de publication (ISO 8601). Future = article programmé. Défaut : maintenant.",
+            "example": "2026-11-01T08:00:00+01:00"
+          }
+        }
+      },
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "number"
+          },
+          "articleCount": {
+            "type": "number",
+            "description": "Nombre d’articles publiés (liste publique)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "position"
+        ]
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Pâtisserie",
+            "maxLength": 120
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "description": {
+            "type": "object",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "position": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Pâtisserie",
+            "maxLength": 120
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "description": {
+            "type": "object",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "position": {
+            "type": "number",
+            "default": 0
+          }
+        }
+      },
+      "PageLinkDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "title"
+        ]
+      },
+      "PageDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "bodyHtml": {
+            "type": "string"
+          },
+          "toc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TocEntryDto"
+            }
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "seo": {
+            "$ref": "#/components/schemas/SeoDto"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "bodyHtml",
+          "toc",
+          "updatedAt",
+          "seo"
+        ]
+      },
+      "AdminPageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "bodyMarkdown": {
+            "type": "string"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "seoTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "bodyMarkdown",
+          "published",
+          "seoTitle",
+          "seoDescription",
+          "updatedAt"
+        ]
+      },
+      "UpsertPageDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Mentions légales",
+            "maxLength": 200
+          },
+          "bodyMarkdown": {
+            "type": "string",
+            "description": "Contenu en Markdown",
+            "maxLength": 60000
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Visible sur le site"
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70,
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160,
+            "nullable": true
+          }
+        },
+        "required": [
+          "title",
+          "bodyMarkdown",
+          "published"
+        ]
+      },
+      "FaqItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "general",
+              "traiteur",
+              "formations",
+              "boutique",
+              "livraison",
+              "paiement",
+              "retours"
+            ]
+          },
+          "question": {
+            "type": "string"
+          },
+          "answerHtml": {
+            "type": "string",
+            "description": "Réponse en HTML assaini"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "question",
+          "answerHtml"
+        ]
+      },
+      "FaqListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaqItemDto"
+            }
+          },
+          "jsonLd": {
+            "type": "object",
+            "description": "Données structurées schema.org (FAQPage)"
+          }
+        },
+        "required": [
+          "items",
+          "jsonLd"
+        ]
+      },
+      "AdminFaqDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "general",
+              "traiteur",
+              "formations",
+              "boutique",
+              "livraison",
+              "paiement",
+              "retours"
+            ]
+          },
+          "question": {
+            "type": "string"
+          },
+          "answerMarkdown": {
+            "type": "string"
+          },
+          "answerHtml": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          },
+          "published": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "question",
+          "answerMarkdown",
+          "answerHtml",
+          "position",
+          "published"
+        ]
+      },
+      "CreateFaqDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "general",
+              "traiteur",
+              "formations",
+              "boutique",
+              "livraison",
+              "paiement",
+              "retours"
+            ]
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "answerMarkdown": {
+            "type": "string",
+            "description": "Réponse en Markdown",
+            "maxLength": 5000
+          },
+          "published": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "category",
+          "question",
+          "answerMarkdown"
+        ]
+      },
+      "ReorderDto": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "description": "Identifiants dans le nouvel ordre",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "ids"
+        ]
+      },
+      "UpdateFaqDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "general",
+              "traiteur",
+              "formations",
+              "boutique",
+              "livraison",
+              "paiement",
+              "retours"
+            ]
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "answerMarkdown": {
+            "type": "string",
+            "description": "Réponse en Markdown",
+            "maxLength": 5000
+          },
+          "published": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "ReviewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "authorName": {
+            "type": "string",
+            "example": "Awa D."
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string"
+          },
+          "occasion": {
+            "type": "string",
+            "nullable": true,
+            "example": "Anniversaire, 40 personnes"
+          },
+          "receivedOn": {
+            "type": "string",
+            "example": "2026-09-12"
+          }
+        },
+        "required": [
+          "id",
+          "authorName",
+          "rating",
+          "content",
+          "occasion",
+          "receivedOn"
+        ]
+      },
+      "ReviewListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReviewDto"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Nombre total d’avis publiés"
+          },
+          "average": {
+            "type": "number",
+            "nullable": true,
+            "description": "Note moyenne (1 décimale)"
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "average"
+        ]
+      },
+      "AdminReviewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "authorName": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "content": {
+            "type": "string"
+          },
+          "occasion": {
+            "type": "string",
+            "nullable": true
+          },
+          "receivedOn": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "sourceNote": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ]
+          },
+          "position": {
+            "type": "number"
+          },
+          "moderatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "authorName",
+          "rating",
+          "content",
+          "occasion",
+          "receivedOn",
+          "sourceNote",
+          "status",
+          "position",
+          "moderatedAt",
+          "createdAt"
+        ]
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "authorName": {
+            "type": "string",
+            "example": "Awa D.",
+            "description": "Nom affiché, tel qu’autorisé par la cliente"
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "occasion": {
+            "type": "object",
+            "example": "Anniversaire, 40 personnes",
+            "maxLength": 120
+          },
+          "receivedOn": {
+            "type": "string",
+            "example": "2026-09-12",
+            "description": "Date de réception de l’avis"
+          },
+          "sourceNote": {
+            "type": "string",
+            "example": "Message WhatsApp du 12/09",
+            "description": "Provenance (interne, jamais publiée) : obligatoire"
+          },
+          "consentConfirmed": {
+            "type": "boolean",
+            "description": "La cliente a accepté la publication de son avis"
+          }
+        },
+        "required": [
+          "authorName",
+          "rating",
+          "content",
+          "receivedOn",
+          "sourceNote",
+          "consentConfirmed"
+        ]
+      },
+      "UpdateReviewDto": {
+        "type": "object",
+        "properties": {
+          "authorName": {
+            "type": "string",
+            "example": "Awa D.",
+            "description": "Nom affiché, tel qu’autorisé par la cliente"
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "occasion": {
+            "type": "object",
+            "example": "Anniversaire, 40 personnes",
+            "maxLength": 120
+          },
+          "receivedOn": {
+            "type": "string",
+            "example": "2026-09-12",
+            "description": "Date de réception de l’avis"
+          },
+          "sourceNote": {
+            "type": "string",
+            "example": "Message WhatsApp du 12/09",
+            "description": "Provenance (interne, jamais publiée) : obligatoire"
+          }
+        }
+      },
+      "ModerateReviewDto": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "SitemapEntryDto": {
+        "type": "object",
+        "properties": {
+          "loc": {
+            "type": "string"
+          },
+          "lastModified": {
+            "type": "string",
+            "nullable": true
+          },
+          "changeFrequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly",
+              "yearly"
+            ]
+          },
+          "priority": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "loc",
+          "lastModified",
+          "changeFrequency",
+          "priority"
+        ]
+      }
+    }
+  }
+}

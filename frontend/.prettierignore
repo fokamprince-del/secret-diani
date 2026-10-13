@@ -1,0 +1,9 @@
+.next/
+node_modules/
+coverage/
+playwright-report/
+test-results/
+.lighthouseci/
+openapi/openapi.json
+package-lock.json
+docs/CAHIER_DES_CHARGES.md

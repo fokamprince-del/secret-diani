@@ -1,0 +1,33 @@
+.page {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-5);
+  padding-block: clamp(4rem, 3rem + 6vw, 8rem);
+}
+
+.code {
+  font-family: var(--font-manuscrit);
+  font-size: clamp(4rem, 3rem + 5vw, 7rem);
+  line-height: 1;
+  /* Grand texte : --terra (4,3:1) suffit, --nude (1,6:1) serait illisible. */
+  color: var(--terra);
+}
+
+.titre {
+  max-width: 20ch;
+}
+
+.texte {
+  max-width: var(--mesure);
+}
+
+.reference {
+  font-size: var(--taille-petit);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  margin-top: var(--e-3);
+}

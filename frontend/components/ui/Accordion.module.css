@@ -1,0 +1,72 @@
+.accordeon {
+  border-top: 1px solid var(--filet);
+  interpolate-size: allow-keywords;
+}
+
+.section {
+  border-bottom: 1px solid var(--filet);
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-4);
+  min-height: 56px;
+  padding: var(--e-4) 0;
+  list-style: none;
+  cursor: pointer;
+  color: var(--cacao);
+}
+
+.question::-webkit-details-marker {
+  display: none;
+}
+
+.question:hover .intitule {
+  color: var(--terra-d);
+}
+
+.intitule {
+  font-family: var(--font-texte);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
+  color: inherit;
+  transition: color var(--duree-courte) ease;
+}
+
+.chevron {
+  flex: none;
+  color: var(--terra-d);
+  transition: transform var(--duree) var(--courbe);
+}
+
+.section[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.reponse {
+  padding-bottom: var(--e-5);
+  max-width: var(--mesure);
+}
+
+.reponse > * + * {
+  margin-top: var(--e-3);
+}
+
+/* Ouverture fluide (navigateurs récents) ; instantanée ailleurs ou si le mouvement est réduit. */
+@media (prefers-reduced-motion: no-preference) {
+  .section::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size var(--duree) var(--courbe),
+      content-visibility var(--duree) allow-discrete;
+  }
+
+  .section[open]::details-content {
+    block-size: auto;
+  }
+}

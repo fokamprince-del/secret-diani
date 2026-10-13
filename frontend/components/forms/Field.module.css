@@ -1,0 +1,80 @@
+.champ {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.libelle {
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.facultatif {
+  font-weight: 400;
+  color: var(--texte);
+}
+
+.aide {
+  font-size: var(--taille-petit);
+  color: var(--texte);
+}
+
+.saisie {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--nude);
+  border-radius: 10px;
+  background-color: var(--surface);
+  font-size: 1rem; /* ≥ 16 px : pas de zoom automatique sur iOS */
+  line-height: 1.5;
+  transition:
+    border-color var(--duree-courte) ease,
+    box-shadow var(--duree-courte) ease;
+}
+
+textarea.saisie {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.saisie:hover {
+  border-color: var(--terra);
+}
+
+.saisie:focus-visible {
+  outline: none;
+  border-color: var(--terra-d);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--terra-d) 25%, transparent);
+}
+
+.champ[data-invalid] .saisie {
+  border-color: var(--erreur);
+}
+
+.erreur {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-2);
+  font-size: var(--taille-petit);
+  color: var(--erreur);
+}
+
+.erreur svg {
+  flex: none;
+  margin-top: 0.15em;
+}
+
+.case {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-3);
+  min-height: var(--cible);
+}
+
+.case input {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--terra-d);
+}

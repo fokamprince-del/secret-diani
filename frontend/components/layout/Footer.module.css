@@ -1,0 +1,97 @@
+.pied {
+  margin-top: var(--section);
+  padding-top: var(--e-8);
+  background-color: var(--sable);
+  border-top: 1px solid var(--filet);
+}
+
+.grille {
+  display: grid;
+  gap: var(--e-7);
+  padding-bottom: var(--e-7);
+}
+
+@media (min-width: 48rem) {
+  .grille {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.marque {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+}
+
+.accroche {
+  max-width: 32ch;
+}
+
+.reseau {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--cible);
+  font-weight: 500;
+}
+
+.titre {
+  margin-bottom: var(--e-3);
+  font-family: var(--font-texte);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cacao);
+}
+
+.colonne li a,
+.liensLegaux a,
+.lienBouton {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+}
+
+.lien {
+  color: var(--texte);
+  background-size: 0% 1px;
+}
+
+.lien:hover {
+  color: var(--terra-d);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-2) var(--e-5);
+  padding-block: var(--e-4) max(var(--e-5), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--filet);
+  font-size: var(--taille-petit);
+}
+
+.liensLegaux {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--e-5);
+}
+
+.lienBouton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--texte);
+  font-size: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.lienBouton:hover {
+  color: var(--terra-d);
+}

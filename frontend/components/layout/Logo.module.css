@@ -1,0 +1,27 @@
+.logo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  min-height: var(--cible);
+  align-content: center;
+  color: var(--cacao);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.logo:hover {
+  color: var(--cacao);
+}
+
+.debut {
+  font-family: var(--font-titre);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.1875rem);
+  letter-spacing: 0.01em;
+}
+
+.nom {
+  font-family: var(--font-manuscrit);
+  font-size: clamp(1.875rem, 1.6rem + 1vw, 2.375rem);
+  color: var(--terra-d);
+  transform: translateY(0.08em);
+}

@@ -1,0 +1,27 @@
+.cadre {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+  background-size: cover;
+  background-position: center;
+}
+
+.cadre picture,
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform var(--duree-longue) var(--courbe);
+}
+
+@media (hover: hover) {
+  .zoom:hover .image,
+  :global(a:hover) > .zoom .image,
+  :global(a:focus-visible) > .zoom .image {
+    transform: scale(1.03);
+  }
+}
