@@ -40,6 +40,25 @@ export interface MailTemplateData {
     balance: string;
     conditions: string[];
   };
+  // Boutique (phase 5)
+  'order-confirmed': {
+    firstName: string;
+    reference: string;
+    itemLines: string[];
+    subtotal: string;
+    shipping: string;
+    total: string;
+    deliveryLine: string;
+    trackingLink: string;
+  };
+  'order-shipped': {
+    firstName: string;
+    reference: string;
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingLink: string;
+  };
+  'stock-low': { lines: string[] };
 }
 
 export type MailTemplate = keyof MailTemplateData;

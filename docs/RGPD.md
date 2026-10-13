@@ -55,6 +55,25 @@
 
 Droit d'accès : `GET /api/v1/me/export` inclut les demandes envoyées avec l'adresse du compte, notes internes comprises. Pour une personne sans compte, Diani répond depuis l'administration (recherche par adresse e-mail). Effacement anticipé sur demande : modification ou annulation depuis l'administration (outil dédié prévu avec le back-office, phase 9).
 
+## T3 — Commandes boutique et facturation (phase 5)
+
+| Rubrique | Contenu |
+|---|---|
+| Finalité | Vendre les kits et accessoires : panier, commande, livraison ou retrait, facturation, suivi, service après-vente |
+| Base légale | Exécution du contrat (CGV acceptées et horodatées à la commande, avec leur version) ; obligation légale pour les factures (conservation comptable) |
+| Personnes concernées | Clientes et clients, avec ou sans compte |
+| Données | E-mail, prénom, nom, téléphone (facultatif), adresses de livraison et de facturation, articles, montants, transporteur et numéro de suivi, note de la cliente. Aucune donnée de carte bancaire (paiement hébergé par Stripe ou PayPal, phase 6) |
+| Panier invité | Jeton aléatoire en cookie strictement nécessaire (panier), seule son empreinte est en base ; aucune donnée personnelle |
+| Destinataires | Diani (administration) ; sous-traitants : hébergeur VPS, Resend (confirmation, expédition), OVH (stockage des factures) ; transporteur (adresse de livraison) |
+| Sécurité | Voir `docs/SECURITY.md` (modèle de menaces boutique) : lien de suivi signé, anti-IDOR, factures inaltérables |
+
+| Donnée | Durée | Mécanisme |
+|---|---|---|
+| Panier | 30 jours sans modification (invité), 1 an (compte) | Purge quotidienne des paniers expirés |
+| Commande et facture | 10 ans (obligation comptable, art. L123-22 du Code de commerce) | Conservées, y compris après la suppression du compte (le compte est anonymisé, la commande garde ses coordonnées de facturation) ; facture inaltérable (déclencheur en base) |
+
+Droit d'accès : `GET /api/v1/me/export` inclut les commandes du compte (avec le numéro de facture). Une commande passée sans compte est retrouvée par Diani dans l'administration (recherche par e-mail).
+
 ## Traitements à venir
 
-T3 Commandes et facturation (phases 5-6) · T4 Formations et progression (phase 7) · T5 Contact et newsletter (phase 8).
+T4 Formations et progression (phase 7) · T5 Contact et newsletter (phase 8).

@@ -9,6 +9,7 @@ import { MailWorkerModule } from './mail/mail-worker.module';
 import { MediaWorkerModule } from './media/media-worker.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
+import { ShopWorkerModule } from './shop/worker/shop-worker.module';
 import { StorageModule } from './storage/storage.module';
 
 /** Module du conteneur `worker` : consommateurs des files BullMQ (e-mails, PDF, images, webhooks). */
@@ -24,6 +25,7 @@ import { StorageModule } from './storage/storage.module';
     StorageModule,
     MediaWorkerModule,
     RevalidateWorkerModule,
+    ShopWorkerModule,
   ],
   providers: [WorkerHeartbeatService],
 })

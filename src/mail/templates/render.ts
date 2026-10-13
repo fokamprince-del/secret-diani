@@ -172,6 +172,36 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
         paragraph: `Référence de votre commande : ${data.reference}. Merci pour votre confiance !`,
       },
     ]),
+
+  'order-confirmed': (data) =>
+    mail(`Votre commande ${data.reference} est confirmée`, 'Merci pour votre commande !', [
+      { paragraph: greeting(data.firstName) },
+      { paragraph: 'Votre paiement est bien reçu : nous préparons votre commande avec soin.' },
+      ...data.itemLines.map((line) => ({ paragraph: line })),
+      { paragraph: `Sous-total : ${data.subtotal} — Livraison : ${data.shipping}` },
+      { paragraph: `Total payé : ${data.total}` },
+      { paragraph: data.deliveryLine },
+      { paragraph: 'Votre facture est disponible depuis le suivi de votre commande.' },
+      { button: { label: 'Suivre ma commande', url: data.trackingLink } },
+    ]),
+
+  'order-shipped': (data) =>
+    mail(`Votre commande ${data.reference} est en route`, 'Votre commande est expédiée', [
+      { paragraph: greeting(data.firstName) },
+      {
+        paragraph: data.trackingNumber
+          ? `Votre commande a été remise au transporteur${data.carrier ? ` (${data.carrier})` : ''}. Numéro de suivi : ${data.trackingNumber}.`
+          : `Votre commande a été remise au transporteur${data.carrier ? ` (${data.carrier})` : ''}.`,
+      },
+      { button: { label: 'Suivre ma commande', url: data.trackingLink } },
+    ]),
+
+  'stock-low': (data) =>
+    mail('Alerte : stock bas en boutique', 'Stock bas', [
+      { paragraph: 'Ces articles sont passés sous leur seuil d’alerte :' },
+      ...data.lines.map((line) => ({ paragraph: `– ${line}` })),
+      { paragraph: 'Pensez au réassort depuis l’administration (Boutique → Stock).' },
+    ]),
 };
 
 export function renderMail(job: Pick<MailJob, 'template' | 'data'>): RenderedMail {

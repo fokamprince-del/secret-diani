@@ -43,6 +43,15 @@ export const AuditAction = {
   CATERING_REQUEST_STATUS_CHANGED: 'catering.request_status_changed',
   CATERING_DEPOSIT_RECORDED: 'catering.deposit_recorded',
   CATERING_SLOT_CHANGED: 'catering.slot_changed',
+  // Boutique (phase 5)
+  SHOP_PRODUCT_CHANGED: 'shop.product_changed',
+  SHOP_STOCK_ADJUSTED: 'shop.stock_adjusted',
+  SHOP_SHIPPING_CHANGED: 'shop.shipping_changed',
+  SHOP_ORDER_CREATED: 'shop.order_created',
+  SHOP_ORDER_PAID: 'shop.order_paid',
+  SHOP_ORDER_STATUS_CHANGED: 'shop.order_status_changed',
+  SHOP_INVOICE_ISSUED: 'shop.invoice_issued',
+  SHOP_ORDERS_EXPORTED: 'shop.orders_exported',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

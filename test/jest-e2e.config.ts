@@ -34,6 +34,7 @@ const config: Config = {
     './src/users/': { lines: 80 },
     './src/rgpd/': { lines: 80 },
     './src/catering/': { lines: 80 },
+    './src/shop/': { lines: 80 },
   },
 };
 

@@ -280,3 +280,44 @@ Le code existe et est testé, mais désactivé par défaut : `GET /catering/slot
 ### D-049 · Données de référence du traiteur
 
 Le seed crée les catégories, produits, variantes et parfums du cahier des charges, **visibles** (prix communiqués par Diani) mais sans photo, ainsi que les paramètres d'acompte. Il est idempotent et ne modifie jamais un élément existant.
+
+## Phase 5 — Boutique
+
+### D-050 · Stock, réservations et survente
+- Un stock par variante : **en stock** et **réservé** (paiements en cours) ; disponible = en stock − réservé.
+- Réserver, vendre, libérer et remettre en stock sont des mises à jour **conditionnelles atomiques** (`UPDATE … WHERE on_hand - reserved >= n`) plutôt qu'un `SELECT … FOR UPDATE` suivi d'une écriture : une seule requête, aucun verrou applicatif. Les variantes sont toujours traitées dans le même ordre (pas d'interblocage entre deux commandes).
+- Contraintes CHECK en dernier rempart : `on_hand >= 0`, `0 <= reserved <= on_hand`. Testé : cinq paniers se disputent la dernière pièce, une seule commande passe.
+- Réservation de **15 minutes** à la validation du panier (paramètre `shop.reservation_minutes`) ; le worker annule chaque minute les commandes non payées et libère leur stock.
+- Un paiement confirmé après expiration revend le stock s'il est encore disponible ; sinon la commande reste annulée et la confirmation renvoie `stock_unavailable` : le paiement doit être remboursé (phase 6).
+- Une nouvelle validation du même panier annule la commande encore en attente et libère son stock avant le recalcul : jamais deux réservations pour un panier, ni de blocage par sa propre réservation (bogue trouvé par les tests e2e).
+- Plafond de 10 exemplaires d'un même article par commande (`shop.max_quantity_per_item`), et 5 validations de panier par 10 minutes et par IP : un robot ne peut pas immobiliser tout le stock.
+
+### D-051 · Panier invité et connecté
+- Invité : jeton aléatoire de 256 bits en cookie `diani_cart` (`HttpOnly; Secure; SameSite=Strict`, chemin `/api/v1/shop`), seule son empreinte SHA-256 est en base ; durée 30 jours glissants. Connectée : panier lié au compte (1 an).
+- Routes `@OptionalAuth()` : sans en-tête `Authorization`, panier invité ; avec un jeton, celui-ci est vérifié (un jeton invalide donne 401, jamais un panier invité).
+- Les routes qui modifient le panier ou valident la commande exigent la garde CSRF existante (en-tête `X-CSRF-Token` + origine), puisque le panier invité est authentifié par cookie.
+- Fusion à la connexion par une route explicite (`POST /shop/cart/merge`) : quantités additionnées et plafonnées, panier invité supprimé, cookie effacé.
+- Aucun prix stocké dans le panier : tout est recalculé à chaque lecture ; un champ de prix envoyé est refusé (400).
+
+### D-052 · Lien de suivi signé
+Le suivi d'une commande sans compte se fait par un **lien signé** : identifiant de commande + HMAC-SHA256 tronqué à 128 bits, clé dérivée (HKDF) de `FIELD_ENCRYPTION_KEY` (l'ancienne clé reste acceptée pendant une rotation). Rien n'est stocké, le lien peut figurer dans chaque e-mail (un jeton aléatoire haché n'aurait pas pu être renvoyé au moment du paiement). Il donne un accès en lecture à la commande et à sa facture ; les notes internes de l'historique n'y figurent pas.
+
+### D-053 · Factures
+- Émises dans la transaction qui enregistre le paiement ; numéro `F-AAAA-NNNNN` tiré d'une séquence par année (`invoice_sequences`, `INSERT … ON CONFLICT DO UPDATE … RETURNING`) : en cas d'échec, l'incrément est annulé avec la transaction, la **numérotation est continue**.
+- Contenu figé à l'émission (vendeur, acheteur, lignes, montants, mention TVA) ; table **inaltérable** par déclencheur : seule la pose du PDF est permise, une fois ; aucune suppression avant 10 ans.
+- PDF produit par le worker (`pdfkit`, polices PDF standard : accents et symbole euro inclus) et stocké dans le bucket privé ; téléchargement par URL signée de 5 minutes.
+- Vendeur et mention TVA : paramètre `legal.seller`. Hypothèse par défaut : franchise en base de TVA (« TVA non applicable, art. 293 B du CGI »), **à confirmer par Diani**, ainsi que forme juridique, adresse et SIRET, obligatoires sur une facture.
+
+### D-054 · Statuts de commande
+`en attente de paiement → payée → en préparation → expédiée → livrée`. « Payée » n'est posé que par la confirmation du paiement, « remboursée » que par un remboursement (phase 6) : l'administration ne choisit que les étapes logistiques. Une commande non payée s'annule (motif obligatoire, stock libéré) ; une commande payée se rembourse. L'expédition envoie l'e-mail de suivi (transporteur et numéro facultatifs).
+
+### D-055 · Catalogue et disponibilité
+- Textes, prix et images sont mis en cache (invalidés à chaque modification) ; la **disponibilité est lue en direct**, et les réponses publiques ne sont cachées que 30 s (CDN compris) : un « plus que 2 » ne reste jamais périmé pendant un pic de ventes.
+- Le tableau comparatif des kits est **déduit de leur composition** (éléments rapprochés sans tenir compte de la casse, des accents ni des espaces) : aucune double saisie.
+- Une variante déjà vendue, réservée ou mise en panier n'est jamais effacée : elle est désactivée (historique des mouvements et des commandes intact). Suppression de produit logique, slug libéré.
+
+### D-056 · Export CSV
+Séparateur « ; », UTF-8 avec BOM (Excel français), et **neutralisation des formules** : une cellule qui commence par `=`, `+`, `-`, `@`, tabulation ou retour chariot est préfixée d'une apostrophe (injection CSV, OWASP), sauf un nombre.
+
+### D-057 · Données de référence de la boutique
+Le seed crée les trois kits du cahier des charges (prix indicatifs) **masqués et sans stock** : composition, poids, photos et stock sont à compléter. Aucun tarif de livraison n'est inventé ; tant qu'il n'en existe pas, aucune commande ne peut être validée.

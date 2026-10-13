@@ -4219,6 +4219,1399 @@
           "Administration — traiteur (demandes)"
         ]
       }
+    },
+    "/api/v1/shop/products": {
+      "get": {
+        "operationId": "ShopController_list",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "kit",
+                "accessory"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShopProductCardDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Kits et accessoires (prix, image, disponibilité en direct)",
+        "tags": [
+          "Boutique"
+        ]
+      }
+    },
+    "/api/v1/shop/products/{slug}": {
+      "get": {
+        "operationId": "ShopController_detail",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopProductDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Fiche produit : variantes, composition, photos, SEO, données structurées",
+        "tags": [
+          "Boutique"
+        ]
+      }
+    },
+    "/api/v1/shop/kits/comparison": {
+      "get": {
+        "operationId": "ShopController_comparison",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KitComparisonDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Tableau comparatif des kits (déduit de leur composition)",
+        "tags": [
+          "Boutique"
+        ]
+      }
+    },
+    "/api/v1/shop/orders/track": {
+      "get": {
+        "operationId": "ShopController_track",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "description": "Jeton du lien de suivi reçu par e-mail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Suivi d’une commande par le lien signé reçu par e-mail (sans compte)",
+        "tags": [
+          "Boutique"
+        ]
+      }
+    },
+    "/api/v1/shop/orders/track/invoice": {
+      "get": {
+        "operationId": "ShopController_trackedInvoice",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "description": "Jeton du lien de suivi reçu par e-mail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Facture en préparation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Facture d’une commande suivie par lien signé (URL de 5 minutes)",
+        "tags": [
+          "Boutique"
+        ]
+      }
+    },
+    "/api/v1/shop/cart": {
+      "get": {
+        "description": "Avec `?country=FR`, les options de livraison applicables sont calculées.",
+        "operationId": "CartController_view",
+        "parameters": [
+          {
+            "name": "country",
+            "required": false,
+            "in": "query",
+            "description": "Pays de livraison (ISO 3166-1 alpha-2) pour calculer les options de livraison",
+            "schema": {
+              "example": "FR",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Panier (compte ou invité), recalculé par le serveur",
+        "tags": [
+          "Boutique — panier et commande"
+        ]
+      }
+    },
+    "/api/v1/shop/cart/items": {
+      "post": {
+        "operationId": "CartController_add",
+        "parameters": [
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF du cookie de panier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCartItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stock insuffisant ou plafond atteint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Ajouter au panier (quantité cumulée, plafonnée au stock disponible)",
+        "tags": [
+          "Boutique — panier et commande"
+        ]
+      }
+    },
+    "/api/v1/shop/cart/items/{variantId}": {
+      "patch": {
+        "operationId": "CartController_set",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF du cookie de panier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCartItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Modifier une quantité (0 retire l’article)",
+        "tags": [
+          "Boutique — panier et commande"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_remove",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF du cookie de panier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retirer un article",
+        "tags": [
+          "Boutique — panier et commande"
+        ]
+      }
+    },
+    "/api/v1/shop/checkout": {
+      "post": {
+        "description": "Compte facultatif (e-mail obligatoire sans compte). Prix, frais de port et stock recalculés par le serveur. Le paiement (Stripe, PayPal) suit avec la phase Paiements.",
+        "operationId": "CartController_checkout",
+        "parameters": [
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF du cookie de panier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResultDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Panier modifié ou stock insuffisant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Valider le panier : commande « en attente de paiement », stock réservé 15 minutes",
+        "tags": [
+          "Boutique — panier et commande"
+        ]
+      }
+    },
+    "/api/v1/shop/cart/merge": {
+      "post": {
+        "description": "Le cookie du panier invité est ensuite effacé.",
+        "operationId": "CartMergeController_merge",
+        "parameters": [
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "description": "Valeur quelconque non vide (protection CSRF du cookie de panier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Après connexion : fusionner le panier invité (cookie) dans celui du compte",
+        "tags": [
+          "Boutique — panier et commande"
+        ]
+      }
+    },
+    "/api/v1/me/orders": {
+      "get": {
+        "operationId": "MyOrdersController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compte — commandes"
+        ]
+      }
+    },
+    "/api/v1/me/orders/{id}": {
+      "get": {
+        "operationId": "MyOrdersController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compte — commandes"
+        ]
+      }
+    },
+    "/api/v1/me/orders/{id}/invoice": {
+      "get": {
+        "operationId": "MyOrdersController_invoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Facture PDF (URL signée de 5 minutes)",
+        "tags": [
+          "Compte — commandes"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/products": {
+      "get": {
+        "operationId": "AdminShopController_listProducts",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "kit",
+                "accessory"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminShopProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminShopController_createProduct",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShopProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminShopProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un produit ou un kit (variantes, composition, photos)",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/products/order": {
+      "put": {
+        "operationId": "AdminShopController_reorderProducts",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminShopProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner les produits (glisser-déposer)",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/products/{id}": {
+      "get": {
+        "operationId": "AdminShopController_getProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminShopProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      },
+      "patch": {
+        "description": "Les tableaux fournis remplacent l’existant ; une variante déjà vendue est désactivée, jamais effacée.",
+        "operationId": "AdminShopController_updateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShopProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminShopProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un produit (prix, textes, photos, visibilité…)",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminShopController_removeProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/stock": {
+      "get": {
+        "operationId": "AdminShopController_listStock",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminStockDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Stock par variante : en stock, réservé, disponible, seuil d’alerte",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/stock/{variantId}/adjust": {
+      "post": {
+        "operationId": "AdminShopController_adjustStock",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStockDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réassort ou inventaire (+/−), historisé",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/stock/{variantId}/threshold": {
+      "put": {
+        "operationId": "AdminShopController_setThreshold",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockThresholdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStockDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Seuil d’alerte « stock bas »",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/stock/{variantId}/movements": {
+      "get": {
+        "operationId": "AdminShopController_movements",
+        "parameters": [
+          {
+            "name": "variantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockMovementDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historique des mouvements (200 derniers)",
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/shipping-rates": {
+      "get": {
+        "operationId": "AdminShopController_listRates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShippingRateDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminShopController_createRate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShippingRateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShippingRateDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/shipping-rates/order": {
+      "put": {
+        "operationId": "AdminShopController_reorderRates",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShippingRateDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/shipping-rates/{id}": {
+      "patch": {
+        "operationId": "AdminShopController_updateRate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShippingRateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShippingRateDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminShopController_removeRate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (catalogue, stock, livraison)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders": {
+      "get": {
+        "operationId": "AdminOrdersController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending_payment",
+                "paid",
+                "preparing",
+                "shipped",
+                "delivered",
+                "cancelled",
+                "refunded"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "Commandes passées à partir de cette date (AAAA-MM-JJ)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "Commandes passées jusqu’à cette date incluse (AAAA-MM-JJ)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Référence (CMD-000042), e-mail ou nom",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrderListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Commandes (filtres : statut, dates, référence, e-mail, nom)",
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/export": {
+      "get": {
+        "operationId": "AdminOrdersController_export",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending_payment",
+                "paid",
+                "preparing",
+                "shipped",
+                "delivered",
+                "cancelled",
+                "refunded"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "AAAA-MM-JJ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "AAAA-MM-JJ (inclus)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fichier CSV (séparateur « ; », UTF-8 avec BOM)",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export CSV (tableur) des commandes filtrées",
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}": {
+      "get": {
+        "operationId": "AdminOrdersController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrderDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}/status": {
+      "post": {
+        "description": "L’expédition envoie l’e-mail de suivi. « Payée » et « remboursée » sont posés par les paiements.",
+        "operationId": "AdminOrdersController_changeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeOrderStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrderDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Étape logistique : en préparation, expédiée (avec suivi), livrée ; annuler une commande non payée",
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}/invoice": {
+      "get": {
+        "operationId": "AdminOrdersController_invoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Facture PDF (URL signée de 5 minutes)",
+        "tags": [
+          "Administration — boutique (commandes)"
+        ]
+      }
     }
   },
   "info": {
@@ -7995,6 +9388,1843 @@
         },
         "required": [
           "text"
+        ]
+      },
+      "AvailabilityDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_stock",
+              "low_stock",
+              "out_of_stock"
+            ]
+          },
+          "remaining": {
+            "type": "number",
+            "nullable": true,
+            "description": "Quantité à afficher (« plus que 2 ») sous le seuil ; null sinon"
+          }
+        },
+        "required": [
+          "status",
+          "remaining"
+        ]
+      },
+      "ShopProductCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "kit",
+              "accessory"
+            ]
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromPriceCents": {
+            "type": "number",
+            "description": "Prix le plus bas (« à partir de »), en centimes"
+          },
+          "image": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "availability": {
+            "description": "Meilleure disponibilité des variantes",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "kind",
+          "shortDescription",
+          "fromPriceCents",
+          "image",
+          "availability"
+        ]
+      },
+      "ShopVariantDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string",
+            "example": "KIT-DEBUTANT"
+          },
+          "label": {
+            "type": "string",
+            "example": "Standard"
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 3799,
+            "description": "Prix TTC en centimes"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailabilityDto"
+          }
+        },
+        "required": [
+          "id",
+          "sku",
+          "label",
+          "priceCents",
+          "availability"
+        ]
+      },
+      "KitItemDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Poche à douille"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 2
+          },
+          "details": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "label",
+          "quantity",
+          "details"
+        ]
+      },
+      "ShopProductDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "kit",
+              "accessory"
+            ]
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromPriceCents": {
+            "type": "number",
+            "description": "Prix le plus bas (« à partir de »), en centimes"
+          },
+          "image": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "availability": {
+            "description": "Meilleure disponibilité des variantes",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityDto"
+              }
+            ]
+          },
+          "descriptionHtml": {
+            "type": "string",
+            "description": "Description en HTML assaini"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShopVariantDto"
+            }
+          },
+          "composition": {
+            "description": "Composition (kits)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemDto"
+            }
+          },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicImageDto"
+            }
+          },
+          "seo": {
+            "$ref": "#/components/schemas/SeoDto"
+          },
+          "jsonLd": {
+            "type": "object",
+            "description": "Données structurées schema.org (Product + Offer)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "kind",
+          "shortDescription",
+          "fromPriceCents",
+          "image",
+          "availability",
+          "descriptionHtml",
+          "variants",
+          "composition",
+          "gallery",
+          "seo",
+          "jsonLd"
+        ]
+      },
+      "ComparisonKitDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "fromPriceCents": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "fromPriceCents"
+        ]
+      },
+      "ComparisonRowDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Poche à douille"
+          },
+          "values": {
+            "nullable": true,
+            "description": "Quantité par kit, dans l’ordre des colonnes (null = absent)",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "label",
+          "values"
+        ]
+      },
+      "KitComparisonDto": {
+        "type": "object",
+        "properties": {
+          "kits": {
+            "description": "Colonnes, du moins cher au plus cher",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComparisonKitDto"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComparisonRowDto"
+            }
+          }
+        },
+        "required": [
+          "kits",
+          "rows"
+        ]
+      },
+      "OrderLineDto": {
+        "type": "object",
+        "properties": {
+          "productName": {
+            "type": "string"
+          },
+          "variantLabel": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitPriceCents": {
+            "type": "number",
+            "description": "Prix unitaire figé à l’achat, en centimes"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "lineTotalCents": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "productName",
+          "variantLabel",
+          "sku",
+          "unitPriceCents",
+          "quantity",
+          "lineTotalCents"
+        ]
+      },
+      "OrderAddressDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "line1": {
+            "type": "string"
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "line1",
+          "line2",
+          "postalCode",
+          "city",
+          "country"
+        ]
+      },
+      "OrderEventDto": {
+        "type": "object",
+        "properties": {
+          "fromStatus": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "paid",
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled",
+              "refunded"
+            ],
+            "nullable": true
+          },
+          "toStatus": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "paid",
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled",
+              "refunded"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromStatus",
+          "toStatus",
+          "note",
+          "createdAt"
+        ]
+      },
+      "OrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "CMD-000042"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "paid",
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled",
+              "refunded"
+            ]
+          },
+          "statusLabel": {
+            "type": "string",
+            "example": "Payée"
+          },
+          "totalCents": {
+            "type": "number"
+          },
+          "itemCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderLineDto"
+            }
+          },
+          "subtotalCents": {
+            "type": "number"
+          },
+          "shippingCents": {
+            "type": "number"
+          },
+          "refundedCents": {
+            "type": "number"
+          },
+          "shippingMethod": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup"
+            ]
+          },
+          "shippingRateName": {
+            "type": "string"
+          },
+          "shippingAddress": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderAddressDto"
+              }
+            ]
+          },
+          "carrier": {
+            "type": "string",
+            "nullable": true
+          },
+          "trackingNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "reservationExpiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "Paiement attendu avant cette date"
+          },
+          "paidAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "shippedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "deliveredAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "invoiceAvailable": {
+            "type": "boolean",
+            "description": "Une facture est disponible au téléchargement"
+          },
+          "timeline": {
+            "description": "Étapes de la commande",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderEventDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "status",
+          "statusLabel",
+          "totalCents",
+          "itemCount",
+          "createdAt",
+          "items",
+          "subtotalCents",
+          "shippingCents",
+          "refundedCents",
+          "shippingMethod",
+          "shippingRateName",
+          "shippingAddress",
+          "carrier",
+          "trackingNumber",
+          "reservationExpiresAt",
+          "paidAt",
+          "shippedAt",
+          "deliveredAt",
+          "invoiceAvailable",
+          "timeline"
+        ]
+      },
+      "CartLineDto": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string"
+          },
+          "productSlug": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "variantLabel": {
+            "type": "string"
+          },
+          "image": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "unitPriceCents": {
+            "type": "number",
+            "description": "Prix unitaire actuel, en centimes (toujours fixé par le serveur)"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "lineTotalCents": {
+            "type": "number"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailabilityDto"
+          },
+          "maxQuantity": {
+            "type": "number",
+            "description": "Quantité maximale commandable maintenant (stock et plafond)"
+          },
+          "issue": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "unavailable",
+              "insufficient_stock"
+            ],
+            "description": "Problème à corriger avant de commander"
+          }
+        },
+        "required": [
+          "variantId",
+          "productSlug",
+          "productName",
+          "variantLabel",
+          "image",
+          "unitPriceCents",
+          "quantity",
+          "lineTotalCents",
+          "availability",
+          "maxQuantity",
+          "issue"
+        ]
+      },
+      "ShippingOptionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Colissimo"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup"
+            ]
+          },
+          "priceCents": {
+            "type": "number",
+            "description": "Frais en centimes (0 si offerts ou retrait)"
+          },
+          "delay": {
+            "type": "string",
+            "nullable": true,
+            "example": "2 à 4 jours ouvrés"
+          },
+          "free": {
+            "type": "boolean",
+            "description": "Livraison offerte grâce au montant du panier"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "method",
+          "priceCents",
+          "delay",
+          "free"
+        ]
+      },
+      "CartDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartLineDto"
+            }
+          },
+          "itemCount": {
+            "type": "number",
+            "description": "Nombre d’articles (badge du panier)"
+          },
+          "subtotalCents": {
+            "type": "number"
+          },
+          "weightGrams": {
+            "type": "number"
+          },
+          "shippingOptions": {
+            "description": "Selon le pays demandé (?country=)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShippingOptionDto"
+            }
+          },
+          "pickupDetails": {
+            "type": "string",
+            "nullable": true,
+            "description": "Adresse et horaires du retrait"
+          },
+          "checkoutReady": {
+            "type": "boolean",
+            "description": "Le panier peut être commandé tel quel"
+          }
+        },
+        "required": [
+          "items",
+          "itemCount",
+          "subtotalCents",
+          "weightGrams",
+          "shippingOptions",
+          "pickupDetails",
+          "checkoutReady"
+        ]
+      },
+      "AddCartItemDto": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 99,
+            "default": 1
+          }
+        },
+        "required": [
+          "variantId",
+          "quantity"
+        ]
+      },
+      "SetCartItemDto": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99,
+            "description": "0 retire l’article"
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      },
+      "CheckoutAddressDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "line1": {
+            "type": "string"
+          },
+          "line2": {
+            "type": "object"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "94000"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string",
+            "example": "FR"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "line1",
+          "postalCode",
+          "city",
+          "country"
+        ]
+      },
+      "CheckoutDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "E-mail de la commande : obligatoire sans compte, ignoré si connectée"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Awa"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Diallo"
+          },
+          "phone": {
+            "type": "object",
+            "example": "+33612345678"
+          },
+          "shippingRateId": {
+            "type": "string",
+            "description": "Option de livraison choisie (liste du panier)"
+          },
+          "shippingAddress": {
+            "description": "Obligatoire pour une livraison",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CheckoutAddressDto"
+              }
+            ]
+          },
+          "billingAddress": {
+            "description": "Facturation ; par défaut l’adresse de livraison (obligatoire pour un retrait)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CheckoutAddressDto"
+              }
+            ]
+          },
+          "note": {
+            "type": "object",
+            "maxLength": 1000
+          },
+          "acceptTerms": {
+            "type": "boolean",
+            "description": "Acceptation des conditions générales de vente"
+          },
+          "captchaToken": {
+            "type": "string",
+            "description": "Jeton Cloudflare Turnstile (obligatoire en production)"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "shippingRateId",
+          "acceptTerms"
+        ]
+      },
+      "CheckoutResultDto": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "CMD-000042"
+          },
+          "totalCents": {
+            "type": "number"
+          },
+          "reservationExpiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Le stock est réservé jusqu’à cette date (paiement à effectuer)"
+          },
+          "trackingToken": {
+            "type": "string",
+            "description": "Jeton du lien de suivi (commande invitée) : à conserver, il donne accès à la commande"
+          }
+        },
+        "required": [
+          "orderId",
+          "reference",
+          "totalCents",
+          "reservationExpiresAt",
+          "trackingToken"
+        ]
+      },
+      "OrderSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "CMD-000042"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "paid",
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled",
+              "refunded"
+            ]
+          },
+          "statusLabel": {
+            "type": "string",
+            "example": "Payée"
+          },
+          "totalCents": {
+            "type": "number"
+          },
+          "itemCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "status",
+          "statusLabel",
+          "totalCents",
+          "itemCount",
+          "createdAt"
+        ]
+      },
+      "OrderListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderSummaryDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "AdminShopVariantDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "priceCents": {
+            "type": "number"
+          },
+          "weightGrams": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "onHand": {
+            "type": "number",
+            "description": "En stock"
+          },
+          "reserved": {
+            "type": "number",
+            "description": "Réservé (paiements en cours)"
+          }
+        },
+        "required": [
+          "id",
+          "sku",
+          "label",
+          "priceCents",
+          "weightGrams",
+          "active",
+          "onHand",
+          "reserved"
+        ]
+      },
+      "AdminShopImageDto": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          },
+          "previewUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "mediaId",
+          "alt",
+          "previewUrl"
+        ]
+      },
+      "AdminShopProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "kit",
+              "accessory"
+            ]
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionMarkdown": {
+            "type": "string"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminShopVariantDto"
+            }
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemDto"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminShopImageDto"
+            }
+          },
+          "position": {
+            "type": "number"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "seoTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "kind",
+          "shortDescription",
+          "descriptionMarkdown",
+          "variants",
+          "composition",
+          "images",
+          "position",
+          "visible",
+          "seoTitle",
+          "seoDescription",
+          "updatedAt"
+        ]
+      },
+      "ShopVariantInputDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Variante existante à modifier ; absente = nouvelle"
+          },
+          "sku": {
+            "type": "string",
+            "example": "KIT-DEBUTANT",
+            "description": "Référence unique (majuscules, chiffres, tirets)"
+          },
+          "label": {
+            "type": "string",
+            "example": "Standard"
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 3799,
+            "description": "Prix TTC en centimes"
+          },
+          "weightGrams": {
+            "type": "number",
+            "example": 650,
+            "description": "Poids d’expédition en grammes"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "sku",
+          "label",
+          "priceCents",
+          "weightGrams"
+        ]
+      },
+      "KitItemInputDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Poche à douille"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 2
+          },
+          "details": {
+            "type": "object",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "label",
+          "quantity"
+        ]
+      },
+      "ShopImageInputDto": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "mediaId"
+        ]
+      },
+      "CreateShopProductDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Kit Débutant"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "kit",
+              "accessory"
+            ]
+          },
+          "shortDescription": {
+            "type": "object",
+            "maxLength": 300
+          },
+          "descriptionMarkdown": {
+            "type": "string",
+            "description": "Markdown (HTML brut désactivé)",
+            "maxLength": 20000
+          },
+          "variants": {
+            "description": "Au moins une variante ; ordre = affichage",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShopVariantInputDto"
+            }
+          },
+          "composition": {
+            "description": "Composition (kits)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemInputDto"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShopImageInputDto"
+            }
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "variants"
+        ]
+      },
+      "UpdateShopProductDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Kit Débutant"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "kit",
+              "accessory"
+            ]
+          },
+          "shortDescription": {
+            "type": "object",
+            "maxLength": 300
+          },
+          "descriptionMarkdown": {
+            "type": "string",
+            "description": "Markdown (HTML brut désactivé)",
+            "maxLength": 20000
+          },
+          "variants": {
+            "description": "Au moins une variante ; ordre = affichage",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShopVariantInputDto"
+            }
+          },
+          "composition": {
+            "description": "Composition (kits)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemInputDto"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShopImageInputDto"
+            }
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160
+          }
+        }
+      },
+      "AdminStockDto": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "variantLabel": {
+            "type": "string"
+          },
+          "onHand": {
+            "type": "number"
+          },
+          "reserved": {
+            "type": "number"
+          },
+          "available": {
+            "type": "number"
+          },
+          "lowStockThreshold": {
+            "type": "number"
+          },
+          "low": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "variantId",
+          "sku",
+          "productName",
+          "variantLabel",
+          "onHand",
+          "reserved",
+          "available",
+          "lowStockThreshold",
+          "low"
+        ]
+      },
+      "AdjustStockDto": {
+        "type": "object",
+        "properties": {
+          "delta": {
+            "type": "number",
+            "example": 10,
+            "description": "Variation (+ réassort, − casse ou inventaire)"
+          },
+          "note": {
+            "type": "string",
+            "example": "Réassort fournisseur"
+          }
+        },
+        "required": [
+          "delta",
+          "note"
+        ]
+      },
+      "StockThresholdDto": {
+        "type": "object",
+        "properties": {
+          "lowStockThreshold": {
+            "type": "number",
+            "example": 3,
+            "description": "Alerte « stock bas » à partir de ce disponible"
+          }
+        },
+        "required": [
+          "lowStockThreshold"
+        ]
+      },
+      "StockMovementDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "delta": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "adjustment",
+              "sale",
+              "restock"
+            ]
+          },
+          "orderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "actorId": {
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "delta",
+          "reason",
+          "orderId",
+          "actorId",
+          "note",
+          "createdAt"
+        ]
+      },
+      "ShippingRateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup"
+            ]
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minWeightGrams": {
+            "type": "number"
+          },
+          "maxWeightGrams": {
+            "type": "number",
+            "nullable": true
+          },
+          "priceCents": {
+            "type": "number"
+          },
+          "freeFromCents": {
+            "type": "number",
+            "nullable": true
+          },
+          "delay": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "method",
+          "countries",
+          "minWeightGrams",
+          "maxWeightGrams",
+          "priceCents",
+          "freeFromCents",
+          "delay",
+          "position",
+          "active"
+        ]
+      },
+      "CreateShippingRateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Colissimo"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup"
+            ]
+          },
+          "countries": {
+            "example": [
+              "FR"
+            ],
+            "description": "Pays desservis (livraison)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minWeightGrams": {
+            "type": "number",
+            "default": 0
+          },
+          "maxWeightGrams": {
+            "type": "number",
+            "nullable": true,
+            "description": "Inclus ; vide = sans limite"
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 790
+          },
+          "freeFromCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "Offerte à partir de ce sous-total"
+          },
+          "delay": {
+            "type": "object",
+            "example": "2 à 4 jours ouvrés"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "name",
+          "method",
+          "priceCents"
+        ]
+      },
+      "UpdateShippingRateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Colissimo"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup"
+            ]
+          },
+          "countries": {
+            "example": [
+              "FR"
+            ],
+            "description": "Pays desservis (livraison)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minWeightGrams": {
+            "type": "number",
+            "default": 0
+          },
+          "maxWeightGrams": {
+            "type": "number",
+            "nullable": true,
+            "description": "Inclus ; vide = sans limite"
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 790
+          },
+          "freeFromCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "Offerte à partir de ce sous-total"
+          },
+          "delay": {
+            "type": "object",
+            "example": "2 à 4 jours ouvrés"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "AdminOrderSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "CMD-000042"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "paid",
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled",
+              "refunded"
+            ]
+          },
+          "statusLabel": {
+            "type": "string",
+            "example": "Payée"
+          },
+          "totalCents": {
+            "type": "number"
+          },
+          "itemCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "hasAccount": {
+            "type": "boolean",
+            "description": "Commande passée avec un compte"
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "status",
+          "statusLabel",
+          "totalCents",
+          "itemCount",
+          "createdAt",
+          "email",
+          "customerName",
+          "hasAccount"
+        ]
+      },
+      "AdminOrderListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminOrderSummaryDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "AdminOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "CMD-000042"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "paid",
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled",
+              "refunded"
+            ]
+          },
+          "statusLabel": {
+            "type": "string",
+            "example": "Payée"
+          },
+          "totalCents": {
+            "type": "number"
+          },
+          "itemCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderLineDto"
+            }
+          },
+          "subtotalCents": {
+            "type": "number"
+          },
+          "shippingCents": {
+            "type": "number"
+          },
+          "refundedCents": {
+            "type": "number"
+          },
+          "shippingMethod": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup"
+            ]
+          },
+          "shippingRateName": {
+            "type": "string"
+          },
+          "shippingAddress": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderAddressDto"
+              }
+            ]
+          },
+          "carrier": {
+            "type": "string",
+            "nullable": true
+          },
+          "trackingNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "reservationExpiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "Paiement attendu avant cette date"
+          },
+          "paidAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "shippedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "deliveredAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "invoiceAvailable": {
+            "type": "boolean",
+            "description": "Une facture est disponible au téléchargement"
+          },
+          "timeline": {
+            "description": "Étapes de la commande",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderEventDto"
+            }
+          },
+          "email": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "billingAddress": {
+            "$ref": "#/components/schemas/OrderAddressDto"
+          },
+          "customerNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "invoiceNumber": {
+            "type": "string",
+            "nullable": true,
+            "example": "F-2026-00001"
+          },
+          "cancellationReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextStatuses": {
+            "type": "array",
+            "description": "Étapes que l’administration peut poser maintenant",
+            "items": {
+              "type": "string",
+              "enum": [
+                "preparing",
+                "shipped",
+                "delivered",
+                "cancelled"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "status",
+          "statusLabel",
+          "totalCents",
+          "itemCount",
+          "createdAt",
+          "items",
+          "subtotalCents",
+          "shippingCents",
+          "refundedCents",
+          "shippingMethod",
+          "shippingRateName",
+          "shippingAddress",
+          "carrier",
+          "trackingNumber",
+          "reservationExpiresAt",
+          "paidAt",
+          "shippedAt",
+          "deliveredAt",
+          "invoiceAvailable",
+          "timeline",
+          "email",
+          "customerName",
+          "phone",
+          "userId",
+          "billingAddress",
+          "customerNote",
+          "invoiceNumber",
+          "cancellationReason",
+          "nextStatuses"
+        ]
+      },
+      "ChangeOrderStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "preparing",
+              "shipped",
+              "delivered",
+              "cancelled"
+            ]
+          },
+          "carrier": {
+            "type": "object",
+            "description": "Transporteur (expédition)",
+            "example": "Colissimo"
+          },
+          "trackingNumber": {
+            "type": "object",
+            "description": "Numéro de suivi (expédition)"
+          },
+          "note": {
+            "type": "object",
+            "description": "Note d’historique (motif d’annulation…)",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "status"
         ]
       }
     }

@@ -27,6 +27,7 @@ import { REDIS_CLIENT } from './redis/redis.constants';
 import { RedisModule } from './redis/redis.module';
 import { RgpdModule } from './rgpd/rgpd.module';
 import { SettingsModule } from './settings/settings.module';
+import { ShopModule } from './shop/shop.module';
 import { StorageModule } from './storage/storage.module';
 import { UsersModule } from './users/users.module';
 
@@ -64,6 +65,7 @@ import { UsersModule } from './users/users.module';
     MediaModule,
     ContentModule,
     CateringModule,
+    ShopModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

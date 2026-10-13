@@ -69,6 +69,7 @@ src/
   common/captcha/         vérification anti-robot Cloudflare Turnstile des formulaires publics
   content/ media/         contenus éditoriaux, médiathèque (phase 3)
   catering/               traiteur : catalogue, demandes, acompte, créneaux (phase 4)
+  shop/                   boutique : catalogue, panier, stock, livraison, commandes, factures (phase 5)
   <domaine>/              un module par domaine (catalog-traiteur, shop, …) — phases 3 à 9
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
@@ -104,5 +105,19 @@ scripts/                  sauvegarde, restauration, export OpenAPI
 | — (sélection figée d'une demande) | `CateringRequestItem` | `catering_request_items` | 4 |
 | — (historique d'une demande) | `CateringRequestEvent` | `catering_request_events` | 4 |
 | — (créneaux, parcours avancé) | `CateringSlot` | `catering_slots` | 4 |
+| `produit_boutique` | `ShopProduct` | `shop_products` | 5 |
+| `kit` (variante vendable) | `ShopVariant` | `shop_variants` | 5 |
+| `composition_kit` | `ShopKitItem` | `shop_kit_items` | 5 |
+| `stock` | `ShopStock` | `shop_stocks` | 5 |
+| — (mouvements de stock) | `ShopStockMovement` | `shop_stock_movements` | 5 |
+| — (galerie d'un produit) | `ShopProductImage` | `shop_product_images` | 5 |
+| `tarif_livraison` | `ShippingRate` | `shipping_rates` | 5 |
+| `panier` | `ShopCart` | `shop_carts` | 5 |
+| `ligne_panier` | `ShopCartItem` | `shop_cart_items` | 5 |
+| `commande` | `Order` | `orders` | 5 |
+| `ligne_commande`, `commander_kit`, `commander_pack` | `OrderItem` (`kind`) | `order_items` | 5 |
+| — (historique d'une commande) | `OrderEvent` | `order_events` | 5 |
+| — (réservation de stock pendant le paiement) | `StockReservation` | `stock_reservations` | 5 |
+| — (facture et sa numérotation) | `Invoice`, `InvoiceSequence` | `invoices`, `invoice_sequences` | 5 |
 
 _Complété au fil des phases._

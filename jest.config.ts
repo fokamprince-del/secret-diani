@@ -57,6 +57,17 @@ const config: Config = {
     '!catering/catalog/*.service.ts',
     '!catering/requests/*.service.ts',
     '!catering/slots/*.service.ts',
+    // Phase 5 : services de la boutique adossés à Postgres/Redis/S3 (e2e) ; la logique pure
+    // (shop/domain), la signature des liens et le rendu des factures restent ici.
+    '!shop/cart/*.service.ts',
+    '!shop/catalog/*.service.ts',
+    '!shop/shipping/*.service.ts',
+    '!shop/stock/*.ts',
+    '!shop/orders/checkout.service.ts',
+    '!shop/orders/orders.service.ts',
+    '!shop/orders/order-expiry.service.ts',
+    '!shop/invoices/invoices.service.ts',
+    '!shop/worker/**',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

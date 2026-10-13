@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { AuthenticatedRequest } from '../../common/auth/authenticated-user';
-import { IS_PUBLIC_KEY } from '../../common/auth/decorators';
+import { IS_PUBLIC_KEY, OPTIONAL_AUTH_KEY } from '../../common/auth/decorators';
 import { AppException } from '../../common/errors/app.exception';
 import { ErrorCode } from '../../common/errors/error-codes';
 import { SessionsService } from '../../sessions/sessions.service';
@@ -17,7 +17,9 @@ function unauthorized(): AppException {
 
 /**
  * Garde globale « refus par défaut » : toute route exige un jeton d'accès valide,
- * sauf celles marquées `@Public()`. Les jetons d'une session révoquée sont refusés immédiatement.
+ * sauf celles marquées `@Public()`. Sur une route `@OptionalAuth()`, l'absence de jeton est admise
+ * (invité) mais un jeton présent est vérifié. Les jetons d'une session révoquée sont refusés
+ * immédiatement.
  */
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -35,6 +37,12 @@ export class AccessTokenGuard implements CanActivate {
     if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const optional = this.reflector.getAllAndOverride<boolean>(OPTIONAL_AUTH_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (optional && request.headers.authorization === undefined) return true;
+
     const [scheme, token] = (request.headers.authorization ?? '').split(' ');
     if (scheme !== 'Bearer' || !token) throw unauthorized();
 

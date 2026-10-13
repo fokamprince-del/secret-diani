@@ -1,6 +1,6 @@
 # Sécurité
 
-> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2) et traiteur (phase 4) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
+> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2), traiteur (phase 4) et boutique (phase 5) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
 
 ## Modèle de menaces — authentification et comptes (STRIDE)
 
@@ -35,6 +35,23 @@
 | I | Notes internes ou message libre exposés | Le récapitulatif et les e-mails à la cliente n'incluent ni notes ni message ; le message libre n'est envoyé qu'à l'administration (HTML échappé) | `catering.e2e` › récapitulatif, `render.spec` › échappement |
 | **D**enial of service | Bombardement d'e-mails vers une victime (adresse saisie par un tiers) | Accusé de réception limité à 3 par jour et par adresse, sans le message libre | `catering.e2e` › anti-bombardement |
 | **E**levation of privilege | Cliente sur l'administration du catalogue | Garde globale « refus par défaut » + rôle admin + 2FA | `catering.e2e` › 403 |
+
+## Modèle de menaces — boutique (phase 5, STRIDE)
+
+| Menace | Scénario | Mesures | Preuves (tests) |
+|---|---|---|---|
+| **S**poofing | Lire la commande ou la facture d'une autre personne | Lien de suivi signé (HMAC 128 bits, clé dérivée hors base) ; espace client filtré sur le compte, 404 indiscernable | `order-link.service.spec`, `shop.e2e` › lien falsifié, anti-IDOR |
+| S | Deviner le panier d'une autre personne | Jeton aléatoire de 256 bits, seule l'empreinte en base | `shop.e2e` › cookie inventé |
+| **T**ampering | Prix modifié par le client | Aucun prix accepté ni stocké dans le panier ; prix, frais de port et total recalculés par le serveur et figés dans la commande | `shop.e2e` › prix envoyé refusé |
+| T | **Survente** (deux paniers pour la dernière pièce) | Mises à jour conditionnelles atomiques, ordre fixe des verrous, contraintes CHECK `0 <= reserved <= on_hand` | `shop.e2e` › 5 paniers pour 1 pièce |
+| T | Paiement compté deux fois (webhook rejoué) | Verrou de la commande, confirmation idempotente (une seule vente, une seule facture) | `shop.e2e` › « already_paid » |
+| T | Facture modifiée ou supprimée | Déclencheur : contenu inaltérable, suppression interdite avant 10 ans, même pour le rôle de l'API | `shop.e2e` › facture inaltérable |
+| T | Injection de formules dans l'export CSV | Cellules commençant par `= + - @` neutralisées | `shop-domain.spec`, `shop.e2e` › export CSV |
+| **R**epudiation | Contestation d'une expédition, d'un ajustement de stock | Historique des commandes et des mouvements de stock (qui, quoi, quand), journal d'audit | `shop.e2e` |
+| **I**nformation disclosure | Notes internes visibles de la cliente | Historique sans notes dans les vues cliente et lien de suivi | `shop.e2e` › vue cliente |
+| **D**enial of service | Robot qui immobilise le stock en validant des paniers | Plafond par article, 5 validations / 10 min / IP, Turnstile, une seule réservation par panier, expiration à 15 min | `shop.e2e` › limite et revalidation |
+| D | CSRF sur le panier invité (cookie) | `SameSite=Strict` + en-tête obligatoire + origine vérifiée | `shop.e2e` › en-tête CSRF exigé |
+| **E**levation of privilege | Cliente sur l'administration, invitée qui se fait passer pour connectée | Rôle admin + 2FA ; jeton invalide sur une route facultative → 401 (jamais invité) | `guards.spec` › `@OptionalAuth()`, `shop.e2e` |
 
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 

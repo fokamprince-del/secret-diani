@@ -77,6 +77,8 @@ model User {
   tokens      UserToken[]
   backupCodes MfaBackupCode[]
   addresses   Address[]
+  cart        ShopCart?
+  orders      Order[]
 
   @@index([role])
   @@index([status, createdAt])
@@ -270,6 +272,7 @@ model Media {
 
   articleCovers  Article[]
   cateringImages CateringProductImage[]
+  shopImages     ShopProductImage[]
 
   @@index([kind, status, createdAt])
   @@index([deletedAt])
@@ -671,4 +674,373 @@ model CateringSlot {
 
   @@index([fulfilment, startsAt])
   @@map("catering_slots")
+}
+
+// =============================================================================
+// Phase 5 — Boutique
+// =============================================================================
+
+enum ShopProductKind {
+  kit
+  accessory
+
+  @@map("shop_product_kind")
+}
+
+/// MLD : produit_boutique (kits d'accessoires et accessoires à l'unité).
+model ShopProduct {
+  id                  String          @id @default(uuid(7)) @db.Uuid
+  slug                String          @unique @db.VarChar(160)
+  name                String          @db.VarChar(160)
+  kind                ShopProductKind
+  shortDescription    String?         @map("short_description") @db.VarChar(300)
+  /// Source Markdown (HTML brut désactivé) et rendu assaini, comme les articles.
+  descriptionMarkdown String          @default("") @map("description_markdown")
+  descriptionHtml     String          @default("") @map("description_html")
+  position            Int             @default(0)
+  visible             Boolean         @default(true)
+  seoTitle            String?         @map("seo_title") @db.VarChar(70)
+  seoDescription      String?         @map("seo_description") @db.VarChar(160)
+  createdAt           DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Suppression logique : les commandes gardent leurs libellés figés.
+  deletedAt           DateTime?       @map("deleted_at") @db.Timestamptz(3)
+
+  variants ShopVariant[]
+  kitItems ShopKitItem[]
+  images   ShopProductImage[]
+
+  @@index([kind, position])
+  @@index([deletedAt])
+  @@map("shop_products")
+}
+
+/// Variante vendable (référence, prix, poids). Une variante qui a un historique se désactive.
+model ShopVariant {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  productId   String   @map("product_id") @db.Uuid
+  /// Référence unique (SKU), reprise sur les factures.
+  sku         String   @unique @db.VarChar(64)
+  label       String   @db.VarChar(80)
+  priceCents  Int      @map("price_cents")
+  /// Poids d'expédition (calcul des frais de livraison).
+  weightGrams Int      @map("weight_grams")
+  position    Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  product      ShopProduct         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stock        ShopStock?
+  movements    ShopStockMovement[]
+  cartItems    ShopCartItem[]
+  reservations StockReservation[]
+
+  @@index([productId, position])
+  @@map("shop_variants")
+}
+
+/// MLD : stock. Disponible = en stock − réservé (paiements en cours) ; jamais négatif (CHECK).
+model ShopStock {
+  variantId         String    @id @map("variant_id") @db.Uuid
+  onHand            Int       @default(0) @map("on_hand")
+  reserved          Int       @default(0)
+  lowStockThreshold Int       @default(3) @map("low_stock_threshold")
+  /// Dernière alerte « stock bas » envoyée (remise à zéro au réassort).
+  lowStockAlertedAt DateTime? @map("low_stock_alerted_at") @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  variant ShopVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@map("shop_stocks")
+}
+
+enum StockMovementReason {
+  /// Inventaire, réassort, casse (administration).
+  adjustment
+  /// Vente confirmée (paiement reçu).
+  sale
+  /// Remise en stock après une annulation ou un remboursement.
+  restock
+
+  @@map("stock_movement_reason")
+}
+
+/// Mouvements de stock : qui, combien, pourquoi (traçabilité des écarts d'inventaire).
+model ShopStockMovement {
+  id        String              @id @default(uuid(7)) @db.Uuid
+  variantId String              @map("variant_id") @db.Uuid
+  delta     Int
+  reason    StockMovementReason
+  orderId   String?             @map("order_id") @db.Uuid
+  actorId   String?             @map("actor_id") @db.Uuid
+  note      String?             @db.VarChar(300)
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  variant ShopVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@index([variantId, createdAt])
+  @@index([orderId])
+  @@map("shop_stock_movements")
+}
+
+/// MLD : composition_kit (élément, quantité). Sert aussi au tableau comparatif des kits.
+model ShopKitItem {
+  id        String  @id @default(uuid(7)) @db.Uuid
+  productId String  @map("product_id") @db.Uuid
+  label     String  @db.VarChar(120)
+  quantity  Int
+  details   String? @db.VarChar(300)
+  position  Int     @default(0)
+
+  product ShopProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, position])
+  @@map("shop_kit_items")
+}
+
+model ShopProductImage {
+  id        String @id @default(uuid(7)) @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  mediaId   String @map("media_id") @db.Uuid
+  alt       String @default("") @db.VarChar(300)
+  position  Int    @default(0)
+
+  product ShopProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media   Media       @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, mediaId])
+  @@index([mediaId])
+  @@map("shop_product_images")
+}
+
+enum ShippingMethod {
+  delivery
+  pickup
+
+  @@map("shipping_method")
+}
+
+/// MLD : tarif_livraison (par zone de pays et tranche de poids ; retrait gratuit possible).
+model ShippingRate {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  name           String         @db.VarChar(120)
+  method         ShippingMethod
+  /// Pays desservis (ISO 3166-1 alpha-2) ; ignoré pour le retrait.
+  countries      String[]       @default([]) @db.Char(2)
+  minWeightGrams Int            @default(0) @map("min_weight_grams")
+  /// Poids maximal inclus ; NULL = sans limite.
+  maxWeightGrams Int?           @map("max_weight_grams")
+  priceCents     Int            @map("price_cents")
+  /// Livraison offerte à partir de ce sous-total (NULL = jamais).
+  freeFromCents  Int?           @map("free_from_cents")
+  /// Délai affiché (ex. « 2 à 4 jours ouvrés »).
+  delay          String?        @db.VarChar(80)
+  position       Int            @default(0)
+  active         Boolean        @default(true)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([active, position])
+  @@map("shipping_rates")
+}
+
+/// MLD : panier. Connecté (user_id) ou invité (empreinte du jeton du cookie).
+model ShopCart {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  userId         String?  @unique @map("user_id") @db.Uuid
+  guestTokenHash String?  @unique @map("guest_token_hash") @db.Char(64)
+  expiresAt      DateTime @map("expires_at") @db.Timestamptz(3)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user  User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items ShopCartItem[]
+
+  @@index([expiresAt])
+  @@map("shop_carts")
+}
+
+/// MLD : ligne_panier. Aucun prix stocké : tout est recalculé par le serveur à chaque lecture.
+model ShopCartItem {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  cartId    String   @map("cart_id") @db.Uuid
+  variantId String   @map("variant_id") @db.Uuid
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  cart    ShopCart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant ShopVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId])
+  @@index([variantId])
+  @@map("shop_cart_items")
+}
+
+enum OrderStatus {
+  pending_payment
+  paid
+  preparing
+  shipped
+  delivered
+  cancelled
+  refunded
+
+  @@map("order_status")
+}
+
+enum OrderItemKind {
+  product
+  /// Pack de formation (phase 7).
+  pack
+
+  @@map("order_item_kind")
+}
+
+/// MLD : commande. Coordonnées et montants figés ; conservée 10 ans avec sa facture.
+model Order {
+  id                   String         @id @default(uuid(7)) @db.Uuid
+  /// Numéro lisible (affiché « CMD-000042 »).
+  number               Int            @unique @default(autoincrement())
+  status               OrderStatus    @default(pending_payment)
+  userId               String?        @map("user_id") @db.Uuid
+  email                String         @db.Citext
+  firstName            String         @map("first_name") @db.VarChar(100)
+  lastName             String         @map("last_name") @db.VarChar(100)
+  phone                String?        @db.VarChar(20)
+  shippingMethod       ShippingMethod @map("shipping_method")
+  shippingRateName     String         @map("shipping_rate_name") @db.VarChar(120)
+  /// Adresse de livraison figée (NULL pour un retrait).
+  shippingAddress      Json?          @map("shipping_address")
+  billingAddress       Json           @map("billing_address")
+  subtotalCents        Int            @map("subtotal_cents")
+  shippingCents        Int            @map("shipping_cents")
+  totalCents           Int            @map("total_cents")
+  refundedCents        Int            @default(0) @map("refunded_cents")
+  currency             String         @default("EUR") @db.Char(3)
+  carrier              String?        @db.VarChar(60)
+  trackingNumber       String?        @map("tracking_number") @db.VarChar(100)
+  customerNote         String?        @map("customer_note") @db.VarChar(1000)
+  termsAcceptedAt      DateTime       @map("terms_accepted_at") @db.Timestamptz(3)
+  termsVersion         String         @map("terms_version") @db.VarChar(20)
+  /// Panier d'origine (sans clé étrangère) : une nouvelle validation du même panier annule la
+  /// commande encore en attente, pour ne jamais réserver deux fois le stock.
+  cartId               String?        @map("cart_id") @db.Uuid
+  /// Fin de la réservation du stock (commande en attente de paiement).
+  reservationExpiresAt DateTime?      @map("reservation_expires_at") @db.Timestamptz(3)
+  paidAt               DateTime?      @map("paid_at") @db.Timestamptz(3)
+  shippedAt            DateTime?      @map("shipped_at") @db.Timestamptz(3)
+  deliveredAt          DateTime?      @map("delivered_at") @db.Timestamptz(3)
+  cancelledAt          DateTime?      @map("cancelled_at") @db.Timestamptz(3)
+  cancellationReason   String?        @map("cancellation_reason") @db.VarChar(300)
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user         User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items        OrderItem[]
+  events       OrderEvent[]
+  reservations StockReservation[]
+  invoice      Invoice?
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([cartId, status])
+  @@index([reservationExpiresAt])
+  @@map("orders")
+}
+
+/// MLD : ligne_commande (commander_kit, commander_pack). Libellés et prix figés à l'achat.
+model OrderItem {
+  id             String        @id @default(uuid(7)) @db.Uuid
+  orderId        String        @map("order_id") @db.Uuid
+  kind           OrderItemKind @default(product)
+  /// Variante vendue (sans clé étrangère : l'historique survit au catalogue).
+  variantId      String?       @map("variant_id") @db.Uuid
+  sku            String?       @db.VarChar(64)
+  productName    String        @map("product_name") @db.VarChar(160)
+  variantLabel   String        @map("variant_label") @db.VarChar(80)
+  unitPriceCents Int           @map("unit_price_cents")
+  quantity       Int
+  weightGrams    Int           @default(0) @map("weight_grams")
+  position       Int           @default(0)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+/// Historique d'une commande (statuts, expédition, annulation) : qui, quoi, quand.
+model OrderEvent {
+  id         String       @id @default(uuid(7)) @db.Uuid
+  orderId    String       @map("order_id") @db.Uuid
+  fromStatus OrderStatus? @map("from_status")
+  toStatus   OrderStatus  @map("to_status")
+  actorId    String?      @map("actor_id") @db.Uuid
+  note       String?      @db.VarChar(500)
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+  @@map("order_events")
+}
+
+/// Réservation temporaire du stock pendant le paiement (consommée au paiement, libérée à l'expiration).
+model StockReservation {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  orderId    String    @map("order_id") @db.Uuid
+  variantId  String    @map("variant_id") @db.Uuid
+  quantity   Int
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(3)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(3)
+  releasedAt DateTime? @map("released_at") @db.Timestamptz(3)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  order   Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant ShopVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@unique([orderId, variantId])
+  @@index([variantId])
+  @@index([expiresAt])
+  @@map("stock_reservations")
+}
+
+/// Séquence des numéros de facture, une ligne par année : numérotation continue, sans trou.
+model InvoiceSequence {
+  year       Int @id
+  lastNumber Int @default(0) @map("last_number")
+
+  @@map("invoice_sequences")
+}
+
+/// Facture (conservée 10 ans, inaltérable : déclencheur en base). Contenu figé à l'émission.
+model Invoice {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  orderId       String   @unique @map("order_id") @db.Uuid
+  /// « F-2026-00001 ».
+  number        String   @unique @db.VarChar(20)
+  year          Int
+  sequence      Int
+  issuedAt      DateTime @map("issued_at") @db.Timestamptz(3)
+  /// Vendeur, acheteur et lignes figés à l'émission.
+  seller        Json
+  buyer         Json
+  lines         Json
+  subtotalCents Int      @map("subtotal_cents")
+  shippingCents Int      @map("shipping_cents")
+  totalCents    Int      @map("total_cents")
+  /// Mention TVA (ex. « TVA non applicable, art. 293 B du CGI »).
+  vatMention    String   @map("vat_mention") @db.VarChar(200)
+  /// Clé du PDF dans le stockage privé (posée une seule fois par le worker).
+  pdfKey        String?  @map("pdf_key") @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@unique([year, sequence])
+  @@map("invoices")
 }

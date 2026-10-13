@@ -1,7 +1,7 @@
 import type { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { AuthenticatedUser } from '../../common/auth/authenticated-user';
-import { IS_PUBLIC_KEY, ROLES_KEY } from '../../common/auth/decorators';
+import { IS_PUBLIC_KEY, OPTIONAL_AUTH_KEY, ROLES_KEY } from '../../common/auth/decorators';
 import type { AppConfigService } from '../../config/app-config.service';
 import type { SessionsService } from '../../sessions/sessions.service';
 import type { AccessTokenService } from '../tokens/access-token.service';
@@ -86,6 +86,36 @@ describe('AccessTokenGuard (refus par défaut)', () => {
     const req = request({ authorization: 'Bearer x' });
     await expect(guard.canActivate(context(req))).resolves.toBe(true);
     expect(req.user).toEqual(client);
+  });
+
+  describe('@OptionalAuth() (panier, commande invitée)', () => {
+    const optional = { [OPTIONAL_AUTH_KEY]: true };
+
+    it('laisse passer un invité sans en-tête Authorization, sans utilisateur', async () => {
+      const req = request();
+      await expect(guard.canActivate(context(req, optional))).resolves.toBe(true);
+      expect(req.user).toBeUndefined();
+      expect(tokens.verify).not.toHaveBeenCalled();
+    });
+
+    it('vérifie un jeton présent et attache l’utilisateur', async () => {
+      tokens.verify.mockReturnValue(client);
+      const req = request({ authorization: 'Bearer x' });
+      await expect(guard.canActivate(context(req, optional))).resolves.toBe(true);
+      expect(req.user).toEqual(client);
+    });
+
+    it('refuse un jeton invalide ou révoqué au lieu de le traiter en invité', async () => {
+      tokens.verify.mockReturnValue(null);
+      await expect(
+        guard.canActivate(context(request({ authorization: 'Bearer x' }), optional)),
+      ).rejects.toMatchObject({ status: 401 });
+      tokens.verify.mockReturnValue(client);
+      sessions.isRevoked.mockResolvedValue(true);
+      await expect(
+        guard.canActivate(context(request({ authorization: 'Bearer x' }), optional)),
+      ).rejects.toMatchObject({ status: 401 });
+    });
   });
 });
 

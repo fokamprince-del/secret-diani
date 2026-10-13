@@ -73,6 +73,33 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
       conditions: ['L’acompte n’est pas remboursable en cas d’annulation de votre part.'],
     },
   },
+  {
+    template: 'order-confirmed',
+    data: {
+      firstName: 'Awa',
+      reference: 'CMD-000042',
+      itemLines: ['1 × Kit Débutant (Standard) : 37,99 €'],
+      subtotal: '37,99 €',
+      shipping: '7,90 €',
+      total: '45,89 €',
+      deliveryLine: 'Livraison Colissimo : Awa Diallo, 1 rue des Lilas, 94000 Créteil',
+      trackingLink: 'https://site.fr/commande/suivi?token=abc',
+    },
+  },
+  {
+    template: 'order-shipped',
+    data: {
+      firstName: 'Awa',
+      reference: 'CMD-000042',
+      carrier: 'Colissimo',
+      trackingNumber: '6A12345678901',
+      trackingLink: 'https://site.fr/commande/suivi?token=abc',
+    },
+  },
+  {
+    template: 'stock-low',
+    data: { lines: ['Kit Débutant (Standard, KIT-DEBUTANT) : 2 disponible(s)'] },
+  },
 ];
 
 describe('renderMail', () => {

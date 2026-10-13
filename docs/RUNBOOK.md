@@ -116,6 +116,22 @@ Les paramètres suivants se trouvent dans la table `app_settings` (écran d'admi
 | `catering.conditions` | 3 phrases | Conditions affichées après la phrase sur l'acompte |
 | `site.whatsapp_number` | vide | Numéro WhatsApp international (`+33…`) ; vide = pas de bouton WhatsApp |
 
+## Boutique : avant d'ouvrir les ventes
+
+1. **Mentions du vendeur** (`legal.seller`, obligatoires sur chaque facture, figées à l'émission) : nom commercial, forme juridique, adresse, SIRET, e-mail, mention TVA. Par défaut : « TVA non applicable, art. 293 B du CGI » (franchise en base), à confirmer.
+2. **Tarifs de livraison** (Boutique → Livraison) : aucun n'est créé par le seed. Sans tarif actif, aucune commande ne peut être validée. Pour le retrait, renseigner aussi `shop.pickup_details` (adresse, horaires).
+3. **Kits** : compléter composition, poids d'expédition, photos, puis réassort (Boutique → Stock) et rendre visibles.
+
+| Clé | Valeur par défaut | Rôle |
+|---|---|---|
+| `shop.reservation_minutes` | `15` | Durée de réservation du stock pendant le paiement |
+| `shop.max_quantity_per_item` | `10` | Quantité maximale d'un même article par commande |
+| `shop.low_stock_display` | `5` | Seuil d'affichage « plus que N » |
+| `shop.pickup_details` | vide | Adresse et horaires du retrait |
+| `legal.seller` | voir ci-dessus | Vendeur affiché sur les factures |
+
+Le seuil d'**alerte** « stock bas » se règle par variante (Boutique → Stock) ; l'e-mail part une fois, puis de nouveau après un réassort au-dessus du seuil.
+
 ## Sondes
 
 | URL | Rôle | Attendu |

@@ -17,6 +17,8 @@ export const RETENTION = {
   auditLogsDays: 365,
   /** Demandes traiteur sans activité (prospection et suivi commercial, recommandation CNIL : 3 ans). */
   cateringRequestsDays: 3 * 365,
+  /** Paniers expirés (invité : 30 jours sans modification ; compte : 1 an). */
+  expiredCartsDays: 0,
 } as const;
 
 export type PurgeReport = Record<keyof typeof RETENTION, number>;
@@ -76,6 +78,10 @@ export class RetentionService {
           cancellation_reason = NULL, anonymized_at = ${now}, updated_at = ${now}
       WHERE anonymized_at IS NULL AND updated_at < ${before(RETENTION.cateringRequestsDays)}`;
 
+    const expiredCarts = await this.prisma.shopCart.deleteMany({
+      where: { expiresAt: { lt: before(RETENTION.expiredCartsDays) } },
+    });
+
     const report: PurgeReport = {
       refreshTokensDays: refreshTokens.count,
       sessionsDays: sessions.count,
@@ -83,6 +89,7 @@ export class RetentionService {
       unverifiedAccountsDays: unverifiedAccounts.count,
       auditLogsDays: auditLogs.count,
       cateringRequestsDays: cateringRequests,
+      expiredCartsDays: expiredCarts.count,
     };
     this.logger.log({ report }, 'Purge des données expirées terminée');
     return report;

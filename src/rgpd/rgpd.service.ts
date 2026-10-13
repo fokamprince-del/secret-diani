@@ -3,6 +3,7 @@ import { AuditAction } from '../audit/audit-actions';
 import { AuditService } from '../audit/audit.service';
 import { AuthService } from '../auth/auth.service';
 import { requestReference } from '../catering/domain/request-status';
+import { orderReference } from '../shop/domain/order-status';
 import type { AuthenticatedUser } from '../common/auth/authenticated-user';
 import type { ClientContext } from '../common/auth/client-context';
 import { AppException } from '../common/errors/app.exception';
@@ -118,6 +119,28 @@ export class RgpdService {
         },
       },
     });
+    // Commandes boutique du compte (conservées 10 ans avec leur facture, même après suppression).
+    const orders = await this.prisma.order.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 500,
+      select: {
+        number: true,
+        status: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        shippingAddress: true,
+        billingAddress: true,
+        totalCents: true,
+        createdAt: true,
+        items: {
+          select: { productName: true, variantLabel: true, quantity: true, unitPriceCents: true },
+        },
+        invoice: { select: { number: true } },
+      },
+    });
     await this.audit.log({
       action: AuditAction.DATA_EXPORTED,
       actorId: userId,
@@ -142,6 +165,11 @@ export class RgpdService {
       addresses,
       sessions,
       securityEvents: events,
+      orders: orders.map(({ number, invoice, ...order }) => ({
+        reference: orderReference(number),
+        invoiceNumber: invoice?.number ?? null,
+        ...order,
+      })),
       cateringRequests: cateringRequests.map(({ number, ...request }) => ({
         reference: requestReference(number),
         ...request,
