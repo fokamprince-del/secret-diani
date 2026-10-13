@@ -1,0 +1,3 @@
+# Anciens dépôts Git séparés (backend/.git, frontend/.git), conservés en sauvegarde locale.
+.depots-separes-sauvegarde/
+.DS_Store
