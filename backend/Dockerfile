@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1.7
 # Image multi-étapes « Les Secrets de Diani » — API et worker partagent la même image.
 #   target `runtime` : image de production minimale (dépendances de prod, utilisateur non-root)
-#   target `migrate` : contient la CLI Prisma, pour `prisma migrate deploy` lors des déploiements
+#   target `migrate` : CLI Prisma (`prisma migrate deploy` à chaque déploiement) et données de
+#                      référence (`prisma db seed`, qui réutilise des modules de src/)
 
 ARG NODE_IMAGE=node:24-alpine
 
@@ -37,6 +38,8 @@ RUN apk add --no-cache openssl
 COPY --from=deps --chown=node:node /app/node_modules ./node_modules
 COPY --chown=node:node package.json ./
 COPY --chown=node:node prisma ./prisma
+COPY --chown=node:node tsconfig.json ./
+COPY --chown=node:node src ./src
 USER node
 CMD ["node", "node_modules/prisma/build/index.js", "migrate", "deploy"]
 

@@ -111,6 +111,17 @@
 | **D**enial of service | Une administratrice se suspend ou se retire le 2FA par erreur | Actions interdites sur son propre compte | `admin.e2e` › propre compte |
 | **E**levation of privilege | Compte suspendu qui garde une session ouverte | Suspension = révocation immédiate de toutes les sessions (jetons d'accès refusés via Redis) | `admin.e2e` › suspension |
 
+## Chaîne de livraison et exploitation (phase 10)
+
+| Risque | Mesures | Où |
+|---|---|---|
+| Dépendance vulnérable | Audit npm bloquant en CI ; Dependabot hebdomadaire ; Trivy sur l'image | `.github/workflows/backend.yml`, `.github/dependabot.yml` |
+| Action GitHub ou image compromise | Versions figées ; mises à jour par PR relues (Dependabot) | idem |
+| Vol des accès de déploiement | Clé SSH dédiée au déploiement (utilisateur sans sudo, groupe docker), empreinte du serveur épinglée, secrets dans l'environnement GitHub `production` | RUNBOOK › Déploiement continu |
+| Version défectueuse en production | Sauvegarde avant migration, remplacement progressif, test de fumée, retour automatique | `scripts/deploy.sh`, D-091 |
+| Script d'exploitation fautif | shellcheck en CI ; tag d'image validé avant usage | `scripts/*.sh` |
+| Saturation sous charge | Deux instances d'API, cache Redis des catalogues, limites de débit, mesures k6 | `load/`, D-093 |
+
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 
 | Exigence | État | Référence |

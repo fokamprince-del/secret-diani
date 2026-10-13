@@ -1,0 +1,45 @@
+# Mises à jour de sécurité et de maintenance (cahier des charges §6.9).
+# Les correctifs de sécurité sont proposés dès leur publication ; le reste, chaque semaine,
+# regroupé pour limiter le bruit. Chaque PR passe la CI complète (tests, audit, scan Trivy).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /backend
+    schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Paris }
+    open-pull-requests-limit: 5
+    labels: [dependencies, backend]
+    groups:
+      backend-mineures:
+        update-types: [minor, patch]
+    commit-message: { prefix: 'chore(backend)' }
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Paris }
+    open-pull-requests-limit: 5
+    labels: [dependencies, frontend]
+    groups:
+      frontend-mineures:
+        update-types: [minor, patch]
+    commit-message: { prefix: 'chore(frontend)' }
+
+  - package-ecosystem: docker
+    directory: /backend
+    schedule: { interval: monthly }
+    labels: [dependencies, backend]
+    commit-message: { prefix: 'chore(backend)' }
+
+  - package-ecosystem: docker
+    directory: /frontend
+    schedule: { interval: monthly }
+    labels: [dependencies, frontend]
+    commit-message: { prefix: 'chore(frontend)' }
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    labels: [dependencies, ci]
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message: { prefix: 'chore(ci)' }

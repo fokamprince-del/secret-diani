@@ -438,3 +438,20 @@ Réponses décrites en détail (packs, formation complète avec modules, leçons
 
 ### D-090 · Clés d'accès (passkeys) reportées
 Le cahier des charges les laisse facultatives. Le TOTP obligatoire couvre le risque pour les administrateurs ; WebAuthn demanderait un enregistrement et une vérification côté frontend. À reconsidérer après la mise en ligne.
+
+## Phase 10 — Durcissement, charge et mise en production
+
+### D-091 · Déploiement continu et retour arrière
+Sur `main`, après les contrôles (lint, tests unitaires et e2e, audit, image scannée par Trivy) : publication des images `runtime` et `migrate` sur ghcr.io (étiquette = 12 premiers caractères du commit), puis déploiement par SSH (`scripts/deploy.sh`) : téléchargement, **sauvegarde chiffrée**, migrations, remplacement progressif, test de fumée (`scripts/smoke.sh`), et **retour automatique** à la version précédente si une instance ne redevient pas saine ou si le test de fumée échoue. Environnement GitHub `production` (secrets du serveur, validation manuelle activable), un seul déploiement à la fois, empreinte SSH du serveur épinglée (pas de confiance au premier contact). Le retour arrière ne défait pas les migrations : elles doivent rester **compatibles avec la version précédente** (règle « expand / contract » : ajouter une colonne ou une table, déployer, puis retirer l'ancienne dans une version ultérieure). Une migration destructrice se déploie en deux temps.
+
+### D-092 · Cache mémoire des paramètres
+Les paramètres du site sont gardés 5 secondes en mémoire dans chaque processus : un parcours de commande les relisait une dizaine de fois en base. Une modification depuis l'administration vide le cache du processus qui la reçoit ; les autres la voient sous 5 secondes, délai acceptable pour des réglages (et le cache public, lui, est invalidé immédiatement).
+
+### D-093 · Deux instances de l'API
+Mesure (load/README.md) : un processus Node tient 300 req/s de catalogue (p95 ≈ 13 ms, servi par le cache Redis), mais seulement 35 parcours de commande par seconde, limité par le CPU (une trentaine de requêtes SQL par parcours). Avec deux instances, 50 parcours/s, p95 190 ms, sans erreur. La production fait donc tourner `api` et `api-2` derrière Traefik (vérification de santé toutes les 5 s, réessai sur l'autre instance si la connexion est refusée). Le déploiement remplace les instances **l'une après l'autre** : pas de coupure. L'API ne garde aucun état propre à un processus (limites de débit, cache, sessions : Redis et Postgres ; tâches planifiées : worker uniquement).
+
+### D-094 · Capacité d'inscription bornée par Argon2id
+Le hachage des mots de passe (Argon2id, 19 Mio, 2 passes : minimum de l'OWASP) coûte cher par conception. Mesure : environ 10 inscriptions par seconde et par instance (1,5 CPU) ; au-delà, les demandes patientent mais aboutissent toutes. L'objectif de 50 inscriptions/s n'est pas atteint sur le dimensionnement prévu ; affaiblir le hachage pour l'atteindre n'est pas acceptable. Un tel pic (3 000 inscriptions en une minute) est très improbable pour ce site ; la limite de débit par IP (5/min) empêche en outre qu'un robot le provoque. Si le besoin apparaît : plus de processeurs, ou une file d'inscription.
+
+### D-095 · Chaîne de livraison
+Dependabot (npm backend et frontend, images Docker, actions GitHub), audit npm bloquant (production : toute sévérité ; outillage : haute et critique), Trivy sur l'image (haute et critique corrigeables), shellcheck sur les scripts d'exploitation, actions et images en versions figées. Les mises à jour mineures sont regroupées chaque semaine ; chacune passe la CI complète avant fusion.

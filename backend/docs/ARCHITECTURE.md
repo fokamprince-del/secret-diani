@@ -81,7 +81,8 @@ src/
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
 docker/                   initialisation Postgres, configuration Traefik
-scripts/                  sauvegarde, restauration, export OpenAPI
+scripts/                  déploiement (deploy, smoke, compose-prod), sauvegarde, restauration, export OpenAPI
+load/                     tests de charge k6 et résultats mesurés
 ```
 
 ## Correspondance MLD → tables

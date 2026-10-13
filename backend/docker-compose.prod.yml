@@ -1,6 +1,6 @@
 # Production (VPS) — voir docs/RUNBOOK.md.
 #   Fichier d'environnement : .env.production sur le serveur (chmod 600), jamais commité.
-#   Déploiement : IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml --env-file .env.production up -d
+#   Déploiement : scripts/deploy.sh <tag> (CI) ; commandes ponctuelles : scripts/compose-prod.sh …
 #
 # Réseaux :
 #   edge     : Traefik ↔ API (accès Internet sortant pour Stripe/PayPal…)
@@ -77,7 +77,9 @@ services:
       resources:
         limits: { cpus: '0.5', memory: 256M }
 
-  api:
+  # Deux instances de l'API derrière Traefik (D-093) : débit doublé (un processus Node par
+  # instance) et déploiement sans coupure, une instance après l'autre (scripts/deploy.sh).
+  api: &api
     <<: *app
     networks: [edge, internal]
     depends_on:
@@ -86,6 +88,8 @@ services:
     deploy:
       resources:
         limits: { cpus: '1.5', memory: 768M }
+
+  api-2: *api
 
   worker:
     <<: *app
@@ -111,6 +115,24 @@ services:
       # Seules les migrations utilisent le rôle propriétaire du schéma.
       DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:?}@postgres:5432/diani?schema=public
     networks: [internal]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  # Données de référence (idempotent, ne remplace rien de ce que Diani a modifié) :
+  # make seed-prod. Accès Internet pour déposer la fiche PDF de démonstration dans le stockage.
+  seed:
+    image: ghcr.io/${GHCR_OWNER:?}/les-secrets-de-diani-backend-migrate:${IMAGE_TAG:?}
+    profiles: [seed]
+    command: ['node', 'node_modules/ts-node/dist/bin.js', '--transpile-only', 'prisma/seed.ts']
+    env_file: [.env.production]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://diani:${POSTGRES_PASSWORD:?}@postgres:5432/diani?schema=public
+    networks: [egress, internal]
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]

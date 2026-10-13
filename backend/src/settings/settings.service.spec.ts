@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { PrismaService } from '../prisma/prisma.service';
-import { defineSetting, SettingsService } from './settings.service';
+import { defineSetting, SETTINGS_CACHE_MS, SettingsService } from './settings.service';
 
 const THRESHOLD = defineSetting({
   key: 'test.threshold',
@@ -17,10 +17,13 @@ const LABEL = defineSetting({
 });
 
 function service(rows: { key: string; value: unknown }[]): SettingsService {
-  const prisma = {
+  return new SettingsService(prismaReturning(rows));
+}
+
+function prismaReturning(rows: { key: string; value: unknown }[]) {
+  return {
     appSetting: { findMany: jest.fn().mockResolvedValue(rows) },
-  } as unknown as PrismaService;
-  return new SettingsService(prisma);
+  } as unknown as PrismaService & { appSetting: { findMany: jest.Mock } };
 }
 
 describe('SettingsService', () => {
@@ -38,6 +41,35 @@ describe('SettingsService', () => {
     await expect(service([{ key: 'test.threshold', value: '50 €' }]).get(THRESHOLD)).resolves.toBe(
       5_000,
     );
+  });
+
+  it('garde les valeurs 5 secondes en mémoire, puis les relit ; vidage à la demande', async () => {
+    jest.useFakeTimers({ now: new Date('2026-10-13T10:00:00Z') });
+    try {
+      const prisma = prismaReturning([{ key: 'test.threshold', value: 8_000 }]);
+      const settings = new SettingsService(prisma);
+      await settings.get(THRESHOLD);
+      await settings.getMany([THRESHOLD, LABEL] as const);
+      // Seul le paramètre jamais lu est demandé à la base.
+      expect(prisma.appSetting.findMany).toHaveBeenCalledTimes(2);
+      expect(prisma.appSetting.findMany.mock.calls[1][0]).toMatchObject({
+        where: { key: { in: ['test.label'] } },
+      });
+      await settings.get(THRESHOLD);
+      expect(prisma.appSetting.findMany).toHaveBeenCalledTimes(2);
+
+      jest.advanceTimersByTime(SETTINGS_CACHE_MS);
+      await settings.get(THRESHOLD);
+      expect(prisma.appSetting.findMany).toHaveBeenCalledTimes(3);
+
+      settings.invalidate('test.threshold');
+      await settings.get(THRESHOLD);
+      settings.invalidate();
+      await settings.get(LABEL);
+      expect(prisma.appSetting.findMany).toHaveBeenCalledTimes(5);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('lit plusieurs paramètres en une requête, dans l’ordre demandé', async () => {

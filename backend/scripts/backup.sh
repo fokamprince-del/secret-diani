@@ -13,7 +13,9 @@ set -eu
 
 : "${BACKUP_AGE_RECIPIENT:?BACKUP_AGE_RECIPIENT manquant (clé publique age)}"
 : "${BACKUP_RCLONE_REMOTE:?BACKUP_RCLONE_REMOTE manquant (destination hors serveur)}"
-COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
+export COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
+# Fichiers d'environnement de production ajoutés s'ils existent (voir scripts/compose-prod.sh).
+compose="$(dirname "$0")/compose-prod.sh"
 BACKUP_DIR="${BACKUP_DIR:-./backups}"
 
 command -v age >/dev/null || { echo "age n'est pas installé" >&2; exit 1; }
@@ -25,7 +27,8 @@ stamp="$(date -u +%Y%m%d-%H%M%S)"
 target="$BACKUP_DIR/diani-$stamp.dump.age"
 
 echo "Sauvegarde de la base vers $target…"
-docker compose -f "$COMPOSE_FILE" exec -T postgres \
+# shellcheck disable=SC2016 # variables développées dans le conteneur Postgres
+"$compose" exec -T postgres \
   sh -c 'pg_dump --format=custom --no-owner --no-privileges -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
   | age --recipient "$BACKUP_AGE_RECIPIENT" --output "$target"
 
