@@ -1,0 +1,135 @@
+# Intégration continue — phase 1 (socle).
+# Le déploiement continu (push ghcr.io, SSH, migrations, test de fumée, rollback) est ajouté en phase 10.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24'
+
+jobs:
+  quality:
+    name: Lint, format et typage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - run: npx prisma generate
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      # docs/openapi.json alimente le client typé du frontend : il doit refléter le code.
+      - name: Spécification OpenAPI à jour
+        run: npm run openapi:check
+
+  unit:
+    name: Tests unitaires
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-fund
+      - run: npx prisma generate
+      - run: npm run test:cov
+
+  e2e:
+    name: Tests e2e (Postgres + Redis éphémères)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: diani_test
+          POSTGRES_USER: diani
+          POSTGRES_PASSWORD: diani_test_password
+        ports: ['55432:5432']
+        options: >-
+          --health-cmd "pg_isready -U diani -d diani_test"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ['56379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      # Stockage S3 de test (les services GitHub ne permettent pas de passer une commande).
+      - name: Démarrer SeaweedFS (S3)
+        run: |
+          docker run -d --name s3-test -p 58333:8333 chrislusf/seaweedfs:4.48 server -s3 -dir=/data
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:58333/healthz && exit 0; sleep 2; done
+          docker logs s3-test; exit 1
+      - run: npm ci --no-fund
+      - run: npx prisma generate
+      - run: npm run test:e2e -- --coverage
+
+  audit:
+    name: Audit des dépendances
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # Bloquant : toute vulnérabilité dans les dépendances de production.
+      - run: npm audit --omit=dev --audit-level=low
+      # Bloquant : vulnérabilité haute ou critique dans l'outillage de développement.
+      - run: npm audit --audit-level=high
+
+  image:
+    name: Image Docker (build + scan)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [quality, unit, e2e]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - name: Build de l'image d'exécution
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: runtime
+          load: true
+          tags: diani-api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Scan de vulnérabilités (Trivy)
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock
+          aquasec/trivy:0.75.0 image --exit-code 1 --severity HIGH,CRITICAL
+          --ignore-unfixed --no-progress diani-api:ci
+      - name: Test de fumée du conteneur (configuration invalide → refus de démarrer)
+        run: |
+          set +e
+          docker run --rm diani-api:ci > out.log 2>&1
+          code=$?
+          set -e
+          cat out.log
+          test "$code" -ne 0
+          grep -q "Configuration invalide" out.log
