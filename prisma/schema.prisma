@@ -73,12 +73,17 @@ model User {
   updatedAt          DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt          DateTime?  @map("deleted_at") @db.Timestamptz(3)
 
-  sessions    Session[]
-  tokens      UserToken[]
-  backupCodes MfaBackupCode[]
-  addresses   Address[]
-  cart        ShopCart?
-  orders      Order[]
+  sessions       Session[]
+  tokens         UserToken[]
+  backupCodes    MfaBackupCode[]
+  addresses      Address[]
+  cart           ShopCart?
+  orders         Order[]
+  courseAccesses CourseAccess[]
+  lessonProgress LessonProgress[]
+  quizAttempts   QuizAttempt[]
+  certificates   Certificate[]
+  callRequests   CallRequest[]
 
   @@index([role])
   @@index([status, createdAt])
@@ -270,9 +275,11 @@ model Media {
   updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt       DateTime?   @map("deleted_at") @db.Timestamptz(3)
 
-  articleCovers  Article[]
-  cateringImages CateringProductImage[]
-  shopImages     ShopProductImage[]
+  articleCovers   Article[]
+  cateringImages  CateringProductImage[]
+  shopImages      ShopProductImage[]
+  courseCovers    Course[]
+  lessonResources LessonResource[]
 
   @@index([kind, status, createdAt])
   @@index([deletedAt])
@@ -817,6 +824,8 @@ model ShopProductImage {
 enum ShippingMethod {
   delivery
   pickup
+  /// Contenu numérique (packs de formation) : rien à expédier.
+  digital
 
   @@map("shipping_method")
 }
@@ -966,6 +975,8 @@ model OrderItem {
   unitPriceCents Int           @map("unit_price_cents")
   quantity       Int
   weightGrams    Int           @default(0) @map("weight_grams")
+  /// Pack de formation vendu (sans clé étrangère : l'historique survit au catalogue).
+  packId         String?       @map("pack_id") @db.Uuid
   position       Int           @default(0)
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -1162,4 +1173,311 @@ model WebhookEvent {
   @@unique([provider, eventId])
   @@index([status, receivedAt])
   @@map("webhook_events")
+}
+
+// =============================================================================
+// Phase 7 — Formations
+// =============================================================================
+
+/// MLD : pack_formation. Le rang ordonne les packs : un pack inclut tous les packs de rang inférieur.
+model CoursePack {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  slug          String   @unique @db.VarChar(120)
+  name          String   @db.VarChar(120)
+  summary       String?  @db.VarChar(500)
+  priceCents    Int      @map("price_cents")
+  /// 1 = Essentiel, 2 = Intermédiaire, 3 = Premium : Premium ⊇ Intermédiaire ⊇ Essentiel.
+  rank          Int      @unique
+  /// Contenus et avantages affichés (liste de phrases).
+  features      Json     @default("[]")
+  /// Appels personnalisés inclus avec ce pack.
+  callsIncluded Int      @default(0) @map("calls_included")
+  visible       Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  courses  Course[]
+  accesses CourseAccess[]
+
+  @@map("course_packs")
+}
+
+enum CourseStatus {
+  draft
+  published
+
+  @@map("course_status")
+}
+
+/// MLD : formation. Accessible à partir du pack indiqué (et avec tous les packs supérieurs).
+model Course {
+  id                  String       @id @default(uuid(7)) @db.Uuid
+  slug                String       @unique @db.VarChar(160)
+  title               String       @db.VarChar(200)
+  summary             String       @db.VarChar(500)
+  descriptionMarkdown String       @default("") @map("description_markdown")
+  descriptionHtml     String       @default("") @map("description_html")
+  packId              String       @map("pack_id") @db.Uuid
+  coverMediaId        String?      @map("cover_media_id") @db.Uuid
+  coverAlt            String       @default("") @map("cover_alt") @db.VarChar(300)
+  /// Formation phare (mise en avant sur la page Formations).
+  featured            Boolean      @default(false)
+  status              CourseStatus @default(draft)
+  position            Int          @default(0)
+  seoTitle            String?      @map("seo_title") @db.VarChar(70)
+  seoDescription      String?      @map("seo_description") @db.VarChar(160)
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt           DateTime?    @map("deleted_at") @db.Timestamptz(3)
+
+  pack         CoursePack     @relation(fields: [packId], references: [id], onDelete: Restrict)
+  coverMedia   Media?         @relation(fields: [coverMediaId], references: [id], onDelete: SetNull)
+  modules      CourseModule[]
+  lessons      Lesson[]
+  certificates Certificate[]
+
+  @@index([status, position])
+  @@index([packId])
+  @@index([coverMediaId])
+  @@map("courses")
+}
+
+/// MLD : module.
+model CourseModule {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  courseId  String   @map("course_id") @db.Uuid
+  title     String   @db.VarChar(200)
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([courseId, position])
+  @@map("course_modules")
+}
+
+/// MLD : leçon (vidéo verticale, fiche PDF, conseils, quiz).
+model Lesson {
+  id                   String   @id @default(uuid(7)) @db.Uuid
+  moduleId             String   @map("module_id") @db.Uuid
+  /// Unique dans la formation (adresse de la leçon).
+  slug                 String   @db.VarChar(160)
+  courseId             String   @map("course_id") @db.Uuid
+  title                String   @db.VarChar(200)
+  summary              String?  @db.VarChar(500)
+  /// Identifiant de la vidéo dans la bibliothèque Bunny Stream.
+  videoId              String?  @map("video_id") @db.VarChar(100)
+  videoDurationSeconds Int?     @map("video_duration_seconds")
+  /// Bloc « Conseils & astuces » (Markdown assaini).
+  tipsMarkdown         String   @default("") @map("tips_markdown")
+  tipsHtml             String   @default("") @map("tips_html")
+  /// Leçon d'exemple, consultable gratuitement sans compte.
+  freePreview          Boolean  @default(false) @map("free_preview")
+  published            Boolean  @default(true)
+  position             Int      @default(0)
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  module    CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  course    Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  resources LessonResource[]
+  quiz      Quiz?
+  progress  LessonProgress[]
+
+  @@unique([courseId, slug])
+  @@index([moduleId, position])
+  @@map("lessons")
+}
+
+/// MLD : ressource (fiche PDF de la médiathèque, téléchargée par URL signée).
+model LessonResource {
+  id        String  @id @default(uuid(7)) @db.Uuid
+  lessonId  String  @map("lesson_id") @db.Uuid
+  mediaId   String  @map("media_id") @db.Uuid
+  title     String  @db.VarChar(200)
+  /// Filigrane au nom de la cliente sur chaque page.
+  watermark Boolean @default(false)
+  position  Int     @default(0)
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  media  Media  @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@index([lessonId, position])
+  @@index([mediaId])
+  @@map("lesson_resources")
+}
+
+/// MLD : quiz (un par leçon au plus). Correction côté serveur uniquement.
+model Quiz {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  lessonId         String   @unique @map("lesson_id") @db.Uuid
+  /// Score minimal (en %) pour valider la leçon.
+  passScorePercent Int      @default(70) @map("pass_score_percent")
+  /// Nombre de tentatives autorisées ; NULL = illimité.
+  maxAttempts      Int?     @map("max_attempts")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  lesson    Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+/// MLD : question_quiz.
+model QuizQuestion {
+  id          String  @id @default(uuid(7)) @db.Uuid
+  quizId      String  @map("quiz_id") @db.Uuid
+  prompt      String  @db.VarChar(500)
+  /// Explication montrée après la réponse.
+  explanation String? @db.VarChar(1000)
+  position    Int     @default(0)
+
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  choices QuizChoice[]
+
+  @@index([quizId, position])
+  @@map("quiz_questions")
+}
+
+/// MLD : reponse_quiz (choix proposés ; la bonne réponse n'est jamais envoyée avant validation).
+model QuizChoice {
+  id         String  @id @default(uuid(7)) @db.Uuid
+  questionId String  @map("question_id") @db.Uuid
+  label      String  @db.VarChar(300)
+  isCorrect  Boolean @map("is_correct")
+  position   Int     @default(0)
+
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, position])
+  @@map("quiz_choices")
+}
+
+enum AccessSource {
+  purchase
+  gift
+  admin
+
+  @@map("access_source")
+}
+
+/// MLD : donner_acces (utilisateur ↔ pack).
+model CourseAccess {
+  id          String       @id @default(uuid(7)) @db.Uuid
+  userId      String       @map("user_id") @db.Uuid
+  packId      String       @map("pack_id") @db.Uuid
+  source      AccessSource
+  /// Commande d'achat (révocation au remboursement intégral).
+  orderId     String?      @map("order_id") @db.Uuid
+  grantedById String?      @map("granted_by_id") @db.Uuid
+  expiresAt   DateTime?    @map("expires_at") @db.Timestamptz(3)
+  revokedAt   DateTime?    @map("revoked_at") @db.Timestamptz(3)
+  note        String?      @db.VarChar(300)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pack CoursePack @relation(fields: [packId], references: [id], onDelete: Restrict)
+
+  @@index([userId, revokedAt])
+  @@index([packId])
+  @@index([orderId])
+  @@map("course_accesses")
+}
+
+/// MLD : progresser (utilisateur ↔ leçon).
+model LessonProgress {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  lessonId         String    @map("lesson_id") @db.Uuid
+  /// Position de lecture (reprise), en secondes.
+  positionSeconds  Int       @default(0) @map("position_seconds")
+  videoCompletedAt DateTime? @map("video_completed_at") @db.Timestamptz(3)
+  quizBestScore    Int?      @map("quiz_best_score")
+  quizPassedAt     DateTime? @map("quiz_passed_at") @db.Timestamptz(3)
+  /// Leçon terminée (vidéo vue et quiz réussi s'il existe).
+  completedAt      DateTime? @map("completed_at") @db.Timestamptz(3)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+/// Tentative de quiz (score enregistré, limite de tentatives).
+model QuizAttempt {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  quizId       String   @map("quiz_id") @db.Uuid
+  scorePercent Int      @map("score_percent")
+  passed       Boolean
+  /// Réponses données : [{ questionId, choiceIds }].
+  answers      Json
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId, quizId])
+  @@index([quizId])
+  @@map("quiz_attempts")
+}
+
+/// MLD : certificat (numéro unique, vérifiable sur une page publique).
+model Certificate {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  /// « DIANI-2026-7K3QF9XA » (aléatoire : impossible d'énumérer les titulaires).
+  number      String    @unique @db.VarChar(40)
+  userId      String    @map("user_id") @db.Uuid
+  courseId    String    @map("course_id") @db.Uuid
+  /// Nom et formation figés à l'émission.
+  holderName  String    @map("holder_name") @db.VarChar(200)
+  courseTitle String    @map("course_title") @db.VarChar(200)
+  issuedAt    DateTime  @map("issued_at") @db.Timestamptz(3)
+  pdfKey      String?   @map("pdf_key") @db.VarChar(255)
+  /// Révoqué (compte supprimé, accès retiré) : la vérification publique l'indique.
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@map("certificates")
+}
+
+enum CallRequestStatus {
+  requested
+  scheduled
+  done
+  cancelled
+
+  @@map("call_request_status")
+}
+
+/// Avantage des packs : demande d'appel personnalisé (nombre d'appels limité par les packs).
+model CallRequest {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  userId      String            @map("user_id") @db.Uuid
+  status      CallRequestStatus @default(requested)
+  /// Disponibilités et sujet indiqués par la cliente.
+  message     String            @db.VarChar(2000)
+  scheduledAt DateTime?         @map("scheduled_at") @db.Timestamptz(3)
+  adminNote   String?           @map("admin_note") @db.VarChar(1000)
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@map("call_requests")
 }
