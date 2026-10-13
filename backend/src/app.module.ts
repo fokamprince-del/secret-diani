@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { createValidationPipe } from './common/pipes/validation.pipe';
 import { RedisThrottlerStorage } from './common/throttler/redis-throttler.storage';
+import { AdminModule } from './admin/admin.module';
 import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { CateringModule } from './catering/catering.module';
@@ -30,6 +31,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { REDIS_CLIENT } from './redis/redis.constants';
 import { RedisModule } from './redis/redis.module';
 import { RgpdModule } from './rgpd/rgpd.module';
+import { SettingsAdminModule } from './settings/settings-admin.module';
 import { SettingsModule } from './settings/settings.module';
 import { ShopModule } from './shop/shop.module';
 import { StorageModule } from './storage/storage.module';
@@ -74,6 +76,8 @@ import { UsersModule } from './users/users.module';
     CoursesModule,
     ContactModule,
     NewsletterModule,
+    SettingsAdminModule,
+    AdminModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

@@ -34,6 +34,7 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
     data: { at: 'lundi', ipTruncated: '203.0.113.0/24', userAgent: null },
   },
   { template: 'account-deleted', data: { firstName: null } },
+  { template: 'account-security-changed', data: { firstName: 'Awa', change: 'mfa_reset' } },
   {
     template: 'catering-request-received',
     data: {

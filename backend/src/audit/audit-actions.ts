@@ -74,6 +74,14 @@ export const AuditAction = {
   CONTACT_UPDATED: 'contact.updated',
   NEWSLETTER_EXPORTED: 'newsletter.exported',
   NEWSLETTER_SUBSCRIBER_DELETED: 'newsletter.subscriber_deleted',
+  // Administration (phase 9)
+  SETTING_UPDATED: 'settings.updated',
+  SETTING_RESET: 'settings.reset',
+  USER_LOCKED: 'admin.user_locked',
+  USER_UNLOCKED: 'admin.user_unlocked',
+  USER_MFA_RESET: 'admin.user_mfa_reset',
+  USER_SESSIONS_REVOKED: 'admin.user_sessions_revoked',
+  USER_DATA_EXPORTED: 'admin.user_data_exported',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

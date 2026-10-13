@@ -403,3 +403,146 @@ export class CourseStatsDto {
   @ApiProperty({ description: 'Taux de complétion (%) des inscrites' })
   completionRate!: number;
 }
+
+// --- Réponses de l'administration (D-076) ------------------------------------------------------
+
+export class AdminPackDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() slug!: string;
+  @ApiProperty() name!: string;
+  @ApiProperty({ nullable: true, type: String }) summary!: string | null;
+  @ApiProperty() priceCents!: number;
+  @ApiProperty({ description: 'Niveau : un pack ouvre les formations de niveau inférieur ou égal' })
+  rank!: number;
+  @ApiProperty({ type: [String] }) features!: string[];
+  @ApiProperty() callsIncluded!: number;
+  @ApiProperty() visible!: boolean;
+}
+
+class AdminCoursePackRefDto {
+  @ApiProperty() name!: string;
+  @ApiProperty() rank!: number;
+}
+
+class LessonCountDto {
+  @ApiProperty() lessons!: number;
+}
+
+export class AdminCourseListItemDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() slug!: string;
+  @ApiProperty() title!: string;
+  @ApiProperty({ enum: ['draft', 'published'] }) status!: string;
+  @ApiProperty() featured!: boolean;
+  @ApiProperty() position!: number;
+  @ApiProperty({ type: AdminCoursePackRefDto }) pack!: AdminCoursePackRefDto;
+  @ApiProperty({ type: LessonCountDto }) _count!: LessonCountDto;
+}
+
+class AdminQuizChoiceDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() label!: string;
+  @ApiProperty() isCorrect!: boolean;
+}
+
+class AdminQuizQuestionDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() prompt!: string;
+  @ApiProperty({ nullable: true, type: String }) explanation!: string | null;
+  @ApiProperty({ type: [AdminQuizChoiceDto] }) choices!: AdminQuizChoiceDto[];
+}
+
+class AdminQuizDto {
+  @ApiProperty() passScorePercent!: number;
+  @ApiProperty({ nullable: true, type: Number, description: 'Vide : tentatives illimitées' })
+  maxAttempts!: number | null;
+  @ApiProperty({ type: [AdminQuizQuestionDto] }) questions!: AdminQuizQuestionDto[];
+}
+
+class AdminResourceDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() mediaId!: string;
+  @ApiProperty() title!: string;
+  @ApiProperty() watermark!: boolean;
+}
+
+class AdminLessonDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() slug!: string;
+  @ApiProperty() title!: string;
+  @ApiProperty({ nullable: true, type: String }) summary!: string | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Identifiant Bunny Stream' })
+  videoId!: string | null;
+  @ApiProperty({ nullable: true, type: Number }) videoDurationSeconds!: number | null;
+  @ApiProperty() tipsMarkdown!: string;
+  @ApiProperty() freePreview!: boolean;
+  @ApiProperty() published!: boolean;
+  @ApiProperty() position!: number;
+  @ApiProperty({ type: [AdminResourceDto] }) resources!: AdminResourceDto[];
+  @ApiProperty({ type: AdminQuizDto, nullable: true }) quiz!: AdminQuizDto | null;
+}
+
+class AdminModuleDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() title!: string;
+  @ApiProperty() position!: number;
+  @ApiProperty({ type: [AdminLessonDto] }) lessons!: AdminLessonDto[];
+}
+
+export class AdminCourseDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() slug!: string;
+  @ApiProperty() title!: string;
+  @ApiProperty() summary!: string;
+  @ApiProperty() descriptionMarkdown!: string;
+  @ApiProperty() packId!: string;
+  @ApiProperty({ nullable: true, type: String }) coverMediaId!: string | null;
+  @ApiProperty() coverAlt!: string;
+  @ApiProperty() featured!: boolean;
+  @ApiProperty({ enum: ['draft', 'published'] }) status!: string;
+  @ApiProperty() position!: number;
+  @ApiProperty({ nullable: true, type: String }) seoTitle!: string | null;
+  @ApiProperty({ nullable: true, type: String }) seoDescription!: string | null;
+  @ApiProperty() updatedAt!: Date;
+  @ApiProperty({ type: [AdminModuleDto], description: 'Modules et leçons, quiz avec réponses' })
+  modules!: AdminModuleDto[];
+}
+
+class AccessPackRefDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() slug!: string;
+  @ApiProperty() name!: string;
+  @ApiProperty() rank!: number;
+}
+
+export class AdminAccessDto {
+  @ApiProperty() id!: string;
+  @ApiProperty({ enum: ['purchase', 'gift', 'admin'] }) source!: string;
+  @ApiProperty({ nullable: true, type: String }) orderId!: string | null;
+  @ApiProperty({ nullable: true, type: Date }) expiresAt!: Date | null;
+  @ApiProperty({ nullable: true, type: Date }) revokedAt!: Date | null;
+  @ApiProperty({ nullable: true, type: String }) note!: string | null;
+  @ApiProperty() createdAt!: Date;
+  @ApiProperty({ type: AccessPackRefDto }) pack!: AccessPackRefDto;
+}
+
+export class GrantedAccessDto {
+  @ApiProperty() id!: string;
+}
+
+class CallRequestUserDto {
+  @ApiProperty() id!: string;
+  @ApiProperty() email!: string;
+  @ApiProperty({ nullable: true, type: String }) firstName!: string | null;
+  @ApiProperty({ nullable: true, type: String }) lastName!: string | null;
+}
+
+export class AdminCallRequestDto {
+  @ApiProperty() id!: string;
+  @ApiProperty({ enum: CallRequestStatus }) status!: CallRequestStatus;
+  @ApiProperty() message!: string;
+  @ApiProperty({ nullable: true, type: Date }) scheduledAt!: Date | null;
+  @ApiProperty() createdAt!: Date;
+  @ApiProperty({ nullable: true, type: String }) adminNote!: string | null;
+  @ApiProperty({ type: CallRequestUserDto }) user!: CallRequestUserDto;
+}

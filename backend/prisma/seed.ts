@@ -1,4 +1,4 @@
-import { type FaqCategory, PrismaClient } from '@prisma/client';
+import { type FaqCategory, type Prisma, PrismaClient } from '@prisma/client';
 import { MarkdownService } from '../src/content/markdown/markdown.service';
 import type { AppConfigService } from '../src/config/app-config.service';
 import { seedCatering } from './seed-data/catering';
@@ -20,7 +20,7 @@ const markdown = new MarkdownService({
       : (process.env.MEDIA_PUBLIC_BASE_URL ?? 'http://localhost:8333/diani-public'),
 } as AppConfigService);
 
-const SETTINGS: { key: string; value: string; description: string }[] = [
+const SETTINGS: { key: string; value: Prisma.InputJsonValue; description: string }[] = [
   {
     key: 'site.whatsapp_number',
     value: '',
@@ -33,9 +33,14 @@ const SETTINGS: { key: string; value: string; description: string }[] = [
     description: 'Autrice affichée sur les articles (données structurées).',
   },
   {
-    key: 'site.instagram_url',
-    value: 'https://www.instagram.com/diani_cuisto/',
-    description: 'Compte Instagram de la marque.',
+    key: 'site.social_links',
+    value: {
+      instagram: 'https://www.instagram.com/diani_cuisto/',
+      tiktok: '',
+      facebook: '',
+      youtube: '',
+    },
+    description: 'Liens vers les réseaux sociaux (adresses https, laisser vide pour masquer).',
   },
   { key: 'site.logo_url', value: '', description: 'URL du logo (données structurées).' },
 ];

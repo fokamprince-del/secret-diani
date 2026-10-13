@@ -39,7 +39,10 @@ export type RevocationReason =
   | 'password_reset'
   | 'email_changed'
   | 'user_revoked'
-  | 'account_deleted';
+  | 'account_deleted'
+  | 'admin_locked'
+  | 'admin_revoked'
+  | 'mfa_reset';
 
 const revokedKey = (sessionId: string): string => `auth:revoked-session:${sessionId}`;
 

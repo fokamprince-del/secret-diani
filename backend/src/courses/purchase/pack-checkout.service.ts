@@ -9,6 +9,8 @@ import { ErrorCode } from '../../common/errors/error-codes';
 import { AppConfigService } from '../../config/app-config.service';
 import { notFound } from '../../content/common/content.helpers';
 import { PrismaService } from '../../prisma/prisma.service';
+import { SettingsService } from '../../settings/settings.service';
+import { COURSE_SALES_OPEN } from '../../settings/site.settings';
 import { orderReference } from '../../shop/domain/order-status';
 import type { CheckoutResultDto } from '../../shop/dto/cart.dto';
 import { OrderLinkService } from '../../shop/orders/order-link.service';
@@ -34,6 +36,7 @@ export class PackCheckoutService {
     private readonly captcha: CaptchaService,
     private readonly links: OrderLinkService,
     private readonly audit: AuditService,
+    private readonly settings: SettingsService,
     config: AppConfigService,
   ) {
     this.termsVersion = config.get('TERMS_VERSION');
@@ -45,6 +48,13 @@ export class PackCheckoutService {
     user: AuthenticatedUser,
     client: ClientContext,
   ): Promise<CheckoutResultDto> {
+    if (!(await this.settings.get(COURSE_SALES_OPEN))) {
+      throw new AppException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        ErrorCode.FEATURE_DISABLED,
+        'Les inscriptions aux formations sont momentanément fermées : elles rouvrent très bientôt.',
+      );
+    }
     await this.captcha.verify(dto.captchaToken, client.ip);
     const pack = await this.prisma.coursePack.findFirst({
       where: { slug: packSlug, visible: true },

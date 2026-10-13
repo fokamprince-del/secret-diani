@@ -7,5 +7,6 @@ import { RgpdService } from './rgpd.service';
   imports: [AuthModule],
   controllers: [RgpdController],
   providers: [RgpdService],
+  exports: [RgpdService],
 })
 export class RgpdModule {}

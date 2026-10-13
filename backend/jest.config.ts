@@ -82,6 +82,10 @@ const config: Config = {
     // Phase 8 : contact et newsletter adossés à Postgres/Redis (e2e) ; le signeur reste ici.
     '!contact/*.service.ts',
     '!newsletter/*.service.ts',
+    // Phase 9 : administration adossée à Postgres/Redis (e2e) ; la série du tableau de bord et le
+    // registre des paramètres restent ici (la série est testée via sa fonction exportée).
+    '!admin/**/*.service.ts',
+    '!settings/settings-admin.service.ts',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

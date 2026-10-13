@@ -98,6 +98,19 @@
 | **D**enial of service | Formulaires utilisés pour bombarder une boîte ou remplir la base | Débit par IP, piège à robots, Turnstile ; 3 accusés / 3 confirmations par jour et par adresse ; purge des inscriptions non confirmées | `contact-newsletter.e2e` › débit, accusés, purge |
 | **E**levation of privilege | Lecture des messages ou de la liste par une cliente | Rôle admin + 2FA | `contact-newsletter.e2e` › 403 / 401 |
 
+## Modèle de menaces — administration (phase 9, STRIDE)
+
+| Menace | Scénario | Mesures | Preuves (tests) |
+|---|---|---|---|
+| **S**poofing | Session d'administration volée qui crée d'autres administrateurs | Aucun changement de rôle par l'API (D-084) ; rôle admin + 2FA sur chaque route | `admin.e2e` › 403 / 401 |
+| S | Administrateur malveillant qui coupe l'accès d'un autre sans trace | Actions journalisées (auteur, cible) et notifiées par e-mail à la personne visée | `admin.e2e` › historique d'un compte |
+| **T**ampering | Paramètre aberrant (acompte négatif, lien `javascript:`) | Clés du registre seulement, valeur validée par le schéma (https imposé, chemins internes filtrés) ; une valeur invalide en base retombe sur la valeur par défaut | `settings.registry.spec`, `admin.e2e` › valeur non conforme |
+| **R**epudiation | Contestation d'une modification de prix ou d'une suspension | Journal d'audit immuable, filtrable par cible et par période | `admin.e2e` › journal d'audit |
+| **I**nformation disclosure | Secrets exposés dans la fiche d'un compte | Sélection explicite des champs, aucun secret ni empreinte | `admin.e2e` › fiche sans secret |
+| I | Clé de chiffrement compromise | Rotation outillée (rechiffrement, D-088) | `admin.e2e` › rotation |
+| **D**enial of service | Une administratrice se suspend ou se retire le 2FA par erreur | Actions interdites sur son propre compte | `admin.e2e` › propre compte |
+| **E**levation of privilege | Compte suspendu qui garde une session ouverte | Suspension = révocation immédiate de toutes les sessions (jetons d'accès refusés via Redis) | `admin.e2e` › suspension |
+
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 
 | Exigence | État | Référence |

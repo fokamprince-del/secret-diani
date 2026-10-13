@@ -10,6 +10,8 @@ import { AppConfigService } from '../../config/app-config.service';
 import { notFound } from '../../content/common/content.helpers';
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { SettingsService } from '../../settings/settings.service';
+import { SITE_NAME } from '../../settings/site.settings';
 import { DOCUMENTS_QUEUE, type DocumentJobData } from '../../shop/shop.constants';
 import { StorageService } from '../../storage/storage.service';
 import { PUBLISHED_COURSE } from '../catalog/courses-catalog.service';
@@ -42,6 +44,7 @@ export class CertificatesService {
     private readonly storage: StorageService,
     private readonly mail: MailService,
     private readonly audit: AuditService,
+    private readonly settings: SettingsService,
     @InjectQueue(DOCUMENTS_QUEUE) private readonly documents: Queue<DocumentJobData>,
     config: AppConfigService,
   ) {
@@ -173,19 +176,12 @@ export class CertificatesService {
       },
     });
     if (!row || row.pdfKey || row.revokedAt) return;
-    const brand = await this.prisma.appSetting.findUnique({
-      where: { key: 'site.name' },
-      select: { value: true },
-    });
     const pdf = await renderCertificatePdf({
       number: row.number,
       holderName: row.holderName,
       courseTitle: row.courseTitle,
       issuedAt: row.issuedAt,
-      brand:
-        typeof brand?.value === 'string' && brand.value.trim()
-          ? brand.value.trim()
-          : 'Les Secrets de Diani',
+      brand: await this.settings.get(SITE_NAME),
       verificationUrl: this.verificationUrl(row.number),
     });
     const key = `certificates/${row.issuedAt.getUTCFullYear()}/${row.number}.pdf`;

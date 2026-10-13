@@ -109,11 +109,59 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "targetType",
+            "required": false,
+            "in": "query",
+            "description": "Type de la cible (user, order, setting…)",
+            "schema": {
+              "example": "user",
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetId",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant de la cible (historique d’un compte, d’une commande…)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "À partir de (inclus)",
+            "schema": {
+              "format": "date-time",
+              "example": "2026-10-01T00:00:00Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "Jusqu’à (exclu)",
+            "schema": {
+              "format": "date-time",
+              "example": "2026-11-01T00:00:00Z",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Page d’entrées et curseur suivant"
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogPageDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6438,7 +6486,17 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminPackDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6465,7 +6523,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPackDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6503,7 +6568,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPackDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6532,7 +6604,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminAccessDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6560,7 +6642,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantedAccessDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6664,7 +6753,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCallRequestDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6703,7 +6802,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCallRequestDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6741,7 +6847,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6767,7 +6880,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6806,7 +6926,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6844,7 +6971,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6883,7 +7017,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6910,7 +7051,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6948,7 +7096,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6987,7 +7142,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7014,7 +7176,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7033,7 +7202,17 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCourseListItemDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7060,7 +7239,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7089,7 +7275,17 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCourseListItemDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7118,7 +7314,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7155,7 +7358,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7209,7 +7419,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7237,7 +7454,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7275,7 +7499,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7313,7 +7544,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCourseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7742,6 +7980,505 @@
           "Administration — newsletter"
         ]
       }
+    },
+    "/api/v1/site/settings": {
+      "get": {
+        "operationId": "SiteSettingsController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicSiteSettingsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Réglages publics du site (contact, réseaux, bandeau, ventes ouvertes)",
+        "tags": [
+          "Site"
+        ]
+      }
+    },
+    "/api/v1/admin/settings": {
+      "get": {
+        "operationId": "AdminSettingsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SettingDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Tous les paramètres modifiables, avec valeur par défaut et schéma",
+        "tags": [
+          "Administration — paramètres"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/{key}": {
+      "get": {
+        "operationId": "AdminSettingsController_get",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "catering.deposit_below_cents",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — paramètres"
+        ]
+      },
+      "put": {
+        "operationId": "AdminSettingsController_update",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "catering.deposit_below_cents",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSettingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un paramètre (validé par son schéma, effet immédiat)",
+        "tags": [
+          "Administration — paramètres"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminSettingsController_reset",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "catering.deposit_below_cents",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Revenir à la valeur par défaut",
+        "tags": [
+          "Administration — paramètres"
+        ]
+      }
+    },
+    "/api/v1/admin/dashboard": {
+      "get": {
+        "operationId": "DashboardController_get",
+        "parameters": [
+          {
+            "name": "days",
+            "required": false,
+            "in": "query",
+            "description": "Période en jours",
+            "schema": {
+              "minimum": 1,
+              "maximum": 365,
+              "default": 30,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ventes, choses à faire, clientes, formations, newsletter, stocks bas",
+        "tags": [
+          "Administration — tableau de bord"
+        ]
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "operationId": "AdminUsersController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Recherche dans l’e-mail, le prénom et le nom",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "client",
+                "admin"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Par défaut : tous les comptes sauf les comptes supprimés",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "locked",
+                "deleted"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Rechercher des comptes (accès aux formations : /admin/courses/accesses)",
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}": {
+      "get": {
+        "operationId": "AdminUsersController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/lock": {
+      "post": {
+        "operationId": "AdminUsersController_lock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Suspendre le compte (connexion refusée, appareils déconnectés)",
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/unlock": {
+      "post": {
+        "operationId": "AdminUsersController_unlock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réactiver le compte (et lever le verrou anti-force brute)",
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/mfa/reset": {
+      "post": {
+        "operationId": "AdminUsersController_resetMfa",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réinitialiser la double authentification (téléphone perdu)",
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/sessions/revoke": {
+      "post": {
+        "operationId": "AdminUsersController_revokeSessions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokedSessionsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Déconnecter le compte de tous ses appareils",
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/export": {
+      "get": {
+        "operationId": "AdminUsersController_export",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Même contenu que GET /me/export"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Exporter les données du compte (demande d’accès RGPD reçue hors ligne)",
+        "tags": [
+          "Administration — comptes"
+        ]
+      }
     }
   },
   "info": {
@@ -7766,6 +8503,74 @@
       }
     },
     "schemas": {
+      "AuditLogDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "nullable": true
+          },
+          "action": {
+            "type": "string",
+            "example": "admin.user_locked"
+          },
+          "targetType": {
+            "type": "string",
+            "nullable": true
+          },
+          "targetId": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true,
+            "description": "Contexte, sans donnée personnelle"
+          },
+          "ipTruncated": {
+            "type": "string",
+            "nullable": true,
+            "example": "203.0.113.0/24"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "actorId",
+          "action",
+          "targetType",
+          "targetId",
+          "metadata",
+          "ipTruncated",
+          "createdAt"
+        ]
+      },
+      "AuditLogPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditLogDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
       "FieldErrorDto": {
         "type": "object",
         "properties": {
@@ -14586,6 +15391,54 @@
           "issuedAt"
         ]
       },
+      "AdminPackDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "priceCents": {
+            "type": "number"
+          },
+          "rank": {
+            "type": "number",
+            "description": "Niveau : un pack ouvre les formations de niveau inférieur ou égal"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callsIncluded": {
+            "type": "number"
+          },
+          "visible": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "summary",
+          "priceCents",
+          "rank",
+          "features",
+          "callsIncluded",
+          "visible"
+        ]
+      },
       "CreatePackDto": {
         "type": "object",
         "properties": {
@@ -14669,6 +15522,80 @@
           }
         }
       },
+      "AccessPackRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "rank"
+        ]
+      },
+      "AdminAccessDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "purchase",
+              "gift",
+              "admin"
+            ]
+          },
+          "orderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "revokedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "pack": {
+            "$ref": "#/components/schemas/AccessPackRefDto"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "orderId",
+          "expiresAt",
+          "revokedAt",
+          "note",
+          "createdAt",
+          "pack"
+        ]
+      },
       "GrantAccessDto": {
         "type": "object",
         "properties": {
@@ -14698,6 +15625,17 @@
           "userId",
           "packId",
           "source"
+        ]
+      },
+      "GrantedAccessDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
         ]
       },
       "RevokeAccessDto": {
@@ -14747,6 +15685,76 @@
           "completionRate"
         ]
       },
+      "CallRequestUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName"
+        ]
+      },
+      "AdminCallRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "requested",
+              "scheduled",
+              "done",
+              "cancelled"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "adminNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/CallRequestUserDto"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "message",
+          "scheduledAt",
+          "createdAt",
+          "adminNote",
+          "user"
+        ]
+      },
       "UpdateCallRequestDto": {
         "type": "object",
         "properties": {
@@ -14778,6 +15786,272 @@
         },
         "required": [
           "title"
+        ]
+      },
+      "AdminResourceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "mediaId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "watermark": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "mediaId",
+          "title",
+          "watermark"
+        ]
+      },
+      "AdminQuizChoiceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "isCorrect"
+        ]
+      },
+      "AdminQuizQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminQuizChoiceDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "prompt",
+          "explanation",
+          "choices"
+        ]
+      },
+      "AdminQuizDto": {
+        "type": "object",
+        "properties": {
+          "passScorePercent": {
+            "type": "number"
+          },
+          "maxAttempts": {
+            "type": "number",
+            "nullable": true,
+            "description": "Vide : tentatives illimitées"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminQuizQuestionDto"
+            }
+          }
+        },
+        "required": [
+          "passScorePercent",
+          "maxAttempts",
+          "questions"
+        ]
+      },
+      "AdminLessonDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifiant Bunny Stream"
+          },
+          "videoDurationSeconds": {
+            "type": "number",
+            "nullable": true
+          },
+          "tipsMarkdown": {
+            "type": "string"
+          },
+          "freePreview": {
+            "type": "boolean"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "position": {
+            "type": "number"
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminResourceDto"
+            }
+          },
+          "quiz": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminQuizDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "summary",
+          "videoId",
+          "videoDurationSeconds",
+          "tipsMarkdown",
+          "freePreview",
+          "published",
+          "position",
+          "resources",
+          "quiz"
+        ]
+      },
+      "AdminModuleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminLessonDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "position",
+          "lessons"
+        ]
+      },
+      "AdminCourseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "descriptionMarkdown": {
+            "type": "string"
+          },
+          "packId": {
+            "type": "string"
+          },
+          "coverMediaId": {
+            "type": "string",
+            "nullable": true
+          },
+          "coverAlt": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "position": {
+            "type": "number"
+          },
+          "seoTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "modules": {
+            "description": "Modules et leçons, quiz avec réponses",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminModuleDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "summary",
+          "descriptionMarkdown",
+          "packId",
+          "coverMediaId",
+          "coverAlt",
+          "featured",
+          "status",
+          "position",
+          "seoTitle",
+          "seoDescription",
+          "updatedAt",
+          "modules"
         ]
       },
       "CreateLessonDto": {
@@ -14958,6 +16232,75 @@
         },
         "required": [
           "questions"
+        ]
+      },
+      "AdminCoursePackRefDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "rank"
+        ]
+      },
+      "LessonCountDto": {
+        "type": "object",
+        "properties": {
+          "lessons": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lessons"
+        ]
+      },
+      "AdminCourseListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "position": {
+            "type": "number"
+          },
+          "pack": {
+            "$ref": "#/components/schemas/AdminCoursePackRefDto"
+          },
+          "_count": {
+            "$ref": "#/components/schemas/LessonCountDto"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "status",
+          "featured",
+          "position",
+          "pack",
+          "_count"
         ]
       },
       "CreateCourseDto": {
@@ -15318,6 +16661,653 @@
         "required": [
           "items",
           "nextCursor"
+        ]
+      },
+      "SocialLinksDto": {
+        "type": "object",
+        "properties": {
+          "instagram": {
+            "type": "string"
+          },
+          "tiktok": {
+            "type": "string"
+          },
+          "facebook": {
+            "type": "string"
+          },
+          "youtube": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "instagram",
+          "tiktok",
+          "facebook",
+          "youtube"
+        ]
+      },
+      "AnnouncementDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string",
+            "description": "Chemin du site ou adresse https ; vide : pas de lien"
+          }
+        },
+        "required": [
+          "enabled",
+          "text",
+          "link"
+        ]
+      },
+      "SiteFeaturesDto": {
+        "type": "object",
+        "properties": {
+          "shopOpen": {
+            "type": "boolean",
+            "description": "Validation du panier de la boutique possible"
+          },
+          "courseSalesOpen": {
+            "type": "boolean",
+            "description": "Achat des packs de formation possible"
+          }
+        },
+        "required": [
+          "shopOpen",
+          "courseSalesOpen"
+        ]
+      },
+      "PublicSiteSettingsDto": {
+        "type": "object",
+        "properties": {
+          "whatsappNumber": {
+            "type": "string",
+            "description": "Numéro WhatsApp (vide : bouton masqué)"
+          },
+          "contactEmail": {
+            "type": "string"
+          },
+          "socialLinks": {
+            "$ref": "#/components/schemas/SocialLinksDto"
+          },
+          "announcement": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnouncementDto"
+              }
+            ]
+          },
+          "features": {
+            "$ref": "#/components/schemas/SiteFeaturesDto"
+          }
+        },
+        "required": [
+          "whatsappNumber",
+          "contactEmail",
+          "socialLinks",
+          "features"
+        ]
+      },
+      "SettingDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "example": "catering.deposit_below_cents"
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "site",
+              "features",
+              "catering",
+              "shop",
+              "legal"
+            ]
+          },
+          "groupLabel": {
+            "type": "string",
+            "example": "Traiteur"
+          },
+          "description": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object",
+            "description": "Valeur en vigueur (valeur par défaut si jamais modifiée)"
+          },
+          "defaultValue": {
+            "type": "object"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Schéma JSON"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "key",
+          "group",
+          "groupLabel",
+          "description",
+          "value",
+          "defaultValue",
+          "isDefault",
+          "schema",
+          "updatedAt"
+        ]
+      },
+      "UpdateSettingDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "object",
+            "description": "Nouvelle valeur, au format décrit par le schéma JSON du paramètre",
+            "example": 1500
+          }
+        },
+        "required": [
+          "value"
+        ]
+      },
+      "PeriodDto": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "number"
+          },
+          "from": {
+            "type": "string",
+            "example": "2026-09-14"
+          },
+          "to": {
+            "type": "string",
+            "example": "2026-10-13"
+          }
+        },
+        "required": [
+          "days",
+          "from",
+          "to"
+        ]
+      },
+      "SalesSplitDto": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "number"
+          },
+          "grossCents": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "orders",
+          "grossCents"
+        ]
+      },
+      "DailySalesDto": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "number"
+          },
+          "grossCents": {
+            "type": "number"
+          },
+          "day": {
+            "type": "string",
+            "example": "2026-10-13"
+          }
+        },
+        "required": [
+          "orders",
+          "grossCents",
+          "day"
+        ]
+      },
+      "SalesDto": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "number"
+          },
+          "grossCents": {
+            "type": "number"
+          },
+          "refundedCents": {
+            "type": "number"
+          },
+          "netCents": {
+            "type": "number"
+          },
+          "shop": {
+            "description": "Boutique (kits, produits)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SalesSplitDto"
+              }
+            ]
+          },
+          "courses": {
+            "description": "Packs de formation",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SalesSplitDto"
+              }
+            ]
+          },
+          "daily": {
+            "description": "Un point par jour, zéro compris",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailySalesDto"
+            }
+          }
+        },
+        "required": [
+          "orders",
+          "grossCents",
+          "refundedCents",
+          "netCents",
+          "shop",
+          "courses",
+          "daily"
+        ]
+      },
+      "TodoDto": {
+        "type": "object",
+        "properties": {
+          "ordersToShip": {
+            "type": "number",
+            "description": "Commandes payées ou en préparation à expédier ou à remettre"
+          },
+          "cateringPending": {
+            "type": "number",
+            "description": "Demandes traiteur nouvelles ou en discussion"
+          },
+          "cateringUpcoming": {
+            "type": "number",
+            "description": "Événements traiteur confirmés dans les 14 prochains jours"
+          },
+          "contactMessagesNew": {
+            "type": "number"
+          },
+          "callRequestsPending": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "ordersToShip",
+          "cateringPending",
+          "cateringUpcoming",
+          "contactMessagesNew",
+          "callRequestsPending"
+        ]
+      },
+      "CustomersDto": {
+        "type": "object",
+        "properties": {
+          "newAccounts": {
+            "type": "number"
+          },
+          "verifiedNewAccounts": {
+            "type": "number"
+          },
+          "totalActive": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "newAccounts",
+          "verifiedNewAccounts",
+          "totalActive"
+        ]
+      },
+      "CoursesSummaryDto": {
+        "type": "object",
+        "properties": {
+          "newAccesses": {
+            "type": "number"
+          },
+          "activeAccesses": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "newAccesses",
+          "activeAccesses"
+        ]
+      },
+      "NewsletterSummaryDto": {
+        "type": "object",
+        "properties": {
+          "confirmed": {
+            "type": "number"
+          },
+          "newConfirmed": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "confirmed",
+          "newConfirmed"
+        ]
+      },
+      "LowStockLineDto": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "available": {
+            "type": "number"
+          },
+          "threshold": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "variantId",
+          "productName",
+          "label",
+          "sku",
+          "available",
+          "threshold"
+        ]
+      },
+      "DashboardDto": {
+        "type": "object",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/PeriodDto"
+          },
+          "sales": {
+            "$ref": "#/components/schemas/SalesDto"
+          },
+          "todo": {
+            "$ref": "#/components/schemas/TodoDto"
+          },
+          "customers": {
+            "$ref": "#/components/schemas/CustomersDto"
+          },
+          "courses": {
+            "$ref": "#/components/schemas/CoursesSummaryDto"
+          },
+          "newsletter": {
+            "$ref": "#/components/schemas/NewsletterSummaryDto"
+          },
+          "lowStock": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LowStockLineDto"
+            }
+          }
+        },
+        "required": [
+          "period",
+          "sales",
+          "todo",
+          "customers",
+          "courses",
+          "newsletter",
+          "lowStock"
+        ]
+      },
+      "AdminUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "client",
+              "admin"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "locked",
+              "deleted"
+            ]
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          },
+          "lastLoginAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "role",
+          "status",
+          "emailVerified",
+          "mfaEnabled",
+          "lastLoginAt",
+          "createdAt"
+        ]
+      },
+      "AdminUserListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "AdminUserStatsDto": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "number"
+          },
+          "paidOrders": {
+            "type": "number"
+          },
+          "activeSessions": {
+            "type": "number"
+          },
+          "activeAccesses": {
+            "type": "number",
+            "description": "Accès actifs à des packs de formation"
+          }
+        },
+        "required": [
+          "orders",
+          "paidOrders",
+          "activeSessions",
+          "activeAccesses"
+        ]
+      },
+      "AdminUserOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          },
+          "totalCents": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "totalCents",
+          "createdAt"
+        ]
+      },
+      "AdminUserDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "client",
+              "admin"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "locked",
+              "deleted"
+            ]
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          },
+          "lastLoginAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "lockedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "marketingConsent": {
+            "type": "boolean"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/AdminUserStatsDto"
+          },
+          "recentOrders": {
+            "description": "5 dernières commandes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserOrderDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "role",
+          "status",
+          "emailVerified",
+          "mfaEnabled",
+          "lastLoginAt",
+          "createdAt",
+          "phone",
+          "lockedAt",
+          "marketingConsent",
+          "stats",
+          "recentOrders"
+        ]
+      },
+      "RevokedSessionsDto": {
+        "type": "object",
+        "properties": {
+          "revoked": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "revoked"
         ]
       }
     }
