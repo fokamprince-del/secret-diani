@@ -392,3 +392,23 @@ Le seed crée les trois packs du cahier des charges (prix, contenus, appels incl
 
 ### D-076 · Réponses de l'administration des formations
 Les écrans d'édition reçoivent la formation complète (modules, leçons, fiches, quiz avec les bonnes réponses) ; ces réponses ne sont pas encore décrites en détail dans l'OpenAPI (schéma générique). À préciser avec le back-office (phase 9).
+
+## Phase 8 — E-mails, contact et newsletter
+
+### D-077 · Formulaire de contact
+Message **enregistré** (suivi dans l'administration : nouveau, lu, répondu, archivé, note interne) puis envoyé par e-mail aux administrateurs avec un `Reply-To` sur l'adresse de la personne : Diani répond directement depuis sa messagerie. Accusé de réception à la personne, **3 par jour au plus** pour une même adresse (le formulaire ne doit pas servir à bombarder un tiers). Si la mise en file des e-mails échoue, le message reste enregistré et visible. Sujets fermés (général, traiteur, formations, boutique, partenariat, autre).
+
+### D-078 · Anti-spam des formulaires publics
+Même défense en trois couches que le traiteur : limitation de débit par IP (contact 3 / 10 min, inscription newsletter 5 / 10 min), piège à robots `website` (réponse identique, rien d'enregistré ni d'envoyé) et Cloudflare Turnstile (obligatoire en production).
+
+### D-079 · Newsletter en double opt-in
+L'inscription par le formulaire reste **en attente** jusqu'au clic sur le lien de confirmation (usage unique, 7 jours, empreinte SHA-256 seule en base). Réponse identique que l'adresse soit déjà inscrite ou non ; aucune relance pour une adresse déjà confirmée ; 3 e-mails de confirmation par jour au plus par adresse. Preuve du consentement conservée : texte exact de la case cochée, dates de demande et de confirmation, IP tronquées (/24, /48). Réinscription possible après une désinscription (nouveau double opt-in).
+
+### D-080 · Désinscription en un clic
+Chaque e-mail de la newsletter porte un lien de désinscription **signé** (identifiant + HMAC-SHA256 tronqué à 128 bits, clé dérivée par HKDF propre à cet usage, `IdSigner`) : sans date d'expiration (un vieil e-mail doit toujours permettre de partir), sans stockage, idempotent. En plus, en-têtes `List-Unsubscribe` et `List-Unsubscribe-Post: List-Unsubscribe=One-Click` (RFC 8058, exigés par Gmail et Yahoo pour les envois en nombre) pointant sur `POST /api/v1/newsletter/unsubscribe/one-click` ; ils ne sont posés que si `PUBLIC_API_URL` est défini. Le lien du site (`/newsletter/desinscription`) reste toujours présent.
+
+### D-081 · Préférence du compte et newsletter
+La case « recevoir les nouvelles » du compte et la newsletter sont une seule et même liste : cochée (adresse vérifiée), l'abonnement est confirmé directement (l'adresse est déjà prouvée, source `account`) ; décochée, la personne est désinscrite ; une désinscription par lien retire aussi la préférence du compte. Cochée à l'inscription, elle prend effet à la vérification de l'e-mail.
+
+### D-082 · Envoi de la newsletter
+L'API ne compose ni n'envoie de campagnes : l'administration exporte les abonné·es **confirmé·es** en CSV (avec la preuve du consentement, export journalisé) vers l'outil d'envoi choisi par Diani (Brevo, Resend Broadcasts…), qui gère alors sa propre désinscription. Les e-mails transactionnels restent sur Resend. Un envoi intégré pourra venir plus tard sans changer le modèle.

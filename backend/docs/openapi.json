@@ -7325,6 +7325,423 @@
           "Administration — formations"
         ]
       }
+    },
+    "/api/v1/contact": {
+      "post": {
+        "description": "Anti-spam : limitation de débit, piège à robots (`website`), Cloudflare Turnstile. Accusé de réception par e-mail.",
+        "operationId": "ContactController_send",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Envoyer un message à Diani",
+        "tags": [
+          "Contact"
+        ]
+      }
+    },
+    "/api/v1/admin/contact-messages": {
+      "get": {
+        "operationId": "AdminContactController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "new",
+                "read",
+                "answered",
+                "archived"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactMessageListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — contact"
+        ]
+      }
+    },
+    "/api/v1/admin/contact-messages/{id}": {
+      "get": {
+        "operationId": "AdminContactController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactMessageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — contact"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminContactController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactMessageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Suivi : lu, répondu, archivé ; note interne",
+        "tags": [
+          "Administration — contact"
+        ]
+      }
+    },
+    "/api/v1/newsletter/subscribe": {
+      "post": {
+        "description": "Réponse identique que l’adresse soit déjà inscrite ou non.",
+        "operationId": "NewsletterController_subscribe",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscribeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "S’inscrire (double opt-in : un e-mail de confirmation est envoyé)",
+        "tags": [
+          "Newsletter"
+        ]
+      }
+    },
+    "/api/v1/newsletter/confirm": {
+      "post": {
+        "operationId": "NewsletterController_confirm",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsletterTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Confirmer l’inscription (lien reçu par e-mail, 7 jours, usage unique)",
+        "tags": [
+          "Newsletter"
+        ]
+      }
+    },
+    "/api/v1/newsletter/unsubscribe": {
+      "post": {
+        "operationId": "NewsletterController_unsubscribe",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsletterTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Se désinscrire (lien signé présent dans chaque e-mail)",
+        "tags": [
+          "Newsletter"
+        ]
+      }
+    },
+    "/api/v1/newsletter/unsubscribe/one-click": {
+      "post": {
+        "operationId": "NewsletterController_oneClick",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Désinscription en un clic (bouton de la messagerie, RFC 8058)",
+        "tags": [
+          "Newsletter"
+        ]
+      }
+    },
+    "/api/v1/admin/newsletter/subscribers": {
+      "get": {
+        "operationId": "AdminNewsletterController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "confirmed",
+                "unsubscribed"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriberListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — newsletter"
+        ]
+      }
+    },
+    "/api/v1/admin/newsletter/subscribers/export": {
+      "get": {
+        "operationId": "AdminNewsletterController_export",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export CSV des abonné·es confirmé·es, avec la preuve du consentement",
+        "tags": [
+          "Administration — newsletter"
+        ]
+      }
+    },
+    "/api/v1/admin/newsletter/subscribers/{id}": {
+      "delete": {
+        "operationId": "AdminNewsletterController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Effacer un·e abonné·e (droit à l’effacement)",
+        "tags": [
+          "Administration — newsletter"
+        ]
+      }
     }
   },
   "info": {
@@ -14637,6 +15054,271 @@
             "maxLength": 160
           }
         }
+      },
+      "ContactDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Awa Diallo"
+          },
+          "email": {
+            "type": "string",
+            "example": "awa@example.com"
+          },
+          "phone": {
+            "type": "object",
+            "example": "+33612345678"
+          },
+          "subject": {
+            "type": "string",
+            "enum": [
+              "general",
+              "catering",
+              "courses",
+              "shop",
+              "partnership",
+              "other"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 5000
+          },
+          "captchaToken": {
+            "type": "string",
+            "description": "Jeton Cloudflare Turnstile (obligatoire en production)"
+          },
+          "website": {
+            "type": "string",
+            "description": "Piège à robots : champ caché, toujours vide pour un humain"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "subject",
+          "message"
+        ]
+      },
+      "MessageDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "ContactMessageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "enum": [
+              "general",
+              "catering",
+              "courses",
+              "shop",
+              "partnership",
+              "other"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "new",
+              "read",
+              "answered",
+              "archived"
+            ]
+          },
+          "adminNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "handledAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "subject",
+          "message",
+          "status",
+          "adminNote",
+          "handledAt",
+          "createdAt"
+        ]
+      },
+      "ContactMessageListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactMessageDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "UpdateContactDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "new",
+              "read",
+              "answered",
+              "archived"
+            ]
+          },
+          "adminNote": {
+            "type": "object",
+            "maxLength": 2000
+          }
+        }
+      },
+      "SubscribeDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "awa@example.com"
+          },
+          "consent": {
+            "type": "boolean",
+            "description": "Case de consentement cochée : « J’accepte de recevoir par e-mail les nouvelles des Secrets de Diani (recettes, formations, nouveautés). Désinscription possible à tout moment, en un clic. »"
+          },
+          "captchaToken": {
+            "type": "string",
+            "description": "Jeton Cloudflare Turnstile (obligatoire en production)"
+          },
+          "website": {
+            "type": "string",
+            "description": "Piège à robots : toujours vide pour un humain"
+          }
+        },
+        "required": [
+          "email",
+          "consent"
+        ]
+      },
+      "NewsletterTokenDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "SubscriberDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "unsubscribed"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "form",
+              "account"
+            ]
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "confirmedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "unsubscribedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "status",
+          "source",
+          "requestedAt",
+          "confirmedAt",
+          "unsubscribedAt"
+        ]
+      },
+      "SubscriberListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriberDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
       }
     }
   }

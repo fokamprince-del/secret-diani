@@ -74,6 +74,8 @@ src/
   payments/               paiements : Stripe Checkout, PayPal, webhooks, remboursements, réconciliation (phase 6)
   courses/                formations : packs, leçons, vidéo signée, quiz, progression, certificats (phase 7)
   documents/              worker : factures, certificats et fiches filigranées en PDF
+  contact/                formulaire de contact et suivi des messages (phase 8)
+  newsletter/             newsletter en double opt-in, désinscription signée en un clic (phase 8)
   <domaine>/              un module par domaine (catalog-traiteur, shop, …) — phases 3 à 9
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
@@ -138,6 +140,8 @@ scripts/                  sauvegarde, restauration, export OpenAPI
 | `progresser` | `LessonProgress` | `lesson_progress` | 7 |
 | — (tentatives de quiz) | `QuizAttempt` | `quiz_attempts` | 7 |
 | `certificat` | `Certificate` | `certificates` | 7 |
+| `contact_message` | `ContactMessage` | `contact_messages` | 8 |
+| `abonne_newsletter` | `NewsletterSubscriber` | `newsletter_subscribers` | 8 |
 | — (appels personnalisés) | `CallRequest` | `call_requests` | 7 |
 
 _Complété au fil des phases._

@@ -103,6 +103,33 @@ Droit d'accès : `GET /api/v1/me/export` inclut les commandes du compte (avec le
 
 Droit d'accès : `GET /api/v1/me/export` inclut accès, progression, tentatives, certificats et demandes d'appel.
 
-## Traitements à venir
+## T5 — Contact et newsletter (phase 8)
 
-T5 Contact et newsletter (phase 8).
+### Messages de contact
+
+| Rubrique | Contenu |
+|---|---|
+| Finalité | Répondre aux questions et demandes envoyées par le formulaire de contact |
+| Base légale | Intérêt légitime (répondre à la personne qui écrit) ; mesures précontractuelles pour une demande de devis |
+| Personnes concernées | Toute personne utilisant le formulaire |
+| Données | Nom, e-mail, téléphone (facultatif), sujet, message, statut et note interne de suivi |
+| Destinataires | Diani (administration, par e-mail et dans le back-office) ; sous-traitants : hébergeur, Resend |
+
+### Newsletter
+
+| Rubrique | Contenu |
+|---|---|
+| Finalité | Envoyer les nouvelles des Secrets de Diani (recettes, formations, nouveautés) |
+| Base légale | **Consentement** (case non pré-cochée, double opt-in), retirable à tout moment en un clic |
+| Personnes concernées | Personnes inscrites par le formulaire ou par la préférence de leur compte |
+| Données | E-mail, statut, origine (formulaire / compte), preuve du consentement : texte accepté, dates de demande, de confirmation et de désinscription, IP tronquées |
+| Destinataires | Diani ; sous-traitants : hébergeur, Resend (confirmation), outil d'envoi des campagnes choisi par Diani (export CSV, à ajouter au registre lors du choix) |
+
+| Donnée | Durée | Mécanisme |
+|---|---|---|
+| Messages de contact | 1 an après la dernière activité | Purge quotidienne (`RetentionService`) |
+| Inscription jamais confirmée | 30 jours | Purge quotidienne |
+| Abonnement confirmé | Jusqu'à la désinscription | — |
+| Désinscrit·e (preuve du retrait) | 3 ans après la désinscription | Purge quotidienne |
+
+Droits : `GET /api/v1/me/export` inclut l'abonnement et les messages envoyés avec l'adresse du compte ; la suppression du compte les efface. Pour une personne sans compte, effacement depuis l'administration (`DELETE /api/v1/admin/newsletter/subscribers/:id`, messages archivés puis purgés).

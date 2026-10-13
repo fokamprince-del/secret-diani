@@ -165,6 +165,24 @@ export class RgpdService {
           select: { status: true, message: true, scheduledAt: true, createdAt: true },
         }),
       ]);
+    const [newsletter, contactMessages] = await Promise.all([
+      this.prisma.newsletterSubscriber.findUnique({
+        where: { email: user.email },
+        select: {
+          status: true,
+          source: true,
+          consentText: true,
+          requestedAt: true,
+          confirmedAt: true,
+          unsubscribedAt: true,
+        },
+      }),
+      this.prisma.contactMessage.findMany({
+        where: { email: user.email },
+        take: 500,
+        select: { subject: true, message: true, status: true, createdAt: true },
+      }),
+    ]);
     const orders = await this.prisma.order.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -217,6 +235,8 @@ export class RgpdService {
         certificates,
         callRequests,
       },
+      newsletter,
+      contactMessages,
       orders: orders.map(({ number, invoice, ...order }) => ({
         reference: orderReference(number),
         invoiceNumber: invoice?.number ?? null,
@@ -258,6 +278,9 @@ export class RgpdService {
         data: { holderName: 'Compte supprimé', revokedAt: new Date() },
       }),
       this.prisma.callRequest.deleteMany({ where: { userId: current.id } }),
+      // Newsletter et messages de contact liés à l'adresse : effacés avec le compte.
+      this.prisma.newsletterSubscriber.deleteMany({ where: { email: user.email } }),
+      this.prisma.contactMessage.deleteMany({ where: { email: user.email } }),
       this.prisma.session.deleteMany({ where: { userId: current.id } }),
       this.prisma.user.update({
         where: { id: current.id },

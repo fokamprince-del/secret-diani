@@ -162,6 +162,21 @@ Le seuil d'**alerte** « stock bas » se règle par variante (Boutique → Stock
 - Une formation se publie dès qu'elle a au moins une leçon publiée ; une leçon marquée « exemple gratuit » est visible sans compte.
 - Le certificat porte le prénom et le nom du profil : rappeler aux clientes de les renseigner.
 
+## E-mails : domaine d'envoi (Resend)
+
+Sans authentification du domaine, les e-mails (confirmations, factures, newsletter) finissent en indésirables. Une fois, avant la mise en ligne :
+1. Resend → **Domains** → ajouter `lessecretsdediani.fr` (région UE). Créer chez le registrar les enregistrements DNS affichés : **DKIM** (TXT `resend._domainkey`), **SPF** (TXT et MX du sous-domaine d'envoi `send`). Attendre l'état « Verified ».
+2. **DMARC** : TXT `_dmarc` = `v=DMARC1; p=none; rua=mailto:dmarc@lessecretsdediani.fr` pendant deux à quatre semaines, lire les rapports, puis passer à `p=quarantine`.
+3. `MAIL_FROM` sur ce domaine ; `MAIL_REPLY_TO` vers une boîte réellement lue (les messages de contact, eux, répondent directement à la personne).
+4. `PUBLIC_API_URL=https://<domaine de l'API>` : active la désinscription en un clic depuis Gmail, Yahoo, Outlook (en-têtes `List-Unsubscribe`).
+5. Vérifier avec mail-tester.com (score ≥ 9/10) en s'inscrivant à la newsletter avec l'adresse fournie.
+
+## Contact et newsletter
+
+- Les messages du formulaire arrivent par e-mail aux administrateurs (« Répondre » écrit directement à la personne) et dans l'administration (`/admin/contact-messages`) : les passer en « répondu » ou « archivé ».
+- Campagnes : exporter les abonné·es confirmé·es (`GET /api/v1/admin/newsletter/subscribers/export`) et les importer dans l'outil d'envoi ; ne jamais réimporter une liste plus ancienne (elle contiendrait des personnes désinscrites depuis). Exporter juste avant chaque envoi.
+- Demande d'effacement d'une personne sans compte : la supprimer de la liste dans l'administration, et dans l'outil d'envoi.
+
 ## Sondes
 
 | URL | Rôle | Attendu |

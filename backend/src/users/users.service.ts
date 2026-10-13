@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuditAction } from '../audit/audit-actions';
 import { AuditService } from '../audit/audit.service';
+import { NewsletterService } from '../newsletter/newsletter.service';
 import { PrismaService } from '../prisma/prisma.service';
 import type { ProfileDto, UpdateProfileDto } from './dto/profile.dto';
 
@@ -22,6 +23,7 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly newsletter: NewsletterService,
   ) {}
 
   async getProfile(userId: string): Promise<ProfileDto> {
@@ -78,6 +80,7 @@ export class UsersService {
           .join(','),
       },
     });
+    if (dto.marketingConsent !== undefined) await this.newsletter.syncAccount(userId);
     return this.getProfile(userId);
   }
 }

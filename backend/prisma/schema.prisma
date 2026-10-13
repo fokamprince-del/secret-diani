@@ -1481,3 +1481,90 @@ model CallRequest {
   @@index([status, createdAt])
   @@map("call_requests")
 }
+
+// =============================================================================
+// Phase 8 — Contact et newsletter
+// =============================================================================
+
+enum ContactSubject {
+  general
+  catering
+  courses
+  shop
+  partnership
+  other
+
+  @@map("contact_subject")
+}
+
+enum ContactStatus {
+  new
+  read
+  answered
+  archived
+
+  @@map("contact_status")
+}
+
+/// MLD : contact_message. Supprimé un an après la dernière activité.
+model ContactMessage {
+  id        String         @id @default(uuid(7)) @db.Uuid
+  name      String         @db.VarChar(120)
+  email     String         @db.Citext
+  phone     String?        @db.VarChar(20)
+  subject   ContactSubject @default(general)
+  message   String         @db.VarChar(5000)
+  status    ContactStatus  @default(new)
+  /// Note interne de l'administration.
+  adminNote String?        @map("admin_note") @db.VarChar(2000)
+  handledAt DateTime?      @map("handled_at") @db.Timestamptz(3)
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([updatedAt])
+  @@map("contact_messages")
+}
+
+enum NewsletterStatus {
+  /// Inscription demandée, confirmation par e-mail attendue (double opt-in).
+  pending
+  confirmed
+  unsubscribed
+
+  @@map("newsletter_status")
+}
+
+enum NewsletterSource {
+  /// Formulaire du site (double opt-in par e-mail).
+  form
+  /// Case cochée dans le compte (adresse déjà vérifiée).
+  account
+
+  @@map("newsletter_source")
+}
+
+/// MLD : abonne_newsletter. Preuve du consentement : texte accepté, dates, IP tronquées.
+model NewsletterSubscriber {
+  id                    String           @id @default(uuid(7)) @db.Uuid
+  email                 String           @unique @db.Citext
+  status                NewsletterStatus @default(pending)
+  source                NewsletterSource @default(form)
+  /// Texte du consentement tel qu'affiché à l'inscription.
+  consentText           String           @map("consent_text") @db.VarChar(500)
+  requestedAt           DateTime         @map("requested_at") @db.Timestamptz(3)
+  requestIpTruncated    String?          @map("request_ip_truncated") @db.VarChar(64)
+  /// Empreinte du jeton de confirmation (usage unique, 7 jours).
+  confirmTokenHash      String?          @unique @map("confirm_token_hash") @db.Char(64)
+  confirmTokenExpiresAt DateTime?        @map("confirm_token_expires_at") @db.Timestamptz(3)
+  confirmedAt           DateTime?        @map("confirmed_at") @db.Timestamptz(3)
+  confirmIpTruncated    String?          @map("confirm_ip_truncated") @db.VarChar(64)
+  unsubscribedAt        DateTime?        @map("unsubscribed_at") @db.Timestamptz(3)
+  createdAt             DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([status, confirmedAt])
+  @@index([updatedAt])
+  @@map("newsletter_subscribers")
+}

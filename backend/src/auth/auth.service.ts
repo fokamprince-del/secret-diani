@@ -9,6 +9,7 @@ import { ErrorCode } from '../common/errors/error-codes';
 import { withMinDuration } from '../common/utils/timing';
 import { AppConfigService } from '../config/app-config.service';
 import { MailService } from '../mail/mail.service';
+import { NewsletterService } from '../newsletter/newsletter.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { type IssuedSession, SessionsService, sessionExpired } from '../sessions/sessions.service';
 import {
@@ -107,6 +108,7 @@ export class AuthService {
     private readonly mail: MailService,
     private readonly audit: AuditService,
     private readonly config: AppConfigService,
+    private readonly newsletter: NewsletterService,
   ) {
     this.siteUrl = config.get('PUBLIC_SITE_URL').replace(/\/$/, '');
   }
@@ -184,6 +186,8 @@ export class AuthService {
       firstName: user.firstName,
       siteLink: this.link('/'),
     });
+    // Consentement donné à l'inscription : adresse désormais vérifiée, abonnement confirmé.
+    await this.newsletter.syncAccount(userId);
     await this.audit.log({
       action: AuditAction.EMAIL_VERIFIED,
       actorId: userId,

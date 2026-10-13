@@ -69,6 +69,11 @@ export const AuditAction = {
   CERTIFICATE_ISSUED: 'course.certificate_issued',
   CALL_REQUESTED: 'course.call_requested',
   CALL_REQUEST_UPDATED: 'course.call_request_updated',
+  // Contact et newsletter (phase 8)
+  CONTACT_RECEIVED: 'contact.received',
+  CONTACT_UPDATED: 'contact.updated',
+  NEWSLETTER_EXPORTED: 'newsletter.exported',
+  NEWSLETTER_SUBSCRIBER_DELETED: 'newsletter.subscriber_deleted',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

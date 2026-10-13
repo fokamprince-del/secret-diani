@@ -21,6 +21,12 @@ export const RETENTION = {
   expiredCartsDays: 0,
   /** Événements de webhook traités (contenu du prestataire, peut contenir un e-mail). */
   webhookEventsDays: 90,
+  /** Messages de contact : un an après la dernière activité. */
+  contactMessagesDays: 365,
+  /** Inscriptions à la newsletter jamais confirmées. */
+  pendingNewsletterDays: 30,
+  /** Désinscriptions : preuve gardée 3 ans (prescription), puis effacée. */
+  unsubscribedNewsletterDays: 3 * 365,
 } as const;
 
 export type PurgeReport = Record<keyof typeof RETENTION, number>;
@@ -91,6 +97,19 @@ export class RetentionService {
       },
     });
 
+    const contactMessages = await this.prisma.contactMessage.deleteMany({
+      where: { updatedAt: { lt: before(RETENTION.contactMessagesDays) } },
+    });
+    const pendingNewsletter = await this.prisma.newsletterSubscriber.deleteMany({
+      where: { status: 'pending', requestedAt: { lt: before(RETENTION.pendingNewsletterDays) } },
+    });
+    const unsubscribedNewsletter = await this.prisma.newsletterSubscriber.deleteMany({
+      where: {
+        status: 'unsubscribed',
+        unsubscribedAt: { lt: before(RETENTION.unsubscribedNewsletterDays) },
+      },
+    });
+
     const report: PurgeReport = {
       refreshTokensDays: refreshTokens.count,
       sessionsDays: sessions.count,
@@ -100,6 +119,9 @@ export class RetentionService {
       cateringRequestsDays: cateringRequests,
       expiredCartsDays: expiredCarts.count,
       webhookEventsDays: webhookEvents.count,
+      contactMessagesDays: contactMessages.count,
+      pendingNewsletterDays: pendingNewsletter.count,
+      unsubscribedNewsletterDays: unsubscribedNewsletter.count,
     };
     this.logger.log({ report }, 'Purge des données expirées terminée');
     return report;
