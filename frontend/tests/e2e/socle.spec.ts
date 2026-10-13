@@ -24,13 +24,16 @@ test.describe('Socle : gabarit, sécurité et accessibilité', () => {
     );
   });
 
-  test('envoie les en-têtes de sécurité et une CSP sans script en ligne', async ({ page }) => {
+  test('envoie les en-têtes de sécurité et une CSP sans script tiers', async ({ page }) => {
     const response = await page.goto('/');
     const headers = response!.headers();
     const csp = headers['content-security-policy'] ?? '';
     expect(csp).toContain("default-src 'self'");
     expect(csp).toContain("frame-ancestors 'none'");
-    expect(csp).toMatch(/script-src 'self'(;| https)/);
+    // Pages statiques : scripts en ligne de Next autorisés, aucun fichier JS hors 'self' (D-F05).
+    expect(csp).toMatch(/script-src 'self' 'unsafe-inline'(;| https)/);
+    expect(csp).toContain("object-src 'none'");
+    expect(csp).toContain("base-uri 'self'");
     expect(headers['x-content-type-options']).toBe('nosniff');
     expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
     expect(headers['permissions-policy']).toContain('camera=()');

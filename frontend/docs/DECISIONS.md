@@ -24,7 +24,7 @@ Décisions prises quand le cahier des charges ne tranchait pas : option la plus 
 **Choix :** pages publiques statiques (ISR), chaque appel `fetch` serveur étiqueté (`lib/api/server.ts`). Le worker de l'API appelle `POST /api/revalidate` après une modification admin, avec un secret partagé comparé en temps constant. Revalidation de secours : une heure.
 **Pourquoi :** contenu modifiable sans redéploiement (critère d'acceptation), pages servies depuis le cache (LCP), et pas de dépendance à l'API au moment de la visite.
 
-### D-F05 · Politique de sécurité du contenu (CSP) — **ouverte, à arbitrer**
+### D-F05 · Politique de sécurité du contenu (CSP) — **validée : option 1 (2026-10-13)**
 
 **Constat :** l'App Router de Next injecte la charge RSC dans des scripts en ligne (`self.__next_f.push(…)`). Avec `script-src 'self'` seul, ces scripts sont bloqués et l'hydratation échoue : menu mobile, bandeau cookies et tout composant client cessent de fonctionner en production. L'intégrité (SRI, activée) ne couvre pas ces scripts en ligne, et Next ne l'applique qu'aux scripts d'amorçage, pas aux morceaux propres à chaque route (vérifié avec Turbopack et webpack). `script-src 'self'` garantit en revanche qu'aucun fichier JS tiers ne peut être chargé.
 **Options :**
@@ -35,7 +35,7 @@ Décisions prises quand le cahier des charges ne tranchait pas : option la plus 
 
 **Recommandation :** option 1. Risque résiduel limité : React échappe tout le contenu, le seul `dangerouslySetInnerHTML` (JSON-LD) échappe `<`, le HTML riche de l'API est déjà assaini côté serveur, `object-src 'none'`, `base-uri 'self'` et `frame-ancestors 'none'` restent verrouillés.
 
-**État :** en attente de validation ; tant que ce n'est pas tranché, les tests e2e qui dépendent du JavaScript échouent volontairement.
+**État :** option 1 validée le 2026-10-13. `script-src 'self' 'unsafe-inline'` (+ SRI) appliqué à toutes les pages dans `next.config.ts` ; la CSP à nonce des routes dynamiques (membre, panier, commande) est à livrer avec la phase 4.
 
 ### D-F06 · Polices
 
