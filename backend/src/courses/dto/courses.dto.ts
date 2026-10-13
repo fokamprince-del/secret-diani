@@ -147,7 +147,11 @@ export class CourseDetailDto extends CourseCardDto {
   @ApiProperty({ type: SeoDto })
   seo!: SeoDto;
 
-  @ApiProperty({ description: 'Données structurées schema.org (Course)' })
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: true,
+    description: 'Données structurées schema.org (Course)',
+  })
   jsonLd!: Record<string, unknown>;
 }
 

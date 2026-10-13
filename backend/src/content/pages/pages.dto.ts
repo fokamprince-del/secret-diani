@@ -20,14 +20,14 @@ export class UpsertPageDto {
   @IsBoolean()
   published!: boolean;
 
-  @ApiPropertyOptional({ maxLength: 70, nullable: true })
+  @ApiPropertyOptional({ type: String, maxLength: 70, nullable: true })
   @IsOptional()
   @Trim()
   @IsString()
   @MaxLength(70)
   seoTitle?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 160, nullable: true })
+  @ApiPropertyOptional({ type: String, maxLength: 160, nullable: true })
   @IsOptional()
   @Trim()
   @IsString()

@@ -210,14 +210,23 @@ export class ChangeOrderStatusDto {
   @IsIn(ADMIN_STATUSES)
   status!: AdminOrderStatus;
 
-  @ApiPropertyOptional({ description: 'Transporteur (expédition)', example: 'Colissimo' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Transporteur (expédition)',
+    example: 'Colissimo',
+  })
   @IsOptional()
   @EmptyToNull()
   @IsString()
   @MaxLength(60)
   carrier?: string | null;
 
-  @ApiPropertyOptional({ description: 'Numéro de suivi (expédition)' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Numéro de suivi (expédition)',
+  })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -225,7 +234,12 @@ export class ChangeOrderStatusDto {
   @MaxLength(100)
   trackingNumber?: string | null;
 
-  @ApiPropertyOptional({ description: 'Note d’historique (motif d’annulation…)', maxLength: 500 })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Note d’historique (motif d’annulation…)',
+    maxLength: 500,
+  })
   @IsOptional()
   @EmptyToNull()
   @IsString()

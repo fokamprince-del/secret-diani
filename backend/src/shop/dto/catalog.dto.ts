@@ -85,7 +85,11 @@ export class ShopProductDetailDto extends ShopProductCardDto {
   @ApiProperty({ type: SeoDto })
   seo!: SeoDto;
 
-  @ApiProperty({ description: 'Données structurées schema.org (Product + Offer)' })
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: true,
+    description: 'Données structurées schema.org (Product + Offer)',
+  })
   jsonLd!: Record<string, unknown>;
 }
 

@@ -53,12 +53,16 @@ export class CreateArticleDto {
   @MaxLength(60_000)
   bodyMarkdown!: string;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ type: String, nullable: true })
   @IsOptional()
   @IsUUID()
   categoryId?: string | null;
 
-  @ApiPropertyOptional({ nullable: true, description: 'Image de couverture (média prêt)' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Image de couverture (média prêt)',
+  })
   @IsOptional()
   @IsUUID()
   coverMediaId?: string | null;
@@ -70,21 +74,25 @@ export class CreateArticleDto {
   @MaxLength(300)
   coverAlt?: string;
 
-  @ApiPropertyOptional({ maxLength: 70, nullable: true })
+  @ApiPropertyOptional({ type: String, maxLength: 70, nullable: true })
   @IsOptional()
   @Trim()
   @IsString()
   @MaxLength(70)
   seoTitle?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 160, nullable: true })
+  @ApiPropertyOptional({ type: String, maxLength: 160, nullable: true })
   @IsOptional()
   @Trim()
   @IsString()
   @MaxLength(160)
   seoDescription?: string | null;
 
-  @ApiPropertyOptional({ nullable: true, description: 'Formation mise en avant en fin d’article' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Formation mise en avant en fin d’article',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(160)

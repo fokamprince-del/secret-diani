@@ -51,7 +51,10 @@ export class SeoController {
   @Get('organization')
   @PublicContent()
   @ApiOperation({ summary: 'Données structurées schema.org de la marque (Organization)' })
-  @ApiOkResponse({ description: 'JSON-LD à insérer tel quel' })
+  @ApiOkResponse({
+    description: 'JSON-LD à insérer tel quel',
+    schema: { type: 'object', additionalProperties: true },
+  })
   organization(): Promise<Record<string, unknown>> {
     return this.seo.organizationJsonLd();
   }

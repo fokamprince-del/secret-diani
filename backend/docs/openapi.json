@@ -2988,7 +2988,15 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "JSON-LD à insérer tel quel"
+            "description": "JSON-LD à insérer tel quel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
         "summary": "Données structurées schema.org de la marque (Organization)",
@@ -9070,17 +9078,17 @@
         "type": "object",
         "properties": {
           "firstName": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 100
           },
           "lastName": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 100
           },
           "phone": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "example": "+33 6 12 34 56 78"
           },
@@ -9440,6 +9448,9 @@
           },
           "headers": {
             "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
             "description": "En-têtes à envoyer tels quels avec le PUT",
             "example": {
               "Content-Type": "image/jpeg"
@@ -9749,6 +9760,7 @@
           },
           "jsonLd": {
             "type": "object",
+            "additionalProperties": true,
             "description": "Données structurées schema.org (Article), à insérer telles quelles"
           }
         },
@@ -9915,11 +9927,11 @@
             "maxLength": 60000
           },
           "categoryId": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "coverMediaId": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "Image de couverture (média prêt)"
           },
@@ -9929,17 +9941,17 @@
             "description": "Texte alternatif de la couverture"
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
             "maxLength": 70,
             "nullable": true
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
             "maxLength": 160,
             "nullable": true
           },
           "relatedCourseSlug": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "Formation mise en avant en fin d’article"
           }
@@ -9974,11 +9986,11 @@
             "maxLength": 60000
           },
           "categoryId": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "coverMediaId": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "Image de couverture (média prêt)"
           },
@@ -9988,17 +10000,17 @@
             "description": "Texte alternatif de la couverture"
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
             "maxLength": 70,
             "nullable": true
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
             "maxLength": 160,
             "nullable": true
           },
           "relatedCourseSlug": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "Formation mise en avant en fin d’article"
           }
@@ -10059,7 +10071,7 @@
             "description": "Généré depuis le nom si absent"
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "maxLength": 500,
             "nullable": true
           },
@@ -10085,7 +10097,7 @@
             "description": "Généré depuis le nom si absent"
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "maxLength": 500,
             "nullable": true
           },
@@ -10205,12 +10217,12 @@
             "description": "Visible sur le site"
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
             "maxLength": 70,
             "nullable": true
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
             "maxLength": 160,
             "nullable": true
           }
@@ -10265,6 +10277,7 @@
           },
           "jsonLd": {
             "type": "object",
+            "additionalProperties": true,
             "description": "Données structurées schema.org (FAQPage)"
           }
         },
@@ -10538,7 +10551,8 @@
             "maxLength": 2000
           },
           "occasion": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "Anniversaire, 40 personnes",
             "maxLength": 120
           },
@@ -10584,7 +10598,8 @@
             "maxLength": 2000
           },
           "occasion": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "Anniversaire, 40 personnes",
             "maxLength": 120
           },
@@ -10994,6 +11009,7 @@
           },
           "jsonLd": {
             "type": "object",
+            "additionalProperties": true,
             "description": "Données structurées schema.org (Product + offres)"
           }
         },
@@ -11083,7 +11099,8 @@
             "example": "Awa"
           },
           "lastName": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "Diallo"
           },
           "email": {
@@ -11091,7 +11108,8 @@
             "example": "cliente@example.com"
           },
           "phone": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "+33612345678"
           },
           "eventDate": {
@@ -11100,7 +11118,8 @@
             "description": "Date de l’événement"
           },
           "guestCount": {
-            "type": "object",
+            "type": "number",
+            "nullable": true,
             "minimum": 1,
             "maximum": 5000,
             "example": 40
@@ -11113,12 +11132,14 @@
             ]
           },
           "deliveryAddress": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Ville ou adresse (livraison seulement)",
             "maxLength": 300
           },
           "message": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 3000
           },
           "items": {
@@ -11185,7 +11206,8 @@
             "example": "Awa"
           },
           "lastName": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "Diallo"
           },
           "email": {
@@ -11193,7 +11215,8 @@
             "example": "cliente@example.com"
           },
           "phone": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "+33612345678"
           },
           "eventDate": {
@@ -11202,7 +11225,8 @@
             "description": "Date de l’événement"
           },
           "guestCount": {
-            "type": "object",
+            "type": "number",
+            "nullable": true,
             "minimum": 1,
             "maximum": 5000,
             "example": 40
@@ -11215,12 +11239,14 @@
             ]
           },
           "deliveryAddress": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Ville ou adresse (livraison seulement)",
             "maxLength": 300
           },
           "message": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 3000
           },
           "items": {
@@ -11303,7 +11329,8 @@
             "description": "Généré depuis le nom si absent"
           },
           "description": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 1000
           },
           "kind": {
@@ -11337,7 +11364,8 @@
             "description": "Généré depuis le nom si absent"
           },
           "description": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 1000
           },
           "kind": {
@@ -11537,7 +11565,8 @@
             "description": "Généré depuis le nom si absent"
           },
           "description": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 2000
           },
           "composition": {
@@ -11577,11 +11606,13 @@
             "default": true
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 70
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 160
           }
         },
@@ -11606,7 +11637,8 @@
             "description": "Généré depuis le nom si absent"
           },
           "description": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 2000
           },
           "composition": {
@@ -11646,11 +11678,13 @@
             "default": true
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 70
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 160
           }
         }
@@ -11920,7 +11954,8 @@
             "example": "Awa"
           },
           "lastName": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "Diallo"
           },
           "email": {
@@ -11928,7 +11963,8 @@
             "example": "cliente@example.com"
           },
           "phone": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "+33612345678"
           },
           "eventDate": {
@@ -11937,7 +11973,8 @@
             "description": "Date de l’événement"
           },
           "guestCount": {
-            "type": "object",
+            "type": "number",
+            "nullable": true,
             "minimum": 1,
             "maximum": 5000,
             "example": 40
@@ -11950,12 +11987,14 @@
             ]
           },
           "deliveryAddress": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Ville ou adresse (livraison seulement)",
             "maxLength": 300
           },
           "message": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 3000
           },
           "items": {
@@ -11966,7 +12005,8 @@
             }
           },
           "internalNotes": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 5000
           }
         },
@@ -12251,7 +12291,8 @@
             "example": "Awa"
           },
           "lastName": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "Diallo"
           },
           "email": {
@@ -12259,7 +12300,8 @@
             "example": "cliente@example.com"
           },
           "phone": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "+33612345678"
           },
           "eventDate": {
@@ -12268,7 +12310,8 @@
             "description": "Date de l’événement"
           },
           "guestCount": {
-            "type": "object",
+            "type": "number",
+            "nullable": true,
             "minimum": 1,
             "maximum": 5000,
             "example": 40
@@ -12281,16 +12324,19 @@
             ]
           },
           "deliveryAddress": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Ville ou adresse (livraison seulement)",
             "maxLength": 300
           },
           "internalNotes": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 5000
           },
           "agreedTotalCents": {
-            "type": "object",
+            "type": "number",
+            "nullable": true,
             "description": "Total convenu en centimes (base de l’acompte ; figé une fois l’acompte reçu)"
           }
         }
@@ -12326,7 +12372,8 @@
             "description": "« Acompte reçu » passe par l’enregistrement de l’acompte"
           },
           "note": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Note d’historique (motif d’annulation…)",
             "maxLength": 500
           }
@@ -12550,6 +12597,7 @@
           },
           "jsonLd": {
             "type": "object",
+            "additionalProperties": true,
             "description": "Données structurées schema.org (Product + Offer)"
           }
         },
@@ -13079,7 +13127,8 @@
             "type": "string"
           },
           "line2": {
-            "type": "object"
+            "type": "string",
+            "nullable": true
           },
           "postalCode": {
             "type": "string",
@@ -13118,7 +13167,8 @@
             "example": "Diallo"
           },
           "phone": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "+33612345678"
           },
           "shippingRateId": {
@@ -13142,7 +13192,8 @@
             ]
           },
           "note": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 1000
           },
           "acceptTerms": {
@@ -13449,7 +13500,8 @@
             "example": 2
           },
           "details": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 300
           }
         },
@@ -13492,7 +13544,8 @@
             ]
           },
           "shortDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 300
           },
           "descriptionMarkdown": {
@@ -13525,11 +13578,13 @@
             "default": true
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 70
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 160
           }
         },
@@ -13558,7 +13613,8 @@
             ]
           },
           "shortDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 300
           },
           "descriptionMarkdown": {
@@ -13591,11 +13647,13 @@
             "default": true
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 70
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 160
           }
         }
@@ -13823,7 +13881,8 @@
             "description": "Offerte à partir de ce sous-total"
           },
           "delay": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "2 à 4 jours ouvrés"
           },
           "active": {
@@ -13880,7 +13939,8 @@
             "description": "Offerte à partir de ce sous-total"
           },
           "delay": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "2 à 4 jours ouvrés"
           },
           "active": {
@@ -14170,16 +14230,19 @@
             ]
           },
           "carrier": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Transporteur (expédition)",
             "example": "Colissimo"
           },
           "trackingNumber": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Numéro de suivi (expédition)"
           },
           "note": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "description": "Note d’historique (motif d’annulation…)",
             "maxLength": 500
           }
@@ -14694,6 +14757,7 @@
           },
           "jsonLd": {
             "type": "object",
+            "additionalProperties": true,
             "description": "Données structurées schema.org (Course)"
           }
         },
@@ -15472,7 +15536,8 @@
             "type": "string"
           },
           "summary": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 500
           },
           "priceCents": {
@@ -15516,7 +15581,8 @@
             "type": "string"
           },
           "summary": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 500
           },
           "priceCents": {
@@ -15639,7 +15705,8 @@
             "description": "Fin de l’accès (vide = sans limite)"
           },
           "note": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 300
           }
         },
@@ -15794,7 +15861,8 @@
             "nullable": true
           },
           "adminNote": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 1000
           }
         }
@@ -16086,7 +16154,8 @@
             "type": "string"
           },
           "summary": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 500
           },
           "videoId": {
@@ -16127,7 +16196,8 @@
             "type": "string"
           },
           "summary": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 500
           },
           "videoId": {
@@ -16218,7 +16288,8 @@
             "type": "string"
           },
           "explanation": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 1000
           },
           "choices": {
@@ -16361,11 +16432,13 @@
             "description": "Formation phare"
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 70
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 160
           }
         },
@@ -16411,11 +16484,13 @@
             "description": "Formation phare"
           },
           "seoTitle": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 70
           },
           "seoDescription": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 160
           }
         }
@@ -16432,7 +16507,8 @@
             "example": "awa@example.com"
           },
           "phone": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "example": "+33612345678"
           },
           "subject": {
@@ -16576,7 +16652,8 @@
             ]
           },
           "adminNote": {
-            "type": "object",
+            "type": "string",
+            "nullable": true,
             "maxLength": 2000
           }
         }

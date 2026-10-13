@@ -27,7 +27,7 @@ export class CreateCategoryDto {
   @Matches(SLUG_PATTERN, { message: 'fr: uniquement des minuscules, chiffres et tirets' })
   slug?: string;
 
-  @ApiPropertyOptional({ maxLength: 500, nullable: true })
+  @ApiPropertyOptional({ type: String, maxLength: 500, nullable: true })
   @IsOptional()
   @Trim()
   @IsString()

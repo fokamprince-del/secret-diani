@@ -118,6 +118,8 @@ export class PresignedUploadDto {
   uploadUrl!: string;
 
   @ApiProperty({
+    type: 'object',
+    additionalProperties: { type: 'string' },
     description: 'En-têtes à envoyer tels quels avec le PUT',
     example: { 'Content-Type': 'image/jpeg' },
   })

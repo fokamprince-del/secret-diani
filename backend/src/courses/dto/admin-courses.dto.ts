@@ -42,7 +42,7 @@ export class CreatePackDto {
   @MaxLength(120)
   slug?: string;
 
-  @ApiPropertyOptional({ maxLength: 500 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 500 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -138,14 +138,14 @@ export class CreateCourseDto {
   @IsBoolean()
   featured?: boolean;
 
-  @ApiPropertyOptional({ maxLength: 70 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 70 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
   @MaxLength(70)
   seoTitle?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 160 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 160 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -179,7 +179,7 @@ export class CreateLessonDto {
   @MaxLength(160)
   slug?: string;
 
-  @ApiPropertyOptional({ maxLength: 500 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 500 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -275,7 +275,7 @@ export class QuizQuestionInputDto {
   @MaxLength(500)
   prompt!: string;
 
-  @ApiPropertyOptional({ maxLength: 1000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 1000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -335,7 +335,7 @@ export class GrantAccessDto {
   @IsDateString({ strict: true })
   expiresAt?: string;
 
-  @ApiPropertyOptional({ maxLength: 300 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 300 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -369,7 +369,7 @@ export class UpdateCallRequestDto {
   @IsDateString({ strict: true })
   scheduledAt?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 1000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 1000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()

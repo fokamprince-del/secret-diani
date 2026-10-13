@@ -57,7 +57,7 @@ class RequestContactDto {
   @MaxLength(100)
   firstName!: string;
 
-  @ApiPropertyOptional({ example: 'Diallo' })
+  @ApiPropertyOptional({ type: String, nullable: true, example: 'Diallo' })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -70,7 +70,7 @@ class RequestContactDto {
   @MaxLength(254)
   email!: string;
 
-  @ApiPropertyOptional({ example: '+33612345678' })
+  @ApiPropertyOptional({ type: String, nullable: true, example: '+33612345678' })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -82,7 +82,7 @@ class RequestContactDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, DATE_MESSAGE)
   eventDate!: string;
 
-  @ApiPropertyOptional({ minimum: 1, maximum: 5000, example: 40 })
+  @ApiPropertyOptional({ type: Number, nullable: true, minimum: 1, maximum: 5000, example: 40 })
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -94,14 +94,19 @@ class RequestContactDto {
   @IsEnum(CateringFulfilment)
   fulfilment?: CateringFulfilment | null;
 
-  @ApiPropertyOptional({ description: 'Ville ou adresse (livraison seulement)', maxLength: 300 })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Ville ou adresse (livraison seulement)',
+    maxLength: 300,
+  })
   @IsOptional()
   @EmptyToNull()
   @IsString()
   @MaxLength(300)
   deliveryAddress?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 3000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 3000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -192,7 +197,7 @@ export class SlotQueryDto {
 
 /** Demande reçue hors du site (WhatsApp, téléphone) et saisie par l'administration. */
 export class AdminCreateCateringRequestDto extends RequestContactDto {
-  @ApiPropertyOptional({ maxLength: 5000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 5000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -214,6 +219,8 @@ export class AdminUpdateCateringRequestDto extends PartialType(
   ] as const),
 ) {
   @ApiPropertyOptional({
+    type: Number,
+    nullable: true,
     description: 'Total convenu en centimes (base de l’acompte ; figé une fois l’acompte reçu)',
   })
   @IsOptional()
@@ -249,7 +256,12 @@ export class ChangeRequestStatusDto {
   @IsIn(['contacted', 'confirmed', 'delivered', 'cancelled'])
   status!: 'contacted' | 'confirmed' | 'delivered' | 'cancelled';
 
-  @ApiPropertyOptional({ description: 'Note d’historique (motif d’annulation…)', maxLength: 500 })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Note d’historique (motif d’annulation…)',
+    maxLength: 500,
+  })
   @IsOptional()
   @EmptyToNull()
   @IsString()
