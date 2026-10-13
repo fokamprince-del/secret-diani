@@ -22,12 +22,14 @@ const videoOrigins = ['https://*.b-cdn.net', 'https://*.mediadelivery.net'];
 const sources = (...values: (string | null | false)[]) => values.filter(Boolean).join(' ');
 
 /**
- * CSP stricte sans nonce : les pages publiques sont statiques (ISR), un nonce imposerait
- * un rendu dynamique. Les scripts Next sont vérifiés par intégrité (SRI, voir DECISIONS D-F05).
+ * CSP des pages publiques statiques (ISR) : un nonce imposerait un rendu dynamique, donc
+ * 'unsafe-inline' pour les scripts RSC en ligne de Next ; les fichiers JS restent limités à
+ * 'self' et vérifiés par intégrité (SRI). Les routes dynamiques recevront une CSP à nonce
+ * en phase 4 (voir DECISIONS D-F05).
  */
 const csp = [
   `default-src 'self'`,
-  `script-src ${sources(`'self'`, isDev && `'unsafe-eval' 'unsafe-inline'`, analyticsOrigin)}`,
+  `script-src ${sources(`'self'`, `'unsafe-inline'`, isDev && `'unsafe-eval'`, analyticsOrigin)}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src ${sources(`'self'`, 'data:', 'blob:', apiOrigin, mediaOrigin)}`,
   `font-src 'self'`,
