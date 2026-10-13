@@ -4,7 +4,7 @@ API REST du site « Les Secrets de Diani » : traiteur, formations en ligne, bou
 
 **Stack :** NestJS 11 · TypeScript strict · PostgreSQL 16 (Prisma) · Redis 7 (cache, limitation de débit, files BullMQ) · Docker · Traefik.
 
-> Cahier des charges : [docs/CAHIER_DES_CHARGES.md](docs/CAHIER_DES_CHARGES.md) · Décisions : [docs/DECISIONS.md](docs/DECISIONS.md) · Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Sécurité : [docs/SECURITY.md](docs/SECURITY.md) · RGPD : [docs/RGPD.md](docs/RGPD.md) · Violation de données : [docs/INCIDENT.md](docs/INCIDENT.md) · Exploitation : [docs/RUNBOOK.md](docs/RUNBOOK.md)
+> Cahier des charges : [docs/CAHIER_DES_CHARGES.md](docs/CAHIER_DES_CHARGES.md) · Décisions : [docs/DECISIONS.md](docs/DECISIONS.md) · Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Sécurité : [docs/SECURITY.md](docs/SECURITY.md) · RGPD : [docs/RGPD.md](docs/RGPD.md) · Violation de données : [docs/INCIDENT.md](docs/INCIDENT.md) · Exploitation : [docs/RUNBOOK.md](docs/RUNBOOK.md) · Guide d'administration : [docs/GUIDE_ADMIN.md](docs/GUIDE_ADMIN.md) · **Rapport final et mise en production : [docs/RAPPORT_FINAL.md](docs/RAPPORT_FINAL.md)** · Tests de charge : [load/README.md](load/README.md)
 
 ## Prérequis
 
@@ -49,6 +49,9 @@ docker compose --profile app up -d --build --wait
 | `make image` | Construit l'image de production |
 | `make backup` / `make restore file=…` | Sauvegarde chiffrée / restauration (voir RUNBOOK) |
 | `make create-admin` | Création sécurisée d'un administrateur (mot de passe saisi sans écho) |
+| `make reencrypt-secrets` | Rechiffrement des secrets 2FA après rotation de `FIELD_ENCRYPTION_KEY` |
+| `make seed-prod`, `make create-admin-prod`, `make reencrypt-secrets-prod` | Équivalents en production (voir RUNBOOK) |
+| `k6 run load/catalog.js` | Tests de charge (voir load/README.md) |
 
 ## Configuration
 
@@ -66,12 +69,12 @@ Toutes les variables sont décrites dans [.env.example](.env.example). Elles son
 | Phase | Contenu | État |
 |---|---|---|
 | 1 | Socle : configuration, Docker, Postgres/Redis, Prisma, journaux, sondes, CI, erreurs | ✅ |
-| 2 | Authentification et comptes : inscription, e-mail, sessions rotatives, 2FA admin, RBAC, RGPD | ✅ (en attente de validation) |
-| 3 | Contenus et médias | — |
-| 4 | Traiteur | — |
-| 5 | Boutique | — |
-| 6 | Paiements | — |
-| 7 | Formations | — |
-| 8 | E-mails, contact, newsletter | — |
-| 9 | Administration et audit | — |
-| 10 | Durcissement, charge, mise en production | — |
+| 2 | Authentification et comptes : inscription, e-mail, sessions rotatives, 2FA admin, RBAC, RGPD | ✅ |
+| 3 | Contenus et médias | ✅ |
+| 4 | Traiteur | ✅ |
+| 5 | Boutique | ✅ |
+| 6 | Paiements | ✅ |
+| 7 | Formations | ✅ |
+| 8 | E-mails, contact, newsletter | ✅ |
+| 9 | Administration et audit | ✅ |
+| 10 | Durcissement, charge, mise en production | ✅ (répétition en préproduction à faire, voir le rapport final) |

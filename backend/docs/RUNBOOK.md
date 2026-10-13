@@ -1,6 +1,6 @@
 # Runbook d'exploitation
 
-> Version phase 3 : sauvegarde et restauration, rôles de base de données, comptes administrateurs, rotation des secrets. Le déploiement continu et le rollback automatique seront complétés en phase 10.
+> Mise en production pas à pas : [RAPPORT_FINAL.md](RAPPORT_FINAL.md) › Procédure de mise en production. Ce document décrit l'exploitation courante.
 
 ## Sauvegardes
 
@@ -185,6 +185,47 @@ Sans authentification du domaine, les e-mails (confirmations, factures, newslett
 - Les messages du formulaire arrivent par e-mail aux administrateurs (« Répondre » écrit directement à la personne) et dans l'administration (`/admin/contact-messages`) : les passer en « répondu » ou « archivé ».
 - Campagnes : exporter les abonné·es confirmé·es (`GET /api/v1/admin/newsletter/subscribers/export`) et les importer dans l'outil d'envoi ; ne jamais réimporter une liste plus ancienne (elle contiendrait des personnes désinscrites depuis). Exporter juste avant chaque envoi.
 - Demande d'effacement d'une personne sans compte : la supprimer de la liste dans l'administration, et dans l'outil d'envoi.
+
+## Déploiement continu
+
+Chaque fusion sur `main` qui passe la CI est déployée automatiquement (D-091). Déroulé, visible dans l'onglet *Actions* de GitHub :
+1. publication des images `les-secrets-de-diani-backend` et `-migrate` sur ghcr.io ;
+2. copie de `docker-compose.prod.yml`, `docker/`, `scripts/` et du `Makefile` dans `/opt/diani` ;
+3. `scripts/deploy.sh <tag>` sur le serveur : sauvegarde chiffrée, migrations, remplacement de `api` puis `api-2` puis `worker` (chacun doit redevenir « healthy »), test de fumée ;
+4. test de fumée depuis GitHub, à travers Cloudflare.
+
+En cas d'échec à l'étape 3, la version précédente est remise en service automatiquement et le job échoue (e-mail de GitHub).
+
+### Mise en place (une fois)
+
+Sur le serveur :
+1. Utilisateur `deploy` sans sudo, membre du groupe `docker`, propriétaire de `/opt/diani`. Clé SSH **dédiée** au déploiement dans `~deploy/.ssh/authorized_keys`.
+2. `/opt/diani/.env.production` (chmod 600) : variables de l'application (voir `.env.example`) **et** celles de compose : `GHCR_OWNER` (propriétaire du dépôt GitHub, en minuscules), `API_DOMAIN`, `ACME_EMAIL`, `POSTGRES_PASSWORD`, `POSTGRES_APP_PASSWORD`, `REDIS_PASSWORD`.
+3. Accès en lecture aux images : jeton GitHub (*fine-grained*, permission `read:packages` seulement), puis `docker login ghcr.io -u <compte>` en tant que `deploy`.
+4. `/etc/diani/backup.env` (voir Sauvegardes) : la sauvegarde avant migration l'utilise.
+
+Dans GitHub, *Settings › Environments › production* :
+- secrets `DEPLOY_HOST`, `DEPLOY_USER` (`deploy`), `DEPLOY_SSH_KEY` (clé privée dédiée), `DEPLOY_KNOWN_HOSTS` (ligne de `ssh-keyscan -t ed25519 <hôte>`, **vérifiée** contre l'empreinte affichée par l'hébergeur) ;
+- variable `API_DOMAIN` ;
+- facultatif : « Required reviewers » pour valider chaque mise en production à la main.
+
+### Retour manuel à une version
+
+```
+cd /opt/diani && cat .deploy/release.env          # version en service
+docker image ls ghcr.io/*/les-secrets-de-diani-backend   # versions disponibles (30 jours)
+./scripts/deploy.sh <tag précédent>
+```
+
+Les migrations déjà appliquées restent en place (elles sont compatibles avec la version précédente, D-091). Une migration en échec s'arrête sans bascule : la version en service continue ; corriger, puis `npx prisma migrate resolve` depuis l'image `migrate` si besoin, ou restaurer la sauvegarde prise juste avant.
+
+### Commandes ponctuelles en production
+
+Toujours via `./scripts/compose-prod.sh` (ou les cibles `make …-prod`), qui ajoute `.env.production` et la version en service : par exemple `./scripts/compose-prod.sh logs -f --tail=100 api api-2`.
+
+## Dimensionnement
+
+Limites des conteneurs (docker-compose.prod.yml) : API 2 × (1,5 CPU, 768 Mo), worker 1 CPU / 768 Mo, Postgres 1,5 CPU / 1,5 Go, Redis 0,5 CPU / 384 Mo, Traefik 0,5 CPU / 256 Mo, ClamAV facultatif 1 CPU / 1,5 Go. **VPS recommandé : 4 vCPU, 8 Go de RAM**, disque SSD 80 Go. Mesures de charge et limites connues : [load/README.md](../load/README.md).
 
 ## Sondes
 

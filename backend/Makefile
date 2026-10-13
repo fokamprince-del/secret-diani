@@ -3,11 +3,12 @@
 
 COMPOSE_DEV  = docker compose -f docker-compose.yml
 COMPOSE_TEST = docker compose -f docker-compose.test.yml
-COMPOSE_PROD = docker compose -f docker-compose.prod.yml
+# Production : .env.production et la version en service (.deploy/release.env), voir scripts/compose-prod.sh.
+COMPOSE_PROD = ./scripts/compose-prod.sh
 
 .PHONY: help install dev infra-up infra-down migrate migrate-new seed lint typecheck test \
         test-unit test-e2e test-infra-up test-infra-down openapi build image \
-        backup restore db-app-role create-admin create-admin-prod \
+        backup restore db-app-role create-admin create-admin-prod seed-prod \
         reencrypt-secrets reencrypt-secrets-prod
 
 help: ## Affiche cette aide
@@ -76,13 +77,16 @@ create-admin: ## Crée un compte administrateur (saisie interactive, mot de pass
 	npx ts-node --transpile-only src/cli/create-admin.ts
 
 db-app-role: ## Production : (re)pose le mot de passe du rôle applicatif diani_app sur une base existante
-	$(COMPOSE_PROD) --env-file .env.production exec -T postgres sh /docker-entrypoint-initdb.d/20-app-role.sh
+	$(COMPOSE_PROD) exec -T postgres sh /docker-entrypoint-initdb.d/20-app-role.sh
 
 create-admin-prod: ## Production : crée un administrateur depuis le conteneur API (voir RUNBOOK)
-	$(COMPOSE_PROD) --env-file .env.production run --rm -it api node dist/cli/create-admin.js
+	$(COMPOSE_PROD) run --rm -it api node dist/cli/create-admin.js
+
+seed-prod: ## Production : données de référence (idempotent, après le premier déploiement)
+	$(COMPOSE_PROD) --profile seed run --rm seed
 
 reencrypt-secrets: ## Rechiffre les secrets 2FA avec la clé courante (après rotation de FIELD_ENCRYPTION_KEY)
 	npx ts-node --transpile-only src/cli/reencrypt-secrets.ts
 
 reencrypt-secrets-prod: ## Production : rechiffrement des secrets 2FA depuis le conteneur API (voir RUNBOOK)
-	$(COMPOSE_PROD) --env-file .env.production run --rm api node dist/cli/reencrypt-secrets.js
+	$(COMPOSE_PROD) run --rm api node dist/cli/reencrypt-secrets.js

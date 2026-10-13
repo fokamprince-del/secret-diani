@@ -11,19 +11,21 @@ set -eu
 
 file="${1:?Usage : restore.sh <fichier .dump.age>}"
 : "${BACKUP_AGE_IDENTITY:?BACKUP_AGE_IDENTITY manquant (fichier de clé privée age)}"
-COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
+export COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
+# Fichiers d'environnement de production ajoutés s'ils existent (voir scripts/compose-prod.sh).
+compose="$(dirname "$0")/compose-prod.sh"
 RESTORE_DB="${RESTORE_DB:-diani_restore}"
 
 [ -f "$file" ] || { echo "Fichier introuvable : $file" >&2; exit 1; }
 command -v age >/dev/null || { echo "age n'est pas installé" >&2; exit 1; }
 
 echo "Création de la base $RESTORE_DB…"
-docker compose -f "$COMPOSE_FILE" exec -T postgres \
+"$compose" exec -T postgres \
   sh -c "dropdb --if-exists -U \"\$POSTGRES_USER\" $RESTORE_DB && createdb -U \"\$POSTGRES_USER\" $RESTORE_DB"
 
 echo "Restauration de $file dans $RESTORE_DB…"
 age --decrypt --identity "$BACKUP_AGE_IDENTITY" "$file" \
-  | docker compose -f "$COMPOSE_FILE" exec -T postgres \
+  | "$compose" exec -T postgres \
       sh -c "pg_restore --no-owner --no-privileges --exit-on-error -U \"\$POSTGRES_USER\" -d $RESTORE_DB"
 
 # La sauvegarde est faite sans droits (--no-privileges) : on réapplique ceux du rôle applicatif
@@ -32,12 +34,12 @@ root="$(dirname "$0")/.."
 for sql in "$root/prisma/migrations/20261013000000_app_role/migration.sql" \
            "$root/docker/postgres/10-timeouts.sql"; do
   echo "Application de $(basename "$(dirname "$sql")")/$(basename "$sql")…"
-  docker compose -f "$COMPOSE_FILE" exec -T postgres \
+  "$compose" exec -T postgres \
     sh -c "psql -v ON_ERROR_STOP=1 -q -U \"\$POSTGRES_USER\" -d $RESTORE_DB" < "$sql"
 done
 
 echo "Vérification : migrations présentes dans la base restaurée"
-docker compose -f "$COMPOSE_FILE" exec -T postgres \
+"$compose" exec -T postgres \
   sh -c "psql -U \"\$POSTGRES_USER\" -d $RESTORE_DB -c 'SELECT migration_name, finished_at FROM _prisma_migrations ORDER BY finished_at DESC LIMIT 5;'"
 
 echo "Restauration terminée dans $RESTORE_DB."

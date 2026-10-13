@@ -1,5 +1,7 @@
-# Intégration continue — phase 1 (socle).
-# Le déploiement continu (push ghcr.io, SSH, migrations, test de fumée, rollback) est ajouté en phase 10.
+# Intégration et déploiement continus du backend.
+#   Toute branche : lint → tests unitaires et e2e → audit → image (scan Trivy).
+#   main seulement : publication des images sur ghcr.io → déploiement SSH (sauvegarde,
+#   migrations, bascule, test de fumée, retour arrière automatique) → test de fumée externe.
 name: CI backend
 
 on:
@@ -41,6 +43,9 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
+      # Scripts d'exploitation (déploiement, sauvegarde, restauration) : shellcheck préinstallé.
+      - name: Scripts shell
+        run: shellcheck scripts/*.sh
       # docs/openapi.json alimente le client typé du frontend : il doit refléter le code.
       - name: Spécification OpenAPI à jour
         run: npm run openapi:check
@@ -92,7 +97,7 @@ jobs:
       - name: Démarrer SeaweedFS (S3)
         run: |
           docker run -d --name s3-test -p 58333:8333 chrislusf/seaweedfs:4.48 server -s3 -dir=/data
-          for i in $(seq 1 30); do curl -sf http://127.0.0.1:58333/healthz && exit 0; sleep 2; done
+          for _ in $(seq 1 30); do curl -sf http://127.0.0.1:58333/healthz && exit 0; sleep 2; done
           docker logs s3-test; exit 1
       - run: npm ci --no-fund
       - run: npx prisma generate
@@ -143,3 +148,88 @@ jobs:
           cat out.log
           test "$code" -ne 0
           grep -q "Configuration invalide" out.log
+
+  publish:
+    name: Publication des images (ghcr.io)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [image, audit]
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Nom des images
+        id: meta
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          {
+            echo "tag=${GITHUB_SHA::12}"
+            echo "api=ghcr.io/$owner/les-secrets-de-diani-backend"
+            echo "migrate=ghcr.io/$owner/les-secrets-de-diani-backend-migrate"
+          } >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Image API et worker
+        uses: docker/build-push-action@v7
+        with:
+          context: backend
+          target: runtime
+          push: true
+          tags: ${{ steps.meta.outputs.api }}:${{ steps.meta.outputs.tag }}
+          cache-from: type=gha
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+      - name: Image des migrations
+        uses: docker/build-push-action@v7
+        with:
+          context: backend
+          target: migrate
+          push: true
+          tags: ${{ steps.meta.outputs.migrate }}:${{ steps.meta.outputs.tag }}
+          cache-from: type=gha
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+
+  deploy:
+    name: Déploiement en production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [publish]
+    # Environnement GitHub « production » : secrets du serveur, validation manuelle possible.
+    environment:
+      name: production
+      url: https://${{ vars.API_DOMAIN }}
+    # Jamais deux déploiements en même temps, et jamais interrompu en cours de route.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - name: Clé SSH du déploiement
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          # Empreinte du serveur épinglée (pas de ssh-keyscan : pas de confiance au premier contact).
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Fichiers d'exploitation vers le serveur
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          tar -czf - docker-compose.prod.yml docker scripts Makefile \
+            | ssh -i ~/.ssh/deploy "$TARGET" 'cd /opt/diani && tar -xzf -'
+      - name: Déploiement (sauvegarde, migrations, bascule, fumée, retour arrière)
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          TAG: ${{ needs.publish.outputs.tag }}
+        run: ssh -i ~/.ssh/deploy "$TARGET" "cd /opt/diani && ./scripts/deploy.sh '$TAG'"
+      - name: Test de fumée depuis l'extérieur (Cloudflare, DNS, TLS)
+        run: ./scripts/smoke.sh "https://${{ vars.API_DOMAIN }}"

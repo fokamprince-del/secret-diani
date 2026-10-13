@@ -5,7 +5,7 @@ http:
       rule: 'Host(`{{ env "API_DOMAIN" }}`)'
       entryPoints: [websecure]
       service: api
-      middlewares: [security-headers, limit-body]
+      middlewares: [security-headers, limit-body, retry-other-instance]
       tls:
         certResolver: letsencrypt
         options: modern
@@ -15,9 +15,11 @@ http:
       loadBalancer:
         servers:
           - url: 'http://api:3000'
+          - url: 'http://api-2:3000'
+        # Une instance qui redémarre (déploiement) est retirée en 5 s au plus.
         healthCheck:
           path: /health
-          interval: 10s
+          interval: 5s
           timeout: 3s
 
   middlewares:
@@ -29,6 +31,12 @@ http:
         contentTypeNosniff: true
         frameDeny: true
         referrerPolicy: no-referrer
+    # Connexion refusée par une instance qui s'arrête : la requête part vers l'autre. Traefik ne
+    # réessaie que si le serveur n'a pas répondu (jamais après une réponse, quel que soit son statut).
+    retry-other-instance:
+      retry:
+        attempts: 2
+        initialInterval: 100ms
     limit-body:
       buffering:
         # Limite haute (téléversements de médias) ; les routes JSON sont limitées plus bas par l'API.

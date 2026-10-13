@@ -169,6 +169,7 @@ export class SettingsAdminService {
   }
 
   private async changed(entry: RegisteredSetting, action: AuditAction, actorId: string) {
+    this.settings.invalidate(entry.definition.key);
     if (entry.cacheTags.length > 0) await this.cache.changed(entry.cacheTags);
     await this.audit.log({
       action,
