@@ -69,7 +69,14 @@ export class UsersService {
       actorId: userId,
       targetType: 'user',
       targetId: userId,
-      metadata: { fields: Object.keys(dto).sort().join(',') },
+      // Champs réellement fournis (les propriétés absentes du corps existent, à `undefined`).
+      metadata: {
+        fields: Object.entries(dto)
+          .filter(([, value]) => value !== undefined)
+          .map(([key]) => key)
+          .sort()
+          .join(','),
+      },
     });
     return this.getProfile(userId);
   }

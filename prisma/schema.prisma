@@ -268,7 +268,8 @@ model Media {
   updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt       DateTime?   @map("deleted_at") @db.Timestamptz(3)
 
-  articleCovers Article[]
+  articleCovers  Article[]
+  cateringImages CateringProductImage[]
 
   @@index([kind, status, createdAt])
   @@index([deletedAt])
@@ -413,4 +414,261 @@ model Review {
 
   @@index([status, position])
   @@map("reviews")
+}
+
+// =============================================================================
+// Phase 4 — Traiteur
+// =============================================================================
+
+/// Comportement d'affichage d'une catégorie (plateaux, mini bouchées à la carte, layer cakes).
+enum CateringKind {
+  platter
+  a_la_carte
+  layer_cake
+
+  @@map("catering_kind")
+}
+
+/// MLD : categorie_traiteur.
+model CateringCategory {
+  id          String       @id @default(uuid(7)) @db.Uuid
+  slug        String       @unique @db.VarChar(120)
+  name        String       @db.VarChar(120)
+  description String?      @db.VarChar(1000)
+  kind        CateringKind
+  position    Int          @default(0)
+  visible     Boolean      @default(true)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  products CateringProduct[]
+
+  @@index([position])
+  @@map("catering_categories")
+}
+
+/// MLD : produit_traiteur (plateau, à la carte ou layer cake selon la catégorie).
+model CateringProduct {
+  id             String    @id @default(uuid(7)) @db.Uuid
+  categoryId     String    @map("category_id") @db.Uuid
+  slug           String    @unique @db.VarChar(160)
+  name           String    @db.VarChar(160)
+  description    String?   @db.VarChar(2000)
+  /// Composition affichée : [{ label, quantity }] (ex. 5 mini burgers).
+  composition    Json      @default("[]")
+  /// Nombre maximal de parfums au choix (0 = pas de parfum ; layer cakes : plusieurs).
+  maxFlavours    Int       @default(0) @map("max_flavours")
+  position       Int       @default(0)
+  visible        Boolean   @default(true)
+  seoTitle       String?   @map("seo_title") @db.VarChar(70)
+  seoDescription String?   @map("seo_description") @db.VarChar(160)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Suppression logique : les demandes passées gardent leurs libellés figés.
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  category CateringCategory         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  variants CateringVariant[]
+  flavours CateringProductFlavour[]
+  images   CateringProductImage[]
+
+  @@index([categoryId, position])
+  @@index([deletedAt])
+  @@map("catering_products")
+}
+
+/// MLD : variante_traiteur (taille ou conditionnement, avec son prix).
+model CateringVariant {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  productId   String   @map("product_id") @db.Uuid
+  /// Libellé affiché (ex. « 6–8 parts », « Boîte de 10 »).
+  label       String   @db.VarChar(80)
+  priceCents  Int      @map("price_cents")
+  /// Nombre de parts indicatif (layer cakes), pour orienter le choix.
+  servingsMin Int?     @map("servings_min")
+  servingsMax Int?     @map("servings_max")
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  product CateringProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, position])
+  @@map("catering_variants")
+}
+
+/// MLD : parfum.
+model CateringFlavour {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  slug      String   @unique @db.VarChar(120)
+  name      String   @db.VarChar(120)
+  position  Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  products CateringProductFlavour[]
+
+  @@index([position])
+  @@map("catering_flavours")
+}
+
+/// MLD : produit_parfum (parfums proposés pour un produit).
+model CateringProductFlavour {
+  productId String @map("product_id") @db.Uuid
+  flavourId String @map("flavour_id") @db.Uuid
+
+  product CateringProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  flavour CateringFlavour @relation(fields: [flavourId], references: [id], onDelete: Cascade)
+
+  @@id([productId, flavourId])
+  @@index([flavourId])
+  @@map("catering_product_flavours")
+}
+
+/// Galerie d'un produit (la première image sert de vignette).
+model CateringProductImage {
+  id        String @id @default(uuid(7)) @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  mediaId   String @map("media_id") @db.Uuid
+  alt       String @default("") @db.VarChar(300)
+  position  Int    @default(0)
+
+  product CateringProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media   Media           @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, mediaId])
+  @@index([mediaId])
+  @@map("catering_product_images")
+}
+
+enum CateringRequestStatus {
+  new
+  contacted
+  deposit_received
+  confirmed
+  delivered
+  cancelled
+
+  @@map("catering_request_status")
+}
+
+enum CateringFulfilment {
+  pickup
+  delivery
+
+  @@map("catering_fulfilment")
+}
+
+enum CateringRequestSource {
+  /// Formulaire « Demande personnalisée » (parcours par défaut).
+  form
+  /// Commande en ligne (parcours avancé, drapeau CATERING_ONLINE_ORDERING).
+  online
+  /// Saisie par l'administration (demande reçue par WhatsApp, téléphone…).
+  admin
+
+  @@map("catering_request_source")
+}
+
+/// MLD : demande_traiteur. Données personnelles anonymisées après la durée de conservation.
+model CateringRequest {
+  id                  String                @id @default(uuid(7)) @db.Uuid
+  /// Numéro lisible (affiché « TR-000042 »).
+  number              Int                   @unique @default(autoincrement())
+  source              CateringRequestSource @default(form)
+  status              CateringRequestStatus @default(new)
+  firstName           String                @map("first_name") @db.VarChar(100)
+  lastName            String?               @map("last_name") @db.VarChar(100)
+  email               String                @db.Citext
+  phone               String?               @db.VarChar(20)
+  eventDate           DateTime              @map("event_date") @db.Date
+  guestCount          Int?                  @map("guest_count")
+  fulfilment          CateringFulfilment?
+  /// Ville ou adresse de livraison (texte libre, livraison seulement).
+  deliveryAddress     String?               @map("delivery_address") @db.VarChar(300)
+  message             String?               @db.VarChar(3000)
+  /// Total estimé à partir de la sélection (prix serveur au moment de la demande).
+  estimatedTotalCents Int?                  @map("estimated_total_cents")
+  /// Total convenu avec la cliente (fixé par l'administration) ; base du calcul de l'acompte.
+  agreedTotalCents    Int?                  @map("agreed_total_cents")
+  depositCents        Int?                  @map("deposit_cents")
+  depositReceivedAt   DateTime?             @map("deposit_received_at") @db.Timestamptz(3)
+  /// Moyen de réception de l'acompte (virement, espèces, PayPal…), texte court.
+  depositMethod       String?               @map("deposit_method") @db.VarChar(50)
+  confirmedAt         DateTime?             @map("confirmed_at") @db.Timestamptz(3)
+  deliveredAt         DateTime?             @map("delivered_at") @db.Timestamptz(3)
+  cancelledAt         DateTime?             @map("cancelled_at") @db.Timestamptz(3)
+  cancellationReason  String?               @map("cancellation_reason") @db.VarChar(500)
+  /// Notes internes (jamais visibles de la cliente).
+  internalNotes       String?               @map("internal_notes") @db.VarChar(5000)
+  slotId              String?               @map("slot_id") @db.Uuid
+  anonymizedAt        DateTime?             @map("anonymized_at") @db.Timestamptz(3)
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  items  CateringRequestItem[]
+  events CateringRequestEvent[]
+  slot   CateringSlot?          @relation(fields: [slotId], references: [id], onDelete: SetNull)
+
+  @@index([status, eventDate])
+  @@index([email])
+  @@index([eventDate])
+  @@index([slotId])
+  @@index([updatedAt])
+  @@map("catering_requests")
+}
+
+/// Ligne de sélection d'une demande. Libellés et prix figés au moment de la demande.
+model CateringRequestItem {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  requestId      String   @map("request_id") @db.Uuid
+  productId      String?  @map("product_id") @db.Uuid
+  variantId      String?  @map("variant_id") @db.Uuid
+  productName    String   @map("product_name") @db.VarChar(160)
+  variantLabel   String   @map("variant_label") @db.VarChar(80)
+  unitPriceCents Int      @map("unit_price_cents")
+  quantity       Int
+  /// Noms des parfums choisis (figés).
+  flavours       String[] @default([]) @db.VarChar(120)
+  position       Int      @default(0)
+
+  request CateringRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@map("catering_request_items")
+}
+
+/// Historique d'une demande (statut, acompte) : qui, quoi, quand.
+model CateringRequestEvent {
+  id         String                 @id @default(uuid(7)) @db.Uuid
+  requestId  String                 @map("request_id") @db.Uuid
+  fromStatus CateringRequestStatus? @map("from_status")
+  toStatus   CateringRequestStatus  @map("to_status")
+  actorId    String?                @map("actor_id") @db.Uuid
+  note       String?                @db.VarChar(500)
+  createdAt  DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  request CateringRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@map("catering_request_events")
+}
+
+/// Créneau de retrait ou de livraison (parcours avancé, désactivé par défaut).
+model CateringSlot {
+  id         String             @id @default(uuid(7)) @db.Uuid
+  fulfilment CateringFulfilment
+  startsAt   DateTime           @map("starts_at") @db.Timestamptz(3)
+  endsAt     DateTime           @map("ends_at") @db.Timestamptz(3)
+  /// Nombre maximal de commandes sur le créneau.
+  capacity   Int
+  active     Boolean            @default(true)
+  createdAt  DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  requests CateringRequest[]
+
+  @@index([fulfilment, startsAt])
+  @@map("catering_slots")
 }

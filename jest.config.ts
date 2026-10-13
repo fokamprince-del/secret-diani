@@ -52,6 +52,11 @@ const config: Config = {
     // Le rendu Markdown est pur : il reste couvert par les tests unitaires.
     'content/markdown/markdown.service.ts',
     '!content/common/*.ts',
+    // Phase 4 : services du traiteur adossés à Postgres/Redis, couverts par les tests e2e
+    // (seuil dans test/jest-e2e.config.ts). La logique métier pure (catering/domain) reste ici.
+    '!catering/catalog/*.service.ts',
+    '!catering/requests/*.service.ts',
+    '!catering/slots/*.service.ts',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

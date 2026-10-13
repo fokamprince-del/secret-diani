@@ -9,6 +9,37 @@ export interface MailTemplateData {
   'email-change-notice': { firstName: string | null };
   'admin-login-alert': { at: string; ipTruncated: string | null; userAgent: string | null };
   'account-deleted': { firstName: string | null };
+  // Traiteur (phase 4)
+  'catering-request-received': {
+    firstName: string;
+    reference: string;
+    eventDate: string;
+    itemLines: string[];
+    estimatedTotal: string | null;
+    conditions: string[];
+  };
+  'catering-request-admin': {
+    reference: string;
+    source: string;
+    customerName: string;
+    email: string;
+    phone: string | null;
+    eventDate: string;
+    guestCount: number | null;
+    fulfilment: string | null;
+    itemLines: string[];
+    estimatedTotal: string | null;
+    message: string | null;
+  };
+  'catering-order-confirmed': {
+    firstName: string;
+    reference: string;
+    eventDate: string;
+    total: string;
+    deposit: string;
+    balance: string;
+    conditions: string[];
+  };
 }
 
 export type MailTemplate = keyof MailTemplateData;

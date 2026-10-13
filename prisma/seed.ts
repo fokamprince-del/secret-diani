@@ -1,6 +1,7 @@
 import { type FaqCategory, PrismaClient } from '@prisma/client';
 import { MarkdownService } from '../src/content/markdown/markdown.service';
 import type { AppConfigService } from '../src/config/app-config.service';
+import { seedCatering } from './seed-data/catering';
 
 /**
  * Seed des données de référence (idempotent : relançable sans doublon, sans écraser
@@ -147,6 +148,8 @@ async function main(): Promise<void> {
       },
     });
   }
+
+  await seedCatering(prisma);
 
   console.log('Seed terminé.');
 }

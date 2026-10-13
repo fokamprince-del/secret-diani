@@ -17,6 +17,7 @@ function createService(raw: Record<string, string>): AppConfigService {
     MEDIA_PUBLIC_BASE_URL: 'http://localhost:9000/diani-public',
     MAIL_TRANSPORT: 'resend',
     RESEND_API_KEY: 're_test_0123456789',
+    TURNSTILE_SECRET_KEY: '0x4AAAAAAA-test-secret',
     ...raw,
   });
   const config = { get: (key: keyof Env) => env[key] } as unknown as ConfigService<Env, true>;

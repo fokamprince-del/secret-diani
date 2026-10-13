@@ -37,6 +37,24 @@
 | Effacement | `DELETE /api/v1/me` (mot de passe exigé) : anonymisation, suppression des adresses, sessions et jetons |
 | Retrait du consentement aux e-mails | `PATCH /api/v1/me` (`marketingConsent: false`) ; lien de désinscription en un clic (phase 8) |
 
+## T2 — Demandes et commandes traiteur (phase 4)
+
+| Rubrique | Contenu |
+|---|---|
+| Finalité | Répondre à une demande de traiteur, établir le devis, suivre l'acompte, la confirmation et la livraison |
+| Base légale | Mesures précontractuelles prises à la demande de la personne, puis exécution du contrat |
+| Personnes concernées | Toute personne qui envoie une demande (avec ou sans compte), ou dont Diani saisit la demande reçue par WhatsApp ou téléphone |
+| Données | Prénom, nom (facultatif), e-mail, téléphone (facultatif), date et lieu de l'événement, nombre d'invités, adresse de livraison (texte libre), message, sélection, montants, moyen de paiement de l'acompte (libellé, aucune donnée bancaire), notes internes de Diani |
+| Destinataires | Diani (administration) ; sous-traitants : hébergeur VPS, Resend (accusé de réception, notification), Cloudflare (vérification anti-robot : jeton et IP, sans donnée de la demande) |
+| Sécurité | Formulaire protégé (débit, piège à robots, Turnstile), accusés de réception limités par adresse, accès administrateur avec 2FA, historique et journal d'audit. Voir `docs/SECURITY.md` |
+
+| Donnée | Durée | Mécanisme |
+|---|---|---|
+| Demande (identité, coordonnées, message, notes) | 3 ans après la dernière activité | **Anonymisation** par la purge quotidienne (`RetentionService`) ; montants et sélection conservés sans identité |
+| Compteur anti-bombardement (empreinte de l'adresse) | 24 heures | Expiration Redis |
+
+Droit d'accès : `GET /api/v1/me/export` inclut les demandes envoyées avec l'adresse du compte, notes internes comprises. Pour une personne sans compte, Diani répond depuis l'administration (recherche par adresse e-mail). Effacement anticipé sur demande : modification ou annulation depuis l'administration (outil dédié prévu avec le back-office, phase 9).
+
 ## Traitements à venir
 
-T2 Demandes traiteur (phase 4) · T3 Commandes et facturation (phases 5-6) · T4 Formations et progression (phase 7) · T5 Contact et newsletter (phase 8).
+T3 Commandes et facturation (phases 5-6) · T4 Formations et progression (phase 7) · T5 Contact et newsletter (phase 8).

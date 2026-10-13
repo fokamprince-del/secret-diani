@@ -66,6 +66,13 @@ describe('Compte, adresses, sessions et RGPD (e2e)', () => {
         .send({ phone: '', marketingConsent: false })
         .expect(200);
       expect(cleared.body).toMatchObject({ phone: null, marketingConsent: false });
+
+      // Le journal d'audit ne cite que les champs réellement modifiés.
+      const entry = await prisma.auditLog.findFirstOrThrow({
+        where: { action: 'account.profile_updated', actorId: alice.userId },
+        orderBy: { id: 'desc' },
+      });
+      expect(entry.metadata).toEqual({ fields: 'marketingConsent,phone' });
     });
 
     it('refuse la modification des champs protégés (rôle, e-mail)', async () => {

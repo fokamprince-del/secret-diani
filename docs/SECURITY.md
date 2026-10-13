@@ -1,6 +1,6 @@
 # Sécurité
 
-> Document construit au fil des phases. Version actuelle : socle (phase 1) et authentification / comptes (phase 2). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
+> Document construit au fil des phases. Version actuelle : socle (phase 1), authentification / comptes (phase 2) et traiteur (phase 4) ; la phase 3 (contenus, médias) est à compléter (constat N4 de l’audit). La revue complète (OWASP ASVS niveau 2 sur tout le périmètre, scan de l'image, test de charge) a lieu en phase 10.
 
 ## Modèle de menaces — authentification et comptes (STRIDE)
 
@@ -21,6 +21,20 @@
 | D | Saturation de la boîte d'une victime | 3 e-mails par heure et par adresse et par usage | `auth.e2e` › renvoi limité |
 | **E**levation of privilege | Accès admin sans 2FA, client sur route admin | Garde globale « refus par défaut », `@Roles`, jeton admin sans `mfa` refusé | `guards.spec`, `admin-mfa.e2e` › RBAC |
 | E | CSRF sur les routes à cookie | SameSite=Strict + en-tête obligatoire + origine vérifiée + Sec-Fetch-Site | `guards.spec` › CsrfGuard, `auth.e2e` › CSRF |
+
+## Modèle de menaces — traiteur (phase 4, STRIDE)
+
+| Menace | Scénario | Mesures | Preuves (tests) |
+|---|---|---|---|
+| **S**poofing | Robot qui inonde le formulaire « Demande personnalisée » | 3 envois / 10 min / IP, piège à robots (succès simulé, rien d'enregistré), Cloudflare Turnstile obligatoire en production, refus si Cloudflare est injoignable | `catering.e2e` › piège à robots, débit ; `captcha.service.spec` ; `env.schema.spec` › Turnstile |
+| **T**ampering | Prix modifié par le client | La sélection ne porte que des identifiants de variantes ; total, acompte et lignes calculés et figés par le serveur ; tout champ de prix est refusé | `catering.e2e` › « ne croit jamais un prix envoyé par le client » |
+| T | Confirmation sans acompte, ou acompte arrangé | Machine à états, mise à jour conditionnelle, contrainte CHECK ; acompte calculé par la règle (D-041), total figé après réception | `catering-domain.spec`, `catering.e2e` › suivi par l'administration |
+| T | Surbooking d'un créneau (parcours avancé) | Verrou `SELECT … FOR UPDATE` sur le créneau avant le comptage | `catering.e2e` › 4 commandes simultanées, 1 acceptée |
+| **R**epudiation | Contestation d'un acompte ou d'une annulation | Historique par demande (qui, quoi, quand, motif), journal d'audit | `catering.e2e` › historique complet |
+| **I**nformation disclosure | Lecture des demandes par une cliente | Routes `admin/*` sous `@Roles('admin')` + 2FA ; aucune route publique ne lit une demande | `catering.e2e` › 401/403 |
+| I | Notes internes ou message libre exposés | Le récapitulatif et les e-mails à la cliente n'incluent ni notes ni message ; le message libre n'est envoyé qu'à l'administration (HTML échappé) | `catering.e2e` › récapitulatif, `render.spec` › échappement |
+| **D**enial of service | Bombardement d'e-mails vers une victime (adresse saisie par un tiers) | Accusé de réception limité à 3 par jour et par adresse, sans le message libre | `catering.e2e` › anti-bombardement |
+| **E**levation of privilege | Cliente sur l'administration du catalogue | Garde globale « refus par défaut » + rôle admin + 2FA | `catering.e2e` › 403 |
 
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 
@@ -56,5 +70,6 @@
 | `JWT_ACCESS_SECRET` | Signature des jetons d'accès | `JWT_ACCESS_SECRET_PREVIOUS` accepté en vérification (voir RUNBOOK) |
 | `FIELD_ENCRYPTION_KEY` | Secrets 2FA, clé HMAC des codes de secours | `FIELD_ENCRYPTION_KEY_PREVIOUS` accepté en déchiffrement (voir RUNBOOK) |
 | `RESEND_API_KEY` | Envoi des e-mails (worker) | Régénérer dans Resend, redéployer |
+| `TURNSTILE_SECRET_KEY` | Vérification anti-robot des formulaires publics | Faire tourner la clé dans Cloudflare (Turnstile), mettre à jour `.env.production`, redéployer |
 
 `FIELD_ENCRYPTION_KEY` n'est jamais dans la base ni dans ses sauvegardes : perdre cette clé rend les secrets 2FA illisibles (les administrateurs devront alors refaire leur enrôlement).

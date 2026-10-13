@@ -8,6 +8,8 @@ import { createValidationPipe } from './common/pipes/validation.pipe';
 import { RedisThrottlerStorage } from './common/throttler/redis-throttler.storage';
 import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
+import { CateringModule } from './catering/catering.module';
+import { CaptchaModule } from './common/captcha/captcha.module';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { CryptoModule } from './common/crypto/crypto.module';
@@ -24,6 +26,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { REDIS_CLIENT } from './redis/redis.constants';
 import { RedisModule } from './redis/redis.module';
 import { RgpdModule } from './rgpd/rgpd.module';
+import { SettingsModule } from './settings/settings.module';
 import { StorageModule } from './storage/storage.module';
 import { UsersModule } from './users/users.module';
 
@@ -49,6 +52,8 @@ import { UsersModule } from './users/users.module';
     }),
     HealthModule,
     CryptoModule,
+    CaptchaModule,
+    SettingsModule,
     AuditModule,
     MailModule,
     AuthModule,
@@ -58,6 +63,7 @@ import { UsersModule } from './users/users.module';
     ContentCacheModule,
     MediaModule,
     ContentModule,
+    CateringModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

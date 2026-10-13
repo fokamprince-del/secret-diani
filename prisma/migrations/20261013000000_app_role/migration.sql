@@ -26,5 +26,12 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT USAGE, SELECT ON SEQUENCES TO diani_app;
 
--- L'historique des migrations n'appartient qu'au rôle propriétaire.
-REVOKE ALL ON TABLE _prisma_migrations FROM diani_app;
+-- L'historique des migrations n'appartient qu'au rôle propriétaire. La table est absente de
+-- la base « shadow » de `prisma migrate dev` : révocation conditionnelle.
+DO $$
+BEGIN
+  IF to_regclass('public._prisma_migrations') IS NOT NULL THEN
+    REVOKE ALL ON TABLE _prisma_migrations FROM diani_app;
+  END IF;
+END
+$$;

@@ -60,6 +60,10 @@ export const envSchema = z
 
     CATERING_ONLINE_ORDERING: booleanFromEnv(false),
 
+    // --- Anti-robot des formulaires publics (Cloudflare Turnstile) ---
+    // Sans clé (développement, tests), la vérification est ignorée ; obligatoire en production.
+    TURNSTILE_SECRET_KEY: z.string().min(10).optional(),
+
     // --- Authentification (phase 2) ---
     JWT_ACCESS_SECRET: jwtSecret,
     // Ancien secret, accepté en vérification seulement pendant une rotation (voir RUNBOOK).
@@ -137,6 +141,13 @@ export const envSchema = z
         code: 'custom',
         path: ['SWAGGER_ENABLED'],
         message: 'interdit en production (la spécification est publiée dans docs/openapi.json)',
+      });
+    }
+    if (!env.TURNSTILE_SECRET_KEY) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['TURNSTILE_SECRET_KEY'],
+        message: 'obligatoire en production (anti-robot des formulaires publics)',
       });
     }
     if (env.MAIL_TRANSPORT !== 'resend') {

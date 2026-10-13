@@ -65,6 +65,10 @@ src/
   mail/                   gabarits, file d'envoi (API) et envoi Resend (worker)
   jobs/retention/         purge quotidienne des données expirées (worker)
   cli/                    commande de création d'un administrateur
+  settings/               paramètres du site modifiables sans déploiement (lecture typée, valeurs par défaut)
+  common/captcha/         vérification anti-robot Cloudflare Turnstile des formulaires publics
+  content/ media/         contenus éditoriaux, médiathèque (phase 3)
+  catering/               traiteur : catalogue, demandes, acompte, créneaux (phase 4)
   <domaine>/              un module par domaine (catalog-traiteur, shop, …) — phases 3 à 9
 prisma/                   schéma, migrations versionnées, seed
 test/e2e/                 tests de bout en bout (application réelle, Postgres et Redis éphémères)
@@ -84,5 +88,21 @@ scripts/                  sauvegarde, restauration, export OpenAPI
 | — (codes de secours 2FA) | `MfaBackupCode` | `mfa_backup_codes` | 2 |
 | `adresse` | `Address` | `addresses` | 2 |
 | `audit_log` | `AuditLog` | `audit_logs` | 2 |
+| `media` | `Media` | `media` | 3 |
+| — (catégories d'articles) | `ArticleCategory` | `article_categories` | 3 |
+| `article` | `Article` | `articles` | 3 |
+| `page_statique` | `StaticPage` | `static_pages` | 3 |
+| `faq` | `Faq` | `faqs` | 3 |
+| `avis` | `Review` | `reviews` | 3 |
+| `categorie_traiteur` | `CateringCategory` | `catering_categories` | 4 |
+| `produit_traiteur` | `CateringProduct` | `catering_products` | 4 |
+| `variante_traiteur` | `CateringVariant` | `catering_variants` | 4 |
+| `parfum` | `CateringFlavour` | `catering_flavours` | 4 |
+| `produit_parfum` | `CateringProductFlavour` | `catering_product_flavours` | 4 |
+| — (galerie d'un produit) | `CateringProductImage` | `catering_product_images` | 4 |
+| `demande_traiteur` | `CateringRequest` | `catering_requests` | 4 |
+| — (sélection figée d'une demande) | `CateringRequestItem` | `catering_request_items` | 4 |
+| — (historique d'une demande) | `CateringRequestEvent` | `catering_request_events` | 4 |
+| — (créneaux, parcours avancé) | `CateringSlot` | `catering_slots` | 4 |
 
 _Complété au fil des phases._

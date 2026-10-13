@@ -2963,6 +2963,1262 @@
           "SEO"
         ]
       }
+    },
+    "/api/v1/catering/catalog": {
+      "get": {
+        "operationId": "CateringController_catalogue",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CateringCatalogDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Catalogue complet (plateaux, à la carte, layer cakes), parfums et conditions",
+        "tags": [
+          "Traiteur"
+        ]
+      }
+    },
+    "/api/v1/catering/products/{slug}": {
+      "get": {
+        "operationId": "CateringController_product",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CateringProductDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Fiche détail d’un produit (SEO, données structurées)",
+        "tags": [
+          "Traiteur"
+        ]
+      }
+    },
+    "/api/v1/catering/conditions": {
+      "get": {
+        "operationId": "CateringController_conditions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CateringConditionsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Conditions de commande (acompte, validation, solde)",
+        "tags": [
+          "Traiteur"
+        ]
+      }
+    },
+    "/api/v1/catering/slots": {
+      "get": {
+        "operationId": "CateringController_availableSlots",
+        "parameters": [
+          {
+            "name": "fulfilment",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pickup",
+                "delivery"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CateringSlotDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Commande en ligne fermée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Créneaux disponibles (commande en ligne uniquement)",
+        "tags": [
+          "Traiteur"
+        ]
+      }
+    },
+    "/api/v1/catering/orders": {
+      "post": {
+        "description": "Sélection et créneau obligatoires ; le total et l’acompte sont calculés par le serveur. Paiement de l’acompte en ligne : phase Paiements.",
+        "operationId": "CateringController_order",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOnlineCateringOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CateringRequestReceiptDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Commande en ligne fermée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Créneau complet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Commander en ligne (parcours avancé, désactivé par défaut)",
+        "tags": [
+          "Traiteur"
+        ]
+      }
+    },
+    "/api/v1/catering-requests": {
+      "post": {
+        "description": "Anti-spam : limitation de débit, piège à robots (`website`), Cloudflare Turnstile (`captchaToken`, obligatoire en production). Envoie un accusé de réception à la cliente et une notification à Diani ; renvoie un lien WhatsApp pré-rempli.",
+        "operationId": "CateringRequestsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCateringRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CateringRequestReceiptDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Envoyer une demande personnalisée",
+        "tags": [
+          "Traiteur"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/categories": {
+      "get": {
+        "operationId": "AdminCateringCatalogController_listCategories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCateringCategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCateringCatalogController_createCategory",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCateringCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringCategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/categories/order": {
+      "put": {
+        "operationId": "AdminCateringCatalogController_reorderCategories",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCateringCategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner les catégories (glisser-déposer)",
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/categories/{id}": {
+      "patch": {
+        "operationId": "AdminCateringCatalogController_updateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCateringCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringCategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCateringCatalogController_removeCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer une catégorie vide",
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/products": {
+      "get": {
+        "operationId": "AdminCateringCatalogController_listProducts",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCateringProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCateringCatalogController_createProduct",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCateringProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un produit (variantes, parfums, galerie)",
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/products/order": {
+      "put": {
+        "operationId": "AdminCateringCatalogController_reorderProducts",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminCateringProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réordonner les produits d’une catégorie (glisser-déposer)",
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/products/{id}": {
+      "get": {
+        "operationId": "AdminCateringCatalogController_getProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "patch": {
+        "description": "Les tableaux fournis (variantes, parfums, images) remplacent l’existant.",
+        "operationId": "AdminCateringCatalogController_updateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCateringProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un produit (prix, textes, visibilité, photos…)",
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCateringCatalogController_removeProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/flavours": {
+      "get": {
+        "operationId": "AdminCateringCatalogController_listFlavours",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminFlavourDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCateringCatalogController_createFlavour",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFlavourDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFlavourDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/flavours/order": {
+      "put": {
+        "operationId": "AdminCateringCatalogController_reorderFlavours",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminFlavourDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/flavours/{id}": {
+      "patch": {
+        "operationId": "AdminCateringCatalogController_updateFlavour",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFlavourDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFlavourDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCateringCatalogController_removeFlavour",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/slots": {
+      "get": {
+        "operationId": "AdminCateringCatalogController_listSlots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminSlotDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créneaux de retrait et de livraison (à venir et 30 derniers jours)",
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCateringCatalogController_createSlot",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSlotDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering/slots/{id}": {
+      "patch": {
+        "operationId": "AdminCateringCatalogController_updateSlot",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSlotDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCateringCatalogController_removeSlot",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (catalogue)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering-requests": {
+      "get": {
+        "operationId": "AdminCateringRequestsController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Identifiant du dernier élément de la page précédente",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "new",
+                "contacted",
+                "deposit_received",
+                "confirmed",
+                "delivered",
+                "cancelled"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "Événements à partir de cette date (AAAA-MM-JJ)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "Événements jusqu’à cette date incluse (AAAA-MM-JJ)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Référence (TR-000042) ou adresse e-mail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringRequestListDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Demandes (filtres : statut, dates, référence, e-mail, nom)",
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCateringRequestsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCreateCateringRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Saisir une demande reçue par WhatsApp ou téléphone",
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering-requests/{id}": {
+      "get": {
+        "operationId": "AdminCateringRequestsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminCateringRequestsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateCateringRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier les informations, le total convenu ou les notes internes",
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering-requests/{id}/deposit": {
+      "post": {
+        "description": "Montant calculé automatiquement sur le total convenu (10 € sous 50 €, 20 € à partir de 50 €).",
+        "operationId": "AdminCateringRequestsController_recordDeposit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordDepositDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enregistrer l’acompte reçu",
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering-requests/{id}/status": {
+      "post": {
+        "description": "Confirmer exige l’acompte reçu et envoie l’e-mail de confirmation à la cliente.",
+        "operationId": "AdminCateringRequestsController_changeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeRequestStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCateringRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Changer le statut (contactée, confirmée, livrée, annulée)",
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      }
+    },
+    "/api/v1/admin/catering-requests/{id}/recap": {
+      "get": {
+        "operationId": "AdminCateringRequestsController_recap",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecapDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Récapitulatif prêt à copier (WhatsApp, e-mail)",
+        "tags": [
+          "Administration — traiteur (demandes)"
+        ]
+      }
     }
   },
   "info": {
@@ -5037,6 +6293,1708 @@
           "lastModified",
           "changeFrequency",
           "priority"
+        ]
+      },
+      "CompositionItemDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "mini burgers"
+          },
+          "quantity": {
+            "type": "number",
+            "nullable": true,
+            "example": 5
+          }
+        },
+        "required": [
+          "label",
+          "quantity"
+        ]
+      },
+      "CateringVariantDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string",
+            "example": "6–8 parts"
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 5000,
+            "description": "Prix en centimes (EUR)"
+          },
+          "servingsMin": {
+            "type": "number",
+            "nullable": true
+          },
+          "servingsMax": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "priceCents",
+          "servingsMin",
+          "servingsMax"
+        ]
+      },
+      "FlavourDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "example": "mangue-passion"
+          },
+          "name": {
+            "type": "string",
+            "example": "Mangue-passion"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ]
+      },
+      "CateringProductCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionItemDto"
+            }
+          },
+          "variants": {
+            "description": "Tailles ou conditionnements, dans l’ordre",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CateringVariantDto"
+            }
+          },
+          "fromPriceCents": {
+            "type": "number",
+            "description": "Prix le plus bas (« à partir de »), en centimes"
+          },
+          "maxFlavours": {
+            "type": "number",
+            "description": "Nombre maximal de parfums au choix (0 = sans parfum)"
+          },
+          "flavours": {
+            "description": "Parfums proposés pour ce produit",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlavourDto"
+            }
+          },
+          "image": {
+            "nullable": true,
+            "description": "Vignette (1re image)",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "gallery": {
+            "description": "Galerie complète",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicImageDto"
+            }
+          },
+          "whatsappUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Bouton « Contacter » : WhatsApp avec message pré-rempli (null sans numéro)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "composition",
+          "variants",
+          "fromPriceCents",
+          "maxFlavours",
+          "flavours",
+          "image",
+          "gallery",
+          "whatsappUrl"
+        ]
+      },
+      "CateringCategoryDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "platter",
+              "a_la_carte",
+              "layer_cake"
+            ]
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CateringProductCardDto"
+            }
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "description",
+          "kind",
+          "products"
+        ]
+      },
+      "DepositRuleDto": {
+        "type": "object",
+        "properties": {
+          "thresholdCents": {
+            "type": "number",
+            "example": 5000,
+            "description": "Seuil en centimes"
+          },
+          "belowCents": {
+            "type": "number",
+            "example": 1000,
+            "description": "Acompte sous le seuil, en centimes"
+          },
+          "fromCents": {
+            "type": "number",
+            "example": 2000,
+            "description": "Acompte à partir du seuil, en centimes"
+          }
+        },
+        "required": [
+          "thresholdCents",
+          "belowCents",
+          "fromCents"
+        ]
+      },
+      "CateringConditionsDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "Conditions de commande, à afficher telles quelles",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deposit": {
+            "$ref": "#/components/schemas/DepositRuleDto"
+          },
+          "minNoticeDays": {
+            "type": "number",
+            "description": "Délai minimal entre la demande et l’événement (jours)"
+          },
+          "onlineOrdering": {
+            "type": "boolean",
+            "description": "Commande en ligne ouverte (panier, créneau, acompte en ligne) ; sinon contact"
+          },
+          "whatsappUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Lien WhatsApp général (null sans numéro configuré)"
+          }
+        },
+        "required": [
+          "items",
+          "deposit",
+          "minNoticeDays",
+          "onlineOrdering",
+          "whatsappUrl"
+        ]
+      },
+      "CateringCatalogDto": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CateringCategoryDto"
+            }
+          },
+          "flavours": {
+            "description": "Tous les parfums disponibles",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlavourDto"
+            }
+          },
+          "conditions": {
+            "$ref": "#/components/schemas/CateringConditionsDto"
+          }
+        },
+        "required": [
+          "categories",
+          "flavours",
+          "conditions"
+        ]
+      },
+      "CateringProductDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionItemDto"
+            }
+          },
+          "variants": {
+            "description": "Tailles ou conditionnements, dans l’ordre",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CateringVariantDto"
+            }
+          },
+          "fromPriceCents": {
+            "type": "number",
+            "description": "Prix le plus bas (« à partir de »), en centimes"
+          },
+          "maxFlavours": {
+            "type": "number",
+            "description": "Nombre maximal de parfums au choix (0 = sans parfum)"
+          },
+          "flavours": {
+            "description": "Parfums proposés pour ce produit",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlavourDto"
+            }
+          },
+          "image": {
+            "nullable": true,
+            "description": "Vignette (1re image)",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicImageDto"
+              }
+            ]
+          },
+          "gallery": {
+            "description": "Galerie complète",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicImageDto"
+            }
+          },
+          "whatsappUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Bouton « Contacter » : WhatsApp avec message pré-rempli (null sans numéro)"
+          },
+          "category": {
+            "$ref": "#/components/schemas/CategoryRefDto"
+          },
+          "seo": {
+            "$ref": "#/components/schemas/SeoDto"
+          },
+          "jsonLd": {
+            "type": "object",
+            "description": "Données structurées schema.org (Product + offres)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "composition",
+          "variants",
+          "fromPriceCents",
+          "maxFlavours",
+          "flavours",
+          "image",
+          "gallery",
+          "whatsappUrl",
+          "category",
+          "seo",
+          "jsonLd"
+        ]
+      },
+      "CateringSlotDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "remaining": {
+            "type": "number",
+            "description": "Places restantes"
+          }
+        },
+        "required": [
+          "id",
+          "fulfilment",
+          "startsAt",
+          "endsAt",
+          "remaining"
+        ]
+      },
+      "RequestItemInputDto": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string",
+            "description": "Variante choisie (taille, conditionnement)"
+          },
+          "quantity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 50,
+            "example": 1
+          },
+          "flavourIds": {
+            "description": "Parfums choisis (layer cakes)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "variantId",
+          "quantity"
+        ]
+      },
+      "CreateOnlineCateringOrderDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Awa"
+          },
+          "lastName": {
+            "type": "object",
+            "example": "Diallo"
+          },
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "phone": {
+            "type": "object",
+            "example": "+33612345678"
+          },
+          "eventDate": {
+            "type": "string",
+            "example": "2026-11-14",
+            "description": "Date de l’événement"
+          },
+          "guestCount": {
+            "type": "object",
+            "minimum": 1,
+            "maximum": 5000,
+            "example": 40
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "deliveryAddress": {
+            "type": "object",
+            "description": "Ville ou adresse (livraison seulement)",
+            "maxLength": 300
+          },
+          "message": {
+            "type": "object",
+            "maxLength": 3000
+          },
+          "items": {
+            "description": "Sélection facultative (le total estimé est calculé par le serveur)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestItemInputDto"
+            }
+          },
+          "captchaToken": {
+            "type": "string",
+            "description": "Jeton Cloudflare Turnstile (obligatoire en production)"
+          },
+          "website": {
+            "type": "string",
+            "description": "Piège à robots : champ caché, toujours vide pour un humain"
+          },
+          "slotId": {
+            "type": "string",
+            "description": "Créneau de retrait ou de livraison"
+          }
+        },
+        "required": [
+          "firstName",
+          "email",
+          "eventDate",
+          "slotId"
+        ]
+      },
+      "CateringRequestReceiptDto": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "example": "TR-000042"
+          },
+          "message": {
+            "type": "string",
+            "example": "Merci ! Votre demande est bien reçue : Diani vous recontacte rapidement."
+          },
+          "estimatedTotalCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "Total estimé de la sélection"
+          },
+          "whatsappUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Prolonger l’échange sur WhatsApp (message pré-rempli avec la référence)"
+          }
+        },
+        "required": [
+          "reference",
+          "message",
+          "estimatedTotalCents",
+          "whatsappUrl"
+        ]
+      },
+      "CreateCateringRequestDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Awa"
+          },
+          "lastName": {
+            "type": "object",
+            "example": "Diallo"
+          },
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "phone": {
+            "type": "object",
+            "example": "+33612345678"
+          },
+          "eventDate": {
+            "type": "string",
+            "example": "2026-11-14",
+            "description": "Date de l’événement"
+          },
+          "guestCount": {
+            "type": "object",
+            "minimum": 1,
+            "maximum": 5000,
+            "example": 40
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "deliveryAddress": {
+            "type": "object",
+            "description": "Ville ou adresse (livraison seulement)",
+            "maxLength": 300
+          },
+          "message": {
+            "type": "object",
+            "maxLength": 3000
+          },
+          "items": {
+            "description": "Sélection facultative (le total estimé est calculé par le serveur)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestItemInputDto"
+            }
+          },
+          "captchaToken": {
+            "type": "string",
+            "description": "Jeton Cloudflare Turnstile (obligatoire en production)"
+          },
+          "website": {
+            "type": "string",
+            "description": "Piège à robots : champ caché, toujours vide pour un humain"
+          }
+        },
+        "required": [
+          "firstName",
+          "email",
+          "eventDate"
+        ]
+      },
+      "AdminCateringCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "platter",
+              "a_la_carte",
+              "layer_cake"
+            ]
+          },
+          "position": {
+            "type": "number"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "productCount": {
+            "type": "number",
+            "description": "Nombre de produits (non supprimés)"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "kind",
+          "position",
+          "visible",
+          "productCount"
+        ]
+      },
+      "CreateCateringCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Plateaux"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "description": {
+            "type": "object",
+            "maxLength": 1000
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "platter",
+              "a_la_carte",
+              "layer_cake"
+            ],
+            "description": "Affichage : plateaux, à la carte, layer cakes"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ]
+      },
+      "UpdateCateringCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Plateaux"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "description": {
+            "type": "object",
+            "maxLength": 1000
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "platter",
+              "a_la_carte",
+              "layer_cake"
+            ],
+            "description": "Affichage : plateaux, à la carte, layer cakes"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "AdminProductImageDto": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          },
+          "previewUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Aperçu (plus petite variante WebP)"
+          }
+        },
+        "required": [
+          "mediaId",
+          "alt",
+          "previewUrl"
+        ]
+      },
+      "AdminCateringProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionItemDto"
+            }
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CateringVariantDto"
+            }
+          },
+          "maxFlavours": {
+            "type": "number"
+          },
+          "flavours": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlavourDto"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminProductImageDto"
+            }
+          },
+          "position": {
+            "type": "number"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "seoTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "seoDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "categoryId",
+          "slug",
+          "name",
+          "description",
+          "composition",
+          "variants",
+          "maxFlavours",
+          "flavours",
+          "images",
+          "position",
+          "visible",
+          "seoTitle",
+          "seoDescription",
+          "updatedAt"
+        ]
+      },
+      "CompositionItemInputDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "mini burgers"
+          },
+          "quantity": {
+            "type": "number",
+            "nullable": true,
+            "example": 5
+          }
+        },
+        "required": [
+          "label"
+        ]
+      },
+      "VariantInputDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Variante existante à modifier ; absente = nouvelle variante"
+          },
+          "label": {
+            "type": "string",
+            "example": "6–8 parts"
+          },
+          "priceCents": {
+            "type": "number",
+            "example": 5000,
+            "description": "Prix en centimes"
+          },
+          "servingsMin": {
+            "type": "number",
+            "nullable": true
+          },
+          "servingsMax": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "label",
+          "priceCents"
+        ]
+      },
+      "ProductImageInputDto": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string",
+            "description": "Texte alternatif (vide = image décorative)",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "mediaId"
+        ]
+      },
+      "CreateCateringProductDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Plateau découverte"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "description": {
+            "type": "object",
+            "maxLength": 2000
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionItemInputDto"
+            }
+          },
+          "variants": {
+            "description": "Au moins une variante (prix) ; l’ordre du tableau est l’ordre d’affichage",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantInputDto"
+            }
+          },
+          "maxFlavours": {
+            "type": "number",
+            "default": 0,
+            "description": "Nombre maximal de parfums au choix"
+          },
+          "flavourIds": {
+            "description": "Parfums proposés",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "images": {
+            "description": "Galerie ; la première image sert de vignette",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductImageInputDto"
+            }
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "categoryId",
+          "name",
+          "variants"
+        ]
+      },
+      "UpdateCateringProductDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Plateau découverte"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "description": {
+            "type": "object",
+            "maxLength": 2000
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompositionItemInputDto"
+            }
+          },
+          "variants": {
+            "description": "Au moins une variante (prix) ; l’ordre du tableau est l’ordre d’affichage",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantInputDto"
+            }
+          },
+          "maxFlavours": {
+            "type": "number",
+            "default": 0,
+            "description": "Nombre maximal de parfums au choix"
+          },
+          "flavourIds": {
+            "description": "Parfums proposés",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "images": {
+            "description": "Galerie ; la première image sert de vignette",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductImageInputDto"
+            }
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          },
+          "seoTitle": {
+            "type": "object",
+            "maxLength": 70
+          },
+          "seoDescription": {
+            "type": "object",
+            "maxLength": 160
+          }
+        }
+      },
+      "AdminFlavourDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "example": "mangue-passion"
+          },
+          "name": {
+            "type": "string",
+            "example": "Mangue-passion"
+          },
+          "position": {
+            "type": "number"
+          },
+          "visible": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "position",
+          "visible"
+        ]
+      },
+      "CreateFlavourDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Mangue-passion"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateFlavourDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Mangue-passion"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Généré depuis le nom si absent"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "AdminSlotDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "remaining": {
+            "type": "number",
+            "description": "Places restantes"
+          },
+          "capacity": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "fulfilment",
+          "startsAt",
+          "endsAt",
+          "remaining",
+          "capacity",
+          "active"
+        ]
+      },
+      "CreateSlotDto": {
+        "type": "object",
+        "properties": {
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "example": "2026-11-14T10:00:00+01:00"
+          },
+          "endsAt": {
+            "type": "string",
+            "example": "2026-11-14T12:00:00+01:00"
+          },
+          "capacity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000
+          }
+        },
+        "required": [
+          "fulfilment",
+          "startsAt",
+          "endsAt",
+          "capacity"
+        ]
+      },
+      "UpdateSlotDto": {
+        "type": "object",
+        "properties": {
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "example": "2026-11-14T10:00:00+01:00"
+          },
+          "endsAt": {
+            "type": "string",
+            "example": "2026-11-14T12:00:00+01:00"
+          },
+          "capacity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AdminCateringRequestSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "TR-000042"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "form",
+              "online",
+              "admin"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "new",
+              "contacted",
+              "deposit_received",
+              "confirmed",
+              "delivered",
+              "cancelled"
+            ]
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventDate": {
+            "type": "string",
+            "example": "2026-11-14"
+          },
+          "guestCount": {
+            "type": "number",
+            "nullable": true
+          },
+          "estimatedTotalCents": {
+            "type": "number",
+            "nullable": true
+          },
+          "agreedTotalCents": {
+            "type": "number",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "source",
+          "status",
+          "firstName",
+          "lastName",
+          "eventDate",
+          "guestCount",
+          "estimatedTotalCents",
+          "agreedTotalCents",
+          "createdAt"
+        ]
+      },
+      "AdminCateringRequestListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminCateringRequestSummaryDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "AdminCreateCateringRequestDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Awa"
+          },
+          "lastName": {
+            "type": "object",
+            "example": "Diallo"
+          },
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "phone": {
+            "type": "object",
+            "example": "+33612345678"
+          },
+          "eventDate": {
+            "type": "string",
+            "example": "2026-11-14",
+            "description": "Date de l’événement"
+          },
+          "guestCount": {
+            "type": "object",
+            "minimum": 1,
+            "maximum": 5000,
+            "example": 40
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "deliveryAddress": {
+            "type": "object",
+            "description": "Ville ou adresse (livraison seulement)",
+            "maxLength": 300
+          },
+          "message": {
+            "type": "object",
+            "maxLength": 3000
+          },
+          "items": {
+            "description": "Sélection facultative (le total estimé est calculé par le serveur)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestItemInputDto"
+            }
+          },
+          "internalNotes": {
+            "type": "object",
+            "maxLength": 5000
+          }
+        },
+        "required": [
+          "firstName",
+          "email",
+          "eventDate"
+        ]
+      },
+      "AdminRequestItemDto": {
+        "type": "object",
+        "properties": {
+          "productName": {
+            "type": "string"
+          },
+          "variantLabel": {
+            "type": "string"
+          },
+          "unitPriceCents": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "flavours": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "productName",
+          "variantLabel",
+          "unitPriceCents",
+          "quantity",
+          "flavours"
+        ]
+      },
+      "AdminRequestEventDto": {
+        "type": "object",
+        "properties": {
+          "fromStatus": {
+            "type": "string",
+            "enum": [
+              "new",
+              "contacted",
+              "deposit_received",
+              "confirmed",
+              "delivered",
+              "cancelled"
+            ],
+            "nullable": true
+          },
+          "toStatus": {
+            "type": "string",
+            "enum": [
+              "new",
+              "contacted",
+              "deposit_received",
+              "confirmed",
+              "delivered",
+              "cancelled"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromStatus",
+          "toStatus",
+          "actorId",
+          "note",
+          "createdAt"
+        ]
+      },
+      "AdminCateringRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "example": "TR-000042"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "form",
+              "online",
+              "admin"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "new",
+              "contacted",
+              "deposit_received",
+              "confirmed",
+              "delivered",
+              "cancelled"
+            ]
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventDate": {
+            "type": "string",
+            "example": "2026-11-14"
+          },
+          "guestCount": {
+            "type": "number",
+            "nullable": true
+          },
+          "estimatedTotalCents": {
+            "type": "number",
+            "nullable": true
+          },
+          "agreedTotalCents": {
+            "type": "number",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ],
+            "nullable": true
+          },
+          "deliveryAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "depositCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "Acompte enregistré, ou acompte calculé sur le total convenu (aperçu)"
+          },
+          "balanceCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "Solde au retrait ou à la livraison"
+          },
+          "depositReceivedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "depositMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "confirmedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "cancelledAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "cancellationReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "internalNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "slot": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CateringSlotDto"
+              }
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminRequestItemDto"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminRequestEventDto"
+            }
+          },
+          "nextStatuses": {
+            "type": "array",
+            "description": "Statuts accessibles depuis le statut actuel",
+            "items": {
+              "type": "string",
+              "enum": [
+                "new",
+                "contacted",
+                "deposit_received",
+                "confirmed",
+                "delivered",
+                "cancelled"
+              ]
+            }
+          },
+          "customerWhatsappUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Lien WhatsApp vers la cliente"
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "source",
+          "status",
+          "firstName",
+          "lastName",
+          "eventDate",
+          "guestCount",
+          "estimatedTotalCents",
+          "agreedTotalCents",
+          "createdAt",
+          "email",
+          "phone",
+          "fulfilment",
+          "deliveryAddress",
+          "message",
+          "depositCents",
+          "balanceCents",
+          "depositReceivedAt",
+          "depositMethod",
+          "confirmedAt",
+          "cancelledAt",
+          "cancellationReason",
+          "internalNotes",
+          "slot",
+          "items",
+          "events",
+          "nextStatuses",
+          "customerWhatsappUrl"
+        ]
+      },
+      "AdminUpdateCateringRequestDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Awa"
+          },
+          "lastName": {
+            "type": "object",
+            "example": "Diallo"
+          },
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "phone": {
+            "type": "object",
+            "example": "+33612345678"
+          },
+          "eventDate": {
+            "type": "string",
+            "example": "2026-11-14",
+            "description": "Date de l’événement"
+          },
+          "guestCount": {
+            "type": "object",
+            "minimum": 1,
+            "maximum": 5000,
+            "example": 40
+          },
+          "fulfilment": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "deliveryAddress": {
+            "type": "object",
+            "description": "Ville ou adresse (livraison seulement)",
+            "maxLength": 300
+          },
+          "internalNotes": {
+            "type": "object",
+            "maxLength": 5000
+          },
+          "agreedTotalCents": {
+            "type": "object",
+            "description": "Total convenu en centimes (base de l’acompte ; figé une fois l’acompte reçu)"
+          }
+        }
+      },
+      "RecordDepositDto": {
+        "type": "object",
+        "properties": {
+          "agreedTotalCents": {
+            "type": "number",
+            "description": "Total convenu en centimes, s’il n’est pas encore enregistré"
+          },
+          "method": {
+            "type": "string",
+            "example": "Virement",
+            "description": "Moyen de paiement de l’acompte"
+          }
+        },
+        "required": [
+          "method"
+        ]
+      },
+      "ChangeRequestStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "contacted",
+              "confirmed",
+              "delivered",
+              "cancelled"
+            ],
+            "description": "« Acompte reçu » passe par l’enregistrement de l’acompte"
+          },
+          "note": {
+            "type": "object",
+            "description": "Note d’historique (motif d’annulation…)",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "RecapDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Récapitulatif prêt à copier (WhatsApp, e-mail)"
+          }
+        },
+        "required": [
+          "text"
         ]
       }
     }

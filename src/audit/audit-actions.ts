@@ -36,6 +36,13 @@ export const AuditAction = {
   FAQ_CHANGED: 'content.faq_changed',
   REVIEW_CHANGED: 'content.review_changed',
   REVIEW_MODERATED: 'content.review_moderated',
+  // Traiteur (phase 4)
+  CATERING_CATALOG_CHANGED: 'catering.catalog_changed',
+  CATERING_REQUEST_CREATED: 'catering.request_created',
+  CATERING_REQUEST_UPDATED: 'catering.request_updated',
+  CATERING_REQUEST_STATUS_CHANGED: 'catering.request_status_changed',
+  CATERING_DEPOSIT_RECORDED: 'catering.deposit_recorded',
+  CATERING_SLOT_CHANGED: 'catering.slot_changed',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

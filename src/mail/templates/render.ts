@@ -118,6 +118,60 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       },
       { paragraph: 'Merci pour votre confiance, et à bientôt peut-être.' },
     ]),
+
+  'catering-request-received': (data) =>
+    mail(`Votre demande ${data.reference} est bien reçue`, 'Demande bien reçue', [
+      { paragraph: greeting(data.firstName) },
+      {
+        paragraph: `Merci pour votre demande pour le ${data.eventDate}. Diani la lit personnellement et vous recontacte rapidement pour en convenir les détails.`,
+      },
+      ...(data.itemLines.length > 0
+        ? [
+            { paragraph: 'Votre sélection :' },
+            ...data.itemLines.map((line) => ({ paragraph: line })),
+          ]
+        : []),
+      ...(data.estimatedTotal
+        ? [
+            {
+              paragraph: `Total estimé : ${data.estimatedTotal} (confirmé avec vous avant toute commande).`,
+            },
+          ]
+        : []),
+      { paragraph: 'Pour rappel, nos conditions :' },
+      ...data.conditions.map((condition) => ({ paragraph: `– ${condition}` })),
+      { paragraph: `Référence de votre demande : ${data.reference}.` },
+    ]),
+
+  'catering-request-admin': (data) =>
+    mail(`Nouvelle demande traiteur ${data.reference}`, 'Nouvelle demande traiteur', [
+      { paragraph: `${data.reference} (${data.source})` },
+      { paragraph: `Cliente : ${data.customerName}` },
+      { paragraph: `E-mail : ${data.email}${data.phone ? ` — Téléphone : ${data.phone}` : ''}` },
+      {
+        paragraph: `Date : ${data.eventDate}${data.guestCount ? ` — ${data.guestCount} invités` : ''}${data.fulfilment ? ` — ${data.fulfilment}` : ''}`,
+      },
+      ...data.itemLines.map((line) => ({ paragraph: line })),
+      ...(data.estimatedTotal ? [{ paragraph: `Total estimé : ${data.estimatedTotal}` }] : []),
+      ...(data.message ? [{ paragraph: `Message : ${data.message}` }] : []),
+      { paragraph: 'La demande est visible dans l’administration (Traiteur → Demandes).' },
+    ]),
+
+  'catering-order-confirmed': (data) =>
+    mail(`Votre commande ${data.reference} est confirmée`, 'Commande confirmée', [
+      { paragraph: greeting(data.firstName) },
+      {
+        paragraph: `Votre acompte de ${data.deposit} est bien reçu : votre commande pour le ${data.eventDate} est confirmée.`,
+      },
+      {
+        paragraph: `Total : ${data.total} — solde à régler au retrait ou à la livraison : ${data.balance}.`,
+      },
+      { paragraph: 'Pour rappel, nos conditions :' },
+      ...data.conditions.map((condition) => ({ paragraph: `– ${condition}` })),
+      {
+        paragraph: `Référence de votre commande : ${data.reference}. Merci pour votre confiance !`,
+      },
+    ]),
 };
 
 export function renderMail(job: Pick<MailJob, 'template' | 'data'>): RenderedMail {

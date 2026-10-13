@@ -20,6 +20,7 @@ const production = {
   PUBLIC_SITE_URL: 'https://a.fr',
   MAIL_TRANSPORT: 'resend',
   RESEND_API_KEY: 're_test_0123456789',
+  TURNSTILE_SECRET_KEY: '0x4AAAAAAA-test-secret',
 };
 
 describe('validateEnv', () => {
@@ -102,6 +103,12 @@ describe('validateEnv', () => {
       /S3_AUTO_CREATE_BUCKETS/,
     );
     expect(validateEnv(base).S3_FORCE_PATH_STYLE).toBe(true);
+  });
+
+  it('exige la clé anti-robot Turnstile en production', () => {
+    const { TURNSTILE_SECRET_KEY: _omitted, ...withoutCaptcha } = production;
+    expect(() => validateEnv(withoutCaptcha)).toThrow(/TURNSTILE_SECRET_KEY/);
+    expect(validateEnv(base).TURNSTILE_SECRET_KEY).toBeUndefined();
   });
 
   it('interdit la documentation Swagger en production', () => {

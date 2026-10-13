@@ -33,6 +33,7 @@ const config: Config = {
     './src/sessions/': { lines: 80 },
     './src/users/': { lines: 80 },
     './src/rgpd/': { lines: 80 },
+    './src/catering/': { lines: 80 },
   },
 };
 

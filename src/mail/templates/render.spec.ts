@@ -34,6 +34,45 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
     data: { at: 'lundi', ipTruncated: '203.0.113.0/24', userAgent: null },
   },
   { template: 'account-deleted', data: { firstName: null } },
+  {
+    template: 'catering-request-received',
+    data: {
+      firstName: 'Awa',
+      reference: 'TR-000042',
+      eventDate: 'samedi 14 novembre 2026',
+      itemLines: ['– 2 × Plateau découverte (Plateau) : 80,00 €'],
+      estimatedTotal: '80,00 €',
+      conditions: ['Le solde est réglé au retrait ou à la livraison.'],
+    },
+  },
+  {
+    template: 'catering-request-admin',
+    data: {
+      reference: 'TR-000042',
+      source: 'formulaire du site',
+      customerName: 'Awa Diallo',
+      email: 'awa@example.com',
+      phone: null,
+      eventDate: 'samedi 14 novembre 2026',
+      guestCount: 40,
+      fulfilment: 'livraison',
+      itemLines: [],
+      estimatedTotal: null,
+      message: 'Anniversaire de ma fille',
+    },
+  },
+  {
+    template: 'catering-order-confirmed',
+    data: {
+      firstName: 'Awa',
+      reference: 'TR-000042',
+      eventDate: 'samedi 14 novembre 2026',
+      total: '90,00 €',
+      deposit: '20,00 €',
+      balance: '70,00 €',
+      conditions: ['L’acompte n’est pas remboursable en cas d’annulation de votre part.'],
+    },
+  },
 ];
 
 describe('renderMail', () => {

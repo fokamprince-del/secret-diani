@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { AuditAction } from '../audit/audit-actions';
 import { AuditService } from '../audit/audit.service';
 import { AuthService } from '../auth/auth.service';
+import { requestReference } from '../catering/domain/request-status';
 import type { AuthenticatedUser } from '../common/auth/authenticated-user';
 import type { ClientContext } from '../common/auth/client-context';
 import { AppException } from '../common/errors/app.exception';
@@ -84,6 +85,39 @@ export class RgpdService {
       take: 1000,
       select: { action: true, ipTruncated: true, createdAt: true },
     });
+    // Demandes traiteur envoyées avec la même adresse (formulaire public, sans compte).
+    const cateringRequests = await this.prisma.cateringRequest.findMany({
+      where: { email: user.email },
+      orderBy: { createdAt: 'desc' },
+      take: 500,
+      select: {
+        number: true,
+        status: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        eventDate: true,
+        guestCount: true,
+        fulfilment: true,
+        deliveryAddress: true,
+        message: true,
+        agreedTotalCents: true,
+        depositCents: true,
+        depositReceivedAt: true,
+        internalNotes: true,
+        createdAt: true,
+        items: {
+          select: {
+            productName: true,
+            variantLabel: true,
+            quantity: true,
+            unitPriceCents: true,
+            flavours: true,
+          },
+        },
+      },
+    });
     await this.audit.log({
       action: AuditAction.DATA_EXPORTED,
       actorId: userId,
@@ -108,6 +142,10 @@ export class RgpdService {
       addresses,
       sessions,
       securityEvents: events,
+      cateringRequests: cateringRequests.map(({ number, ...request }) => ({
+        reference: requestReference(number),
+        ...request,
+      })),
     };
   }
 

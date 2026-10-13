@@ -18,6 +18,7 @@ export type ContentTag =
   | 'faq'
   | 'reviews'
   | 'media'
+  | 'catering'
   | 'sitemap';
 
 /**
