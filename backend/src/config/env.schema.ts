@@ -32,6 +32,9 @@ export const envSchema = z
     PORT: z.coerce.number().int().min(1).max(65535).default(3000),
 
     PUBLIC_SITE_URL: z.url({ protocol: /^https?$/ }),
+    // URL publique de l'API (ex. https://api.lessecretsdediani.fr), sans /api/v1 : liens
+    // « désinscription en un clic » des e-mails (RFC 8058). Facultative.
+    PUBLIC_API_URL: z.url({ protocol: /^https?$/ }).optional(),
     CORS_ORIGINS: urlList.optional(),
 
     DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/ }),

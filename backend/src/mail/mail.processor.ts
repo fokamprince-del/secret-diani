@@ -25,7 +25,7 @@ export class MailProcessor extends WorkerHost {
 
   async process(job: Job<MailJob>): Promise<void> {
     const rendered = renderMail(job.data);
-    const replyTo = this.config.get('MAIL_REPLY_TO');
+    const replyTo = rendered.replyTo ?? this.config.get('MAIL_REPLY_TO');
     try {
       await this.transport.send({
         from: this.config.get('MAIL_FROM'),

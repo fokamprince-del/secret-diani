@@ -15,6 +15,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
 import { CryptoModule } from './common/crypto/crypto.module';
 import { AppConfigModule } from './config/config.module';
 import { ContentCacheModule } from './content/cache/content-cache.module';
+import { ContactModule } from './contact/contact.module';
 import { ContentModule } from './content/content.module';
 import { CoursesModule } from './courses/courses.module';
 import { AppConfigService } from './config/app-config.service';
@@ -23,6 +24,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { LoggingModule } from './logging/logging.module';
 import { MailModule } from './mail/mail.module';
 import { MediaModule } from './media/media.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { REDIS_CLIENT } from './redis/redis.constants';
@@ -70,6 +72,8 @@ import { UsersModule } from './users/users.module';
     ShopModule,
     PaymentsModule,
     CoursesModule,
+    ContactModule,
+    NewsletterModule,
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

@@ -7,6 +7,25 @@ function mail(subject: string, title: string, blocks: LayoutBlock[]): RenderedMa
   return { subject, ...renderLayout(title, blocks) };
 }
 
+/**
+ * Désinscription en un clic (RFC 2369 et RFC 8058) : les messageries proposent un bouton
+ * « Se désabonner » qui poste directement sur l'API, sans ouvrir de page.
+ */
+function withUnsubscribe(
+  rendered: RenderedMail,
+  links: { unsubscribeLink: string; oneClickUrl: string | null },
+): RenderedMail {
+  return {
+    ...rendered,
+    headers: links.oneClickUrl
+      ? {
+          'List-Unsubscribe': `<${links.oneClickUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        }
+      : { 'List-Unsubscribe': `<${links.unsubscribeLink}>` },
+  };
+}
+
 /** Gabarits versionnés avec le code (toute modification passe en revue), en français. */
 const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
   'verify-email': (data) =>
@@ -255,6 +274,57 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       { paragraph: `Appels restants après cette demande : ${data.remaining}.` },
       { paragraph: 'La demande est visible dans l’administration (Formations → Appels).' },
     ]),
+
+  'contact-admin': (data) => ({
+    ...mail(`Nouveau message : ${data.subject}`, 'Nouveau message depuis le site', [
+      { paragraph: `De : ${data.name} (${data.email}${data.phone ? `, ${data.phone}` : ''})` },
+      { paragraph: `Sujet : ${data.subject}` },
+      ...data.message.split(/\n+/).map((line) => ({ paragraph: line })),
+      { paragraph: 'Répondez directement à cet e-mail pour lui écrire.' },
+    ]),
+    replyTo: data.email,
+  }),
+
+  'contact-ack': (data) =>
+    mail('Nous avons bien reçu votre message', 'Message bien reçu', [
+      { paragraph: `Bonjour ${data.name},` },
+      {
+        paragraph: `Merci pour votre message (${data.subject}). Diani vous répond personnellement dans les meilleurs délais.`,
+      },
+    ]),
+
+  'newsletter-confirm': (data) =>
+    withUnsubscribe(
+      mail('Confirmez votre inscription à la newsletter', 'Une dernière étape', [
+        { paragraph: 'Bonjour,' },
+        {
+          paragraph:
+            'Vous avez demandé à recevoir les nouvelles des Secrets de Diani (recettes, formations, nouveautés). Confirmez votre inscription : ce lien est valable 7 jours.',
+        },
+        { button: { label: 'Confirmer mon inscription', url: data.confirmLink } },
+        {
+          paragraph:
+            'Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail : vous ne serez pas inscrit·e.',
+        },
+        { paragraph: 'Vous pourrez vous désinscrire à tout moment, en un clic :' },
+        { button: { label: 'Me désinscrire', url: data.unsubscribeLink } },
+      ]),
+      data,
+    ),
+
+  'newsletter-welcome': (data) =>
+    withUnsubscribe(
+      mail('Bienvenue dans la newsletter', 'Inscription confirmée', [
+        { paragraph: 'Bonjour,' },
+        {
+          paragraph:
+            'Votre inscription est confirmée : à très vite pour les prochaines nouveautés !',
+        },
+        { paragraph: 'Vous pouvez vous désinscrire à tout moment, en un clic :' },
+        { button: { label: 'Me désinscrire', url: data.unsubscribeLink } },
+      ]),
+      data,
+    ),
 
   'payment-alert': (data) =>
     mail(`Paiements : ${data.title}`, data.title, [

@@ -81,6 +81,21 @@ export interface MailTemplateData {
     link: string;
   };
   'call-request-admin': { customerName: string; email: string; message: string; remaining: number };
+  // Contact et newsletter (phase 8)
+  'contact-admin': {
+    name: string;
+    email: string;
+    phone: string | null;
+    subject: string;
+    message: string;
+  };
+  'contact-ack': { name: string; subject: string };
+  'newsletter-confirm': {
+    confirmLink: string;
+    unsubscribeLink: string;
+    oneClickUrl: string | null;
+  };
+  'newsletter-welcome': { unsubscribeLink: string; oneClickUrl: string | null };
 }
 
 export type MailTemplate = keyof MailTemplateData;
@@ -93,4 +108,8 @@ export interface RenderedMail {
   subject: string;
   html: string;
   text: string;
+  /** En-têtes propres au message (List-Unsubscribe…). */
+  headers?: Record<string, string>;
+  /** Adresse de réponse propre au message (ex. la personne qui a écrit). */
+  replyTo?: string;
 }

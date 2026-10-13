@@ -79,6 +79,9 @@ const config: Config = {
     '!courses/**/*.service.ts',
     'courses/video/video.service.ts',
     '!documents/**',
+    // Phase 8 : contact et newsletter adossés à Postgres/Redis (e2e) ; le signeur reste ici.
+    '!contact/*.service.ts',
+    '!newsletter/*.service.ts',
   ],
   coverageDirectory: '../coverage/unit',
   coverageThreshold: { global: { lines: 80, branches: 70 } },

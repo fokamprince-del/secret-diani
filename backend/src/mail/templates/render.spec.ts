@@ -137,7 +137,75 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
       remaining: 2,
     },
   },
+  {
+    template: 'contact-admin',
+    data: {
+      name: 'Awa Diallo',
+      email: 'awa@example.com',
+      phone: null,
+      subject: 'Traiteur',
+      message: 'Bonjour,\nJe voudrais un devis.',
+    },
+  },
+  { template: 'contact-ack', data: { name: 'Awa', subject: 'Traiteur' } },
+  {
+    template: 'newsletter-confirm',
+    data: {
+      confirmLink: 'https://site.fr/newsletter/confirmer?token=abc',
+      unsubscribeLink: 'https://site.fr/newsletter/desinscription?token=def',
+      oneClickUrl: 'https://api.site.fr/api/v1/newsletter/unsubscribe?token=def',
+    },
+  },
+  {
+    template: 'newsletter-welcome',
+    data: {
+      unsubscribeLink: 'https://site.fr/newsletter/desinscription?token=def',
+      oneClickUrl: null,
+    },
+  },
 ];
+
+describe('en-têtes propres à certains e-mails', () => {
+  it('newsletter : désinscription en un clic (RFC 8058) quand l’API est joignable', () => {
+    const withApi = renderMail({
+      template: 'newsletter-welcome',
+      data: {
+        unsubscribeLink: 'https://site.fr/newsletter/desinscription?token=def',
+        oneClickUrl: 'https://api.site.fr/api/v1/newsletter/unsubscribe?token=def',
+      },
+    });
+    expect(withApi.headers).toEqual({
+      'List-Unsubscribe': '<https://api.site.fr/api/v1/newsletter/unsubscribe?token=def>',
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    });
+    const withoutApi = renderMail({
+      template: 'newsletter-welcome',
+      data: {
+        unsubscribeLink: 'https://site.fr/newsletter/desinscription?token=def',
+        oneClickUrl: null,
+      },
+    });
+    expect(withoutApi.headers).toEqual({
+      'List-Unsubscribe': '<https://site.fr/newsletter/desinscription?token=def>',
+    });
+  });
+
+  it('contact : Diani répond directement à la personne ; message échappé', () => {
+    const rendered = renderMail({
+      template: 'contact-admin',
+      data: {
+        name: 'Awa',
+        email: 'awa@example.com',
+        phone: null,
+        subject: 'Autre',
+        message: '<b>bonjour</b>',
+      },
+    });
+    expect(rendered.replyTo).toBe('awa@example.com');
+    expect(rendered.html).not.toContain('<b>bonjour</b>');
+    expect(rendered.html).toContain('&lt;b&gt;bonjour&lt;/b&gt;');
+  });
+});
 
 describe('renderMail', () => {
   it.each(JOBS.map((job) => [job.template, job] as const))(
@@ -147,8 +215,9 @@ describe('renderMail', () => {
       expect(mail.subject.length).toBeGreaterThan(5);
       expect(mail.html).toContain('<html lang="fr">');
       expect(mail.text).toContain('Les Secrets de Diani');
-      for (const value of Object.values(job.data)) {
-        if (typeof value === 'string' && value.startsWith('https://')) {
+      // Tout lien fourni figure dans le message, sauf l'URL « un clic », destinée à l'en-tête.
+      for (const [key, value] of Object.entries(job.data)) {
+        if (key !== 'oneClickUrl' && typeof value === 'string' && value.startsWith('https://')) {
           expect(mail.text).toContain(value);
           expect(mail.html).toContain(escapeHtml(value));
         }

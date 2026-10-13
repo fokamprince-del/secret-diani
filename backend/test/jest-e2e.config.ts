@@ -39,6 +39,8 @@ const config: Config = {
     './src/payments/': { lines: 80 },
     // Exigence du cahier des charges : droits d'accès ≥ 80 %.
     './src/courses/': { lines: 80 },
+    './src/contact/': { lines: 80 },
+    './src/newsletter/': { lines: 80 },
   },
 };
 

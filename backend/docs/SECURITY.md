@@ -85,6 +85,19 @@
 | **D**enial of service | Abus des appels inclus | Quota calculé sous verrou ; 3 demandes / heure | `courses.e2e` › avantages |
 | **E**levation of privilege | Cliente sur l'administration des formations | Rôle admin + 2FA | `courses.e2e` › accès accordés (403) |
 
+## Modèle de menaces — contact et newsletter (phase 8, STRIDE)
+
+| Menace | Scénario | Mesures | Preuves (tests) |
+|---|---|---|---|
+| **S**poofing | Inscrire l'adresse d'un tiers à la newsletter | Double opt-in : rien n'est actif sans clic sur le lien reçu ; lien à usage unique, 7 jours | `contact-newsletter.e2e` › double opt-in, lien expiré |
+| S | Désinscrire quelqu'un d'autre | Lien signé HMAC (clé dérivée propre à l'usage) ; un jeton modifié est refusé | `id-signer.spec`, `contact-newsletter.e2e` › jeton falsifié |
+| **T**ampering | Injection dans l'e-mail envoyé à Diani | Gabarits échappés, en-têtes construits par le transport (pas de concaténation), champs bornés | `render.spec` |
+| **R**epudiation | Contestation d'un consentement | Texte de la case, dates, IP tronquées conservés ; export journalisé | `contact-newsletter.e2e` › preuve du consentement, export |
+| **I**nformation disclosure | Savoir si une adresse est inscrite | Réponse identique, aucun e-mail pour une adresse déjà confirmée | `contact-newsletter.e2e` › ne révèle pas |
+| I | Données personnelles dans le journal | Journal : identifiant du message seulement, jamais l'e-mail | `contact-newsletter.e2e` › contact |
+| **D**enial of service | Formulaires utilisés pour bombarder une boîte ou remplir la base | Débit par IP, piège à robots, Turnstile ; 3 accusés / 3 confirmations par jour et par adresse ; purge des inscriptions non confirmées | `contact-newsletter.e2e` › débit, accusés, purge |
+| **E**levation of privilege | Lecture des messages ou de la liste par une cliente | Rôle admin + 2FA | `contact-newsletter.e2e` › 403 / 401 |
+
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 
 | Exigence | État | Référence |
