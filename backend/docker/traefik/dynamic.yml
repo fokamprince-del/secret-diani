@@ -1,6 +1,16 @@
-# Configuration dynamique Traefik (production) — routage vers l'API et durcissement TLS.
+# Configuration dynamique Traefik (production) — routage vers l'API et le site, durcissement TLS.
 http:
   routers:
+    # Site public (Next.js) : il pose lui-même ses en-têtes de sécurité (CSP, HSTS…).
+    site:
+      rule: 'Host(`{{ env "SITE_DOMAIN" }}`)'
+      entryPoints: [websecure]
+      service: site
+      middlewares: [limit-body-site, retry-other-instance]
+      tls:
+        certResolver: letsencrypt
+        options: modern
+
     api:
       rule: 'Host(`{{ env "API_DOMAIN" }}`)'
       entryPoints: [websecure]
@@ -11,6 +21,16 @@ http:
         options: modern
 
   services:
+    site:
+      loadBalancer:
+        servers:
+          - url: 'http://web:5173'
+          - url: 'http://web-2:5173'
+        healthCheck:
+          path: /api/health
+          interval: 5s
+          timeout: 3s
+
     api:
       loadBalancer:
         servers:
@@ -37,6 +57,10 @@ http:
       retry:
         attempts: 2
         initialInterval: 100ms
+    # Le site ne reçoit que des formulaires de revalidation (petits) : 1 Mo au plus.
+    limit-body-site:
+      buffering:
+        maxRequestBodyBytes: 1048576
     limit-body:
       buffering:
         # Limite haute (téléversements de médias) ; les routes JSON sont limitées plus bas par l'API.

@@ -460,3 +460,10 @@ Dependabot (npm backend et frontend, images Docker, actions GitHub), audit npm b
 
 ### D-096 · Contenus de l'accueil en paramètres
 Le frontend (phase 2) doit afficher sur l'accueil une image d'ambiance, un texte court par univers et le mot de Diani, tous modifiables sans développeur. Plutôt qu'un nouveau modèle de données, ce sont trois paramètres du groupe « Accueil » (`home.hero_image_id`, `home.universes`, `home.diani_word`) lus par `GET /site/home`, qui résout les identifiants de la médiathèque en images prêtes (`PublicImage`) : une image supprimée ou pas encore traitée n'est jamais exposée (fond uni). Une image se désigne par son identifiant (pas d'URL libre : aucun contenu tiers). Modification → revalidation de l'étiquette `site` ; une modification de la médiathèque invalide aussi le cache Redis. La vidéo d'ambiance du hero est reportée : l'image seule respecte le budget de performance (LCP).
+
+### D-097 · Revalidation de chaque instance du site
+Le site tourne en deux instances (déploiement sans coupure) ; chacune garde en mémoire son cache de pages (système de fichiers en lecture seule). `FRONTEND_REVALIDATE_URL` accepte donc plusieurs adresses séparées par des virgules (5 au plus, validées au démarrage) ; le worker les prévient toutes en parallèle, et un seul échec relance tout le job (la revalidation est idempotente). En production, adresses internes (`http://web:5173/…`, `http://web-2:5173/…`) : le worker et le site partagent le réseau `internal`, rien ne passe par Internet.
+
+### D-098 · Le site dans la même pile que l'API
+Services `web` et `web-2` (profil `web`) dans `docker-compose.prod.yml`, derrière le même Traefik (routeur `site`, sonde `/api/health`, corps limités à 1 Mo). Le site reçoit un seul secret (`REVALIDATE_SECRET`), jamais le fichier `.env.production` entier. Il lit l'API par le réseau interne (`API_INTERNAL_URL=http://api:3000`). Déploiement séparé (`scripts/deploy-web.sh`, appelé par la CI du frontend), avec remplacement progressif, réchauffage du cache, test de fumée et retour arrière automatique ; le déploiement de l'API ne touche pas au site (profil inactif).
+

@@ -5,8 +5,10 @@ import { REVALIDATE_QUEUE, type RevalidateJobData } from './revalidate.constants
 
 /**
  * Prévient le frontend (Next.js, ISR) qu'un contenu a changé : ses pages statiques sont
- * régénérées sans redéploiement. URL fixée par la configuration (aucune URL fournie
- * par un utilisateur : pas de SSRF). Sans configuration, le job ne fait rien.
+ * régénérées sans redéploiement. Chaque instance du frontend a son propre cache : toutes les
+ * adresses configurées sont prévenues (D-097). URL fixées par la configuration (aucune URL
+ * fournie par un utilisateur : pas de SSRF). Sans configuration, le job ne fait rien. Un échec
+ * relance le job entier : la revalidation est idempotente.
  */
 @Processor(REVALIDATE_QUEUE)
 export class RevalidateProcessor extends WorkerHost {
@@ -15,16 +17,23 @@ export class RevalidateProcessor extends WorkerHost {
   }
 
   async process(job: Job<RevalidateJobData>): Promise<void> {
-    const url = this.config.get('FRONTEND_REVALIDATE_URL');
+    const urls = this.config.get('FRONTEND_REVALIDATE_URL');
     const secret = this.config.get('FRONTEND_REVALIDATE_SECRET');
-    if (!url || !secret) return;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tags: job.data.tags }),
-      signal: AbortSignal.timeout(10_000),
-      redirect: 'error',
-    });
-    if (!response.ok) throw new Error(`Revalidation refusée (${response.status})`);
+    if (!urls || urls.length === 0 || !secret) return;
+    const body = JSON.stringify({ tags: job.data.tags });
+    const results = await Promise.allSettled(
+      urls.map(async (url) => {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json' },
+          body,
+          signal: AbortSignal.timeout(10_000),
+          redirect: 'error',
+        });
+        if (!response.ok) throw new Error(`Revalidation refusée (${response.status})`);
+      }),
+    );
+    const failure = results.find((result) => result.status === 'rejected');
+    if (failure) throw failure.reason as Error;
   }
 }
