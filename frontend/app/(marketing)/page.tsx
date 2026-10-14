@@ -7,7 +7,7 @@ import { Universes } from '@/components/home/Universes';
 import { JsonLd } from '@/components/ui/JsonLd';
 import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
 import { getHomeContent, getOrganization, getReviews } from '@/lib/api/content';
-import { pageMetadata, SITE_NAME } from '@/lib/seo';
+import { pageMetadata, SITE_NAME, websiteJsonLd } from '@/lib/seo';
 
 const TITLE = `${SITE_NAME} · Traiteur, formations et boutique`;
 
@@ -36,6 +36,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={websiteJsonLd()} />
       <JsonLd data={organization} />
       <Hero
         media={

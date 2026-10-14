@@ -3,6 +3,13 @@ import { siteUrl } from './env';
 
 export const SITE_NAME = 'Les Secrets de Diani';
 
+const DEFAULT_SHARE_IMAGE = {
+  url: siteUrl('/opengraph-image'),
+  width: 1200,
+  height: 630,
+  alt: `${SITE_NAME} : traiteur, formations et boutique`,
+};
+
 interface PageMetadataInput {
   title: string;
   description: string;
@@ -24,7 +31,9 @@ export function pageMetadata({
   type = 'website',
 }: PageMetadataInput): Metadata {
   const url = siteUrl(path);
-  const images = image ? [image] : undefined;
+  // Sans visuel propre, l'image de partage par défaut (app/opengraph-image.tsx) : déclarer
+  // `openGraph` dans une page remplace sinon celle héritée du gabarit.
+  const images = [image ?? DEFAULT_SHARE_IMAGE];
   return {
     title,
     description,
@@ -39,10 +48,10 @@ export function pageMetadata({
       images,
     },
     twitter: {
-      card: image ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title,
       description,
-      images: image ? [image.url] : undefined,
+      images: [images[0]!.url],
     },
     robots: noindex ? { index: false, follow: false } : undefined,
   };
@@ -52,3 +61,32 @@ export function pageMetadata({
 export const privateMetadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
+
+/**
+ * Fil d'Ariane en données structurées (BreadcrumbList) : les moteurs l'affichent sous le titre.
+ * Chemins internes ; l'accueil est ajouté en tête.
+ */
+export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  const trail = [{ name: 'Accueil', path: '/' }, ...items];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: siteUrl(item.path),
+    })),
+  };
+}
+
+/** Site (WebSite) : nom et adresse officiels, sur l'accueil. */
+export function websiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: siteUrl('/'),
+    inLanguage: 'fr-FR',
+  };
+}

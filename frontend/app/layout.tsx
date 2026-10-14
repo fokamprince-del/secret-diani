@@ -6,6 +6,7 @@ import { Analytics } from '@/components/layout/Analytics';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { OfflineNotice } from '@/components/layout/OfflineNotice';
 import { getSiteSettings } from '@/lib/api/content';
 import { publicEnv } from '@/lib/env';
 import { SITE_NAME } from '@/lib/seo';
@@ -50,6 +51,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </main>
           <Footer settings={settings} socials={socials} />
           <CookieConsent />
+          <OfflineNotice />
           <Analytics />
         </AuthProvider>
       </body>

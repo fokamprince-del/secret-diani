@@ -8,7 +8,7 @@ import { JsonLd } from '@/components/ui/JsonLd';
 import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
 import { ErrorState } from '@/components/ui/States';
 import { getShopProduct, getShopProducts, getSiteSettings } from '@/lib/api/content';
-import { pageMetadata } from '@/lib/seo';
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo';
 import styles from './page.module.css';
 
 type Params = Promise<{ slug: string }>;
@@ -58,6 +58,12 @@ export default async function ProductPage({ params }: { params: Params }) {
   return (
     <>
       <JsonLd data={product.jsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Boutique & kits', path: '/boutique' },
+          { name: product.name, path: `/boutique/${product.slug}` },
+        ])}
+      />
       <div className={`conteneur ${styles.fiche}`}>
         <nav aria-label="Fil d’Ariane" className={styles.ariane}>
           <ol role="list">

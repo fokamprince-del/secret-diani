@@ -185,7 +185,8 @@ test.describe('Conseils & astuces', () => {
       page.getByRole('region', { name: 'À lire aussi' }).getByRole('heading', { level: 3 }),
     ).toHaveCount(3);
     expect(await jsonLdTypes(page)).toContain('Article');
-    await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'article');
+    // Navigation côté client : l'ancienne balise peut coexister un instant avec la nouvelle.
+    await expect(page.locator('meta[property="og:type"][content="article"]')).toHaveCount(1);
   });
 
   test('une ancienne adresse d’article redirige définitivement vers la nouvelle', async ({

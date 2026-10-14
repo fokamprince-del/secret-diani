@@ -190,3 +190,21 @@ Les bonnes réponses ne sont connues qu'après validation (l'API ne les envoie p
 ### D-F40 · Mes formations, certificats, avantages
 
 « Mes formations » : barre de progression (rôle `progressbar`, remplissage animé sauf mouvement réduit), « Commencer » / « Reprendre » vers la bonne leçon, « Obtenir mon certificat » à 100 % (nom et prénom requis : sinon renvoi vers le profil), certificats téléchargeables avec leur page publique de vérification (`/certificat/<numéro>`, non indexée), avantages des packs et demandes d'appel personnalisé dans la limite incluse.
+
+## Phase 7 — Animations, états, accessibilité, SEO avancé
+
+### D-F41 · Animations : peu nombreuses, au service de l'action
+
+Inventaire : entrée échelonnée du hero (seul « moment mémorable »), soulignement des liens, léger zoom des visuels au survol, confirmation « Ajouté au panier » / « ajouté à votre demande », barre de progression qui se remplit, ouverture fluide des accordéons, apparition du bandeau hors ligne. Toutes durent 150 à 700 ms et sont coupées si le mouvement est réduit (durées à 0, `scroll-behavior: auto`, animations retirées ; test e2e). Rien n'est caché en attente d'un défilement. Pas de vidéo de hero (aucune n'est fournie ; l'image reste la solution la plus légère, D-096).
+
+### D-F42 · États partout
+
+Chargement : squelettes à ratio réservé (aucun décalage). Vide : invitation à agir (« Découvrir les kits », « Découvrir les packs »), jamais d'excuse. Erreur : cause en mots simples et action de rattrapage (« Réessayer », « Revenir au panier », « Nous contacter »), jamais de code technique (seulement la référence d'incident sur la page d'erreur). Hors ligne : bandeau annoncé (`role="status"`) puis « Connexion rétablie ». 404 soignée, erreur de page (`error.tsx`) et erreur du gabarit (`global-error.tsx`).
+
+### D-F43 · SEO avancé
+
+Données structurées : WebSite et Organization (accueil), BreadcrumbList (article, produit, formation), Article, Product + Offer, Course, FAQPage (fournies par l'API quand elle les a). Image de partage par défaut générée au build (`app/opengraph-image.tsx`, couleurs de la marque, sans portrait), ajoutée explicitement par `pageMetadata` aux pages sans visuel propre (déclarer `openGraph` dans une page remplace sinon celle du gabarit). Cartes Twitter « grande image ». Pages privées, tunnel de commande, leçons et vérification de certificat : `noindex`.
+
+### D-F44 · Accessibilité vérifiée par les tests
+
+Axe (WCAG 2.2 AA, violations graves et critiques) sur toutes les pages publiques, de compte, de l'espace membre, du panier et de la commande ; un seul `h1` et un titre unique par page ; cibles d'au moins 44 px pour les boutons et champs sur mobile (test, qui a fait passer le bouton « Afficher » du mot de passe de 40 à 44 px) ; parcours au clavier (menu mobile, lien d'évitement, ajout au panier) ; texte alternatif sur toute image. Délai d'assertion e2e porté à 10 s (suite parallèle, CI chargée).

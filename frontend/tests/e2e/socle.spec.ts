@@ -73,7 +73,9 @@ test.describe('Socle : gabarit, sécurité et accessibilité', () => {
     expect(response?.status()).toBe(404);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Revenir à l’accueil' })).toBeVisible();
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    // Next peut répéter la balise (métadonnées diffusées en flux) : on vérifie qu'aucune n'indexe.
+    await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute('content', /noindex/);
+    await expect(page.locator('meta[name="robots"]:not([content*="noindex"])')).toHaveCount(0);
   });
 
   test('robots.txt et sitemap.xml sont générés', async ({ request }) => {
