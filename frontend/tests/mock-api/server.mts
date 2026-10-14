@@ -10,6 +10,7 @@
  */
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { handleAuth, refreshStats } from './auth.mts';
+import { handleShop, paymentPage } from './shop.mts';
 import {
   articleCards,
   articleDetail,
@@ -103,12 +104,14 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
 
   // Statistiques réservées aux tests (jamais exposées par le vrai backend).
   if (url.pathname === '/__mock/stats') return send(res, 200, refreshStats());
+  if (url.pathname === '/__mock/paiement') return paymentPage(url, res, SITE_URL);
 
   const path = url.pathname.startsWith(PREFIX) ? url.pathname.slice(PREFIX.length) : null;
   if (path === null) return notFound(res);
 
   const body = req.method === 'GET' ? {} : await readJson(req);
   if (await handleAuth(req, res, path, body, send, error)) return;
+  if (await handleShop(req, res, url, path, body, send, error, SITE_URL)) return;
 
   if (req.method === 'GET') {
     if (path === '/site/settings') return send(res, 200, settings);

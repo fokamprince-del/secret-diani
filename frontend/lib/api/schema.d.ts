@@ -4280,7 +4280,7 @@ export interface components {
       /** @example Poche à douille */
       label: string;
       /** @description Quantité par kit, dans l’ordre des colonnes (null = absent) */
-      values: number[] | null;
+      values: (number | null)[];
     };
     KitComparisonDto: {
       /** @description Colonnes, du moins cher au plus cher */

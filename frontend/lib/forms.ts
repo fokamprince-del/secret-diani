@@ -168,3 +168,74 @@ export const mfaCodeSchema = z.object({
     .regex(/^\d{6}$/, 'Saisissez les 6 chiffres affichés par votre application.'),
 });
 export type MfaCodeValues = z.infer<typeof mfaCodeSchema>;
+
+const addressFields = {
+  line1: z.string().trim(),
+  line2: z.string().trim().max(200, 'Complément trop long.'),
+  postalCode: z.string().trim(),
+  city: z.string().trim(),
+  country: z.string().length(2),
+};
+
+function checkAddress(
+  prefix: 'shipping' | 'billing',
+  address: { line1: string; postalCode: string; city: string },
+  context: z.RefinementCtx,
+) {
+  if (address.line1.length < 3) {
+    context.addIssue({ code: 'custom', path: [prefix, 'line1'], message: 'Indiquez l’adresse.' });
+  }
+  if (!/^[A-Za-z0-9 -]{3,10}$/.test(address.postalCode)) {
+    context.addIssue({
+      code: 'custom',
+      path: [prefix, 'postalCode'],
+      message: 'Vérifiez le code postal.',
+    });
+  }
+  if (address.city.length < 1) {
+    context.addIssue({ code: 'custom', path: [prefix, 'city'], message: 'Indiquez la ville.' });
+  }
+}
+
+/**
+ * Commande de la boutique. `guest` : l'e-mail est demandé (sans compte) ; `deliveryIds` : options
+ * de livraison qui exigent une adresse. Pour un retrait, l'adresse de facturation est demandée.
+ */
+export function checkoutSchema(guest: boolean, deliveryIds: string[]) {
+  return z
+    .object({
+      email: guest ? emailField : z.string(),
+      firstName: z.string().trim().min(1, 'Indiquez votre prénom.').max(100, 'Prénom trop long.'),
+      lastName: z.string().trim().min(1, 'Indiquez votre nom.').max(100, 'Nom trop long.'),
+      phone: optionalPhoneField,
+      shippingRateId: z.string().min(1, 'Choisissez un mode de livraison.'),
+      shipping: z.object(addressFields),
+      billingSame: z.boolean(),
+      billing: z.object({
+        firstName: z.string().trim(),
+        lastName: z.string().trim(),
+        ...addressFields,
+      }),
+      note: z.string().trim().max(1000, 'Votre message est trop long (1 000 caractères au plus).'),
+      acceptTerms: z.boolean().refine((value) => value, {
+        message: 'Acceptez les conditions générales de vente pour commander.',
+      }),
+      provider: z.enum(['stripe', 'paypal'], { message: 'Choisissez un moyen de paiement.' }),
+    })
+    .superRefine((values, context) => {
+      const delivery = deliveryIds.includes(values.shippingRateId);
+      if (delivery) checkAddress('shipping', values.shipping, context);
+      if (!delivery || !values.billingSame) {
+        checkAddress('billing', values.billing, context);
+        if (!values.billing.firstName || !values.billing.lastName) {
+          context.addIssue({
+            code: 'custom',
+            path: ['billing', 'lastName'],
+            message: 'Indiquez le nom pour la facture.',
+          });
+        }
+      }
+    });
+}
+
+export type CheckoutValues = z.infer<ReturnType<typeof checkoutSchema>>;

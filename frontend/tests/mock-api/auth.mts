@@ -174,6 +174,16 @@ function bearer(req: IncomingMessage): { user: User; session: Session } | null {
   return user ? { user, session } : null;
 }
 
+/** Identifiant de la personne connectée (jeton valable), sinon `null` : panier, commandes. */
+export function bearerUserId(req: IncomingMessage): string | null {
+  return bearer(req)?.user.id ?? null;
+}
+
+/** E-mail du compte connecté (commandes passées avec un compte). */
+export function bearerEmail(req: IncomingMessage): string | null {
+  return bearer(req)?.user.email ?? null;
+}
+
 const MESSAGES = {
   invalid: 'E-mail ou mot de passe incorrect.',
   expired: 'Votre session a expiré. Reconnectez-vous pour continuer.',

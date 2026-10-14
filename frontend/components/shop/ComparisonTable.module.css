@@ -1,0 +1,57 @@
+.defilement {
+  overflow-x: auto;
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+  scrollbar-width: thin;
+}
+
+.tableau {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+}
+
+.legende {
+  padding: var(--e-4) var(--e-5) 0;
+  font-family: var(--font-titre);
+  font-size: 1.25rem;
+  text-align: left;
+  color: var(--cacao);
+}
+
+.tableau th,
+.tableau td {
+  padding: var(--e-3) var(--e-5);
+  border-bottom: 1px solid var(--filet);
+  text-align: center;
+}
+
+.tableau td {
+  /* Repère des textes masqués : ils restent dans la zone défilante. */
+  position: relative;
+}
+
+.tableau tbody th {
+  text-align: left;
+  font-weight: 400;
+  color: var(--texte);
+}
+
+/* Première colonne fixe pendant le défilement horizontal. */
+.tableau tr > :first-child {
+  position: sticky;
+  left: 0;
+  background-color: var(--surface);
+}
+
+.kit {
+  display: block;
+  font-family: var(--font-titre);
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.prix {
+  font-size: var(--taille-petit);
+  font-weight: 400;
+}

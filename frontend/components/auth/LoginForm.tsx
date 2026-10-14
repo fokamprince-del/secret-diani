@@ -8,8 +8,10 @@ import { useForm } from 'react-hook-form';
 import { browserApi, unwrap } from '@/lib/api/client';
 import { ApiError, userMessage } from '@/lib/api/errors';
 import type { components } from '@/lib/api/schema';
+import { mergeGuestCart } from '@/lib/api/shop';
 import { safeReturnPath } from '@/lib/auth/navigation';
 import { startSession } from '@/lib/auth/session';
+import { readCartCount, writeCartCount } from '@/lib/cart-hint';
 import { type LoginValues, loginSchema, type MfaCodeValues, mfaCodeSchema } from '@/lib/forms';
 import { PasswordField } from '../forms/PasswordField';
 import { TextField } from '../forms/Field';
@@ -48,8 +50,13 @@ export function LoginForm({ returnTo }: { returnTo?: string }) {
     defaultValues: { code: '' },
   });
 
-  const finish = (data: Authenticated) => {
+  const finish = async (data: Authenticated) => {
     startSession(data);
+    // Le panier invité rejoint celui du compte (aucun appel s'il n'y en a pas).
+    if (readCartCount() > 0) {
+      const cart = await mergeGuestCart();
+      if (cart) writeCartCount(cart.itemCount);
+    }
     router.replace(safeReturnPath(returnTo));
     router.refresh();
   };
@@ -61,7 +68,7 @@ export function LoginForm({ returnTo }: { returnTo?: string }) {
     try {
       const data = unwrap(await browserApi.POST('/api/v1/auth/login', { body: values })) as
         Authenticated | Challenge;
-      if (data.status === 'authenticated') return finish(data);
+      if (data.status === 'authenticated') return await finish(data);
       if (data.status === 'mfa_required') {
         setStep({ kind: 'mfa', mfaToken: data.mfaToken });
         return;
@@ -85,7 +92,7 @@ export function LoginForm({ returnTo }: { returnTo?: string }) {
     setFailure(null);
     try {
       if (step.kind === 'mfa') {
-        finish(
+        await finish(
           unwrap(
             await browserApi.POST('/api/v1/auth/2fa/verify', {
               body: { mfaToken: step.mfaToken, code },
@@ -111,7 +118,7 @@ export function LoginForm({ returnTo }: { returnTo?: string }) {
     if (step.kind !== 'mfa') return;
     setFailure(null);
     try {
-      finish(
+      await finish(
         unwrap(
           await browserApi.POST('/api/v1/auth/2fa/verify', {
             body: { mfaToken: step.mfaToken, backupCode: backupCode.trim() },
@@ -152,7 +159,7 @@ export function LoginForm({ returnTo }: { returnTo?: string }) {
           ))}
         </ul>
         <div>
-          <Button onClick={() => finish(step.session)} withArrow>
+          <Button onClick={() => void finish(step.session)} withArrow>
             J’ai noté mes codes, continuer
           </Button>
         </div>

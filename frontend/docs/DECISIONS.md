@@ -146,3 +146,21 @@ L'activation du compte se fait à l'ouverture du lien (elle prouve seulement l'a
 ### D-F30 · Suppression du compte et export
 
 L'export (`GET /me/export`) est téléchargé en fichier JSON. La suppression demande le mot de passe dans une fenêtre native (`<dialog>`), puis ferme la session dans tous les onglets ; l'API anonymise le compte et ne garde que les factures (obligation légale).
+
+## Phase 5 — Boutique, panier, commande, paiement
+
+### D-F31 · Panier sur le serveur, badge dans le navigateur
+
+Le panier vit dans l'API : panier invité identifié par son cookie HttpOnly (`/api/v1/shop`), ou panier du compte une fois connectée (jeton ajouté s'il existe). Tous les montants (prix, frais, total) viennent de l'API ; le navigateur n'envoie jamais de prix. Pour afficher le badge de l'en-tête sans appeler l'API sur chaque page, le nombre d'articles est gardé dans `localStorage` (simple indicateur, ni prix ni jeton) et synchronisé entre onglets ; le panier n'apparaît dans l'en-tête que s'il contient quelque chose. À la connexion, le panier invité rejoint celui du compte (`POST /shop/cart/merge`).
+
+### D-F32 · Paiement par redirection uniquement
+
+La commande est créée par l'API (`POST /shop/checkout` : montants recalculés, stock réservé 15 minutes), puis la personne est redirigée vers la page hébergée de Stripe Checkout ou de PayPal (`POST /payments/checkout`). Aucune donnée de carte ne passe par le site, aucun script de prestataire n'est chargé : la CSP n'a rien à autoriser. Au retour, rien n'est considéré payé sans l'API : PayPal → capture demandée par le site ; Stripe → attente (quelques secondes) de la confirmation par webhook, sinon message « paiement en cours de confirmation ». Paiement annulé : la commande reste réservée jusqu'à l'heure indiquée et le paiement peut être repris avec l'un ou l'autre moyen.
+
+### D-F33 · Suivi sans compte
+
+Le jeton de suivi (lien signé reçu par e-mail ou retour de paiement) est retiré de la barre d'adresse dès sa lecture et gardé en mémoire ; il donne accès au détail et à la facture (URL signée de 5 minutes). Les commandes passées connectée apparaissent dans « Mes commandes » de l'espace membre.
+
+### D-F34 · Boutique fermée, rupture, plafond
+
+Boutique fermée dans l'administration (`features.shopOpen`) : le catalogue reste visible, l'ajout au panier est remplacé par un message. Disponibilité toujours en mots (« En stock », « Plus que 2 en stock », « Épuisé pour le moment »), jamais par la seule couleur. Le sélecteur de quantité est borné par le stock affiché ; l'API reste juge (message de plafond affiché tel quel).

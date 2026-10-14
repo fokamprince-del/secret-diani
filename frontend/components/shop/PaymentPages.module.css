@@ -1,0 +1,12 @@
+.attente,
+.page {
+  display: grid;
+  gap: var(--e-5);
+  max-width: 48rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}
