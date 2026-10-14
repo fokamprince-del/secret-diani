@@ -8,7 +8,7 @@ import { JsonLd } from '@/components/ui/JsonLd';
 import { ErrorState } from '@/components/ui/States';
 import { getCourse, getCourses, getSiteSettings } from '@/lib/api/content';
 import { formatDuration, formatPrice, pluralize } from '@/lib/format';
-import { pageMetadata } from '@/lib/seo';
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo';
 import styles from './page.module.css';
 
 type Params = Promise<{ slug: string }>;
@@ -62,6 +62,12 @@ export default async function CoursePage({ params }: { params: Params }) {
   return (
     <>
       <JsonLd data={course.jsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Formations', path: '/formations' },
+          { name: course.title, path: `/formations/${course.slug}` },
+        ])}
+      />
       <PageHeader
         eyebrow={<Link href="/formations">Formations</Link>}
         title={course.title}

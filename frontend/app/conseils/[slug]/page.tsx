@@ -11,7 +11,7 @@ import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
 import { ErrorState } from '@/components/ui/States';
 import { getArticle, getArticles } from '@/lib/api/content';
 import { formatDate, formatReadingTime } from '@/lib/format';
-import { pageMetadata } from '@/lib/seo';
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo';
 import styles from './page.module.css';
 
 type Params = Promise<{ slug: string }>;
@@ -66,6 +66,20 @@ export default async function ArticlePage({ params }: { params: Params }) {
   return (
     <>
       <JsonLd data={article.jsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Conseils & astuces', path: '/conseils' },
+          ...(article.category
+            ? [
+                {
+                  name: article.category.name,
+                  path: `/conseils/categorie/${article.category.slug}`,
+                },
+              ]
+            : []),
+          { name: article.title, path: `/conseils/${article.slug}` },
+        ])}
+      />
       <article>
         <PageHeader
           eyebrow={

@@ -10,6 +10,8 @@ const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
  */
 export default defineConfig({
   testDir: 'tests/e2e',
+  // Suite parallèle et machines de CI chargées : 10 s d'attente pour une assertion.
+  expect: { timeout: 10_000 },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
