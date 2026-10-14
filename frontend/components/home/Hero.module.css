@@ -12,6 +12,12 @@
   inset: 0;
 }
 
+/* L'image d'ambiance couvre toute la zone, sans arrondi. */
+.media > * {
+  height: 100%;
+  border-radius: 0;
+}
+
 /* Voile crème en bas du visuel pour garantir le contraste du texte. */
 .media::after {
   content: '';

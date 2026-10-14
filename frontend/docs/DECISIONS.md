@@ -21,7 +21,7 @@ Décisions prises quand le cahier des charges ne tranchait pas : option la plus 
 
 ### D-F04 · Rendu et revalidation
 
-**Choix :** pages publiques statiques (ISR), chaque appel `fetch` serveur étiqueté (`lib/api/server.ts`). Le worker de l'API appelle `POST /api/revalidate` après une modification admin, avec un secret partagé comparé en temps constant. Revalidation de secours : une heure.
+**Choix :** pages publiques statiques (ISR), chaque appel `fetch` serveur étiqueté (`lib/api/server.ts`). Le worker de l'API appelle `POST /api/revalidate` après une modification admin, avec un secret partagé comparé en temps constant. Revalidation de secours : cinq minutes (une heure en phase 1, raccourcie en phase 2, voir D-F12).
 **Pourquoi :** contenu modifiable sans redéploiement (critère d'acceptation), pages servies depuis le cache (LCP), et pas de dépendance à l'API au moment de la visite.
 
 ### D-F05 · Politique de sécurité du contenu (CSP) — **validée : option 1 (2026-10-13)**
@@ -60,3 +60,41 @@ Le choix cookies est gardé 6 mois dans `localStorage` (recommandation CNIL), pu
 ### D-F11 · Budget JavaScript
 
 Composants serveur par défaut ; composants client uniquement pour l'interactif (menu, navigation courante, consentement, mesure d'audience). TanStack Query n'est monté que dans les zones interactives (panier, leçon), pas dans le gabarit racine. Lighthouse CI avertit au-delà de 180 ko de JS (compressé) sur l'accueil.
+
+## Phase 2 — Accueil et pages éditoriales
+
+### D-F12 · Contenu indisponible : page dégradée au build, dernière version gardée ensuite
+
+**Constat :** l'image Docker se construit sans accès à l'API ; un build qui échoue faute d'API bloquerait tout déploiement.
+**Choix :** `lib/api/content.ts` distingue deux moments. Pendant le build (`NEXT_PHASE`), une API injoignable donne `null` : la page s'affiche sans ce contenu (sections masquées, état d'erreur sur les pages qui n'ont que lui). À l'exécution, l'erreur remonte : Next garde alors la dernière version réussie de la page au lieu de la remplacer par une version dégradée. La revalidation de secours passe à **5 minutes** pour qu'une page construite sans API se répare seule rapidement ; le webhook de revalidation reste le chemin normal (immédiat). Coût : au plus une régénération par page et par tranche de 5 minutes, servie par le cache Redis de l'API.
+Une page ou un article absent (404 de l'API) donne une vraie 404 ; une adresse mal formée n'est jamais transmise à l'API.
+
+### D-F13 · Contenus de l'accueil dans l'API
+
+L'image d'ambiance, les textes des trois univers et le mot de Diani sont des paramètres de l'administration (`GET /site/home`, backend D-096). Seuls les libellés d'interface (titres des univers, boutons, engagements de réassurance) sont dans le code. Sans image, un aplat de la palette remplace la photo (jamais un faux visuel ni un portrait). Sans avis publié, la section des avis est masquée (aucun avis inventé).
+
+### D-F14 · Pages de l'API servies à la racine
+
+`app/(pages)/[page]` sert toute page publiée de l'API à `/<slug>` (À propos, mentions légales, CGV, confidentialité, et toute page créée plus tard), comme le plan du site de l'API. Les pages connues au build sont statiques ; une nouvelle page est rendue à sa première visite puis mise en cache, sans redéploiement. Les routes fixes (`/contact`, `/faq`, `/conseils`…) ont priorité.
+
+### D-F15 · Conseils : une adresse par catégorie, pagination à la demande
+
+Le filtre par catégorie est fait de vrais liens (`/conseils/categorie/<slug>`) : pages statiques, indexables, sans paramètre d'URL qui rendrait la page dynamique. La première page d'articles (12) est rendue au build ; « Afficher plus d'articles » charge la suite depuis le navigateur, place le focus sur le premier article ajouté et annonce le nombre d'articles chargés. Une ancienne adresse d'article redirige définitivement (301) vers la nouvelle.
+
+### D-F16 · Anti-robot Turnstile chargé à la demande
+
+Formulaires de contact et de newsletter : champ piège (honeypot) + Cloudflare Turnstile en mode « interaction seulement » (invisible sauf doute). Le script n'est chargé qu'au premier focus dans un formulaire, jamais au chargement de la page ; la CSP n'autorise `challenges.cloudflare.com` (script et cadre) que si `NEXT_PUBLIC_TURNSTILE_SITE_KEY` est définie. Pas de SRI possible sur ce script (Cloudflare le met à jour sans préavis) : l'origine est restreinte à la seule adresse de Cloudflare.
+
+### D-F17 · Liens des e-mails : action au clic, jeton retiré de l'adresse
+
+Les pages `/newsletter/confirmer` et `/newsletter/desinscription` (adresses envoyées par l'API) ne déclenchent rien au chargement : un bouton confirme l'action. Les robots qui ouvrent les liens des e-mails pour les analyser ne peuvent ainsi ni confirmer ni désinscrire à la place de la personne. Le jeton est retiré de la barre d'adresse dès sa lecture (historique, mesure d'audience). Pages non indexées.
+
+### D-F18 · Budget JavaScript : rien de lourd dans le code commun
+
+Le formulaire de newsletter est dans le pied de page de toutes les pages : il est écrit sans bibliothèque de formulaire (validation native, messages partagés dans `lib/form-messages.ts`). `lib/env.ts` valide les variables publiques sans Zod. React Hook Form et Zod ne sont chargés que sur la page Contact. Effet mesuré sur l'accueil : 227 → 185 ko de JavaScript compressé.
+
+### D-F19 · Tests e2e sur une API factice
+
+`tests/mock-api` sert des données typées par l'OpenAPI (le typage casse si le contrat change) et simule les réponses des formulaires (succès, erreur de champ, limite de débit, lien expiré). Port 3999, jamais 3000 (celui du vrai backend en local). Les parcours avec le vrai backend restent marqués `@api`.
+
+**Lighthouse (mobile, simulation, poste de développement) en fin de phase 2 :** accessibilité, bonnes pratiques et SEO à 1 / 0,96 / 1 sur les quatre pages mesurées ; performance 0,83 à 0,90 ; CLS 0 ; LCP simulé ≈ 3,2 s (observé ≈ 0,5 s). L'objectif LCP < 2,5 s n'est **pas atteint** : sur ce poste, le premier affichage attend l'exécution du JavaScript de React et Next (hydratation ≈ 700 ms de script en simulation, ~120 ko compressés pour le seul cadre), que la simulation compte en entier. Travail prévu en phase 8 (performance) : mesure sur l'environnement de préproduction, retrait de la police manuscrite du chemin critique (logo vectoriel, D-F06), réduction du JavaScript hydraté.

@@ -15,10 +15,18 @@ export type CacheTag =
   | 'faq'
   | 'reviews'
   | 'media'
+  | 'catering'
+  | 'shop'
+  | 'courses'
+  | 'site'
   | 'sitemap';
 
-/** Revalidation de secours si un webhook se perd : une heure. */
-const FALLBACK_REVALIDATE_SECONDS = 3600;
+/**
+ * Revalidation de secours : cinq minutes. Couvre un webhook perdu et, surtout, une page
+ * construite pendant que l'API était injoignable (build Docker) : elle se répare seule
+ * au lieu de rester dégradée (DECISIONS D-F04, D-F12).
+ */
+export const FALLBACK_REVALIDATE_SECONDS = 300;
 
 /** Client des composants serveur : passe par le réseau interne quand il est configuré. */
 export const serverApi = createApiClient(serverEnv.apiBaseUrl);

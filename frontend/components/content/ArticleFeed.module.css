@@ -1,0 +1,26 @@
+.flux {
+  display: grid;
+  gap: var(--e-7);
+}
+
+.grille {
+  display: grid;
+  gap: var(--e-7) var(--e-6);
+}
+
+@media (min-width: 40rem) {
+  .grille {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .grille {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.plus {
+  display: flex;
+  justify-content: center;
+}

@@ -27,6 +27,16 @@
   max-width: 32ch;
 }
 
+.reseaux {
+  display: grid;
+  gap: 0;
+}
+
+.lettre {
+  padding-block: var(--e-7);
+  border-top: 1px solid var(--filet);
+}
+
 .reseau {
   display: inline-flex;
   align-items: center;

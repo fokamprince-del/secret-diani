@@ -1,0 +1,37 @@
+.corps {
+  display: grid;
+  gap: var(--e-7);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  /* Sommaire en marge, collé pendant la lecture ; le texte garde sa largeur de lecture. */
+  .corps:has(nav) {
+    grid-template-columns: 16rem minmax(0, 1fr);
+  }
+
+  .corps > nav {
+    position: sticky;
+    top: calc(var(--hauteur-header) + var(--e-5));
+  }
+}
+
+.suite {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-5);
+  margin-top: var(--section);
+  padding-top: var(--e-7);
+  border-top: 1px solid var(--filet);
+}
+
+.suiteTitre {
+  max-width: 24ch;
+  font-size: var(--t-h3);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}

@@ -27,10 +27,6 @@ export const footerNavigation = {
   ],
 } as const;
 
-export const socialLinks = {
-  instagram: { href: 'https://www.instagram.com/diani_cuisto/', handle: '@diani_cuisto' },
-} as const;
-
 /** Une page est « courante » si l'URL est la sienne ou une sous-page (`/boutique/kit-pro`). */
 export function isCurrent(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);

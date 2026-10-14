@@ -1,0 +1,14 @@
+.formulaire {
+  position: relative;
+  display: grid;
+  gap: var(--e-5);
+  max-width: 36rem;
+}
+
+.confirmation {
+  max-width: 36rem;
+}
+
+.confirmation:focus {
+  outline: none;
+}

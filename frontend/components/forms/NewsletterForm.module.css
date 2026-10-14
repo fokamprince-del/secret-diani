@@ -1,0 +1,14 @@
+.formulaire {
+  position: relative;
+  display: grid;
+  gap: var(--e-4);
+  max-width: 28rem;
+}
+
+.titre {
+  font-size: var(--t-h3);
+}
+
+.texte {
+  margin-top: calc(-1 * var(--e-2));
+}

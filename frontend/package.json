@@ -10,6 +10,7 @@
     "dev": "next dev --port 5173",
     "build": "next build",
     "postbuild": "node scripts/prepare-standalone.mjs",
+    "build:e2e": "node scripts/with-mock-api.mjs npm run build",
     "start": "node scripts/start.mjs",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
@@ -21,6 +22,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "mock-api": "node tests/mock-api/server.mts",
     "test:a11y": "playwright test --grep @a11y",
     "lhci": "lhci autorun"
   },

@@ -5,13 +5,18 @@ import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { readConsent } from '@/lib/consent';
+import { socialLinksFrom } from '@/lib/social';
+import { settings } from '../mock-api/fixtures.mts';
 import { navigation } from '../navigation-mock';
 import { axeViolations } from './axe';
+
+const socials = socialLinksFrom(settings);
+const instagram = socials[0]!;
 
 describe('Header', () => {
   it('présente les six rubriques dans l’ordre et signale la page courante', () => {
     navigation.pathname = '/boutique/kit-expert';
-    render(<Header />);
+    render(<Header social={instagram} />);
     const nav = screen.getAllByRole('navigation', { name: 'Navigation principale' })[0]!;
     const links = within(nav).getAllByRole('link');
     expect(links.map((link) => link.textContent)).toEqual([
@@ -30,7 +35,7 @@ describe('Header', () => {
   });
 
   it('ouvre le menu mobile et le referme au choix d’une rubrique', async () => {
-    const { container } = render(<Header />);
+    const { container } = render(<Header social={instagram} />);
     const dialog = container.querySelector('dialog')!;
     // jsdom ne sait pas changer de document : on garde le clic, sans la navigation.
     dialog.addEventListener('click', (event) => event.preventDefault());
@@ -41,14 +46,14 @@ describe('Header', () => {
   });
 
   it('n’a pas de violation d’accessibilité', async () => {
-    const { container } = render(<Header />);
+    const { container } = render(<Header social={instagram} />);
     expect(await axeViolations(container)).toEqual([]);
   });
 });
 
 describe('Footer', () => {
-  it('donne accès aux pages légales, à Instagram et à la gestion des cookies', async () => {
-    const { container } = render(<Footer />);
+  it('donne accès aux pages légales, aux réseaux, à l’e-mail et à la gestion des cookies', async () => {
+    const { container } = render(<Footer settings={settings} socials={socials} />);
     expect(screen.getByRole('link', { name: /Mentions légales/ })).toHaveAttribute(
       'href',
       '/mentions-legales',
@@ -57,8 +62,24 @@ describe('Footer', () => {
       'href',
       'https://www.instagram.com/diani_cuisto/',
     );
+    expect(screen.getByRole('link', { name: 'bonjour@exemple.fr' })).toHaveAttribute(
+      'href',
+      'mailto:bonjour@exemple.fr',
+    );
     expect(screen.getByRole('button', { name: 'Gérer mes cookies' })).toBeInTheDocument();
+    expect(screen.getByRole('form', { name: 'La lettre de Diani' })).toBeInTheDocument();
     expect(await axeViolations(container)).toEqual([]);
+  });
+
+  it('masque les réseaux et l’e-mail absents des réglages', () => {
+    const empty = {
+      ...settings,
+      contactEmail: '',
+      socialLinks: { instagram: '', tiktok: '', facebook: '', youtube: '' },
+    };
+    render(<Footer settings={empty} socials={socialLinksFrom(empty)} />);
+    expect(screen.queryByRole('link', { name: /Instagram/ })).toBeNull();
+    expect(screen.queryByRole('link', { name: /@/ })).toBeNull();
   });
 });
 
@@ -82,7 +103,7 @@ describe('CookieConsent', () => {
     render(
       <>
         <CookieConsent />
-        <Footer />
+        <Footer settings={null} socials={[]} />
       </>,
     );
     expect(screen.queryByRole('region', { name: 'Vos cookies, votre choix' })).toBeNull();

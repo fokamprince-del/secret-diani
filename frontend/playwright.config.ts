@@ -4,8 +4,9 @@ const PORT = 5173;
 const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
 
 /**
- * Tests de parcours sur le build de production (`next start`), mobile d'abord.
- * Les parcours qui dépendent de l'API sont marqués `@api` et exigent le backend démarré.
+ * Tests de parcours sur le build de production, mobile d'abord, branché sur l'API factice
+ * (`tests/mock-api`, port 3999) : construire avec `npm run build:e2e`. Les parcours marqués
+ * `@api` exigent le vrai backend démarré.
  */
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -28,10 +29,18 @@ export default defineConfig({
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined
-    : {
-        command: 'npm run start',
-        url: baseURL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-      },
+    : [
+        {
+          command: 'npm run mock-api',
+          url: 'http://localhost:3999/api/v1/site/settings',
+          reuseExistingServer: !process.env.CI,
+          timeout: 30_000,
+        },
+        {
+          command: 'npm run start',
+          url: baseURL,
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
+      ],
 });

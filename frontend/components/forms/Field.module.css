@@ -32,6 +32,25 @@
     box-shadow var(--duree-courte) ease;
 }
 
+/* Flèche au trait fin de la même famille que les icônes. */
+.liste {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2382493f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 1.25rem;
+}
+
+/* Piège à robots : hors écran pour les humains, présent pour les robots qui remplissent tout. */
+.piege {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 textarea.saisie {
   resize: vertical;
   min-height: 8rem;

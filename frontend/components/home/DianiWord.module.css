@@ -1,0 +1,43 @@
+.mot {
+  padding-block: var(--section);
+}
+
+.contenu {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-6);
+  text-align: center;
+}
+
+.titre {
+  font-family: var(--font-texte);
+  font-size: var(--taille-petit);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terra-d);
+}
+
+.figure {
+  display: grid;
+  gap: var(--e-5);
+  max-width: 44rem;
+  margin: 0;
+}
+
+.citation {
+  display: grid;
+  gap: var(--e-4);
+  margin: 0;
+  font-family: var(--font-titre);
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+  line-height: 1.45;
+  color: var(--cacao);
+}
+
+.signature {
+  font-family: var(--font-manuscrit);
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--terra-d);
+}

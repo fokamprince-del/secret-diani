@@ -1,0 +1,90 @@
+.univers {
+  padding-block: var(--section);
+}
+
+.liste {
+  display: grid;
+  gap: var(--section);
+}
+
+.bandeau {
+  display: grid;
+  gap: var(--e-6);
+  align-items: center;
+}
+
+@media (min-width: 64rem) {
+  .bandeau {
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(2.5rem, 1rem + 4vw, 5rem);
+  }
+
+  /* Les bandeaux alternent : le visuel passe à droite une fois sur deux. */
+  .bandeau:nth-child(even) .visuel {
+    order: 2;
+  }
+}
+
+.visuel {
+  border-radius: var(--rayon);
+  overflow: hidden;
+}
+
+/* Sans photo : un aplat chaud de la palette, jamais un faux visuel. */
+.aplat {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--rayon);
+  background-color: var(--peche);
+}
+
+[data-univers='courses'] .aplat {
+  background-color: var(--sable);
+}
+
+[data-univers='shop'] .aplat {
+  background-color: var(--nude);
+}
+
+/* Numéro en filigrane, purement décoratif (pseudo-élément : ignoré des lecteurs d'écran). */
+.aplat::after {
+  content: attr(data-numero);
+  font-family: var(--font-titre);
+  font-size: clamp(4rem, 2rem + 8vw, 8rem);
+  line-height: 1;
+  color: color-mix(in srgb, var(--cacao) 18%, transparent);
+}
+
+.texte {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+  max-width: 34rem;
+}
+
+.numero {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--terra-d);
+}
+
+/* Filet doré : micro-accent décoratif, jamais porteur de texte. */
+.numero::after {
+  content: '';
+  width: 2.5rem;
+  height: 1px;
+  background-color: var(--or);
+}
+
+.titre {
+  font-size: var(--t-h2);
+}
+
+.description {
+  max-width: 44ch;
+}

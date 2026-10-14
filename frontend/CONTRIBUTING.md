@@ -3,7 +3,7 @@
 ## Avant d'ouvrir une demande de fusion
 
 ```bash
-npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run test:e2e
+npm run format:check && npm run lint && npm run typecheck && npm test && npm run build:e2e && npm run test:e2e
 ```
 
 La CI rejoue ces étapes, puis axe, Lighthouse CI (mobile, score ≥ 90) et le build de l'image Docker.

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { SocialLink } from '@/lib/social';
 import { Icon } from '../ui/Icon';
 import { Logo } from './Logo';
 import { MainNav } from './MainNav';
@@ -9,7 +10,7 @@ import styles from './Header.module.css';
  * En-tête collant. Le panier et l'espace membre n'apparaissent que lorsqu'ils servent :
  * badge de quantité (phase 5) et état connecté (phase 4). En attendant, un lien de connexion.
  */
-export function Header() {
+export function Header({ social }: { social: SocialLink | null }) {
   return (
     <header className={styles.entete}>
       <div className={`conteneur ${styles.barre}`}>
@@ -20,7 +21,7 @@ export function Header() {
             <Icon name="user" />
             <span className="visually-hidden">Se connecter</span>
           </Link>
-          <MobileMenu />
+          <MobileMenu social={social} />
         </div>
       </div>
     </header>

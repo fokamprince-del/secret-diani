@@ -1,0 +1,45 @@
+.filtre {
+  margin-bottom: var(--e-7);
+}
+
+/* Mobile : une seule ligne défilante plutôt qu'un mur de pastilles. */
+.liste {
+  display: flex;
+  gap: var(--e-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 4px;
+}
+
+@media (min-width: 48rem) {
+  .liste {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+}
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+  padding-inline: var(--e-4);
+  border: 1px solid var(--nude);
+  border-radius: var(--rayon-pilule);
+  color: var(--cacao);
+  font-size: var(--taille-petit);
+  white-space: nowrap;
+  transition:
+    background-color var(--duree-courte) ease,
+    border-color var(--duree-courte) ease;
+}
+
+.pastille:hover {
+  border-color: var(--terra);
+  color: var(--cacao);
+}
+
+.pastille[aria-current='page'] {
+  border-color: var(--terra-d);
+  background-color: var(--terra-d);
+  color: var(--blanc);
+}
