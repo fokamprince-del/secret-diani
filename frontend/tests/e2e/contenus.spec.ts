@@ -51,7 +51,7 @@ test.describe('Accueil', () => {
     await expect(universes.getByText('Plateaux, bouchées et layer cakes')).toBeVisible();
     await expect(universes).not.toContainText('€');
     await expect(universes.getByRole('link')).toHaveCount(3);
-    await expect(universes.getByRole('link', { name: 'Découvrir le traiteur' })).toHaveAttribute(
+    await expect(universes.getByRole('link', { name: 'Je commande un plateau' })).toHaveAttribute(
       'href',
       '/traiteur',
     );
@@ -63,7 +63,7 @@ test.describe('Accueil', () => {
   test('affiche les avis traiteur de l’API, le mot de Diani et la réassurance', async ({
     page,
   }) => {
-    const reviews = page.getByRole('region', { name: 'Ce qu’en disent nos clients' });
+    const reviews = page.getByRole('region', { name: 'Ce qu’on m’écrit après la fête' });
     await expect(reviews.getByRole('listitem')).toHaveCount(4);
     await expect(reviews).toContainText('4,8 sur 5, d’après 4 avis sur le traiteur');
     await expect(reviews.getByText('Note : 5 sur 5').first()).toBeAttached();
@@ -346,14 +346,14 @@ test.describe('SEO, accessibilité et responsive des pages éditoriales', () => 
     }
   });
 
-  test('aucune violation d’accessibilité grave @a11y', async ({ page }) => {
-    test.setTimeout(90_000);
-    await dismissConsent(page);
-    for (const path of [...PAGES, '/newsletter/confirmer?token=jeton-valide']) {
+  // Une page par test : analyses en parallèle, et un échec désigne directement la page.
+  for (const path of [...PAGES, '/newsletter/confirmer?token=jeton-valide']) {
+    test(`aucune violation d’accessibilité grave : ${path} @a11y`, async ({ page }) => {
+      await dismissConsent(page);
       await page.goto(path);
       expect(await seriousA11yViolations(page), path).toEqual([]);
-    }
-  });
+    });
+  }
 
   test('aucun défilement horizontal à 360 px', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });

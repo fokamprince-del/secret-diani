@@ -30,8 +30,8 @@ export default async function ContactPage() {
         title="Contact"
         intro={
           <p>
-            Une question, une envie, un projet ? Écrivez-nous. Pour une commande traiteur, précisez
-            la date et le nombre d’invités.
+            Une question, une envie, un projet ? Écrivez-moi. Pour une commande traiteur, indiquez
+            la date et le nombre d’invités : j’irai plus vite.
           </p>
         }
       />

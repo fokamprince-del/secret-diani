@@ -13,10 +13,10 @@ export default function NotFound() {
       <p className={styles.code} aria-hidden="true">
         404
       </p>
-      <h1 className={styles.titre}>Cette page n’est pas (ou plus) à la carte.</h1>
+      <h1 className={styles.titre}>Cette page est partie avec la dernière part.</h1>
       <p className={styles.texte}>
-        Le lien est peut-être ancien, ou l’adresse contient une faute de frappe. Voici de quoi
-        reprendre le fil.
+        Le lien est peut-être ancien, ou l’adresse contient une faute de frappe. Il reste
+        heureusement de quoi se régaler :
       </p>
       <ul role="list" className={styles.actions}>
         <li>

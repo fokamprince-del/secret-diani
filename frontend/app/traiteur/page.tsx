@@ -29,8 +29,8 @@ export default async function TraiteurPage() {
         title="Traiteur & commandes"
         intro={
           <p>
-            Plateaux, mini bouchées et layer cakes faits maison pour vos anniversaires, baptêmes et
-            fêtes. Choisissez, écrivez à Diani : tout est confirmé puis préparé pour votre date.
+            Des plateaux qui disparaissent avant l’arrivée du dessert, des layer cakes à vos
+            parfums. Vous me donnez la date et le nombre d’invités, je m’occupe du reste.
           </p>
         }
       />
@@ -100,7 +100,7 @@ export default async function TraiteurPage() {
               <h2 id="demande-titre">Demande personnalisée</h2>
               <p>
                 Un buffet complet, un gâteau sur mesure, une question ? Indiquez votre date et vos
-                envies : Diani vous recontacte pour tout caler.
+                envies : je vous recontacte pour caler chaque détail.
               </p>
               {catalog.conditions.whatsappUrl && (
                 <p>

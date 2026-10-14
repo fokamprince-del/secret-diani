@@ -100,7 +100,9 @@ test.describe('Boutique', () => {
       'Offerte',
     );
     await line.getByRole('button', { name: 'Retirer Kit Débutant' }).click();
-    await expect(page.getByRole('heading', { name: 'Votre panier est vide' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Votre panier est vide… pour l’instant.' }),
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: /Panier,/ })).toHaveCount(0);
   });
 });

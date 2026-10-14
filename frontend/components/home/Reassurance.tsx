@@ -6,12 +6,12 @@ const COMMITMENTS: { icon: IconName; title: string; text: string }[] = [
   {
     icon: 'leaf',
     title: 'Frais et de qualité',
-    text: 'Des produits choisis et préparés pour votre date.',
+    text: 'Des produits choisis un par un, préparés pour votre date.',
   },
   {
     icon: 'heart',
     title: 'Fait maison avec passion',
-    text: 'Chaque création sort de la cuisine de Diani.',
+    text: 'Tout sort de ma cuisine, fait à la main.',
   },
   {
     icon: 'lock',
@@ -21,7 +21,7 @@ const COMMITMENTS: { icon: IconName; title: string; text: string }[] = [
   {
     icon: 'chat',
     title: 'À votre écoute',
-    text: 'Une question ? Écrivez-nous, nous répondons vite.',
+    text: 'Une question ? Écrivez-moi, je vous réponds.',
   },
 ];
 

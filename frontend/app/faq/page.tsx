@@ -40,7 +40,7 @@ export default async function FaqPage() {
       <JsonLd data={faq?.jsonLd} />
       <PageHeader
         title="Questions fréquentes"
-        intro={<p>Les réponses aux questions que l’on nous pose le plus souvent.</p>}
+        intro={<p>Les questions qu’on me pose le plus souvent, avec mes réponses.</p>}
       />
       <div className={`conteneur ${styles.faq}`}>
         {!faq ? (
@@ -49,7 +49,7 @@ export default async function FaqPage() {
           </ErrorState>
         ) : groups.length === 0 ? (
           <EmptyState title="Aucune question pour le moment">
-            <p>Posez-nous directement votre question : nous y répondrons avec plaisir.</p>
+            <p>Posez-moi directement votre question : je vous réponds avec plaisir.</p>
           </EmptyState>
         ) : (
           <>
@@ -90,9 +90,9 @@ export default async function FaqPage() {
 
         <aside aria-labelledby="faq-contact" className={styles.contact}>
           <h2 id="faq-contact" className={styles.titre}>
-            Vous ne trouvez pas votre réponse ?
+            Votre question n’est pas là ?
           </h2>
-          <p>Écrivez-nous, nous vous répondrons avec plaisir.</p>
+          <p>Écrivez-moi : je vous réponds avec plaisir.</p>
           <div>
             <ButtonLink href="/contact" withArrow>
               Poser ma question

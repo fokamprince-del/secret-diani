@@ -20,7 +20,7 @@ export function Conditions({ conditions }: { conditions: CateringConditions }) {
           événement.
         </li>
         <li>
-          <strong>Diani confirme</strong> les disponibilités, le détail et le prix.
+          <strong>Je vous confirme</strong> la disponibilité, le détail et le prix.
         </li>
         <li>
           <strong>Vous versez l’acompte</strong> : la commande est alors validée.

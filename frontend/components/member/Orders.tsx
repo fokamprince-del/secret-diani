@@ -32,9 +32,9 @@ export function OrderList() {
   if (orders.data.items.length === 0) {
     return (
       <EmptyState
-        title="Aucune commande pour le moment"
+        title="Pas encore de commande"
         icon="bag"
-        action={<ButtonLink href="/boutique">Découvrir les kits</ButtonLink>}
+        action={<ButtonLink href="/boutique">Je choisis mon kit</ButtonLink>}
       >
         <p>Vos achats dans la boutique apparaîtront ici, avec leur suivi et leurs factures.</p>
       </EmptyState>

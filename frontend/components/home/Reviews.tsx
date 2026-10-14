@@ -18,7 +18,7 @@ export function Reviews({ reviews }: { reviews: ReviewList | null }) {
   return (
     <section aria-labelledby="avis-titre" className={styles.avis}>
       <div className={`conteneur ${styles.entete}`}>
-        <h2 id="avis-titre">Ce qu’en disent nos clients</h2>
+        <h2 id="avis-titre">Ce qu’on m’écrit après la fête</h2>
         {reviews.average !== null && (
           <p className={styles.moyenne}>
             <Rating value={reviews.average} />

@@ -121,9 +121,12 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <aside aria-labelledby="formation-titre" className={`conteneur ${styles.formation}`}>
           <div className={styles.formationCadre}>
             <h2 id="formation-titre" className={styles.formationTitre}>
-              Aller plus loin avec Diani
+              Ce geste, je vous le montre en vidéo
             </h2>
-            <p>Cette technique est enseignée pas à pas, en vidéo, dans les formations en ligne.</p>
+            <p>
+              Dans mes formations en ligne, je le décompose pas à pas : vous le refaites chez vous à
+              votre rythme.
+            </p>
             <div>
               <ButtonLink href="/formations" withArrow>
                 Découvrir les formations

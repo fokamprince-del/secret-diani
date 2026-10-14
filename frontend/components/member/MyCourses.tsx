@@ -122,7 +122,7 @@ function CourseList() {
   if (courses.data.length === 0) {
     return (
       <EmptyState
-        title="Aucune formation pour le moment"
+        title="Pas encore de formation"
         icon="play"
         headingLevel={3}
         action={<ButtonLink href="/formations">Découvrir les packs</ButtonLink>}

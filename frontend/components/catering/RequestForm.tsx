@@ -371,7 +371,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
         </Button>
       </div>
       <p className={styles.mention}>
-        Aucun paiement maintenant : Diani vous recontacte pour confirmer, puis vous demande
+        Aucun paiement maintenant : je vous recontacte pour confirmer, puis je vous demande
         l’acompte.
       </p>
     </form>

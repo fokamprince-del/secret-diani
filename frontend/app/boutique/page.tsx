@@ -36,8 +36,8 @@ export default async function BoutiquePage() {
         title="Boutique & kits"
         intro={
           <p>
-            Les accessoires que Diani utilise vraiment, réunis en kits selon votre niveau. Sans
-            compte si vous préférez : un e-mail suffit pour suivre la commande.
+            Les accessoires que j’utilise vraiment, réunis en kits selon votre niveau. Pas besoin de
+            compte : un e-mail suffit pour suivre votre commande.
           </p>
         }
       />
@@ -51,7 +51,7 @@ export default async function BoutiquePage() {
             title="Les kits arrivent bientôt"
             action={<ButtonLink href="/formations">Découvrir les formations</ButtonLink>}
           >
-            <p>En attendant, les formations de Diani vous attendent.</p>
+            <p>En attendant, mes formations vous attendent.</p>
           </EmptyState>
         ) : (
           <>
