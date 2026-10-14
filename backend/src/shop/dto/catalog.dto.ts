@@ -116,8 +116,8 @@ export class ComparisonRowDto {
   label!: string;
 
   @ApiProperty({
-    type: [Number],
-    nullable: true,
+    type: 'array',
+    items: { type: 'number', nullable: true },
     description: 'Quantité par kit, dans l’ordre des colonnes (null = absent)',
   })
   values!: (number | null)[];

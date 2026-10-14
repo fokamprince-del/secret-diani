@@ -12697,12 +12697,12 @@
             "example": "Poche à douille"
           },
           "values": {
-            "nullable": true,
-            "description": "Quantité par kit, dans l’ordre des colonnes (null = absent)",
             "type": "array",
             "items": {
-              "type": "number"
-            }
+              "type": "number",
+              "nullable": true
+            },
+            "description": "Quantité par kit, dans l’ordre des colonnes (null = absent)"
           }
         },
         "required": [
