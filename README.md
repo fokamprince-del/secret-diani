@@ -14,6 +14,8 @@ Les deux applications vivent dans ce même dépôt (monorepo) mais restent indé
 | Branche | Rôle |
 |---|---|
 | `main` | Version stable : backend jusqu'à la phase 6 (paiements), frontend phase 1 |
-| `develop` | Branche de travail : les nouvelles phases y sont intégrées avant de rejoindre `main` |
+| `develop` | Branche de travail : backend phases 1 à 10 et frontend phases 1 à 8 ; rejoint `main` après la répétition en préproduction (une fusion sur `main` déclenche le déploiement) |
 
 L'historique du backend (phases 1 à 6 et lots de l'audit) est conservé sous `backend/`.
+
+Rapports finaux : [backend](backend/docs/RAPPORT_FINAL.md) · [frontend](frontend/docs/RAPPORT_FINAL.md). Recette sur vrais téléphones : [frontend/docs/RECETTE.md](frontend/docs/RECETTE.md).
