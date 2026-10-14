@@ -1,4 +1,4 @@
-import { dropSession, ensureSession } from '../auth/session';
+import { dropSession, ensureSession, getSession, hasSessionHint } from '../auth/session';
 import { publicEnv } from '../env';
 import { createApiClient } from './client';
 
@@ -41,3 +41,17 @@ async function authFetch(request: Request): Promise<Response> {
 
 /** Client des routes protégées (espace membre, achats, formations), navigateur uniquement. */
 export const authedApi = createApiClient(publicEnv.apiUrl, authFetch);
+
+/**
+ * Routes ouvertes à tous mais personnalisées une fois connectée (panier, leçons) : le jeton est
+ * ajouté s'il existe, sans jamais l'exiger. Les modifications portent l'en-tête CSRF.
+ */
+async function optionalAuthFetch(request: Request): Promise<Response> {
+  const headers = new Headers(request.headers);
+  if (request.method !== 'GET') headers.set('X-CSRF-Token', '1');
+  const session = getSession() ?? (hasSessionHint() ? await ensureSession() : null);
+  if (session) headers.set('Authorization', `Bearer ${session.accessToken}`);
+  return fetch(new Request(request, { headers }));
+}
+
+export const optionalAuthApi = createApiClient(publicEnv.apiUrl, optionalAuthFetch);

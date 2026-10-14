@@ -1,0 +1,15 @@
+.valide {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-4);
+  max-width: 40rem;
+  padding: var(--e-6);
+  border: 1px solid var(--succes);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.valide svg {
+  flex: none;
+  color: var(--succes);
+}

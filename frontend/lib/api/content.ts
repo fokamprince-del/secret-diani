@@ -156,3 +156,42 @@ export function getKitComparison() {
     serverApi.GET('/api/v1/shop/kits/comparison', { fetch: cached(['shop']) }),
   );
 }
+
+export function getPacks() {
+  return load('packs de formation', () =>
+    serverApi.GET('/api/v1/courses/packs', { fetch: cached(['courses']) }),
+  );
+}
+
+export function getCourses() {
+  return load('formations', () =>
+    serverApi.GET('/api/v1/courses', { fetch: cached(['courses', 'media']) }),
+  );
+}
+
+export async function getCourse(slug: string) {
+  if (!SLUG_PATTERN.test(slug)) notFound();
+  return load(
+    `formation « ${slug} »`,
+    () =>
+      serverApi.GET('/api/v1/courses/{slug}', {
+        params: { path: { slug } },
+        fetch: cached(['courses', 'media']),
+      }),
+    { notFoundOn404: true },
+  );
+}
+
+/** Vérification publique d'un certificat (numéro imprimé sur le PDF). */
+export async function getCertificateVerification(number: string) {
+  if (!/^[A-Za-z0-9-]{4,40}$/.test(number)) notFound();
+  return load(
+    `certificat « ${number} »`,
+    () =>
+      serverApi.GET('/api/v1/certificates/{number}', {
+        params: { path: { number } },
+        fetch: cached(['courses']),
+      }),
+    { notFoundOn404: true },
+  );
+}

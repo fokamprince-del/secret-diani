@@ -1,0 +1,64 @@
+.carte {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--e-2);
+}
+
+.visuel {
+  margin-bottom: var(--e-2);
+  border-radius: var(--rayon);
+  overflow: hidden;
+}
+
+.aplat {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--rayon);
+  background-color: var(--peche);
+}
+
+.pack {
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--terra-d);
+}
+
+.titre {
+  font-size: 1.5rem;
+}
+
+.lien {
+  color: var(--cacao);
+  background-size: 0% 1px;
+}
+
+.lien::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--rayon);
+}
+
+.lien:focus-visible {
+  outline: none;
+}
+
+.lien:focus-visible::after {
+  outline: var(--focus-anneau);
+  outline-offset: 4px;
+}
+
+.carte:hover .lien {
+  color: var(--terra-d);
+}
+
+.resume {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.meta {
+  font-size: var(--taille-petit);
+}

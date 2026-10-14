@@ -19,6 +19,7 @@ export default function robots(): MetadataRoute.Robots {
         '/verifier-email',
         '/confirmer-email',
         '/newsletter/',
+        '/certificat/',
       ],
     },
     sitemap: siteUrl('/sitemap.xml'),

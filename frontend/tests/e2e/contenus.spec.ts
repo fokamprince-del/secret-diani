@@ -15,6 +15,8 @@ const PAGES = [
   '/',
   '/traiteur',
   '/boutique',
+  '/formations',
+  '/formations/creme-au-beurre',
   '/boutique/kit-debutant',
   '/a-propos',
   '/contact',

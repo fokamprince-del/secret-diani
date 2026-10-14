@@ -28,3 +28,12 @@ export function formatReadingTime(minutes: number): string {
 export function pluralize(count: number, singular: string, plural: string): string {
   return `${count} ${Math.abs(count) > 1 ? plural : singular}`;
 }
+
+/** Durée en minutes → « 45 min », « 1 h », « 1 h 20 min ». */
+export function formatDuration(totalMinutes: number): string {
+  const minutes = Math.max(0, Math.round(totalMinutes));
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours === 0) return `${rest} min`;
+  return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
+}
