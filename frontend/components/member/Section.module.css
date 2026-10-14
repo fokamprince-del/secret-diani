@@ -1,0 +1,21 @@
+.section {
+  display: grid;
+  gap: var(--e-5);
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.section[data-ton='danger'] {
+  border: 1px solid color-mix(in srgb, var(--erreur) 35%, transparent);
+}
+
+.titre {
+  font-size: var(--t-h3);
+}
+
+.intro {
+  display: grid;
+  gap: var(--e-2);
+  max-width: var(--mesure);
+}

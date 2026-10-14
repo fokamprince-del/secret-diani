@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { useAuth } from '../auth/AuthProvider';
 import { Icon } from '../ui/Icon';
 import { Logo } from './Logo';
 import type { SocialLink } from '@/lib/social';
@@ -16,6 +17,8 @@ import styles from './MobileMenu.module.css';
 export function MobileMenu({ social }: { social: SocialLink | null }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const pathname = usePathname();
+  const { status } = useAuth();
+  const connected = status === 'authenticated';
 
   const open = () => dialogRef.current?.showModal();
   const close = () => dialogRef.current?.close();
@@ -65,9 +68,13 @@ export function MobileMenu({ social }: { social: SocialLink | null }) {
         </nav>
 
         <div className={`conteneur ${styles.bas}`}>
-          <Link href="/connexion" className={`${styles.secondaire} sans-filet`} onClick={close}>
+          <Link
+            href={connected ? '/espace-membre' : '/connexion'}
+            className={`${styles.secondaire} sans-filet`}
+            onClick={close}
+          >
             <Icon name="user" size={20} />
-            Se connecter
+            {connected ? 'Mon espace' : 'Se connecter'}
           </Link>
           {social && (
             <a

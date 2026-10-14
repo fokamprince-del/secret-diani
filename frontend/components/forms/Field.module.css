@@ -97,3 +97,32 @@ textarea.saisie {
   margin: 0.2rem 0 0;
   accent-color: var(--terra-d);
 }
+
+/* Mot de passe : bouton « Afficher » dans le champ, à droite. */
+.motDePasse {
+  position: relative;
+}
+
+.motDePasse .saisie {
+  padding-right: 6.5rem;
+}
+
+.afficher {
+  position: absolute;
+  top: 50%;
+  right: 0.25rem;
+  min-width: var(--cible);
+  min-height: 40px;
+  padding: 0 var(--e-3);
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--terra-d);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  transform: translateY(-50%);
+}
+
+.afficher:hover {
+  background-color: var(--sable);
+}

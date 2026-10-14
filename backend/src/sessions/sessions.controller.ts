@@ -13,6 +13,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
 import type { AuthenticatedUser } from '../common/auth/authenticated-user';
@@ -20,6 +21,17 @@ import { CurrentUser } from '../common/auth/decorators';
 import { AuditAction } from '../audit/audit-actions';
 import { AuditService } from '../audit/audit.service';
 import { SessionsService, type SessionView } from './sessions.service';
+
+export class SessionViewDto implements SessionView {
+  @ApiProperty() id!: string;
+  @ApiProperty({ description: 'Session de l’appareil qui fait la requête' }) current!: boolean;
+  @ApiProperty({ type: String, nullable: true }) userAgent!: string | null;
+  @ApiProperty({ type: String, nullable: true, description: 'Adresse IP tronquée' })
+  ipTruncated!: string | null;
+  @ApiProperty() createdAt!: Date;
+  @ApiProperty() lastUsedAt!: Date;
+  @ApiProperty() expiresAt!: Date;
+}
 
 @ApiTags('Compte — sessions')
 @ApiBearerAuth()
@@ -32,7 +44,10 @@ export class SessionsController {
 
   @Get()
   @ApiOperation({ summary: 'Lister mes sessions actives (appareils connectés)' })
-  @ApiOkResponse({ description: 'Sessions actives, la session courante est signalée' })
+  @ApiOkResponse({
+    type: [SessionViewDto],
+    description: 'Sessions actives, la session courante est signalée',
+  })
   list(@CurrentUser() user: AuthenticatedUser): Promise<SessionView[]> {
     return this.sessions.listForUser(user.id, user.sessionId);
   }

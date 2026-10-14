@@ -1072,7 +1072,17 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Sessions actives, la session courante est signalée"
+            "description": "Sessions actives, la session courante est signalée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionViewDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -9015,6 +9025,48 @@
         "required": [
           "newEmail",
           "currentPassword"
+        ]
+      },
+      "SessionViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean",
+            "description": "Session de l’appareil qui fait la requête"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "ipTruncated": {
+            "type": "string",
+            "nullable": true,
+            "description": "Adresse IP tronquée"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "current",
+          "userAgent",
+          "ipTruncated",
+          "createdAt",
+          "lastUsedAt",
+          "expiresAt"
         ]
       },
       "ProfileDto": {

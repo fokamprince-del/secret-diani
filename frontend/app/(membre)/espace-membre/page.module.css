@@ -1,0 +1,45 @@
+.titre {
+  font-size: var(--t-h1);
+}
+
+.raccourcis {
+  display: grid;
+  gap: var(--e-4);
+}
+
+@media (min-width: 40rem) {
+  .raccourcis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.raccourci {
+  display: grid;
+  gap: var(--e-2);
+  height: 100%;
+  padding: var(--e-5);
+  border: 1px solid transparent;
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+  color: var(--texte);
+  transition: border-color var(--duree-courte) ease;
+}
+
+.raccourci:hover {
+  border-color: var(--nude);
+  color: var(--texte);
+}
+
+.icone {
+  color: var(--terra);
+}
+
+.libelle {
+  font-family: var(--font-titre);
+  font-size: 1.375rem;
+  color: var(--cacao);
+}
+
+.description {
+  font-size: var(--taille-petit);
+}

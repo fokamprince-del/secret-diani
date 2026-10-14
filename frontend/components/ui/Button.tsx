@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ComponentProps, ReactNode, Ref } from 'react';
 import { Icon } from './Icon';
 import styles from './Button.module.css';
 
@@ -29,6 +29,7 @@ type ButtonProps = CommonProps &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
     /** Action en cours : le bouton reste lisible par les lecteurs d'écran et ne se double pas. */
     loading?: boolean;
+    ref?: Ref<HTMLButtonElement>;
   };
 
 export function Button({

@@ -23,13 +23,16 @@ const timeout: Middleware = {
 };
 
 /** Client typé (généré depuis l'OpenAPI du backend), utilisable côté serveur comme navigateur. */
-export function createApiClient(baseUrl: string = publicEnv.apiUrl): ApiClient {
-  const client = createClient<paths>({ baseUrl, credentials: 'include' });
+export function createApiClient(
+  baseUrl: string = publicEnv.apiUrl,
+  fetchImpl?: (request: Request) => Promise<Response>,
+): ApiClient {
+  const client = createClient<paths>({ baseUrl, credentials: 'include', fetch: fetchImpl });
   client.use(timeout);
   return client;
 }
 
-/** Client du navigateur (sans authentification). L'auth s'ajoute en phase 4. */
+/** Client du navigateur pour les routes publiques (le client authentifié est dans `./authed`). */
 export const browserApi = createApiClient();
 
 type Result<T> = { data?: T; error?: unknown; response: Response };
