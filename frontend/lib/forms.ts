@@ -55,3 +55,57 @@ export const contactSchema = z.object({
 });
 
 export type ContactValues = z.infer<typeof contactSchema>;
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Demande traiteur. `minDate` (AAAA-MM-JJ) applique le délai de préparation réglé dans
+ * l'administration ; l'API le revérifie.
+ */
+export function cateringRequestSchema(minDate: string, minDateLabel: string) {
+  return z
+    .object({
+      firstName: z
+        .string()
+        .trim()
+        .min(1, 'Indiquez votre prénom.')
+        .max(100, 'Votre prénom est trop long (100 caractères au plus).'),
+      lastName: z.string().trim().max(100, 'Votre nom est trop long (100 caractères au plus).'),
+      email: emailField,
+      phone: optionalPhoneField,
+      eventDate: z
+        .string()
+        .regex(DATE_PATTERN, 'Indiquez la date de votre événement.')
+        .refine((value) => value >= minDate, {
+          message: `Choisissez une date à partir du ${minDateLabel} : Diani a besoin de ce délai pour tout préparer.`,
+        }),
+      guestCount: z
+        .string()
+        .trim()
+        .refine((value) => value === '' || (/^\d+$/.test(value) && +value >= 1 && +value <= 5000), {
+          message: 'Indiquez un nombre d’invités entre 1 et 5 000, ou laissez vide.',
+        }),
+      fulfilment: z.enum(['pickup', 'delivery'], { message: 'Choisissez retrait ou livraison.' }),
+      deliveryAddress: z
+        .string()
+        .trim()
+        .max(300, 'L’adresse est trop longue (300 caractères au plus).'),
+      message: z
+        .string()
+        .trim()
+        .max(3000, 'Votre message est trop long : 3 000 caractères au plus.'),
+      slotId: z.string(),
+      website: z.string(),
+    })
+    .superRefine((values, context) => {
+      if (values.fulfilment === 'delivery' && values.deliveryAddress === '') {
+        context.addIssue({
+          code: 'custom',
+          path: ['deliveryAddress'],
+          message: 'Indiquez la ville ou l’adresse de livraison.',
+        });
+      }
+    });
+}
+
+export type CateringRequestValues = z.infer<ReturnType<typeof cateringRequestSchema>>;

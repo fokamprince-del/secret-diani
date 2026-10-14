@@ -5,6 +5,7 @@
       "startServerReadyPattern": "Ready",
       "url": [
         "http://localhost:5173/",
+        "http://localhost:5173/traiteur",
         "http://localhost:5173/conseils",
         "http://localhost:5173/conseils/reussir-sa-creme-au-beurre",
         "http://localhost:5173/contact"

@@ -98,3 +98,21 @@ Le formulaire de newsletter est dans le pied de page de toutes les pages : il es
 `tests/mock-api` sert des données typées par l'OpenAPI (le typage casse si le contrat change) et simule les réponses des formulaires (succès, erreur de champ, limite de débit, lien expiré). Port 3999, jamais 3000 (celui du vrai backend en local). Les parcours avec le vrai backend restent marqués `@api`.
 
 **Lighthouse (mobile, simulation, poste de développement) en fin de phase 2 :** accessibilité, bonnes pratiques et SEO à 1 / 0,96 / 1 sur les quatre pages mesurées ; performance 0,83 à 0,90 ; CLS 0 ; LCP simulé ≈ 3,2 s (observé ≈ 0,5 s). L'objectif LCP < 2,5 s n'est **pas atteint** : sur ce poste, le premier affichage attend l'exécution du JavaScript de React et Next (hydratation ≈ 700 ms de script en simulation, ~120 ko compressés pour le seul cadre), que la simulation compte en entier. Travail prévu en phase 8 (performance) : mesure sur l'environnement de préproduction, retrait de la police manuscrite du chemin critique (logo vectoriel, D-F06), réduction du JavaScript hydraté.
+
+## Phase 3 — Traiteur
+
+### D-F20 · Choisir, contacter, demander : jamais de paiement
+
+Chaque produit a un bouton « Contacter » qui ouvre WhatsApp (numéro réglé dans l'administration) avec un message reprenant le choix exact (taille, parfums). Le lien de l'API est réutilisé, seul le texte est remplacé, et seul un lien `https://wa.me` est accepté. Sans numéro configuré, « Contacter » mène au formulaire de demande. « Ajouter à ma demande » construit une sélection jointe à la demande personnalisée (`POST /catering-requests`) : quantités, parfums, estimation et acompte affichés à titre indicatif ; **aucun prix n'est envoyé**, l'API recalcule l'estimation et la renvoie dans l'accusé de réception (référence, lien WhatsApp avec la référence).
+
+### D-F21 · Sélection gardée pour la session de l'onglet
+
+La sélection est gardée dans `sessionStorage` (aucune donnée personnelle, aucun jeton) : elle survit à un rechargement ou à un détour par une autre page, et disparaît à la fermeture de l'onglet. Stockage indisponible : la sélection vit le temps de la page.
+
+### D-F22 · Délai de préparation calculé dans le navigateur
+
+La date minimale de l'événement dépend du jour et du délai réglé dans l'administration (`minNoticeDays`). La page étant générée à l'avance, cette date n'est calculée qu'après l'hydratation (sinon le HTML du build serait faux, et l'hydratation divergerait) ; l'API revérifie la date.
+
+### D-F23 · Parcours de commande en ligne prêt mais masqué
+
+Si l'administration ouvre la commande en ligne (`onlineOrdering`), le même formulaire demande un créneau (`GET /catering/slots`) et envoie une commande (`POST /catering/orders`). Fermée par défaut (`CATERING_ONLINE_ORDERING=false` côté API) : rien n'en apparaît.
