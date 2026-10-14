@@ -1,0 +1,30 @@
+/* Vertical 9:16 sur mobile (vidéos tournées au téléphone), hauteur limitée sur grand écran. */
+.cadre {
+  display: grid;
+  place-items: center;
+  border-radius: var(--rayon);
+  overflow: hidden;
+  background-color: var(--cacao);
+}
+
+.video {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  max-height: calc(100svh - var(--hauteur-header) - 2rem);
+  background-color: var(--cacao);
+}
+
+.indisponible {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-3);
+  padding: var(--e-8) var(--e-5);
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+  text-align: center;
+  color: var(--texte);
+}
+
+.indisponible svg {
+  color: var(--terra);
+}

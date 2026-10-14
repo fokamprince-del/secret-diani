@@ -179,6 +179,11 @@ export function bearerUserId(req: IncomingMessage): string | null {
   return bearer(req)?.user.id ?? null;
 }
 
+/** Identifiant d'un compte par son e-mail (aides de test de l'API factice). */
+export function userIdForEmail(email: string): string | undefined {
+  return users.get(email.trim().toLowerCase())?.id;
+}
+
 /** E-mail du compte connecté (commandes passées avec un compte). */
 export function bearerEmail(req: IncomingMessage): string | null {
   return bearer(req)?.user.email ?? null;

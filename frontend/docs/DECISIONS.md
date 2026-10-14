@@ -164,3 +164,29 @@ Le jeton de suivi (lien signé reçu par e-mail ou retour de paiement) est retir
 ### D-F34 · Boutique fermée, rupture, plafond
 
 Boutique fermée dans l'administration (`features.shopOpen`) : le catalogue reste visible, l'ajout au panier est remplacé par un message. Disponibilité toujours en mots (« En stock », « Plus que 2 en stock », « Épuisé pour le moment »), jamais par la seule couleur. Le sélecteur de quantité est borné par le stock affiché ; l'API reste juge (message de plafond affiché tel quel).
+
+## Phase 6 — Formations
+
+### D-F35 · Une seule adresse par leçon, accès décidé par l'API
+
+Les leçons sont servies à `/formations/<formation>/<leçon>` (et non dans l'espace membre) : la même page sert la leçon d'exemple sans compte et la leçon complète une fois le pack acheté. La page ne contient aucune donnée ; la leçon est demandée par le navigateur avec le jeton s'il existe, et l'API décide : leçon offerte, leçon du pack, ou refus (403) → invitation claire à choisir le pack (« J'ai déjà un compte » mène à la connexion avec retour). Pages non indexées (contenu payant).
+
+### D-F36 · Vidéo : HLS signé, hls.js chargé à la demande
+
+La vidéo (Bunny Stream) arrive en playlist HLS signée et courte. Safari et iOS la lisent nativement ; ailleurs, hls.js (`1.7.3`, version figée) n'est chargé que sur les pages de leçon (import dynamique) : il ne pèse rien sur le reste du site. Commandes natives du navigateur (clavier, plein écran, sous-titres de la playlist quand ils existent). Format vertical 9:16, colonne de 26 rem au plus sur grand écran. Vidéo indisponible : message, le reste de la leçon reste consultable.
+
+### D-F37 · Reprise de lecture
+
+Position envoyée au plus toutes les 15 secondes de lecture (`shouldSave`, testée), à chaque pause et à la fin (« vidéo vue »). Reprise à la position enregistrée (sauf dans les 5 dernières secondes). Un échec d'enregistrement n'interrompt jamais la lecture. Rien n'est enregistré pour la leçon d'exemple sans accès.
+
+### D-F38 · Quiz corrigé par l'API
+
+Les bonnes réponses ne sont connues qu'après validation (l'API ne les envoie pas avant). Toutes les questions doivent avoir une réponse avant l'envoi. Correction en mots et en icônes (« Juste. » / « Pas tout à fait. »), bonne réponse signalée, explication, score, nouvel essai si permis. Grandes zones de réponse (≥ 52 px), boutons radio ou cases à cocher natifs.
+
+### D-F39 · Achat d'un pack et accès
+
+« Choisir ce pack » mène à `/commande/pack/<pack>` (compte obligatoire : sans session, connexion avec retour). Adresse de facturation, conditions de vente (avec demande d'accès immédiat), paiement par redirection comme la boutique. L'accès n'existe qu'après la confirmation du paiement par l'API (webhook) : un paiement annulé n'ouvre rien (test e2e). Après paiement, « Accéder à mes formations ». Ventes fermées dans l'administration (`courseSalesOpen`) : boutons remplacés par un message, accès existants conservés.
+
+### D-F40 · Mes formations, certificats, avantages
+
+« Mes formations » : barre de progression (rôle `progressbar`, remplissage animé sauf mouvement réduit), « Commencer » / « Reprendre » vers la bonne leçon, « Obtenir mon certificat » à 100 % (nom et prénom requis : sinon renvoi vers le profil), certificats téléchargeables avec leur page publique de vérification (`/certificat/<numéro>`, non indexée), avantages des packs et demandes d'appel personnalisé dans la limite incluse.

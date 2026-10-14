@@ -1,0 +1,84 @@
+.liste {
+  display: grid;
+  gap: var(--e-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.formation {
+  display: grid;
+  gap: var(--e-3);
+  padding: var(--e-5);
+  border: 1px solid var(--filet);
+  border-radius: 12px;
+}
+
+.entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-2);
+}
+
+.titre {
+  font-size: 1.375rem;
+}
+
+.obtenu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-1);
+  font-size: var(--taille-petit);
+  font-weight: 600;
+  color: var(--succes);
+}
+
+/* Barre de progression qui se remplit (animation douce, coupée si le mouvement est réduit). */
+.progression {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.barre {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--rayon-pilule);
+  background-color: var(--sable);
+  overflow: hidden;
+}
+
+.barre span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--terra);
+  transition: width var(--duree-longue) var(--courbe);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .barre span {
+    animation: remplir 700ms var(--courbe) both;
+  }
+}
+
+@keyframes remplir {
+  from {
+    width: 0;
+  }
+}
+
+.pourcentage {
+  min-width: 3rem;
+  font-size: var(--taille-petit);
+  font-weight: 600;
+  color: var(--cacao);
+  text-align: right;
+}
+
+.avantages {
+  margin: 0;
+  padding-left: 1.2em;
+}

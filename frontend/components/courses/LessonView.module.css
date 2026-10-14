@@ -1,0 +1,125 @@
+.chargement {
+  display: grid;
+  gap: var(--e-5);
+  padding-block: var(--e-5);
+}
+
+/* Mobile : la vidéo occupe le premier écran ; grand écran : vidéo à gauche, texte à droite. */
+.lecon {
+  display: grid;
+  gap: var(--e-6);
+  padding-block: var(--e-5) var(--e-8);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .lecon {
+    /* Colonne vidéo à la largeur d'un format vertical 9:16, le texte prend le reste. */
+    grid-template-columns: minmax(18rem, 26rem) minmax(0, 1fr);
+    gap: var(--e-8);
+  }
+
+  .lecteur {
+    position: sticky;
+    top: calc(var(--hauteur-header) + var(--e-5));
+  }
+}
+
+.texte {
+  display: grid;
+  gap: var(--e-5);
+  min-width: 0;
+}
+
+.fil {
+  font-size: var(--taille-petit);
+}
+
+.titre {
+  font-size: var(--t-h1);
+}
+
+.statut {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--succes);
+}
+
+.navigation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--e-3);
+}
+
+.voisine {
+  display: grid;
+  gap: 2px;
+  min-height: var(--cible);
+  padding: var(--e-3) var(--e-4);
+  border: 1px solid var(--nude);
+  border-radius: 12px;
+  color: var(--cacao);
+  font-weight: 500;
+}
+
+.voisine:hover {
+  border-color: var(--terra);
+  color: var(--cacao);
+}
+
+.suivante {
+  text-align: right;
+}
+
+.sens {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--texte);
+}
+
+.bloc {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.bloc h2 {
+  font-size: var(--t-h3);
+}
+
+.fiches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}
+
+.taille {
+  font-weight: 400;
+}
+
+.retour {
+  font-size: var(--taille-petit);
+}
+
+.verrou {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+  max-width: 40rem;
+  margin-block: var(--e-8);
+  padding: clamp(1.5rem, 1rem + 2vw, 3rem);
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+}
+
+.verrouIcone {
+  color: var(--terra);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}

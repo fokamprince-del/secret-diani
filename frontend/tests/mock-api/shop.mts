@@ -308,6 +308,8 @@ interface Order {
   email: string;
   /** Panier vidé une fois la commande payée (comme le backend). */
   cartKey: string | null;
+  /** Effet du paiement confirmé (ouverture des droits d'un pack). */
+  onPaid?: () => void;
 }
 const orders = new Map<string, Order>();
 let orderSeq = 41;
@@ -333,10 +335,64 @@ function setStatus(order: Order, status: S['OrderDto']['status']) {
   order.view.statusLabel = STATUS_LABELS[status];
   if (status === 'paid') {
     if (order.cartKey) carts.delete(order.cartKey);
+    order.onPaid?.();
     order.view.paidAt = new Date().toISOString();
     order.view.invoiceAvailable = true;
     order.view.reservationExpiresAt = null;
   }
+}
+
+/** Commande d'un pack de formation (compte requis) : droits ouverts au paiement confirmé. */
+export function createPackOrder(
+  userId: string,
+  email: string,
+  pack: { name: string; priceCents: number },
+  onPaid: () => void,
+): S['CheckoutResultDto'] {
+  const id = randomUUID();
+  const token = `suivi${randomUUID().replace(/-/g, '')}`;
+  const now = new Date().toISOString();
+  const view: S['OrderDto'] = {
+    id,
+    reference: `CMD-${String(++orderSeq).padStart(6, '0')}`,
+    status: 'pending_payment',
+    statusLabel: STATUS_LABELS.pending_payment,
+    totalCents: pack.priceCents,
+    itemCount: 1,
+    createdAt: now,
+    items: [
+      {
+        productName: `Pack ${pack.name}`,
+        variantLabel: 'Accès aux formations',
+        sku: null,
+        unitPriceCents: pack.priceCents,
+        quantity: 1,
+        lineTotalCents: pack.priceCents,
+      },
+    ],
+    subtotalCents: pack.priceCents,
+    shippingCents: 0,
+    refundedCents: 0,
+    shippingMethod: 'digital',
+    shippingRateName: 'Accès en ligne',
+    shippingAddress: null,
+    carrier: null,
+    trackingNumber: null,
+    reservationExpiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
+    paidAt: null,
+    shippedAt: null,
+    deliveredAt: null,
+    invoiceAvailable: false,
+    timeline: [{ fromStatus: null, toStatus: 'pending_payment', note: null, createdAt: now }],
+  };
+  orders.set(id, { view, token, userId, email, cartKey: null, onPaid });
+  return {
+    orderId: id,
+    reference: view.reference,
+    totalCents: view.totalCents,
+    reservationExpiresAt: view.reservationExpiresAt!,
+    trackingToken: token,
+  };
 }
 
 const orderByToken = (token: string) => [...orders.values()].find((order) => order.token === token);

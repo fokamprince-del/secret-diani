@@ -7,6 +7,7 @@
         "http://localhost:5173/",
         "http://localhost:5173/traiteur",
         "http://localhost:5173/boutique",
+        "http://localhost:5173/formations",
         "http://localhost:5173/conseils",
         "http://localhost:5173/conseils/reussir-sa-creme-au-beurre",
         "http://localhost:5173/contact"

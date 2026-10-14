@@ -138,6 +138,11 @@ export function PaymentReturn() {
       </FormStatus>
       <OrderView order={state.order} getInvoiceUrl={invoiceFor(token!)} />
       <div className={styles.actions}>
+        {state.order.shippingMethod === 'digital' && (
+          <ButtonLink href="/espace-membre/formations" withArrow>
+            Accéder à mes formations
+          </ButtonLink>
+        )}
         <ButtonLink href={trackingHref(token!)} variant="secondaire">
           Lien de suivi de la commande
         </ButtonLink>

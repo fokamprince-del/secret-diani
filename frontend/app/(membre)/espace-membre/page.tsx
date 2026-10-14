@@ -7,6 +7,7 @@ import styles from './page.module.css';
 export const metadata: Metadata = { title: 'Mon espace' };
 
 const DESCRIPTIONS: Record<string, string> = {
+  '/espace-membre/formations': 'Vos formations, votre progression et vos certificats.',
   '/espace-membre/commandes': 'Suivi de vos commandes et factures.',
   '/espace-membre/profil': 'Nom, téléphone, adresse e-mail et préférences.',
   '/espace-membre/adresses': 'Vos adresses de livraison et de facturation.',

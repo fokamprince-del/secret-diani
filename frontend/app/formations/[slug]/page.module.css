@@ -1,0 +1,98 @@
+.fiche {
+  display: grid;
+  gap: var(--e-7);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .fiche {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+
+  .acces {
+    position: sticky;
+    top: calc(var(--hauteur-header) + var(--e-5));
+  }
+}
+
+.contenu {
+  display: grid;
+  gap: var(--e-7);
+}
+
+.programme {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.module {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.moduleTitre {
+  font-size: 1.25rem;
+}
+
+.lecons {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--filet);
+}
+
+.lecon {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--e-3);
+  min-height: 3.5rem;
+  border-bottom: 1px solid var(--filet);
+}
+
+.icone {
+  color: var(--terra);
+}
+
+.leconTitre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2);
+  color: var(--cacao);
+}
+
+.badge {
+  padding: 0 var(--e-2);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--sable);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.duree {
+  font-size: var(--taille-petit);
+}
+
+.acces {
+  display: grid;
+  gap: var(--e-4);
+  padding: var(--e-6);
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+}
+
+.accesTitre {
+  font-size: var(--t-h3);
+}
+
+.prix {
+  font-family: var(--font-titre);
+  font-size: 2rem;
+  color: var(--cacao);
+}
+
+.aide {
+  font-size: var(--taille-petit);
+}
