@@ -27,6 +27,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
     sri: { algorithm: 'sha256' },
+    // CSS critique en ligne : plus de feuilles bloquantes, premier affichage plus tôt (D-F45).
+    inlineCss: true,
+    // Cache ISR en mémoire : le système de fichiers de l'image est en lecture seule ; chaque
+    // instance a son cache, revalidé par l'API sur chacune (D-F46, backend D-097).
+    isrFlushToDisk: false,
   },
   images: {
     formats: ['image/avif', 'image/webp'],

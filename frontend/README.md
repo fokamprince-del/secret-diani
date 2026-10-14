@@ -63,11 +63,17 @@ openapi/        copie versionnée de la spécification de l'API
 tests/          unit (Vitest) · e2e (Playwright)
 ```
 
-## Docker
+## Docker et mise en production
 
 ```bash
-docker build -t diani-frontend \
-  --build-arg NEXT_PUBLIC_SITE_URL=https://site.exemple \
-  --build-arg NEXT_PUBLIC_API_URL=https://api.site.exemple .
+docker build -t diani-frontend   --build-arg NEXT_PUBLIC_SITE_URL=https://site.exemple   --build-arg NEXT_PUBLIC_API_URL=https://api.site.exemple   --build-arg NEXT_PUBLIC_MEDIA_URL=https://medias.site.exemple   --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=… .
 docker run -p 5173:5173 -e REVALIDATE_SECRET=… -e API_INTERNAL_URL=http://api:3000 diani-frontend
 ```
+
+En production, le site tourne en deux instances (`web`, `web-2`) dans la pile de l'API, derrière le même Traefik : voir `backend/docker-compose.prod.yml` et `backend/docs/RUNBOOK.md` › Déploiement du site. Une fusion sur `main` publie l'image et lance `scripts/deploy-web.sh` (bascule progressive, réchauffage du cache, test de fumée, retour arrière). Sonde : `GET /api/health`.
+
+## Documentation
+
+- [docs/DECISIONS.md](docs/DECISIONS.md) : décisions techniques, phase par phase.
+- [docs/RAPPORT_FINAL.md](docs/RAPPORT_FINAL.md) : ce qui est fait, mesures, risques, variables à fournir.
+- [docs/RECETTE.md](docs/RECETTE.md) : recette sur vrais téléphones, à faire en préproduction.

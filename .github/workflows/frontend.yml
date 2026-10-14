@@ -1,6 +1,6 @@
 # Intégration continue du frontend.
-# lint → types → tests → build → e2e + axe → Lighthouse CI → image Docker.
-# Le déploiement (VPS derrière Traefik, même hôte que l'API) est ajouté en phase 8.
+# lint → types → tests → build → e2e + axe → Lighthouse CI → image Docker ; sur main :
+# publication de l'image puis déploiement (VPS derrière Traefik, même hôte que l'API).
 name: CI frontend
 
 on:
@@ -149,3 +149,87 @@ jobs:
             NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # --- Production (fusion sur main) ------------------------------------------------------------
+  # Image construite avec les adresses de production : les variables NEXT_PUBLIC_* sont figées
+  # dans le JavaScript, et les pages statiques sont générées avec les contenus de l'API publique.
+  publish:
+    name: Publication de l'image (ghcr.io)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [docker]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Nom de l'image
+        id: meta
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          {
+            echo "tag=${GITHUB_SHA::12}"
+            echo "image=ghcr.io/$owner/les-secrets-de-diani-frontend"
+          } >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v7
+        with:
+          context: frontend
+          push: true
+          tags: ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=https://${{ vars.SITE_DOMAIN }}
+            NEXT_PUBLIC_API_URL=https://${{ vars.API_DOMAIN }}
+            NEXT_PUBLIC_MEDIA_URL=${{ vars.MEDIA_URL }}
+            NEXT_PUBLIC_PLAUSIBLE_DOMAIN=${{ vars.PLAUSIBLE_DOMAIN }}
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ vars.TURNSTILE_SITE_KEY }}
+          cache-from: type=gha
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+
+  deploy:
+    name: Déploiement en production
+    needs: [publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://${{ vars.SITE_DOMAIN }}
+    # Même groupe que le déploiement de l'API : jamais deux déploiements en même temps.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - name: Clé SSH du déploiement
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Fichiers d'exploitation vers le serveur
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          tar -czf - docker-compose.prod.yml docker scripts Makefile \
+            | ssh -i ~/.ssh/deploy "$TARGET" 'cd /opt/diani && tar -xzf -'
+      - name: Déploiement du site (bascule progressive, réchauffage, fumée, retour arrière)
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          TAG: ${{ needs.publish.outputs.tag }}
+        run: ssh -i ~/.ssh/deploy "$TARGET" "cd /opt/diani && ./scripts/deploy-web.sh '$TAG'"
+      - name: Test de fumée depuis l'extérieur (Cloudflare, DNS, TLS)
+        run: ./scripts/smoke-web.sh "https://${{ vars.SITE_DOMAIN }}"

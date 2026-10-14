@@ -208,3 +208,18 @@ Données structurées : WebSite et Organization (accueil), BreadcrumbList (artic
 ### D-F44 · Accessibilité vérifiée par les tests
 
 Axe (WCAG 2.2 AA, violations graves et critiques) sur toutes les pages publiques, de compte, de l'espace membre, du panier et de la commande ; un seul `h1` et un titre unique par page ; cibles d'au moins 44 px pour les boutons et champs sur mobile (test, qui a fait passer le bouton « Afficher » du mot de passe de 40 à 44 px) ; parcours au clavier (menu mobile, lien d'évitement, ajout au panier) ; texte alternatif sur toute image. Délai d'assertion e2e porté à 10 s (suite parallèle, CI chargée).
+
+## Phase 8 — Performance et mise en production
+
+### D-F45 · Mesures de performance : ce qui compte et comment on le mesure
+
+Mesures Lighthouse mobile (4× ralentissement processeur, réseau 4G lente) sur le poste de développement (indice de performance 1381, processeur portable de milieu de gamme). Deux constats :
+
+1. **Méthode « simulate » trompeuse en local.** Sur `localhost`, les scripts arrivent instantanément et le navigateur les exécute avant le premier affichage ; la simulation impute alors tout ce JavaScript au LCP (≈ 3,3 s simulés pour 0,4 s observés). Mesuré avec un vrai ralentissement (`devtools`), le LCP est de 1,5 à 2,3 s sur toutes les pages, sous l'objectif de 2,5 s. Lighthouse CI utilise donc la méthode `devtools` ; LCP < 2,5 s et CLS < 0,1 sont **bloquants**.
+2. **Temps de blocage (TBT) élevé** sous ralentissement : 0,7 à 1,7 s selon la page, dû à l'hydratation de React et Next (≈ 165 ko compressés pour le cadre seul, le code du site n'en ajoute qu'une vingtaine). Le score de performance reste ainsi entre 0,7 et 0,8 sur ce poste : l'objectif de 90 n'est pas atteint ici. Il devient un **avertissement** en CI (non bloquant), avec le TBT et le poids du JavaScript, plutôt qu'une barrière que la machine de CI ne franchirait pas de façon fiable. La mesure qui fera foi est celle de PageSpeed Insights sur la préproduction puis les données réelles (Core Web Vitals) — voir [RECETTE.md](RECETTE.md).
+
+Gains retenus : CSS critique en ligne (`experimental.inlineCss`, premier affichage 1,37 s → 1,07 s simulés), Zod et React Hook Form hors du code commun (D-F18), hls.js chargé à la demande (D-F36). Essais sans effet mesurable, écartés : polices en `display: optional`, `content-visibility` sur les sections hors écran.
+
+### D-F46 · Cache de pages en mémoire, revalidé sur chaque instance
+
+Le système de fichiers de l'image est en lecture seule : le cache des pages ISR reste en mémoire (`isrFlushToDisk: false`), le cache des requêtes va dans un `tmpfs`. Chaque instance ayant son cache, l'API prévient les deux (backend D-097). À chaque déploiement, `deploy-web.sh` revalide tous les contenus et visite les pages principales sur chaque instance : une page construite pendant que l'API était injoignable est réparée avant la fin du déploiement. Sonde `GET /api/health` (sans dépendance : une API en difficulté ne retire pas le site, qui sert ses pages depuis le cache).

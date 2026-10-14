@@ -17,6 +17,8 @@ ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_MEDIA_URL
 ARG NEXT_PUBLIC_PLAUSIBLE_DOMAIN
+ARG NEXT_PUBLIC_PLAUSIBLE_SRC
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY . .
 RUN npm run build
@@ -35,6 +37,6 @@ COPY --from=build --chown=node:node /app/.next/standalone ./
 USER node
 EXPOSE 5173
 HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:5173/robots.txt >/dev/null || exit 1
+  CMD wget -qO- http://127.0.0.1:5173/api/health >/dev/null || exit 1
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "server.js"]
