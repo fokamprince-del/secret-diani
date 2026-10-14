@@ -12,6 +12,8 @@ export default defineConfig({
   testDir: 'tests/e2e',
   // Suite parallèle et machines de CI chargées : 10 s d'attente pour une assertion.
   expect: { timeout: 10_000 },
+  // Parcours longs (plusieurs pages analysées par axe) : 60 s par test.
+  timeout: 60_000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

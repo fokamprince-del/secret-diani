@@ -125,4 +125,23 @@ describe('validateEnv', () => {
       validateEnv({ ...base, FRONTEND_REVALIDATE_URL: 'https://site.fr/api/revalidate' }),
     ).toThrow(/FRONTEND_REVALIDATE_SECRET/);
   });
+
+  it('accepte une adresse de revalidation par instance du frontend', () => {
+    const env = validateEnv({
+      ...base,
+      FRONTEND_REVALIDATE_URL: 'http://web:5173/api/revalidate, http://web-2:5173/api/revalidate',
+      FRONTEND_REVALIDATE_SECRET: 's'.repeat(32),
+    });
+    expect(env.FRONTEND_REVALIDATE_URL).toEqual([
+      'http://web:5173/api/revalidate',
+      'http://web-2:5173/api/revalidate',
+    ]);
+    expect(() =>
+      validateEnv({
+        ...base,
+        FRONTEND_REVALIDATE_URL: 'http://web:5173/api/revalidate,ftp://ailleurs',
+        FRONTEND_REVALIDATE_SECRET: 's'.repeat(32),
+      }),
+    ).toThrow(/FRONTEND_REVALIDATE_URL/);
+  });
 });

@@ -200,14 +200,26 @@ En cas d'échec à l'étape 3, la version précédente est remise en service aut
 
 Sur le serveur :
 1. Utilisateur `deploy` sans sudo, membre du groupe `docker`, propriétaire de `/opt/diani`. Clé SSH **dédiée** au déploiement dans `~deploy/.ssh/authorized_keys`.
-2. `/opt/diani/.env.production` (chmod 600) : variables de l'application (voir `.env.example`) **et** celles de compose : `GHCR_OWNER` (propriétaire du dépôt GitHub, en minuscules), `API_DOMAIN`, `ACME_EMAIL`, `POSTGRES_PASSWORD`, `POSTGRES_APP_PASSWORD`, `REDIS_PASSWORD`.
+2. `/opt/diani/.env.production` (chmod 600) : variables de l'application (voir `.env.example`) **et** celles de compose : `GHCR_OWNER` (propriétaire du dépôt GitHub, en minuscules), `API_DOMAIN`, `SITE_DOMAIN` (domaine du site, sans `https://`), `ACME_EMAIL`, `POSTGRES_PASSWORD`, `POSTGRES_APP_PASSWORD`, `REDIS_PASSWORD`. Pour la revalidation des pages du site : `FRONTEND_REVALIDATE_URL=http://web:5173/api/revalidate,http://web-2:5173/api/revalidate` (réseau interne, une adresse par instance, D-097) et `FRONTEND_REVALIDATE_SECRET` (32 caractères au moins, `openssl rand -base64 48`).
 3. Accès en lecture aux images : jeton GitHub (*fine-grained*, permission `read:packages` seulement), puis `docker login ghcr.io -u <compte>` en tant que `deploy`.
 4. `/etc/diani/backup.env` (voir Sauvegardes) : la sauvegarde avant migration l'utilise.
 
 Dans GitHub, *Settings › Environments › production* :
 - secrets `DEPLOY_HOST`, `DEPLOY_USER` (`deploy`), `DEPLOY_SSH_KEY` (clé privée dédiée), `DEPLOY_KNOWN_HOSTS` (ligne de `ssh-keyscan -t ed25519 <hôte>`, **vérifiée** contre l'empreinte affichée par l'hébergeur) ;
 - variable `API_DOMAIN` ;
+- pour le site (CI du frontend) : variables `SITE_DOMAIN`, `MEDIA_URL` (origine publique des médias), et si utilisées `PLAUSIBLE_DOMAIN`, `TURNSTILE_SITE_KEY` (clé **publique**) : elles sont figées dans le JavaScript au build ;
 - facultatif : « Required reviewers » pour valider chaque mise en production à la main.
+
+### Déploiement du site (Next.js)
+
+Une fusion sur `main` qui touche `frontend/` lance la CI du frontend : contrôles, tests e2e, Lighthouse, puis publication de l'image `les-secrets-de-diani-frontend` (étiquette = 12 premiers caractères du commit) et `scripts/deploy-web.sh <tag>` sur le serveur :
+1. téléchargement de l'image ;
+2. remplacement de `web` puis de `web-2` (Traefik sert l'autre instance, sonde `/api/health`) ;
+3. réchauffage du cache des pages : revalidation de tous les contenus sur chaque instance, puis visite des pages principales ;
+4. test de fumée (`scripts/smoke-web.sh`) : pages, 404, espace membre protégé, CSP, HSTS ;
+5. retour automatique à la version précédente en cas d'échec.
+
+Le site ne touche ni à la base ni à l'API. Version en service : `.deploy/web-release.env`. Retour manuel : `./scripts/deploy-web.sh <tag précédent>`. Premier déploiement : l'API doit déjà tourner (les pages sont construites avec ses contenus ; à défaut, elles se réparent au réchauffage).
 
 ### Retour manuel à une version
 
@@ -225,7 +237,7 @@ Toujours via `./scripts/compose-prod.sh` (ou les cibles `make …-prod`), qui aj
 
 ## Dimensionnement
 
-Limites des conteneurs (docker-compose.prod.yml) : API 2 × (1,5 CPU, 768 Mo), worker 1 CPU / 768 Mo, Postgres 1,5 CPU / 1,5 Go, Redis 0,5 CPU / 384 Mo, Traefik 0,5 CPU / 256 Mo, ClamAV facultatif 1 CPU / 1,5 Go. **VPS recommandé : 4 vCPU, 8 Go de RAM**, disque SSD 80 Go. Mesures de charge et limites connues : [load/README.md](../load/README.md).
+Limites des conteneurs (docker-compose.prod.yml) : API 2 × (1,5 CPU, 768 Mo), site 2 × (1 CPU, 512 Mo), worker 1 CPU / 768 Mo, Postgres 1,5 CPU / 1,5 Go, Redis 0,5 CPU / 384 Mo, Traefik 0,5 CPU / 256 Mo, ClamAV facultatif 1 CPU / 1,5 Go. **VPS recommandé : 4 vCPU, 8 Go de RAM**, disque SSD 80 Go. Mesures de charge et limites connues : [load/README.md](../load/README.md).
 
 ## Sondes
 

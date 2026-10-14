@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { EMAIL_MESSAGES } from './form-messages';
 
+// La CSP interdit `eval` : sans ce réglage, Zod teste `new Function()` au chargement et le
+// navigateur signale une violation (sans effet, mais visible dans Lighthouse et la console).
+z.config({ jitless: true });
+
 /**
  * Schémas de formulaire partagés, messages en français. Ils reprennent les règles de l'API
  * (qui reste seule juge) pour signaler les erreurs avant l'envoi.

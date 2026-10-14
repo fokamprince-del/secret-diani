@@ -3,7 +3,7 @@ import type { AppConfigService } from '../../config/app-config.service';
 import type { RevalidateJobData } from './revalidate.constants';
 import { RevalidateProcessor } from './revalidate.processor';
 
-function processor(values: Record<string, string | undefined>): RevalidateProcessor {
+function processor(values: Record<string, unknown>): RevalidateProcessor {
   return new RevalidateProcessor({ get: (key: string) => values[key] } as AppConfigService);
 }
 
@@ -25,7 +25,7 @@ describe('RevalidateProcessor', () => {
   it('prévient le frontend avec le secret partagé, sans suivre de redirection', async () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 200 }));
     await processor({
-      FRONTEND_REVALIDATE_URL: 'https://site.fr/api/revalidate',
+      FRONTEND_REVALIDATE_URL: ['https://site.fr/api/revalidate'],
       FRONTEND_REVALIDATE_SECRET: 's'.repeat(32),
     }).process(job);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -39,9 +39,28 @@ describe('RevalidateProcessor', () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 401 }));
     await expect(
       processor({
-        FRONTEND_REVALIDATE_URL: 'https://site.fr/api/revalidate',
+        FRONTEND_REVALIDATE_URL: ['https://site.fr/api/revalidate'],
         FRONTEND_REVALIDATE_SECRET: 's'.repeat(32),
       }).process(job),
     ).rejects.toThrow('Revalidation refusée (401)');
+  });
+
+  it('prévient chaque instance du frontend ; une seule en échec relance le job', async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
+      .mockResolvedValueOnce(new Response(null, { status: 503 }));
+    await expect(
+      processor({
+        FRONTEND_REVALIDATE_URL: [
+          'http://web:5173/api/revalidate',
+          'http://web-2:5173/api/revalidate',
+        ],
+        FRONTEND_REVALIDATE_SECRET: 's'.repeat(32),
+      }).process(job),
+    ).rejects.toThrow('Revalidation refusée (503)');
+    expect(fetchMock.mock.calls.map((call: unknown[]) => call[0])).toEqual([
+      'http://web:5173/api/revalidate',
+      'http://web-2:5173/api/revalidate',
+    ]);
   });
 });

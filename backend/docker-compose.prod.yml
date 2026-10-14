@@ -1,9 +1,10 @@
 # Production (VPS) — voir docs/RUNBOOK.md.
 #   Fichier d'environnement : .env.production sur le serveur (chmod 600), jamais commité.
-#   Déploiement : scripts/deploy.sh <tag> (CI) ; commandes ponctuelles : scripts/compose-prod.sh …
+#   Déploiement : scripts/deploy.sh <tag> (API, CI backend) et scripts/deploy-web.sh <tag>
+#   (site, CI frontend) ; commandes ponctuelles : scripts/compose-prod.sh …
 #
 # Réseaux :
-#   edge     : Traefik ↔ API (accès Internet sortant pour Stripe/PayPal…)
+#   edge     : Traefik ↔ API et site (accès Internet sortant pour Stripe/PayPal…)
 #   egress   : accès Internet sortant du worker (Resend, Bunny, OVH…)
 #   internal : API/worker ↔ Postgres/Redis — SANS accès extérieur, aucun port publié
 name: diani
@@ -58,6 +59,7 @@ services:
       - --accesslog.fields.headers.defaultmode=drop
     environment:
       API_DOMAIN: ${API_DOMAIN:?}
+      SITE_DOMAIN: ${SITE_DOMAIN:?}
     ports: ['80:80', '443:443']
     volumes:
       - ./docker/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
@@ -107,6 +109,34 @@ services:
     deploy:
       resources:
         limits: { cpus: '1.0', memory: 768M }
+
+  # Site (Next.js) : deux instances derrière Traefik, remplacées l'une après l'autre
+  # (scripts/deploy-web.sh). Profil « web » : le déploiement de l'API n'y touche pas.
+  # Réseau internal : le site lit l'API sans sortir du serveur, et le worker lui envoie la
+  # revalidation des pages (FRONTEND_REVALIDATE_URL=http://web:5173/…,http://web-2:5173/…).
+  web: &web
+    image: ghcr.io/${GHCR_OWNER:?}/les-secrets-de-diani-frontend:${WEB_IMAGE_TAG:-absent}
+    profiles: [web]
+    environment:
+      API_INTERNAL_URL: http://api:3000
+      # Seul secret du site, partagé avec le worker ; aucun autre secret de l'API n'est exposé.
+      REVALIDATE_SECRET: ${FRONTEND_REVALIDATE_SECRET:?}
+    networks: [edge, internal]
+    read_only: true
+    # Cache des requêtes de Next (le cache des pages est en mémoire, D-F46 du frontend).
+    tmpfs: ['/tmp', '/app/.next/cache:uid=1000,gid=1000']
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options: { max-size: '20m', max-file: '5' }
+    deploy:
+      resources:
+        limits: { cpus: '1.0', memory: 512M }
+
+  web-2: *web
 
   migrate:
     image: ghcr.io/${GHCR_OWNER:?}/les-secrets-de-diani-backend-migrate:${IMAGE_TAG:?}

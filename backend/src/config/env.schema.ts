@@ -140,7 +140,22 @@ export const envSchema = z
     CLAMAV_PORT: z.coerce.number().int().min(1).max(65535).default(3310),
 
     // --- Revalidation du frontend (ISR) après une modification de contenu ---
-    FRONTEND_REVALIDATE_URL: z.url({ protocol: /^https?$/ }).optional(),
+    // Une adresse par instance du frontend (séparées par des virgules) : chacune garde son cache.
+    FRONTEND_REVALIDATE_URL: z
+      .string()
+      .transform((value) =>
+        value
+          .split(',')
+          .map((url) => url.trim())
+          .filter(Boolean),
+      )
+      .pipe(
+        z
+          .array(z.url({ protocol: /^https?$/ }))
+          .min(1)
+          .max(5),
+      )
+      .optional(),
     FRONTEND_REVALIDATE_SECRET: z.string().min(32).optional(),
     // Durée du cache Redis des contenus publics.
     CONTENT_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).max(86400).default(300),
