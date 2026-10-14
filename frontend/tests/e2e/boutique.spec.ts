@@ -139,6 +139,29 @@ test.describe('Commande et paiement', () => {
     await expect(page.getByRole('button', { name: 'Télécharger la facture' })).toBeVisible();
   });
 
+  test('sans moyen de paiement configuré : explication, bouton désactivé', async ({ page }) => {
+    await page.route('**/api/v1/payments/methods', (route) =>
+      route.fulfill({ json: { stripe: false, paypal: false } }),
+    );
+    await addKit(page);
+    await page.goto('/commande');
+    await expect(
+      page.getByText(/Le paiement en ligne est momentanément indisponible/),
+    ).toBeVisible();
+    await expect(page.getByRole('radio', { name: /Carte bancaire|PayPal/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Payer/ })).toBeDisabled();
+  });
+
+  test('PayPal seul : proposé et choisi par défaut', async ({ page }) => {
+    await page.route('**/api/v1/payments/methods', (route) =>
+      route.fulfill({ json: { stripe: false, paypal: true } }),
+    );
+    await addKit(page);
+    await page.goto('/commande');
+    await expect(page.getByRole('radio', { name: /PayPal/ })).toBeChecked();
+    await expect(page.getByRole('radio', { name: /Carte bancaire/ })).toHaveCount(0);
+  });
+
   test('retrait : l’adresse de facturation est demandée ; CGV obligatoires', async ({ page }) => {
     await addKit(page);
     await page.goto('/commande');
