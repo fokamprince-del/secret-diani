@@ -1,0 +1,30 @@
+.boutique {
+  display: grid;
+  gap: var(--section);
+}
+
+.section {
+  display: grid;
+  gap: var(--e-6);
+}
+
+.grille {
+  display: grid;
+  gap: var(--e-5);
+}
+
+@media (min-width: 40rem) {
+  .grille {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .grille {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.faq {
+  max-width: 48rem;
+}

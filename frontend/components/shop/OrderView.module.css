@@ -1,0 +1,104 @@
+.commande {
+  display: grid;
+  gap: var(--e-6);
+}
+
+.entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.statut {
+  padding: var(--e-1) var(--e-4);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--sable);
+  font-size: var(--taille-petit);
+  font-weight: 600;
+  color: var(--cacao);
+}
+
+.statut[data-statut='paid'],
+.statut[data-statut='shipped'],
+.statut[data-statut='delivered'] {
+  background-color: color-mix(in srgb, var(--succes) 14%, var(--blanc));
+  color: var(--succes);
+}
+
+.bloc {
+  display: grid;
+  gap: var(--e-3);
+  padding: var(--e-5);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.titre {
+  font-size: 1.25rem;
+}
+
+.tableau {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableau th,
+.tableau td {
+  padding: var(--e-2) 0;
+  border-bottom: 1px solid var(--filet);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tableau th:first-child {
+  text-align: left;
+  font-weight: 400;
+}
+
+.tableau thead th {
+  font-size: var(--taille-petit);
+  font-weight: 600;
+  color: var(--cacao);
+}
+
+.tableau tbody th {
+  color: var(--cacao);
+}
+
+.variante {
+  display: block;
+  font-size: var(--taille-petit);
+  color: var(--texte);
+}
+
+.total th,
+.total td {
+  font-family: var(--font-titre);
+  font-size: 1.25rem;
+  color: var(--cacao);
+}
+
+.etapes {
+  display: grid;
+  gap: var(--e-3);
+  margin: 0;
+  padding-left: 1.25em;
+}
+
+.etapes li::marker {
+  color: var(--or);
+}
+
+.etape {
+  display: block;
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.date,
+.note {
+  display: block;
+  font-size: var(--taille-petit);
+}

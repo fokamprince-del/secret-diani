@@ -131,3 +131,28 @@ export function getCateringCatalog() {
     serverApi.GET('/api/v1/catering/catalog', { fetch: cached(['catering', 'media']) }),
   );
 }
+
+export function getShopProducts() {
+  return load('catalogue de la boutique', () =>
+    serverApi.GET('/api/v1/shop/products', { fetch: cached(['shop', 'media']) }),
+  );
+}
+
+export async function getShopProduct(slug: string) {
+  if (!SLUG_PATTERN.test(slug)) notFound();
+  return load(
+    `produit « ${slug} »`,
+    () =>
+      serverApi.GET('/api/v1/shop/products/{slug}', {
+        params: { path: { slug } },
+        fetch: cached(['shop', 'media']),
+      }),
+    { notFoundOn404: true },
+  );
+}
+
+export function getKitComparison() {
+  return load('comparatif des kits', () =>
+    serverApi.GET('/api/v1/shop/kits/comparison', { fetch: cached(['shop']) }),
+  );
+}

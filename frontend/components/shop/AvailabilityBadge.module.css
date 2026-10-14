@@ -1,0 +1,16 @@
+.dispo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-1);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--succes);
+}
+
+.dispo[data-statut='low_stock'] {
+  color: var(--terra-d);
+}
+
+.dispo[data-statut='out_of_stock'] {
+  color: var(--texte);
+}

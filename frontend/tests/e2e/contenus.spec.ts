@@ -14,6 +14,8 @@ import {
 const PAGES = [
   '/',
   '/traiteur',
+  '/boutique',
+  '/boutique/kit-debutant',
   '/a-propos',
   '/contact',
   '/faq',

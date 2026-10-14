@@ -1,0 +1,68 @@
+.carte {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--e-4);
+  height: 100%;
+  padding: var(--e-4);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.visuel {
+  border-radius: var(--rayon);
+  overflow: hidden;
+}
+
+.aplat {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+}
+
+.texte {
+  display: grid;
+  align-content: start;
+  gap: var(--e-2);
+  padding-inline: var(--e-2);
+}
+
+.nom {
+  font-size: var(--t-h3);
+}
+
+.lien {
+  color: var(--cacao);
+  background-size: 0% 1px;
+}
+
+/* Carte entièrement cliquable, seul le nom est un lien. */
+.lien::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--rayon);
+}
+
+.lien:focus-visible {
+  outline: none;
+}
+
+.lien:focus-visible::after {
+  outline: var(--focus-anneau);
+  outline-offset: 3px;
+}
+
+.carte:hover .lien {
+  color: var(--terra-d);
+}
+
+.prix {
+  font-size: var(--taille-petit);
+}
+
+.montant {
+  font-family: var(--font-titre);
+  font-size: 1.5rem;
+  color: var(--cacao);
+}

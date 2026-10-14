@@ -1,0 +1,20 @@
+.panier {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding-inline: 4px;
+  border-radius: var(--rayon-pilule);
+  background-color: var(--terra-d);
+  color: var(--blanc);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+}

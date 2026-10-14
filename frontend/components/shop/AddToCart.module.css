@@ -1,0 +1,140 @@
+.achat {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.groupe {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.legende {
+  margin-bottom: var(--e-2);
+  padding: 0;
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.variantes {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.variante {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: var(--e-3) var(--e-4);
+  border: 1px solid var(--nude);
+  border-radius: 10px;
+  background-color: var(--surface);
+  cursor: pointer;
+}
+
+.variante input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.variante:has(input:checked) {
+  border-color: var(--terra-d);
+  box-shadow: inset 0 0 0 1px var(--terra-d);
+  background-color: var(--sable);
+}
+
+.variante:has(input:focus-visible) {
+  outline: var(--focus-anneau);
+  outline-offset: 3px;
+}
+
+.varianteNom {
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.variantePrix {
+  font-size: var(--taille-petit);
+}
+
+.prix {
+  font-family: var(--font-titre);
+  font-size: 2rem;
+  color: var(--cacao);
+}
+
+.ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--e-4);
+}
+
+.quantite {
+  display: grid;
+  gap: var(--e-1);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.pas {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--nude);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--surface);
+}
+
+.pas button {
+  width: var(--cible);
+  height: 46px;
+  border: 0;
+  border-radius: var(--rayon-pilule);
+  background: none;
+  color: var(--terra-d);
+  font-size: 1.25rem;
+}
+
+.pas button:disabled {
+  color: var(--texte-s);
+  cursor: not-allowed;
+}
+
+.pas input {
+  width: 3rem;
+  height: 46px;
+  border: 0;
+  background: none;
+  text-align: center;
+  font-size: 1rem;
+  appearance: textfield;
+}
+
+.pas input::-webkit-inner-spin-button,
+.pas input::-webkit-outer-spin-button {
+  appearance: none;
+}
+
+.ferme {
+  padding: var(--e-3) var(--e-4);
+  border-radius: 10px;
+  background-color: var(--sable);
+}
+
+.ajoute {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-2);
+  font-size: var(--taille-petit);
+  color: var(--succes);
+}
+
+.ajoute svg {
+  flex: none;
+  margin-top: 0.2em;
+}

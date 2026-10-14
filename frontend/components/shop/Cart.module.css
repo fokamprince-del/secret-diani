@@ -1,0 +1,175 @@
+.chargement {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.panier {
+  display: grid;
+  gap: var(--e-7);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .panier {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  }
+
+  .recap {
+    position: sticky;
+    top: calc(var(--hauteur-header) + var(--e-5));
+  }
+}
+
+.articles {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.lignes {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.ligne {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: var(--e-3) var(--e-4);
+  padding: var(--e-4);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.ligne[aria-busy='true'] {
+  opacity: 0.6;
+}
+
+@media (min-width: 48rem) {
+  .ligne {
+    grid-template-columns: 5rem minmax(0, 1fr) auto auto;
+    align-items: center;
+  }
+}
+
+.aplat {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  background-color: var(--sable);
+  color: var(--terra);
+}
+
+.produit {
+  display: grid;
+  gap: var(--e-1);
+}
+
+.nom {
+  font-family: var(--font-titre);
+  font-size: 1.25rem;
+  color: var(--cacao);
+  background-size: 0% 1px;
+}
+
+.nom:hover {
+  background-size: 100% 1px;
+}
+
+.detail {
+  font-size: var(--taille-petit);
+}
+
+.probleme {
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--erreur);
+}
+
+.quantite {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+@media (max-width: 47.99rem) {
+  .quantite {
+    grid-column: 2;
+  }
+
+  .total {
+    grid-column: 2;
+  }
+}
+
+.quantite select {
+  min-width: 4.5rem;
+  min-height: var(--cible);
+  padding: 0 var(--e-3);
+  border: 1px solid var(--nude);
+  border-radius: 10px;
+  background-color: var(--surface);
+  font-size: 1rem;
+}
+
+.retirer {
+  min-height: var(--cible);
+  padding: 0 var(--e-2);
+  border: 0;
+  background: none;
+  color: var(--lien);
+  font-size: var(--taille-petit);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.total {
+  font-family: var(--font-titre);
+  font-size: 1.25rem;
+  color: var(--cacao);
+  font-variant-numeric: tabular-nums;
+}
+
+.recap {
+  display: grid;
+  gap: var(--e-4);
+  padding: var(--e-6);
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+}
+
+.recapTitre {
+  font-size: var(--t-h3);
+}
+
+.montants {
+  display: grid;
+  gap: var(--e-2);
+  margin: 0;
+}
+
+.montants div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--e-4);
+}
+
+.montants dd {
+  margin: 0;
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.retrait,
+.mention {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-2);
+  font-size: var(--taille-petit);
+}
+
+.retrait svg,
+.mention svg {
+  flex: none;
+  margin-top: 0.2em;
+  color: var(--terra);
+}
