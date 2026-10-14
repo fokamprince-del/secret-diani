@@ -1,6 +1,6 @@
 # Personnalité — Les Secrets de Diani
 
-Document de marque, **à valider (et à faire relire par Diani)** avant toute modification du site. Il guide les textes, les photos et le mouvement. Il ne remplace pas le cahier des charges : palette crème / nude / camel / brun doux, or en micro-accent, hero sans visage, aucun avis inventé.
+Document de marque. **Validé le 14 octobre 2026** : signature A (trait de crème) avec la note manuscrite B en accent rare ; vouvoiement chaleureux. Reste à faire relire la voix et les phrases par Diani. Il guide les textes, les photos et le mouvement. Il ne remplace pas le cahier des charges : palette crème / nude / camel / brun doux, or en micro-accent, hero sans visage, aucun avis inventé.
 
 Les phrases ci-dessous sont des **propositions de ton** : elles ne prêtent à Diani aucun fait (années d'expérience, nombre de clientes, origines) qu'elle n'aurait pas confirmé.
 
