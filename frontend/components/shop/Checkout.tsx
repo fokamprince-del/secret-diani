@@ -100,6 +100,10 @@ export function Checkout() {
     }
   }, [user, setValue]);
 
+  useEffect(() => {
+    if (methods && !methods.stripe && methods.paypal) setValue('provider', 'paypal');
+  }, [methods, setValue]);
+
   const [shippingRateId, billingSame, shippingCountry] = useWatch({
     control,
     name: ['shippingRateId', 'billingSame', 'shipping.country'],
@@ -228,6 +232,7 @@ export function Checkout() {
   }
 
   const providers = PROVIDERS.filter((provider) => methods[provider.value]);
+  const canPay = providers.length > 0;
 
   return (
     <form noValidate onSubmit={onSubmit} onFocus={activate} className={styles.commande}>
@@ -402,6 +407,12 @@ export function Checkout() {
 
         <fieldset className={styles.etape}>
           <legend className={styles.legende}>3. Paiement</legend>
+          {!canPay && (
+            <p className={styles.alerte} role="status">
+              Le paiement en ligne est momentanément indisponible. Votre panier est conservé :
+              réessayez un peu plus tard, ou <Link href="/contact">écrivez-nous</Link>.
+            </p>
+          )}
           <div className={styles.options}>
             {providers.map((provider) => (
               <label key={provider.value} className={styles.option}>
@@ -478,7 +489,7 @@ export function Checkout() {
             </>
           )}
         </FormStatus>
-        <Button type="submit" loading={isSubmitting} fullWidth>
+        <Button type="submit" loading={isSubmitting} disabled={!canPay} fullWidth>
           <Icon name="lock" size={18} />
           Payer {formatPrice(total)}
         </Button>

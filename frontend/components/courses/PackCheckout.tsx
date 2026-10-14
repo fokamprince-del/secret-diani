@@ -54,6 +54,7 @@ export function PackCheckout({ slug }: { slug: string }) {
   const router = useRouter();
   const [pack, setPack] = useState<Pack | null | undefined>(undefined);
   const [salesOpen, setSalesOpen] = useState(true);
+  const [methods, setMethods] = useState<{ stripe: boolean; paypal: boolean } | null>(null);
   const [failure, setFailure] = useState<{ text: string; owned?: boolean } | null>(null);
   const { activate, getToken, reset, container } = useCaptcha();
 
@@ -67,8 +68,10 @@ export function PackCheckout({ slug }: { slug: string }) {
     Promise.all([
       browserApi.GET('/api/v1/courses/packs').then(unwrap),
       browserApi.GET('/api/v1/site/settings').then(unwrap),
+      browserApi.GET('/api/v1/payments/methods').then(unwrap),
     ]).then(
-      ([packs, settings]) => {
+      ([packs, settings, paymentMethods]) => {
+        setMethods(paymentMethods);
         setPack(packs.find((entry) => entry.slug === slug) ?? null);
         setSalesOpen(settings.features.courseSalesOpen);
       },
@@ -95,6 +98,10 @@ export function PackCheckout({ slug }: { slug: string }) {
       provider: 'stripe',
     },
   });
+
+  useEffect(() => {
+    if (methods && !methods.stripe && methods.paypal) setValue('provider', 'paypal');
+  }, [methods, setValue]);
 
   useEffect(() => {
     if (user) {
@@ -212,19 +219,29 @@ export function PackCheckout({ slug }: { slug: string }) {
         </fieldset>
         <fieldset className={styles.etape}>
           <legend className={styles.legende}>Paiement</legend>
+          {methods && !methods.stripe && !methods.paypal && (
+            <p className={styles.alerte} role="status">
+              Le paiement en ligne est momentanément indisponible. Réessayez un peu plus tard, ou{' '}
+              <Link href="/contact">écrivez-nous</Link>.
+            </p>
+          )}
           <div className={styles.options}>
-            <label className={styles.option}>
-              <input type="radio" value="stripe" {...register('provider')} />
-              <span className={styles.optionNom}>Carte bancaire</span>
-              <span className={styles.optionDetail}>
-                Apple Pay et Google Pay acceptés, via Stripe
-              </span>
-            </label>
-            <label className={styles.option}>
-              <input type="radio" value="paypal" {...register('provider')} />
-              <span className={styles.optionNom}>PayPal</span>
-              <span className={styles.optionDetail}>Avec ou sans compte PayPal</span>
-            </label>
+            {methods?.stripe && (
+              <label className={styles.option}>
+                <input type="radio" value="stripe" {...register('provider')} />
+                <span className={styles.optionNom}>Carte bancaire</span>
+                <span className={styles.optionDetail}>
+                  Apple Pay et Google Pay acceptés, via Stripe
+                </span>
+              </label>
+            )}
+            {methods?.paypal && (
+              <label className={styles.option}>
+                <input type="radio" value="paypal" {...register('provider')} />
+                <span className={styles.optionNom}>PayPal</span>
+                <span className={styles.optionDetail}>Avec ou sans compte PayPal</span>
+              </label>
+            )}
           </div>
           <CheckboxField
             label={
@@ -270,7 +287,12 @@ export function PackCheckout({ slug }: { slug: string }) {
             </>
           )}
         </FormStatus>
-        <Button type="submit" loading={isSubmitting} fullWidth>
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          disabled={!methods || (!methods.stripe && !methods.paypal)}
+          fullWidth
+        >
           <Icon name="lock" size={18} />
           Payer {formatPrice(pack.priceCents)}
         </Button>
