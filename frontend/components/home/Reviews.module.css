@@ -1,0 +1,84 @@
+.avis {
+  padding-block: var(--section);
+  background-color: var(--sable);
+}
+
+.entete {
+  display: grid;
+  gap: var(--e-3);
+  margin-bottom: var(--e-7);
+}
+
+.moyenne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+/* Mobile : cartes côte à côte, défilement au doigt avec arrêt sur chaque carte. */
+.defilement {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gouttiere);
+  scrollbar-width: thin;
+  padding-bottom: var(--e-4);
+}
+
+.liste {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(82%, 22rem);
+  gap: var(--e-5);
+}
+
+@media (min-width: 64rem) {
+  .defilement {
+    overflow: visible;
+  }
+
+  .liste {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.carte {
+  scroll-snap-align: start;
+}
+
+.figure {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--e-4);
+  height: 100%;
+  margin: 0;
+  padding: var(--e-6);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.citation {
+  margin: 0;
+  font-family: var(--font-titre);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--cacao);
+}
+
+.auteur {
+  display: grid;
+  gap: var(--e-1);
+  padding-top: var(--e-4);
+  border-top: 1px solid var(--filet);
+}
+
+.nom {
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.details {
+  font-size: var(--taille-petit);
+}

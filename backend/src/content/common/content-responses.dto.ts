@@ -141,6 +141,8 @@ export class ArticleDetailDto extends ArticleCardDto {
   relatedArticles!: ArticleCardDto[];
 
   @ApiProperty({
+    type: 'object',
+    additionalProperties: true,
     description: 'Données structurées schema.org (Article), à insérer telles quelles',
   })
   jsonLd!: Record<string, unknown>;
@@ -194,7 +196,11 @@ export class FaqListDto {
   @ApiProperty({ type: [FaqItemDto] })
   items!: FaqItemDto[];
 
-  @ApiProperty({ description: 'Données structurées schema.org (FAQPage)' })
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: true,
+    description: 'Données structurées schema.org (FAQPage)',
+  })
   jsonLd!: Record<string, unknown>;
 }
 

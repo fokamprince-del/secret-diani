@@ -1,0 +1,19 @@
+/* Repère du texte masqué : sans lui, il s'échapperait d'une zone défilante (débordement). */
+.note {
+  position: relative;
+  display: inline-flex;
+}
+
+.etoiles {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.pleine {
+  color: var(--terra);
+  fill: currentColor;
+}
+
+.vide {
+  color: var(--nude);
+}

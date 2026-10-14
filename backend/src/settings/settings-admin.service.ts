@@ -7,7 +7,9 @@ import { AppException } from '../common/errors/app.exception';
 import { ErrorCode } from '../common/errors/error-codes';
 import { ContentCacheService } from '../content/cache/content-cache.service';
 import { notFound } from '../content/common/content.helpers';
+import { PUBLIC_IMAGE_SELECT, type PublicImage, toPublicImage } from '../media/media.types';
 import { PrismaService } from '../prisma/prisma.service';
+import { DIANI_WORD, HERO_IMAGE, UNIVERSES } from './home.settings';
 import {
   CONTACT_EMAIL,
   COURSE_SALES_OPEN,
@@ -43,6 +45,14 @@ export interface PublicSiteSettings {
   socialLinks: z.infer<typeof SOCIAL_LINKS.schema>;
   announcement: z.infer<typeof ANNOUNCEMENT.schema> | null;
   features: { shopOpen: boolean; courseSalesOpen: boolean };
+}
+
+export type UniverseKey = 'catering' | 'courses' | 'shop';
+
+export interface PublicHome {
+  heroImage: PublicImage | null;
+  universes: Record<UniverseKey, { text: string; image: PublicImage | null }>;
+  dianiWord: { text: string; signature: string } | null;
 }
 
 /** Chemin d'une erreur Zod, à la manière des erreurs de validation des DTO (`value.text`). */
@@ -143,6 +153,42 @@ export class SettingsAdminService {
         socialLinks,
         announcement: announcement.enabled ? announcement : null,
         features: { shopOpen, courseSalesOpen },
+      };
+    });
+  }
+
+  /** Contenus de l'accueil : textes des univers, mot de Diani et images prêtes à afficher. */
+  async publicHome(): Promise<PublicHome> {
+    return this.cache.getOrSet('site:home', async () => {
+      const [heroImageId, universes, dianiWord] = await this.settings.getMany([
+        HERO_IMAGE,
+        UNIVERSES,
+        DIANI_WORD,
+      ]);
+      const ids = [heroImageId, ...Object.values(universes).map((u) => u.imageId)].filter(
+        (id) => id !== '',
+      );
+      const media =
+        ids.length > 0
+          ? await this.prisma.media.findMany({
+              where: { id: { in: ids } },
+              select: { id: true, ...PUBLIC_IMAGE_SELECT },
+            })
+          : [];
+      // Image supprimée, en cours de traitement ou vidéo : rien n'est affiché (fond uni).
+      const image = (id: string) => toPublicImage(media.find((m) => m.id === id) ?? null);
+      const universe = ({ text, imageId }: { text: string; imageId: string }) => ({
+        text,
+        image: image(imageId),
+      });
+      return {
+        heroImage: image(heroImageId),
+        universes: {
+          catering: universe(universes.catering),
+          courses: universe(universes.courses),
+          shop: universe(universes.shop),
+        },
+        dianiWord: dianiWord.text ? dianiWord : null,
       };
     });
   }

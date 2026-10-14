@@ -1,12 +1,23 @@
 import Link from 'next/link';
+import type { SiteSettings } from '@/lib/api/types';
+import { SITE_NAME } from '@/lib/seo';
+import type { SocialLink } from '@/lib/social';
+import { NewsletterForm } from '../forms/NewsletterForm';
 import { Icon } from '../ui/Icon';
 import { Logo } from './Logo';
 import { ManageCookiesButton } from './ManageCookiesButton';
-import { footerNavigation, socialLinks } from './navigation';
+import { footerNavigation } from './navigation';
 import styles from './Footer.module.css';
 
-export function Footer() {
+interface FooterProps {
+  /** Réglages publics de l'API ; `null` si elle n'a pas répondu au build. */
+  settings: SiteSettings | null;
+  socials: SocialLink[];
+}
+
+export function Footer({ settings, socials }: FooterProps) {
   const year = new Date().getFullYear();
+  const email = settings?.contactEmail;
   return (
     <footer className={styles.pied}>
       <div className={`conteneur ${styles.grille}`}>
@@ -16,16 +27,32 @@ export function Footer() {
             Traiteur, formations et boutique d’accessoires pour créer, apprendre et se faire
             plaisir.
           </p>
-          <a
-            href={socialLinks.instagram.href}
-            className={`${styles.reseau} sans-filet`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Icon name="instagram" size={20} />
-            {socialLinks.instagram.handle}
-            <span className="visually-hidden"> sur Instagram (nouvel onglet)</span>
-          </a>
+          {(socials.length > 0 || email) && (
+            <ul role="list" className={styles.reseaux}>
+              {socials.map((social) => (
+                <li key={social.network}>
+                  <a
+                    href={social.href}
+                    className={`${styles.reseau} sans-filet`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <Icon name={social.network} size={20} />
+                    {social.handle}
+                    <span className="visually-hidden"> sur {social.label} (nouvel onglet)</span>
+                  </a>
+                </li>
+              ))}
+              {email && (
+                <li>
+                  <a href={`mailto:${email}`} className={`${styles.reseau} sans-filet`}>
+                    <Icon name="mail" size={20} />
+                    {email}
+                  </a>
+                </li>
+              )}
+            </ul>
+          )}
         </div>
 
         <nav aria-labelledby="pied-univers" className={styles.colonne}>
@@ -59,8 +86,14 @@ export function Footer() {
         </nav>
       </div>
 
+      <div className={`conteneur ${styles.lettre}`}>
+        <NewsletterForm />
+      </div>
+
       <div className={`conteneur ${styles.legal}`}>
-        <p>© {year} Les Secrets de Diani</p>
+        <p>
+          © {year} {SITE_NAME}
+        </p>
         <nav aria-label="Informations légales">
           <ul role="list" className={styles.liensLegaux}>
             {footerNavigation.legal.map((item) => (

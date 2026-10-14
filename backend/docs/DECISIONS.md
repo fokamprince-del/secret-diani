@@ -455,3 +455,8 @@ Le hachage des mots de passe (Argon2id, 19 Mio, 2 passes : minimum de l'OWASP) c
 
 ### D-095 · Chaîne de livraison
 Dependabot (npm backend et frontend, images Docker, actions GitHub), audit npm bloquant (production : toute sévérité ; outillage : haute et critique), Trivy sur l'image (haute et critique corrigeables), shellcheck sur les scripts d'exploitation, actions et images en versions figées. Les mises à jour mineures sont regroupées chaque semaine ; chacune passe la CI complète avant fusion.
+
+## Après la phase 10 — besoins du frontend
+
+### D-096 · Contenus de l'accueil en paramètres
+Le frontend (phase 2) doit afficher sur l'accueil une image d'ambiance, un texte court par univers et le mot de Diani, tous modifiables sans développeur. Plutôt qu'un nouveau modèle de données, ce sont trois paramètres du groupe « Accueil » (`home.hero_image_id`, `home.universes`, `home.diani_word`) lus par `GET /site/home`, qui résout les identifiants de la médiathèque en images prêtes (`PublicImage`) : une image supprimée ou pas encore traitée n'est jamais exposée (fond uni). Une image se désigne par son identifiant (pas d'URL libre : aucun contenu tiers). Modification → revalidation de l'étiquette `site` ; une modification de la médiathèque invalide aussi le cache Redis. La vidéo d'ambiance du hero est reportée : l'image seule respecte le budget de performance (LCP).

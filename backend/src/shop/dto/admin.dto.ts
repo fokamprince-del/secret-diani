@@ -85,7 +85,7 @@ export class KitItemInputDto {
   @Max(1000)
   quantity!: number;
 
-  @ApiPropertyOptional({ maxLength: 300 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 300 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -125,7 +125,7 @@ export class CreateShopProductDto {
   @IsEnum(ShopProductKind)
   kind!: ShopProductKind;
 
-  @ApiPropertyOptional({ maxLength: 300 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 300 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -170,14 +170,14 @@ export class CreateShopProductDto {
   @IsBoolean()
   visible?: boolean;
 
-  @ApiPropertyOptional({ maxLength: 70 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 70 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
   @MaxLength(70)
   seoTitle?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 160 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 160 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -410,7 +410,7 @@ export class CreateShippingRateDto {
   @Max(MAX_PRICE_CENTS)
   freeFromCents?: number | null;
 
-  @ApiPropertyOptional({ example: '2 à 4 jours ouvrés' })
+  @ApiPropertyOptional({ type: String, nullable: true, example: '2 à 4 jours ouvrés' })
   @IsOptional()
   @EmptyToNull()
   @IsString()

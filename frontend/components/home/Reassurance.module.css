@@ -1,0 +1,43 @@
+.engagements {
+  padding-block: var(--e-8);
+  border-top: 1px solid var(--filet);
+}
+
+.liste {
+  display: grid;
+  gap: var(--e-6);
+}
+
+@media (min-width: 40rem) {
+  .liste {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .liste {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.item {
+  display: grid;
+  gap: var(--e-2);
+  align-content: start;
+}
+
+.icone {
+  margin-bottom: var(--e-2);
+  color: var(--terra);
+}
+
+.titre {
+  font-family: var(--font-texte);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.texte {
+  font-size: var(--taille-petit);
+}

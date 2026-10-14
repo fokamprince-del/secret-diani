@@ -43,7 +43,7 @@ export class CreateCateringCategoryDto {
   @MaxLength(120)
   slug?: string;
 
-  @ApiPropertyOptional({ maxLength: 1000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 1000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -210,7 +210,7 @@ export class CreateCateringProductDto {
   @MaxLength(160)
   slug?: string;
 
-  @ApiPropertyOptional({ maxLength: 2000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -267,14 +267,14 @@ export class CreateCateringProductDto {
   @IsBoolean()
   visible?: boolean;
 
-  @ApiPropertyOptional({ maxLength: 70 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 70 })
   @IsOptional()
   @EmptyToNull()
   @IsString()
   @MaxLength(70)
   seoTitle?: string | null;
 
-  @ApiPropertyOptional({ maxLength: 160 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 160 })
   @IsOptional()
   @EmptyToNull()
   @IsString()

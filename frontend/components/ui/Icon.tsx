@@ -52,6 +52,28 @@ const paths = {
     </>
   ),
   chat: <path d="M5 18.5V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H8l-3 2.5z" />,
+  mail: (
+    <>
+      <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+      <path d="M4 7l8 6 8-6" />
+    </>
+  ),
+  star: <path d="M12 4.5l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z" />,
+  tiktok: (
+    <path d="M14.5 4c.4 2.4 1.9 3.9 4.5 4.2v3a7.3 7.3 0 0 1-4.5-1.5v5.6a5.2 5.2 0 1 1-5.2-5.2h.7v3a2.2 2.2 0 1 0 1.5 2.1V4h3z" />
+  ),
+  facebook: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <path d="M15 8.5h-1.5a2 2 0 0 0-2 2V20.5M9.5 13h5" />
+    </>
+  ),
+  youtube: (
+    <>
+      <rect x="3" y="6" width="18" height="12" rx="4" />
+      <path d="M10.5 9.5v5l4-2.5z" />
+    </>
+  ),
 } as const;
 
 export type IconName = keyof typeof paths;

@@ -38,7 +38,12 @@ export class CreateReviewDto {
   @MaxLength(2000)
   content!: string;
 
-  @ApiPropertyOptional({ example: 'Anniversaire, 40 personnes', maxLength: 120 })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: 'Anniversaire, 40 personnes',
+    maxLength: 120,
+  })
   @IsOptional()
   @Trim()
   @IsString()

@@ -1006,10 +1006,1978 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/catering/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Catalogue complet (plateaux, à la carte, layer cakes), parfums et conditions */
+    get: operations['CateringController_catalogue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/catering/products/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fiche détail d’un produit (SEO, données structurées) */
+    get: operations['CateringController_product'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/catering/conditions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Conditions de commande (acompte, validation, solde) */
+    get: operations['CateringController_conditions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/catering/slots': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Créneaux disponibles (commande en ligne uniquement) */
+    get: operations['CateringController_availableSlots'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/catering/orders': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Commander en ligne (parcours avancé, désactivé par défaut)
+     * @description Sélection et créneau obligatoires ; le total et l’acompte sont calculés par le serveur. Paiement de l’acompte en ligne : phase Paiements.
+     */
+    post: operations['CateringController_order'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/catering-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Envoyer une demande personnalisée
+     * @description Anti-spam : limitation de débit, piège à robots (`website`), Cloudflare Turnstile (`captchaToken`, obligatoire en production). Envoie un accusé de réception à la cliente et une notification à Diani ; renvoie un lien WhatsApp pré-rempli.
+     */
+    post: operations['CateringRequestsController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCateringCatalogController_listCategories'];
+    put?: never;
+    post: operations['AdminCateringCatalogController_createCategory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/categories/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Réordonner les catégories (glisser-déposer) */
+    put: operations['AdminCateringCatalogController_reorderCategories'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/categories/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Supprimer une catégorie vide */
+    delete: operations['AdminCateringCatalogController_removeCategory'];
+    options?: never;
+    head?: never;
+    patch: operations['AdminCateringCatalogController_updateCategory'];
+    trace?: never;
+  };
+  '/api/v1/admin/catering/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCateringCatalogController_listProducts'];
+    put?: never;
+    /** Créer un produit (variantes, parfums, galerie) */
+    post: operations['AdminCateringCatalogController_createProduct'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/products/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Réordonner les produits d’une catégorie (glisser-déposer) */
+    put: operations['AdminCateringCatalogController_reorderProducts'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/products/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCateringCatalogController_getProduct'];
+    put?: never;
+    post?: never;
+    delete: operations['AdminCateringCatalogController_removeProduct'];
+    options?: never;
+    head?: never;
+    /**
+     * Modifier un produit (prix, textes, visibilité, photos…)
+     * @description Les tableaux fournis (variantes, parfums, images) remplacent l’existant.
+     */
+    patch: operations['AdminCateringCatalogController_updateProduct'];
+    trace?: never;
+  };
+  '/api/v1/admin/catering/flavours': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCateringCatalogController_listFlavours'];
+    put?: never;
+    post: operations['AdminCateringCatalogController_createFlavour'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/flavours/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['AdminCateringCatalogController_reorderFlavours'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/flavours/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['AdminCateringCatalogController_removeFlavour'];
+    options?: never;
+    head?: never;
+    patch: operations['AdminCateringCatalogController_updateFlavour'];
+    trace?: never;
+  };
+  '/api/v1/admin/catering/slots': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Créneaux de retrait et de livraison (à venir et 30 derniers jours) */
+    get: operations['AdminCateringCatalogController_listSlots'];
+    put?: never;
+    post: operations['AdminCateringCatalogController_createSlot'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering/slots/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['AdminCateringCatalogController_removeSlot'];
+    options?: never;
+    head?: never;
+    patch: operations['AdminCateringCatalogController_updateSlot'];
+    trace?: never;
+  };
+  '/api/v1/admin/catering-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Demandes (filtres : statut, dates, référence, e-mail, nom) */
+    get: operations['AdminCateringRequestsController_list'];
+    put?: never;
+    /** Saisir une demande reçue par WhatsApp ou téléphone */
+    post: operations['AdminCateringRequestsController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering-requests/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCateringRequestsController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Modifier les informations, le total convenu ou les notes internes */
+    patch: operations['AdminCateringRequestsController_update'];
+    trace?: never;
+  };
+  '/api/v1/admin/catering-requests/{id}/deposit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Enregistrer l’acompte reçu
+     * @description Montant calculé automatiquement sur le total convenu (10 € sous 50 €, 20 € à partir de 50 €).
+     */
+    post: operations['AdminCateringRequestsController_recordDeposit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering-requests/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Changer le statut (contactée, confirmée, livrée, annulée)
+     * @description Confirmer exige l’acompte reçu et envoie l’e-mail de confirmation à la cliente.
+     */
+    post: operations['AdminCateringRequestsController_changeStatus'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catering-requests/{id}/recap': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Récapitulatif prêt à copier (WhatsApp, e-mail) */
+    get: operations['AdminCateringRequestsController_recap'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Kits et accessoires (prix, image, disponibilité en direct) */
+    get: operations['ShopController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/products/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fiche produit : variantes, composition, photos, SEO, données structurées */
+    get: operations['ShopController_detail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/kits/comparison': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Tableau comparatif des kits (déduit de leur composition) */
+    get: operations['ShopController_comparison'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/orders/track': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Suivi d’une commande par le lien signé reçu par e-mail (sans compte) */
+    get: operations['ShopController_track'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/orders/track/invoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Facture d’une commande suivie par lien signé (URL de 5 minutes) */
+    get: operations['ShopController_trackedInvoice'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/cart': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Panier (compte ou invité), recalculé par le serveur
+     * @description Avec `?country=FR`, les options de livraison applicables sont calculées.
+     */
+    get: operations['CartController_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/cart/items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Ajouter au panier (quantité cumulée, plafonnée au stock disponible) */
+    post: operations['CartController_add'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/cart/items/{variantId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Retirer un article */
+    delete: operations['CartController_remove'];
+    options?: never;
+    head?: never;
+    /** Modifier une quantité (0 retire l’article) */
+    patch: operations['CartController_set'];
+    trace?: never;
+  };
+  '/api/v1/shop/checkout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Valider le panier : commande « en attente de paiement », stock réservé 15 minutes
+     * @description Compte facultatif (e-mail obligatoire sans compte). Prix, frais de port et stock recalculés par le serveur. Le paiement (Stripe, PayPal) suit avec la phase Paiements.
+     */
+    post: operations['CartController_checkout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/shop/cart/merge': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Après connexion : fusionner le panier invité (cookie) dans celui du compte
+     * @description Le cookie du panier invité est ensuite effacé.
+     */
+    post: operations['CartMergeController_merge'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/orders': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MyOrdersController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/orders/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MyOrdersController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/orders/{id}/invoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Facture PDF (URL signée de 5 minutes) */
+    get: operations['MyOrdersController_invoice'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminShopController_listProducts'];
+    put?: never;
+    /** Créer un produit ou un kit (variantes, composition, photos) */
+    post: operations['AdminShopController_createProduct'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/products/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Réordonner les produits (glisser-déposer) */
+    put: operations['AdminShopController_reorderProducts'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/products/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminShopController_getProduct'];
+    put?: never;
+    post?: never;
+    delete: operations['AdminShopController_removeProduct'];
+    options?: never;
+    head?: never;
+    /**
+     * Modifier un produit (prix, textes, photos, visibilité…)
+     * @description Les tableaux fournis remplacent l’existant ; une variante déjà vendue est désactivée, jamais effacée.
+     */
+    patch: operations['AdminShopController_updateProduct'];
+    trace?: never;
+  };
+  '/api/v1/admin/shop/stock': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Stock par variante : en stock, réservé, disponible, seuil d’alerte */
+    get: operations['AdminShopController_listStock'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/stock/{variantId}/adjust': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Réassort ou inventaire (+/−), historisé */
+    post: operations['AdminShopController_adjustStock'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/stock/{variantId}/threshold': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Seuil d’alerte « stock bas » */
+    put: operations['AdminShopController_setThreshold'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/stock/{variantId}/movements': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Historique des mouvements (200 derniers) */
+    get: operations['AdminShopController_movements'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/shipping-rates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminShopController_listRates'];
+    put?: never;
+    post: operations['AdminShopController_createRate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/shipping-rates/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['AdminShopController_reorderRates'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/shipping-rates/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['AdminShopController_removeRate'];
+    options?: never;
+    head?: never;
+    patch: operations['AdminShopController_updateRate'];
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Commandes (filtres : statut, dates, référence, e-mail, nom) */
+    get: operations['AdminOrdersController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Export CSV (tableur) des commandes filtrées */
+    get: operations['AdminOrdersController_export'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminOrdersController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Étape logistique : en préparation, expédiée (avec suivi), livrée ; annuler une commande non payée
+     * @description L’expédition envoie l’e-mail de suivi. « Payée » et « remboursée » sont posés par les paiements.
+     */
+    post: operations['AdminOrdersController_changeStatus'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders/{id}/invoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Facture PDF (URL signée de 5 minutes) */
+    get: operations['AdminOrdersController_invoice'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/payments/methods': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Moyens de paiement disponibles */
+    get: operations['PaymentsController_methods'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/payments/checkout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Payer une commande : redirection vers Stripe Checkout ou PayPal
+     * @description Accès par le jeton signé reçu à la validation du panier. Aucune donnée de carte ne transite par l’API. La commande n’est validée qu’après la confirmation du prestataire.
+     */
+    post: operations['PaymentsController_checkout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/payments/paypal/capture': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Retour de PayPal : le serveur capture le paiement validé et confirme la commande */
+    post: operations['PaymentsController_capture'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders/{id}/payments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Paiements et remboursements d’une commande */
+    get: operations['AdminPaymentsController_payments'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/shop/orders/{id}/refunds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Rembourser (total ou partiel) chez le prestataire
+     * @description Montant contrôlé (jamais plus que le payé moins le remboursé). Un remboursement intégral passe la commande en « remboursée » et peut remettre les articles en stock. La cliente est prévenue par e-mail.
+     */
+    post: operations['AdminPaymentsController_refund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/packs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Packs (prix, contenus, avantages, formations incluses) */
+    get: operations['CoursesController_packs'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Formations publiées (formations phares en premier) */
+    get: operations['CoursesController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fiche d’une formation : programme, pack requis, données structurées */
+    get: operations['CoursesController_detail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/{slug}/lessons/{lessonSlug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Leçon : vidéo signée, conseils, fiches, quiz (sans les réponses), progression
+     * @description Leçon d’exemple : ouverte à tous. Sinon, compte et pack requis (403 COURSE_ACCESS_REQUIRED, avec le pack à proposer).
+     */
+    get: operations['CoursesController_lesson'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/packs/{slug}/checkout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Acheter un pack (compte requis) : commande à payer ensuite par /payments/checkout
+     * @description L’accès n’est ouvert qu’à la confirmation du paiement par le prestataire.
+     */
+    post: operations['CoursesController_buy'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mes formations : progression et bouton « Reprendre » */
+    get: operations['MyLearningController_myCourses'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/courses/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MyLearningController_myCourse'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/lessons/{id}/progress': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Reprise de lecture (toutes les ~15 s) et fin de vidéo */
+    put: operations['MyLearningController_progress'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/lessons/{id}/quiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Valider le quiz (correction côté serveur) */
+    post: operations['MyLearningController_quiz'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/lessons/{id}/resources/{resourceId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fiche PDF : URL signée de 5 minutes (409 tant qu’une fiche filigranée est en préparation) */
+    get: operations['MyLearningController_resource'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/certificates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MyLearningController_myCertificates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/certificates/{id}/download': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MyLearningController_downloadCertificate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/courses/{slug}/certificate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Obtenir le certificat d’une formation terminée (nom et prénom requis) */
+    post: operations['MyLearningController_claim'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/perks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Avantages des packs : appels personnalisés restants, fournisseurs offerts… */
+    get: operations['MyLearningController_myPerks'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/call-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MyLearningController_myCalls'];
+    put?: never;
+    /** Demander un appel personnalisé (dans la limite des appels inclus) */
+    post: operations['MyLearningController_requestCall'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/certificates/{number}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Vérification publique d’un certificat par son numéro */
+    get: operations['CertificatesController_verify'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/packs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCoursesController_listPacks'];
+    put?: never;
+    post: operations['AdminCoursesController_createPack'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/packs/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Modifier un pack (prix, contenus, appels inclus, visibilité) */
+    patch: operations['AdminCoursesController_updatePack'];
+    trace?: never;
+  };
+  '/api/v1/admin/courses/accesses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Accès d’une cliente (historique compris) */
+    get: operations['AdminCoursesController_accesses'];
+    put?: never;
+    /** Offrir ou accorder un accès à un pack (e-mail à la cliente) */
+    post: operations['AdminCoursesController_grant'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/accesses/{id}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Retirer un accès */
+    post: operations['AdminCoursesController_revoke'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/stats': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Inscrites, commencées, terminées et taux de complétion par formation */
+    get: operations['AdminCoursesController_stats'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/call-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Demandes d’appel personnalisé */
+    get: operations['AdminCoursesController_calls'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/call-requests/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['AdminCoursesController_updateCall'];
+    trace?: never;
+  };
+  '/api/v1/admin/courses/modules/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Supprimer un module vide */
+    delete: operations['AdminCoursesController_removeModule'];
+    options?: never;
+    head?: never;
+    patch: operations['AdminCoursesController_renameModule'];
+    trace?: never;
+  };
+  '/api/v1/admin/courses/modules/{id}/lessons': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AdminCoursesController_addLesson'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/modules/{id}/lessons/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Réordonner les leçons d’un module (glisser-déposer) */
+    put: operations['AdminCoursesController_reorderLessons'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/lessons/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['AdminCoursesController_removeLesson'];
+    options?: never;
+    head?: never;
+    /** Modifier une leçon (vidéo, conseils, publication, déplacement de module) */
+    patch: operations['AdminCoursesController_updateLesson'];
+    trace?: never;
+  };
+  '/api/v1/admin/courses/lessons/{id}/resources': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Fiches PDF de la leçon (liste complète, dans l’ordre) */
+    put: operations['AdminCoursesController_setResources'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/lessons/{id}/quiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Quiz de la leçon (remplace l’existant) */
+    put: operations['AdminCoursesController_setQuiz'];
+    post?: never;
+    delete: operations['AdminCoursesController_removeQuiz'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminCoursesController_listCourses'];
+    put?: never;
+    post: operations['AdminCoursesController_createCourse'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Réordonner les formations (glisser-déposer) */
+    put: operations['AdminCoursesController_reorderCourses'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Formation complète (modules, leçons, fiches, quiz avec réponses) */
+    get: operations['AdminCoursesController_getCourse'];
+    put?: never;
+    post?: never;
+    delete: operations['AdminCoursesController_removeCourse'];
+    options?: never;
+    head?: never;
+    patch: operations['AdminCoursesController_updateCourse'];
+    trace?: never;
+  };
+  '/api/v1/admin/courses/{id}/publish': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AdminCoursesController_publish'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/{id}/unpublish': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AdminCoursesController_unpublish'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/{id}/modules': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AdminCoursesController_addModule'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/courses/{id}/modules/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['AdminCoursesController_reorderModules'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/contact': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Envoyer un message à Diani
+     * @description Anti-spam : limitation de débit, piège à robots (`website`), Cloudflare Turnstile. Accusé de réception par e-mail.
+     */
+    post: operations['ContactController_send'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/contact-messages': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminContactController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/contact-messages/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminContactController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Suivi : lu, répondu, archivé ; note interne */
+    patch: operations['AdminContactController_update'];
+    trace?: never;
+  };
+  '/api/v1/newsletter/subscribe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * S’inscrire (double opt-in : un e-mail de confirmation est envoyé)
+     * @description Réponse identique que l’adresse soit déjà inscrite ou non.
+     */
+    post: operations['NewsletterController_subscribe'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/newsletter/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Confirmer l’inscription (lien reçu par e-mail, 7 jours, usage unique) */
+    post: operations['NewsletterController_confirm'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/newsletter/unsubscribe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Se désinscrire (lien signé présent dans chaque e-mail) */
+    post: operations['NewsletterController_unsubscribe'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/newsletter/unsubscribe/one-click': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Désinscription en un clic (bouton de la messagerie, RFC 8058) */
+    post: operations['NewsletterController_oneClick'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/newsletter/subscribers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminNewsletterController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/newsletter/subscribers/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Export CSV des abonné·es confirmé·es, avec la preuve du consentement */
+    get: operations['AdminNewsletterController_export'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/newsletter/subscribers/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Effacer un·e abonné·e (droit à l’effacement) */
+    delete: operations['AdminNewsletterController_remove'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/site/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Réglages publics du site (contact, réseaux, bandeau, ventes ouvertes) */
+    get: operations['SiteSettingsController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/site/home': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Contenus de l’accueil (image d’ambiance, univers, mot de Diani) */
+    get: operations['SiteSettingsController_home'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Tous les paramètres modifiables, avec valeur par défaut et schéma */
+    get: operations['AdminSettingsController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/settings/{key}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminSettingsController_get'];
+    /** Modifier un paramètre (validé par son schéma, effet immédiat) */
+    put: operations['AdminSettingsController_update'];
+    post?: never;
+    /** Revenir à la valeur par défaut */
+    delete: operations['AdminSettingsController_reset'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ventes, choses à faire, clientes, formations, newsletter, stocks bas */
+    get: operations['DashboardController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Rechercher des comptes (accès aux formations : /admin/courses/accesses) */
+    get: operations['AdminUsersController_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AdminUsersController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users/{id}/lock': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Suspendre le compte (connexion refusée, appareils déconnectés) */
+    post: operations['AdminUsersController_lock'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users/{id}/unlock': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Réactiver le compte (et lever le verrou anti-force brute) */
+    post: operations['AdminUsersController_unlock'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users/{id}/mfa/reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Réinitialiser la double authentification (téléphone perdu) */
+    post: operations['AdminUsersController_resetMfa'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users/{id}/sessions/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Déconnecter le compte de tous ses appareils */
+    post: operations['AdminUsersController_revokeSessions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/users/{id}/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Exporter les données du compte (demande d’accès RGPD reçue hors ligne) */
+    get: operations['AdminUsersController_export'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    AuditLogDto: {
+      id: string;
+      actorId: string | null;
+      /** @example admin.user_locked */
+      action: string;
+      targetType: string | null;
+      targetId: string | null;
+      /** @description Contexte, sans donnée personnelle */
+      metadata: {
+        [key: string]: unknown;
+      } | null;
+      /** @example 203.0.113.0/24 */
+      ipTruncated: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AuditLogPageDto: {
+      items: components['schemas']['AuditLogDto'][];
+      nextCursor: string | null;
+    };
     FieldErrorDto: {
       /** @example email */
       field: string;
@@ -1176,10 +3144,10 @@ export interface components {
       createdAt: string;
     };
     UpdateProfileDto: {
-      firstName?: Record<string, never> | null;
-      lastName?: Record<string, never> | null;
+      firstName?: string | null;
+      lastName?: string | null;
       /** @example +33 6 12 34 56 78 */
-      phone?: Record<string, never> | null;
+      phone?: string | null;
       marketingConsent?: boolean;
     };
     AddressDto: {
@@ -1300,7 +3268,9 @@ export interface components {
        *       "Content-Type": "image/jpeg"
        *     }
        */
-      headers: Record<string, never>;
+      headers: {
+        [key: string]: string;
+      };
     };
     DownloadUrlDto: {
       /** @description URL signée, valable 5 minutes */
@@ -1382,7 +3352,9 @@ export interface components {
       relatedCourseSlug: string | null;
       relatedArticles: components['schemas']['ArticleCardDto'][];
       /** @description Données structurées schema.org (Article), à insérer telles quelles */
-      jsonLd: Record<string, never>;
+      jsonLd: {
+        [key: string]: unknown;
+      };
     };
     AdminArticleDto: {
       id: string;
@@ -1429,15 +3401,15 @@ export interface components {
       excerpt: string;
       /** @description Contenu en Markdown (le HTML brut est ignoré) */
       bodyMarkdown: string;
-      categoryId?: Record<string, never> | null;
+      categoryId?: string | null;
       /** @description Image de couverture (média prêt) */
-      coverMediaId?: Record<string, never> | null;
+      coverMediaId?: string | null;
       /** @description Texte alternatif de la couverture */
       coverAlt?: string;
-      seoTitle?: Record<string, never> | null;
-      seoDescription?: Record<string, never> | null;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
       /** @description Formation mise en avant en fin d’article */
-      relatedCourseSlug?: Record<string, never> | null;
+      relatedCourseSlug?: string | null;
     };
     UpdateArticleDto: {
       /** @example Réussir sa crème au beurre */
@@ -1451,15 +3423,15 @@ export interface components {
       excerpt?: string;
       /** @description Contenu en Markdown (le HTML brut est ignoré) */
       bodyMarkdown?: string;
-      categoryId?: Record<string, never> | null;
+      categoryId?: string | null;
       /** @description Image de couverture (média prêt) */
-      coverMediaId?: Record<string, never> | null;
+      coverMediaId?: string | null;
       /** @description Texte alternatif de la couverture */
       coverAlt?: string;
-      seoTitle?: Record<string, never> | null;
-      seoDescription?: Record<string, never> | null;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
       /** @description Formation mise en avant en fin d’article */
-      relatedCourseSlug?: Record<string, never> | null;
+      relatedCourseSlug?: string | null;
     };
     PublishArticleDto: {
       /**
@@ -1482,7 +3454,7 @@ export interface components {
       name: string;
       /** @description Généré depuis le nom si absent */
       slug?: string;
-      description?: Record<string, never> | null;
+      description?: string | null;
       /** @default 0 */
       position: number;
     };
@@ -1491,7 +3463,7 @@ export interface components {
       name?: string;
       /** @description Généré depuis le nom si absent */
       slug?: string;
-      description?: Record<string, never> | null;
+      description?: string | null;
       /** @default 0 */
       position: number;
     };
@@ -1526,8 +3498,8 @@ export interface components {
       bodyMarkdown: string;
       /** @description Visible sur le site */
       published: boolean;
-      seoTitle?: Record<string, never> | null;
-      seoDescription?: Record<string, never> | null;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
     };
     FaqItemDto: {
       id: string;
@@ -1541,7 +3513,9 @@ export interface components {
     FaqListDto: {
       items: components['schemas']['FaqItemDto'][];
       /** @description Données structurées schema.org (FAQPage) */
-      jsonLd: Record<string, never>;
+      jsonLd: {
+        [key: string]: unknown;
+      };
     };
     AdminFaqDto: {
       id: string;
@@ -1622,7 +3596,7 @@ export interface components {
       rating: number;
       content: string;
       /** @example Anniversaire, 40 personnes */
-      occasion?: Record<string, never>;
+      occasion?: string | null;
       /**
        * @description Date de réception de l’avis
        * @example 2026-09-12
@@ -1645,7 +3619,7 @@ export interface components {
       rating?: number;
       content?: string;
       /** @example Anniversaire, 40 personnes */
-      occasion?: Record<string, never>;
+      occasion?: string | null;
       /**
        * @description Date de réception de l’avis
        * @example 2026-09-12
@@ -1667,6 +3641,2099 @@ export interface components {
       /** @enum {string} */
       changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
       priority: number;
+    };
+    CompositionItemDto: {
+      /** @example mini burgers */
+      label: string;
+      /** @example 5 */
+      quantity: number | null;
+    };
+    CateringVariantDto: {
+      id: string;
+      /** @example 6–8 parts */
+      label: string;
+      /**
+       * @description Prix en centimes (EUR)
+       * @example 5000
+       */
+      priceCents: number;
+      servingsMin: number | null;
+      servingsMax: number | null;
+    };
+    FlavourDto: {
+      id: string;
+      /** @example mangue-passion */
+      slug: string;
+      /** @example Mangue-passion */
+      name: string;
+    };
+    CateringProductCardDto: {
+      id: string;
+      slug: string;
+      name: string;
+      description: string | null;
+      composition: components['schemas']['CompositionItemDto'][];
+      /** @description Tailles ou conditionnements, dans l’ordre */
+      variants: components['schemas']['CateringVariantDto'][];
+      /** @description Prix le plus bas (« à partir de »), en centimes */
+      fromPriceCents: number;
+      /** @description Nombre maximal de parfums au choix (0 = sans parfum) */
+      maxFlavours: number;
+      /** @description Parfums proposés pour ce produit */
+      flavours: components['schemas']['FlavourDto'][];
+      /** @description Vignette (1re image) */
+      image: components['schemas']['PublicImageDto'] | null;
+      /** @description Galerie complète */
+      gallery: components['schemas']['PublicImageDto'][];
+      /** @description Bouton « Contacter » : WhatsApp avec message pré-rempli (null sans numéro) */
+      whatsappUrl: string | null;
+    };
+    CateringCategoryDto: {
+      slug: string;
+      name: string;
+      description: string | null;
+      /** @enum {string} */
+      kind: 'platter' | 'a_la_carte' | 'layer_cake';
+      products: components['schemas']['CateringProductCardDto'][];
+    };
+    DepositRuleDto: {
+      /**
+       * @description Seuil en centimes
+       * @example 5000
+       */
+      thresholdCents: number;
+      /**
+       * @description Acompte sous le seuil, en centimes
+       * @example 1000
+       */
+      belowCents: number;
+      /**
+       * @description Acompte à partir du seuil, en centimes
+       * @example 2000
+       */
+      fromCents: number;
+    };
+    CateringConditionsDto: {
+      /** @description Conditions de commande, à afficher telles quelles */
+      items: string[];
+      deposit: components['schemas']['DepositRuleDto'];
+      /** @description Délai minimal entre la demande et l’événement (jours) */
+      minNoticeDays: number;
+      /** @description Commande en ligne ouverte (panier, créneau, acompte en ligne) ; sinon contact */
+      onlineOrdering: boolean;
+      /** @description Lien WhatsApp général (null sans numéro configuré) */
+      whatsappUrl: string | null;
+    };
+    CateringCatalogDto: {
+      categories: components['schemas']['CateringCategoryDto'][];
+      /** @description Tous les parfums disponibles */
+      flavours: components['schemas']['FlavourDto'][];
+      conditions: components['schemas']['CateringConditionsDto'];
+    };
+    CateringProductDetailDto: {
+      id: string;
+      slug: string;
+      name: string;
+      description: string | null;
+      composition: components['schemas']['CompositionItemDto'][];
+      /** @description Tailles ou conditionnements, dans l’ordre */
+      variants: components['schemas']['CateringVariantDto'][];
+      /** @description Prix le plus bas (« à partir de »), en centimes */
+      fromPriceCents: number;
+      /** @description Nombre maximal de parfums au choix (0 = sans parfum) */
+      maxFlavours: number;
+      /** @description Parfums proposés pour ce produit */
+      flavours: components['schemas']['FlavourDto'][];
+      /** @description Vignette (1re image) */
+      image: components['schemas']['PublicImageDto'] | null;
+      /** @description Galerie complète */
+      gallery: components['schemas']['PublicImageDto'][];
+      /** @description Bouton « Contacter » : WhatsApp avec message pré-rempli (null sans numéro) */
+      whatsappUrl: string | null;
+      category: components['schemas']['CategoryRefDto'];
+      seo: components['schemas']['SeoDto'];
+      /** @description Données structurées schema.org (Product + offres) */
+      jsonLd: {
+        [key: string]: unknown;
+      };
+    };
+    CateringSlotDto: {
+      id: string;
+      /** @enum {string} */
+      fulfilment: 'pickup' | 'delivery';
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      endsAt: string;
+      /** @description Places restantes */
+      remaining: number;
+    };
+    RequestItemInputDto: {
+      /** @description Variante choisie (taille, conditionnement) */
+      variantId: string;
+      /** @example 1 */
+      quantity: number;
+      /** @description Parfums choisis (layer cakes) */
+      flavourIds?: string[];
+    };
+    CreateOnlineCateringOrderDto: {
+      /** @example Awa */
+      firstName: string;
+      /** @example Diallo */
+      lastName?: string | null;
+      /** @example cliente@example.com */
+      email: string;
+      /** @example +33612345678 */
+      phone?: string | null;
+      /**
+       * @description Date de l’événement
+       * @example 2026-11-14
+       */
+      eventDate: string;
+      /** @example 40 */
+      guestCount?: number | null;
+      /** @enum {string} */
+      fulfilment?: 'pickup' | 'delivery';
+      /** @description Ville ou adresse (livraison seulement) */
+      deliveryAddress?: string | null;
+      message?: string | null;
+      /** @description Sélection facultative (le total estimé est calculé par le serveur) */
+      items?: components['schemas']['RequestItemInputDto'][];
+      /** @description Jeton Cloudflare Turnstile (obligatoire en production) */
+      captchaToken?: string;
+      /** @description Piège à robots : champ caché, toujours vide pour un humain */
+      website?: string;
+      /** @description Créneau de retrait ou de livraison */
+      slotId: string;
+    };
+    CateringRequestReceiptDto: {
+      /** @example TR-000042 */
+      reference: string;
+      /** @example Merci ! Votre demande est bien reçue : Diani vous recontacte rapidement. */
+      message: string;
+      /** @description Total estimé de la sélection */
+      estimatedTotalCents: number | null;
+      /** @description Prolonger l’échange sur WhatsApp (message pré-rempli avec la référence) */
+      whatsappUrl: string | null;
+    };
+    CreateCateringRequestDto: {
+      /** @example Awa */
+      firstName: string;
+      /** @example Diallo */
+      lastName?: string | null;
+      /** @example cliente@example.com */
+      email: string;
+      /** @example +33612345678 */
+      phone?: string | null;
+      /**
+       * @description Date de l’événement
+       * @example 2026-11-14
+       */
+      eventDate: string;
+      /** @example 40 */
+      guestCount?: number | null;
+      /** @enum {string} */
+      fulfilment?: 'pickup' | 'delivery';
+      /** @description Ville ou adresse (livraison seulement) */
+      deliveryAddress?: string | null;
+      message?: string | null;
+      /** @description Sélection facultative (le total estimé est calculé par le serveur) */
+      items?: components['schemas']['RequestItemInputDto'][];
+      /** @description Jeton Cloudflare Turnstile (obligatoire en production) */
+      captchaToken?: string;
+      /** @description Piège à robots : champ caché, toujours vide pour un humain */
+      website?: string;
+    };
+    AdminCateringCategoryDto: {
+      id: string;
+      slug: string;
+      name: string;
+      description: string | null;
+      /** @enum {string} */
+      kind: 'platter' | 'a_la_carte' | 'layer_cake';
+      position: number;
+      visible: boolean;
+      /** @description Nombre de produits (non supprimés) */
+      productCount: number;
+    };
+    CreateCateringCategoryDto: {
+      /** @example Plateaux */
+      name: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      description?: string | null;
+      /**
+       * @description Affichage : plateaux, à la carte, layer cakes
+       * @enum {string}
+       */
+      kind: 'platter' | 'a_la_carte' | 'layer_cake';
+      /** @default true */
+      visible: boolean;
+    };
+    UpdateCateringCategoryDto: {
+      /** @example Plateaux */
+      name?: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      description?: string | null;
+      /**
+       * @description Affichage : plateaux, à la carte, layer cakes
+       * @enum {string}
+       */
+      kind?: 'platter' | 'a_la_carte' | 'layer_cake';
+      /** @default true */
+      visible: boolean;
+    };
+    AdminProductImageDto: {
+      mediaId: string;
+      alt: string;
+      /** @description Aperçu (plus petite variante WebP) */
+      previewUrl: string | null;
+    };
+    AdminCateringProductDto: {
+      id: string;
+      categoryId: string;
+      slug: string;
+      name: string;
+      description: string | null;
+      composition: components['schemas']['CompositionItemDto'][];
+      variants: components['schemas']['CateringVariantDto'][];
+      maxFlavours: number;
+      flavours: components['schemas']['FlavourDto'][];
+      images: components['schemas']['AdminProductImageDto'][];
+      position: number;
+      visible: boolean;
+      seoTitle: string | null;
+      seoDescription: string | null;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    CompositionItemInputDto: {
+      /** @example mini burgers */
+      label: string;
+      /** @example 5 */
+      quantity?: number | null;
+    };
+    VariantInputDto: {
+      /** @description Variante existante à modifier ; absente = nouvelle variante */
+      id?: string;
+      /** @example 6–8 parts */
+      label: string;
+      /**
+       * @description Prix en centimes
+       * @example 5000
+       */
+      priceCents: number;
+      servingsMin?: number | null;
+      servingsMax?: number | null;
+    };
+    ProductImageInputDto: {
+      mediaId: string;
+      /** @description Texte alternatif (vide = image décorative) */
+      alt?: string;
+    };
+    CreateCateringProductDto: {
+      categoryId: string;
+      /** @example Plateau découverte */
+      name: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      description?: string | null;
+      composition?: components['schemas']['CompositionItemInputDto'][];
+      /** @description Au moins une variante (prix) ; l’ordre du tableau est l’ordre d’affichage */
+      variants: components['schemas']['VariantInputDto'][];
+      /**
+       * @description Nombre maximal de parfums au choix
+       * @default 0
+       */
+      maxFlavours: number;
+      /** @description Parfums proposés */
+      flavourIds?: string[];
+      /** @description Galerie ; la première image sert de vignette */
+      images?: components['schemas']['ProductImageInputDto'][];
+      /** @default true */
+      visible: boolean;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+    };
+    UpdateCateringProductDto: {
+      categoryId?: string;
+      /** @example Plateau découverte */
+      name?: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      description?: string | null;
+      composition?: components['schemas']['CompositionItemInputDto'][];
+      /** @description Au moins une variante (prix) ; l’ordre du tableau est l’ordre d’affichage */
+      variants?: components['schemas']['VariantInputDto'][];
+      /**
+       * @description Nombre maximal de parfums au choix
+       * @default 0
+       */
+      maxFlavours: number;
+      /** @description Parfums proposés */
+      flavourIds?: string[];
+      /** @description Galerie ; la première image sert de vignette */
+      images?: components['schemas']['ProductImageInputDto'][];
+      /** @default true */
+      visible: boolean;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+    };
+    AdminFlavourDto: {
+      id: string;
+      /** @example mangue-passion */
+      slug: string;
+      /** @example Mangue-passion */
+      name: string;
+      position: number;
+      visible: boolean;
+    };
+    CreateFlavourDto: {
+      /** @example Mangue-passion */
+      name: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      /** @default true */
+      visible: boolean;
+    };
+    UpdateFlavourDto: {
+      /** @example Mangue-passion */
+      name?: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      /** @default true */
+      visible: boolean;
+    };
+    AdminSlotDto: {
+      id: string;
+      /** @enum {string} */
+      fulfilment: 'pickup' | 'delivery';
+      /** Format: date-time */
+      startsAt: string;
+      /** Format: date-time */
+      endsAt: string;
+      /** @description Places restantes */
+      remaining: number;
+      capacity: number;
+      active: boolean;
+    };
+    CreateSlotDto: {
+      /** @enum {string} */
+      fulfilment: 'pickup' | 'delivery';
+      /** @example 2026-11-14T10:00:00+01:00 */
+      startsAt: string;
+      /** @example 2026-11-14T12:00:00+01:00 */
+      endsAt: string;
+      capacity: number;
+    };
+    UpdateSlotDto: {
+      /** @enum {string} */
+      fulfilment?: 'pickup' | 'delivery';
+      /** @example 2026-11-14T10:00:00+01:00 */
+      startsAt?: string;
+      /** @example 2026-11-14T12:00:00+01:00 */
+      endsAt?: string;
+      capacity?: number;
+      active?: boolean;
+    };
+    AdminCateringRequestSummaryDto: {
+      id: string;
+      /** @example TR-000042 */
+      reference: string;
+      /** @enum {string} */
+      source: 'form' | 'online' | 'admin';
+      /** @enum {string} */
+      status: 'new' | 'contacted' | 'deposit_received' | 'confirmed' | 'delivered' | 'cancelled';
+      firstName: string;
+      lastName: string | null;
+      /** @example 2026-11-14 */
+      eventDate: string;
+      guestCount: number | null;
+      estimatedTotalCents: number | null;
+      agreedTotalCents: number | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AdminCateringRequestListDto: {
+      items: components['schemas']['AdminCateringRequestSummaryDto'][];
+      nextCursor: string | null;
+    };
+    AdminCreateCateringRequestDto: {
+      /** @example Awa */
+      firstName: string;
+      /** @example Diallo */
+      lastName?: string | null;
+      /** @example cliente@example.com */
+      email: string;
+      /** @example +33612345678 */
+      phone?: string | null;
+      /**
+       * @description Date de l’événement
+       * @example 2026-11-14
+       */
+      eventDate: string;
+      /** @example 40 */
+      guestCount?: number | null;
+      /** @enum {string} */
+      fulfilment?: 'pickup' | 'delivery';
+      /** @description Ville ou adresse (livraison seulement) */
+      deliveryAddress?: string | null;
+      message?: string | null;
+      /** @description Sélection facultative (le total estimé est calculé par le serveur) */
+      items?: components['schemas']['RequestItemInputDto'][];
+      internalNotes?: string | null;
+    };
+    AdminRequestItemDto: {
+      productName: string;
+      variantLabel: string;
+      unitPriceCents: number;
+      quantity: number;
+      flavours: string[];
+    };
+    AdminRequestEventDto: {
+      /** @enum {string|null} */
+      fromStatus:
+        'new' | 'contacted' | 'deposit_received' | 'confirmed' | 'delivered' | 'cancelled' | null;
+      /** @enum {string} */
+      toStatus: 'new' | 'contacted' | 'deposit_received' | 'confirmed' | 'delivered' | 'cancelled';
+      actorId: string | null;
+      note: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AdminCateringRequestDto: {
+      id: string;
+      /** @example TR-000042 */
+      reference: string;
+      /** @enum {string} */
+      source: 'form' | 'online' | 'admin';
+      /** @enum {string} */
+      status: 'new' | 'contacted' | 'deposit_received' | 'confirmed' | 'delivered' | 'cancelled';
+      firstName: string;
+      lastName: string | null;
+      /** @example 2026-11-14 */
+      eventDate: string;
+      guestCount: number | null;
+      estimatedTotalCents: number | null;
+      agreedTotalCents: number | null;
+      /** Format: date-time */
+      createdAt: string;
+      email: string;
+      phone: string | null;
+      /** @enum {string|null} */
+      fulfilment: 'pickup' | 'delivery' | null;
+      deliveryAddress: string | null;
+      message: string | null;
+      /** @description Acompte enregistré, ou acompte calculé sur le total convenu (aperçu) */
+      depositCents: number | null;
+      /** @description Solde au retrait ou à la livraison */
+      balanceCents: number | null;
+      /** Format: date-time */
+      depositReceivedAt: string | null;
+      depositMethod: string | null;
+      /** Format: date-time */
+      confirmedAt: string | null;
+      /** Format: date-time */
+      cancelledAt: string | null;
+      cancellationReason: string | null;
+      internalNotes: string | null;
+      slot: components['schemas']['CateringSlotDto'] | null;
+      items: components['schemas']['AdminRequestItemDto'][];
+      events: components['schemas']['AdminRequestEventDto'][];
+      /** @description Statuts accessibles depuis le statut actuel */
+      nextStatuses: (
+        'new' | 'contacted' | 'deposit_received' | 'confirmed' | 'delivered' | 'cancelled'
+      )[];
+      /** @description Lien WhatsApp vers la cliente */
+      customerWhatsappUrl: string | null;
+    };
+    AdminUpdateCateringRequestDto: {
+      /** @example Awa */
+      firstName?: string;
+      /** @example Diallo */
+      lastName?: string | null;
+      /** @example cliente@example.com */
+      email?: string;
+      /** @example +33612345678 */
+      phone?: string | null;
+      /**
+       * @description Date de l’événement
+       * @example 2026-11-14
+       */
+      eventDate?: string;
+      /** @example 40 */
+      guestCount?: number | null;
+      /** @enum {string} */
+      fulfilment?: 'pickup' | 'delivery';
+      /** @description Ville ou adresse (livraison seulement) */
+      deliveryAddress?: string | null;
+      internalNotes?: string | null;
+      /** @description Total convenu en centimes (base de l’acompte ; figé une fois l’acompte reçu) */
+      agreedTotalCents?: number | null;
+    };
+    RecordDepositDto: {
+      /** @description Total convenu en centimes, s’il n’est pas encore enregistré */
+      agreedTotalCents?: number;
+      /**
+       * @description Moyen de paiement de l’acompte
+       * @example Virement
+       */
+      method: string;
+    };
+    ChangeRequestStatusDto: {
+      /**
+       * @description « Acompte reçu » passe par l’enregistrement de l’acompte
+       * @enum {string}
+       */
+      status: 'contacted' | 'confirmed' | 'delivered' | 'cancelled';
+      /** @description Note d’historique (motif d’annulation…) */
+      note?: string | null;
+    };
+    RecapDto: {
+      /** @description Récapitulatif prêt à copier (WhatsApp, e-mail) */
+      text: string;
+    };
+    AvailabilityDto: {
+      /** @enum {string} */
+      status: 'in_stock' | 'low_stock' | 'out_of_stock';
+      /** @description Quantité à afficher (« plus que 2 ») sous le seuil ; null sinon */
+      remaining: number | null;
+    };
+    ShopProductCardDto: {
+      id: string;
+      slug: string;
+      name: string;
+      /** @enum {string} */
+      kind: 'kit' | 'accessory';
+      shortDescription: string | null;
+      /** @description Prix le plus bas (« à partir de »), en centimes */
+      fromPriceCents: number;
+      image: components['schemas']['PublicImageDto'] | null;
+      /** @description Meilleure disponibilité des variantes */
+      availability: components['schemas']['AvailabilityDto'];
+    };
+    ShopVariantDto: {
+      id: string;
+      /** @example KIT-DEBUTANT */
+      sku: string;
+      /** @example Standard */
+      label: string;
+      /**
+       * @description Prix TTC en centimes
+       * @example 3799
+       */
+      priceCents: number;
+      availability: components['schemas']['AvailabilityDto'];
+    };
+    KitItemDto: {
+      /** @example Poche à douille */
+      label: string;
+      /** @example 2 */
+      quantity: number;
+      details: string | null;
+    };
+    ShopProductDetailDto: {
+      id: string;
+      slug: string;
+      name: string;
+      /** @enum {string} */
+      kind: 'kit' | 'accessory';
+      shortDescription: string | null;
+      /** @description Prix le plus bas (« à partir de »), en centimes */
+      fromPriceCents: number;
+      image: components['schemas']['PublicImageDto'] | null;
+      /** @description Meilleure disponibilité des variantes */
+      availability: components['schemas']['AvailabilityDto'];
+      /** @description Description en HTML assaini */
+      descriptionHtml: string;
+      variants: components['schemas']['ShopVariantDto'][];
+      /** @description Composition (kits) */
+      composition: components['schemas']['KitItemDto'][];
+      gallery: components['schemas']['PublicImageDto'][];
+      seo: components['schemas']['SeoDto'];
+      /** @description Données structurées schema.org (Product + Offer) */
+      jsonLd: {
+        [key: string]: unknown;
+      };
+    };
+    ComparisonKitDto: {
+      slug: string;
+      name: string;
+      fromPriceCents: number;
+    };
+    ComparisonRowDto: {
+      /** @example Poche à douille */
+      label: string;
+      /** @description Quantité par kit, dans l’ordre des colonnes (null = absent) */
+      values: number[] | null;
+    };
+    KitComparisonDto: {
+      /** @description Colonnes, du moins cher au plus cher */
+      kits: components['schemas']['ComparisonKitDto'][];
+      rows: components['schemas']['ComparisonRowDto'][];
+    };
+    OrderLineDto: {
+      productName: string;
+      variantLabel: string;
+      sku: string | null;
+      /** @description Prix unitaire figé à l’achat, en centimes */
+      unitPriceCents: number;
+      quantity: number;
+      lineTotalCents: number;
+    };
+    OrderAddressDto: {
+      firstName: string;
+      lastName: string;
+      line1: string;
+      line2: string | null;
+      postalCode: string;
+      city: string;
+      country: string;
+    };
+    OrderEventDto: {
+      /** @enum {string|null} */
+      fromStatus:
+        | 'pending_payment'
+        | 'paid'
+        | 'preparing'
+        | 'shipped'
+        | 'delivered'
+        | 'cancelled'
+        | 'refunded'
+        | null;
+      /** @enum {string} */
+      toStatus:
+        | 'pending_payment'
+        | 'paid'
+        | 'preparing'
+        | 'shipped'
+        | 'delivered'
+        | 'cancelled'
+        | 'refunded';
+      note: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    OrderDto: {
+      id: string;
+      /** @example CMD-000042 */
+      reference: string;
+      /** @enum {string} */
+      status:
+        | 'pending_payment'
+        | 'paid'
+        | 'preparing'
+        | 'shipped'
+        | 'delivered'
+        | 'cancelled'
+        | 'refunded';
+      /** @example Payée */
+      statusLabel: string;
+      totalCents: number;
+      itemCount: number;
+      /** Format: date-time */
+      createdAt: string;
+      items: components['schemas']['OrderLineDto'][];
+      subtotalCents: number;
+      shippingCents: number;
+      refundedCents: number;
+      /** @enum {string} */
+      shippingMethod: 'delivery' | 'pickup' | 'digital';
+      shippingRateName: string;
+      shippingAddress: components['schemas']['OrderAddressDto'] | null;
+      carrier: string | null;
+      trackingNumber: string | null;
+      /**
+       * Format: date-time
+       * @description Paiement attendu avant cette date
+       */
+      reservationExpiresAt: string | null;
+      /** Format: date-time */
+      paidAt: string | null;
+      /** Format: date-time */
+      shippedAt: string | null;
+      /** Format: date-time */
+      deliveredAt: string | null;
+      /** @description Une facture est disponible au téléchargement */
+      invoiceAvailable: boolean;
+      /** @description Étapes de la commande */
+      timeline: components['schemas']['OrderEventDto'][];
+    };
+    CartLineDto: {
+      variantId: string;
+      productSlug: string;
+      productName: string;
+      variantLabel: string;
+      image: components['schemas']['PublicImageDto'] | null;
+      /** @description Prix unitaire actuel, en centimes (toujours fixé par le serveur) */
+      unitPriceCents: number;
+      quantity: number;
+      lineTotalCents: number;
+      availability: components['schemas']['AvailabilityDto'];
+      /** @description Quantité maximale commandable maintenant (stock et plafond) */
+      maxQuantity: number;
+      /**
+       * @description Problème à corriger avant de commander
+       * @enum {string|null}
+       */
+      issue: 'unavailable' | 'insufficient_stock' | null;
+    };
+    ShippingOptionDto: {
+      id: string;
+      /** @example Colissimo */
+      name: string;
+      /** @enum {string} */
+      method: 'delivery' | 'pickup' | 'digital';
+      /** @description Frais en centimes (0 si offerts ou retrait) */
+      priceCents: number;
+      /** @example 2 à 4 jours ouvrés */
+      delay: string | null;
+      /** @description Livraison offerte grâce au montant du panier */
+      free: boolean;
+    };
+    CartDto: {
+      items: components['schemas']['CartLineDto'][];
+      /** @description Nombre d’articles (badge du panier) */
+      itemCount: number;
+      subtotalCents: number;
+      weightGrams: number;
+      /** @description Selon le pays demandé (?country=) */
+      shippingOptions: components['schemas']['ShippingOptionDto'][];
+      /** @description Adresse et horaires du retrait */
+      pickupDetails: string | null;
+      /** @description Le panier peut être commandé tel quel */
+      checkoutReady: boolean;
+    };
+    AddCartItemDto: {
+      variantId: string;
+      /** @default 1 */
+      quantity: number;
+    };
+    SetCartItemDto: {
+      /** @description 0 retire l’article */
+      quantity: number;
+    };
+    CheckoutAddressDto: {
+      firstName: string;
+      lastName: string;
+      line1: string;
+      line2?: string | null;
+      /** @example 94000 */
+      postalCode: string;
+      city: string;
+      /** @example FR */
+      country: string;
+    };
+    CheckoutDto: {
+      /** @description E-mail de la commande : obligatoire sans compte, ignoré si connectée */
+      email?: string;
+      /** @example Awa */
+      firstName: string;
+      /** @example Diallo */
+      lastName: string;
+      /** @example +33612345678 */
+      phone?: string | null;
+      /** @description Option de livraison choisie (liste du panier) */
+      shippingRateId: string;
+      /** @description Obligatoire pour une livraison */
+      shippingAddress?: components['schemas']['CheckoutAddressDto'];
+      /** @description Facturation ; par défaut l’adresse de livraison (obligatoire pour un retrait) */
+      billingAddress?: components['schemas']['CheckoutAddressDto'];
+      note?: string | null;
+      /** @description Acceptation des conditions générales de vente */
+      acceptTerms: boolean;
+      /** @description Jeton Cloudflare Turnstile (obligatoire en production) */
+      captchaToken?: string;
+    };
+    CheckoutResultDto: {
+      orderId: string;
+      /** @example CMD-000042 */
+      reference: string;
+      totalCents: number;
+      /**
+       * Format: date-time
+       * @description Le stock est réservé jusqu’à cette date (paiement à effectuer)
+       */
+      reservationExpiresAt: string;
+      /** @description Jeton du lien de suivi (commande invitée) : à conserver, il donne accès à la commande */
+      trackingToken: string;
+    };
+    OrderSummaryDto: {
+      id: string;
+      /** @example CMD-000042 */
+      reference: string;
+      /** @enum {string} */
+      status:
+        | 'pending_payment'
+        | 'paid'
+        | 'preparing'
+        | 'shipped'
+        | 'delivered'
+        | 'cancelled'
+        | 'refunded';
+      /** @example Payée */
+      statusLabel: string;
+      totalCents: number;
+      itemCount: number;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    OrderListDto: {
+      items: components['schemas']['OrderSummaryDto'][];
+      nextCursor: string | null;
+    };
+    AdminShopVariantDto: {
+      id: string;
+      sku: string;
+      label: string;
+      priceCents: number;
+      weightGrams: number;
+      active: boolean;
+      /** @description En stock */
+      onHand: number;
+      /** @description Réservé (paiements en cours) */
+      reserved: number;
+    };
+    AdminShopImageDto: {
+      mediaId: string;
+      alt: string;
+      previewUrl: string | null;
+    };
+    AdminShopProductDto: {
+      id: string;
+      slug: string;
+      name: string;
+      /** @enum {string} */
+      kind: 'kit' | 'accessory';
+      shortDescription: string | null;
+      descriptionMarkdown: string;
+      variants: components['schemas']['AdminShopVariantDto'][];
+      composition: components['schemas']['KitItemDto'][];
+      images: components['schemas']['AdminShopImageDto'][];
+      position: number;
+      visible: boolean;
+      seoTitle: string | null;
+      seoDescription: string | null;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    ShopVariantInputDto: {
+      /** @description Variante existante à modifier ; absente = nouvelle */
+      id?: string;
+      /**
+       * @description Référence unique (majuscules, chiffres, tirets)
+       * @example KIT-DEBUTANT
+       */
+      sku: string;
+      /** @example Standard */
+      label: string;
+      /**
+       * @description Prix TTC en centimes
+       * @example 3799
+       */
+      priceCents: number;
+      /**
+       * @description Poids d’expédition en grammes
+       * @example 650
+       */
+      weightGrams: number;
+      /** @default true */
+      active: boolean;
+    };
+    KitItemInputDto: {
+      /** @example Poche à douille */
+      label: string;
+      /** @example 2 */
+      quantity: number;
+      details?: string | null;
+    };
+    ShopImageInputDto: {
+      mediaId: string;
+      alt?: string;
+    };
+    CreateShopProductDto: {
+      /** @example Kit Débutant */
+      name: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      /** @enum {string} */
+      kind: 'kit' | 'accessory';
+      shortDescription?: string | null;
+      /** @description Markdown (HTML brut désactivé) */
+      descriptionMarkdown?: string;
+      /** @description Au moins une variante ; ordre = affichage */
+      variants: components['schemas']['ShopVariantInputDto'][];
+      /** @description Composition (kits) */
+      composition?: components['schemas']['KitItemInputDto'][];
+      images?: components['schemas']['ShopImageInputDto'][];
+      /** @default true */
+      visible: boolean;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+    };
+    UpdateShopProductDto: {
+      /** @example Kit Débutant */
+      name?: string;
+      /** @description Généré depuis le nom si absent */
+      slug?: string;
+      /** @enum {string} */
+      kind?: 'kit' | 'accessory';
+      shortDescription?: string | null;
+      /** @description Markdown (HTML brut désactivé) */
+      descriptionMarkdown?: string;
+      /** @description Au moins une variante ; ordre = affichage */
+      variants?: components['schemas']['ShopVariantInputDto'][];
+      /** @description Composition (kits) */
+      composition?: components['schemas']['KitItemInputDto'][];
+      images?: components['schemas']['ShopImageInputDto'][];
+      /** @default true */
+      visible: boolean;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+    };
+    AdminStockDto: {
+      variantId: string;
+      sku: string;
+      productName: string;
+      variantLabel: string;
+      onHand: number;
+      reserved: number;
+      available: number;
+      lowStockThreshold: number;
+      low: boolean;
+    };
+    AdjustStockDto: {
+      /**
+       * @description Variation (+ réassort, − casse ou inventaire)
+       * @example 10
+       */
+      delta: number;
+      /** @example Réassort fournisseur */
+      note: string;
+    };
+    StockThresholdDto: {
+      /**
+       * @description Alerte « stock bas » à partir de ce disponible
+       * @example 3
+       */
+      lowStockThreshold: number;
+    };
+    StockMovementDto: {
+      id: string;
+      delta: number;
+      /** @enum {string} */
+      reason: 'adjustment' | 'sale' | 'restock';
+      orderId: string | null;
+      actorId: string | null;
+      note: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    ShippingRateDto: {
+      id: string;
+      name: string;
+      /** @enum {string} */
+      method: 'delivery' | 'pickup' | 'digital';
+      countries: string[];
+      minWeightGrams: number;
+      maxWeightGrams: number | null;
+      priceCents: number;
+      freeFromCents: number | null;
+      delay: string | null;
+      position: number;
+      active: boolean;
+    };
+    CreateShippingRateDto: {
+      /** @example Colissimo */
+      name: string;
+      /** @enum {string} */
+      method: 'delivery' | 'pickup';
+      /**
+       * @description Pays desservis (livraison)
+       * @example [
+       *       "FR"
+       *     ]
+       */
+      countries?: string[];
+      /** @default 0 */
+      minWeightGrams: number;
+      /** @description Inclus ; vide = sans limite */
+      maxWeightGrams?: number | null;
+      /** @example 790 */
+      priceCents: number;
+      /** @description Offerte à partir de ce sous-total */
+      freeFromCents?: number | null;
+      /** @example 2 à 4 jours ouvrés */
+      delay?: string | null;
+      /** @default true */
+      active: boolean;
+    };
+    UpdateShippingRateDto: {
+      /** @example Colissimo */
+      name?: string;
+      /** @enum {string} */
+      method?: 'delivery' | 'pickup';
+      /**
+       * @description Pays desservis (livraison)
+       * @example [
+       *       "FR"
+       *     ]
+       */
+      countries?: string[];
+      /** @default 0 */
+      minWeightGrams: number;
+      /** @description Inclus ; vide = sans limite */
+      maxWeightGrams?: number | null;
+      /** @example 790 */
+      priceCents?: number;
+      /** @description Offerte à partir de ce sous-total */
+      freeFromCents?: number | null;
+      /** @example 2 à 4 jours ouvrés */
+      delay?: string | null;
+      /** @default true */
+      active: boolean;
+    };
+    AdminOrderSummaryDto: {
+      id: string;
+      /** @example CMD-000042 */
+      reference: string;
+      /** @enum {string} */
+      status:
+        | 'pending_payment'
+        | 'paid'
+        | 'preparing'
+        | 'shipped'
+        | 'delivered'
+        | 'cancelled'
+        | 'refunded';
+      /** @example Payée */
+      statusLabel: string;
+      totalCents: number;
+      itemCount: number;
+      /** Format: date-time */
+      createdAt: string;
+      email: string;
+      customerName: string;
+      /** @description Commande passée avec un compte */
+      hasAccount: boolean;
+    };
+    AdminOrderListDto: {
+      items: components['schemas']['AdminOrderSummaryDto'][];
+      nextCursor: string | null;
+    };
+    AdminOrderDto: {
+      id: string;
+      /** @example CMD-000042 */
+      reference: string;
+      /** @enum {string} */
+      status:
+        | 'pending_payment'
+        | 'paid'
+        | 'preparing'
+        | 'shipped'
+        | 'delivered'
+        | 'cancelled'
+        | 'refunded';
+      /** @example Payée */
+      statusLabel: string;
+      totalCents: number;
+      itemCount: number;
+      /** Format: date-time */
+      createdAt: string;
+      items: components['schemas']['OrderLineDto'][];
+      subtotalCents: number;
+      shippingCents: number;
+      refundedCents: number;
+      /** @enum {string} */
+      shippingMethod: 'delivery' | 'pickup' | 'digital';
+      shippingRateName: string;
+      shippingAddress: components['schemas']['OrderAddressDto'] | null;
+      carrier: string | null;
+      trackingNumber: string | null;
+      /**
+       * Format: date-time
+       * @description Paiement attendu avant cette date
+       */
+      reservationExpiresAt: string | null;
+      /** Format: date-time */
+      paidAt: string | null;
+      /** Format: date-time */
+      shippedAt: string | null;
+      /** Format: date-time */
+      deliveredAt: string | null;
+      /** @description Une facture est disponible au téléchargement */
+      invoiceAvailable: boolean;
+      /** @description Étapes de la commande */
+      timeline: components['schemas']['OrderEventDto'][];
+      email: string;
+      customerName: string;
+      phone: string | null;
+      userId: string | null;
+      billingAddress: components['schemas']['OrderAddressDto'];
+      customerNote: string | null;
+      /** @example F-2026-00001 */
+      invoiceNumber: string | null;
+      cancellationReason: string | null;
+      /** @description Étapes que l’administration peut poser maintenant */
+      nextStatuses: ('preparing' | 'shipped' | 'delivered' | 'cancelled')[];
+    };
+    ChangeOrderStatusDto: {
+      /** @enum {string} */
+      status: 'preparing' | 'shipped' | 'delivered' | 'cancelled';
+      /**
+       * @description Transporteur (expédition)
+       * @example Colissimo
+       */
+      carrier?: string | null;
+      /** @description Numéro de suivi (expédition) */
+      trackingNumber?: string | null;
+      /** @description Note d’historique (motif d’annulation…) */
+      note?: string | null;
+    };
+    PaymentMethodsDto: {
+      /** @description Carte bancaire, Apple Pay, Google Pay… via Stripe Checkout */
+      stripe: boolean;
+      paypal: boolean;
+    };
+    StartPaymentDto: {
+      /** @description Jeton de la commande reçu à la validation du panier (lien signé) */
+      token: string;
+      /** @enum {string} */
+      provider: 'stripe' | 'paypal';
+    };
+    StartedPaymentDto: {
+      paymentId: string;
+      /** @enum {string} */
+      provider: 'stripe' | 'paypal';
+      /** @description Page de paiement hébergée par le prestataire (redirection) */
+      redirectUrl: string;
+      /**
+       * Format: date-time
+       * @description La page de paiement expire à cette date
+       */
+      expiresAt: string;
+    };
+    CapturePayPalDto: {
+      /** @description Jeton de la commande (paramètre « suivi » de l’URL de retour) */
+      token: string;
+    };
+    PaymentResultDto: {
+      /** @enum {string} */
+      outcome:
+        | 'paid'
+        | 'already_processed'
+        | 'unknown_payment'
+        | 'amount_mismatch'
+        | 'refunded_stock_unavailable'
+        | 'refunded_duplicate';
+      order: components['schemas']['OrderDto'];
+    };
+    AdminRefundDto: {
+      id: string;
+      amountCents: number;
+      reason: string;
+      /** @enum {string} */
+      status: 'pending' | 'succeeded' | 'failed';
+      restocked: boolean;
+      /** @description NULL : remboursement automatique */
+      actorId: string | null;
+      failureReason: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AdminPaymentDto: {
+      id: string;
+      /** @enum {string} */
+      provider: 'stripe' | 'paypal';
+      /** @enum {string} */
+      status:
+        | 'pending'
+        | 'succeeded'
+        | 'failed'
+        | 'abandoned'
+        | 'refunded'
+        | 'partially_refunded'
+        | 'disputed';
+      amountCents: number;
+      refundedCents: number;
+      /** @description Référence chez le prestataire */
+      providerPaymentId: string | null;
+      /** Format: date-time */
+      succeededAt: string | null;
+      failureReason: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      refunds: components['schemas']['AdminRefundDto'][];
+    };
+    CreateRefundDto: {
+      /** @description Montant en centimes ; absent = tout le restant remboursable */
+      amountCents?: number;
+      /** @example Article arrivé abîmé */
+      reason: string;
+      /**
+       * @description Remettre les articles en stock (remboursement intégral seulement)
+       * @default false
+       */
+      restock: boolean;
+    };
+    CourseRefDto: {
+      slug: string;
+      title: string;
+    };
+    PackDto: {
+      id: string;
+      /** @example premium */
+      slug: string;
+      /** @example Premium */
+      name: string;
+      summary: string | null;
+      /**
+       * @description Prix TTC en centimes
+       * @example 19999
+       */
+      priceCents: number;
+      /** @description Niveau : un pack inclut tous les packs de niveau inférieur */
+      rank: number;
+      /** @description Contenus et avantages, à afficher en liste */
+      features: string[];
+      /** @description Appels personnalisés inclus */
+      callsIncluded: number;
+      /** @description Formations accessibles avec ce pack (packs inférieurs compris) */
+      courses: components['schemas']['CourseRefDto'][];
+    };
+    PackRefDto: {
+      slug: string;
+      name: string;
+      rank: number;
+      priceCents: number;
+    };
+    CourseCardDto: {
+      id: string;
+      slug: string;
+      title: string;
+      summary: string;
+      cover: components['schemas']['PublicImageDto'] | null;
+      /** @description Formation phare */
+      featured: boolean;
+      /** @description Pack minimal qui donne accès à la formation */
+      pack: components['schemas']['PackRefDto'];
+      lessonCount: number;
+      /** @description Durée totale des vidéos (minutes) */
+      durationMinutes: number;
+    };
+    OutlineLessonDto: {
+      id: string;
+      slug: string;
+      title: string;
+      durationSeconds: number | null;
+      /** @description Leçon d’exemple consultable gratuitement */
+      freePreview: boolean;
+      /** @description Quiz à la fin de la leçon */
+      hasQuiz: boolean;
+    };
+    OutlineModuleDto: {
+      id: string;
+      title: string;
+      lessons: components['schemas']['OutlineLessonDto'][];
+    };
+    CourseDetailDto: {
+      id: string;
+      slug: string;
+      title: string;
+      summary: string;
+      cover: components['schemas']['PublicImageDto'] | null;
+      /** @description Formation phare */
+      featured: boolean;
+      /** @description Pack minimal qui donne accès à la formation */
+      pack: components['schemas']['PackRefDto'];
+      lessonCount: number;
+      /** @description Durée totale des vidéos (minutes) */
+      durationMinutes: number;
+      /** @description Description en HTML assaini */
+      descriptionHtml: string;
+      /** @description Programme (titres seulement) */
+      modules: components['schemas']['OutlineModuleDto'][];
+      seo: components['schemas']['SeoDto'];
+      /** @description Données structurées schema.org (Course) */
+      jsonLd: {
+        [key: string]: unknown;
+      };
+    };
+    PlaybackDto: {
+      /** @description Playlist HLS signée (hls.js) ; null si la vidéo est indisponible */
+      hlsUrl: string | null;
+      /**
+       * Format: date-time
+       * @description Fin de validité de l’URL
+       */
+      expiresAt: string | null;
+      durationSeconds: number | null;
+    };
+    ResourceViewDto: {
+      id: string;
+      /** @example Fiche recette */
+      title: string;
+      sizeBytes: number | null;
+    };
+    QuizChoiceViewDto: {
+      id: string;
+      label: string;
+    };
+    QuizQuestionViewDto: {
+      id: string;
+      prompt: string;
+      /** @description Plusieurs bonnes réponses possibles */
+      multiple: boolean;
+      /** @description Choix proposés (jamais la bonne réponse) */
+      choices: components['schemas']['QuizChoiceViewDto'][];
+    };
+    QuizViewDto: {
+      id: string;
+      passScorePercent: number;
+      maxAttempts: number | null;
+      /** @description Tentatives déjà faites */
+      attemptsUsed: number;
+      bestScore: number | null;
+      passed: boolean;
+      questions: components['schemas']['QuizQuestionViewDto'][];
+    };
+    LessonProgressViewDto: {
+      /** @description Position de reprise (secondes) */
+      positionSeconds: number;
+      videoCompleted: boolean;
+      completed: boolean;
+    };
+    LessonNavDto: {
+      slug: string;
+      title: string;
+    };
+    LessonDto: {
+      id: string;
+      slug: string;
+      title: string;
+      summary: string | null;
+      course: components['schemas']['CourseRefDto'];
+      moduleTitle: string;
+      video: components['schemas']['PlaybackDto'];
+      /** @description Bloc « Conseils & astuces » (HTML assaini) */
+      tipsHtml: string;
+      resources: components['schemas']['ResourceViewDto'][];
+      quiz: components['schemas']['QuizViewDto'] | null;
+      /** @description Null pour une leçon d’exemple consultée sans compte */
+      progress: components['schemas']['LessonProgressViewDto'] | null;
+      previous: components['schemas']['LessonNavDto'] | null;
+      next: components['schemas']['LessonNavDto'] | null;
+    };
+    PackCheckoutDto: {
+      /** @description Adresse de facturation */
+      billingAddress: components['schemas']['CheckoutAddressDto'];
+      /** @description Acceptation des conditions générales de vente */
+      acceptTerms: boolean;
+      /** @description Jeton Cloudflare Turnstile (obligatoire en production) */
+      captchaToken?: string;
+    };
+    MyCourseDto: {
+      slug: string;
+      title: string;
+      cover: components['schemas']['PublicImageDto'] | null;
+      /** @description Progression (%) */
+      progressPercent: number;
+      /** @description Bouton « Reprendre » */
+      resume: components['schemas']['LessonNavDto'] | null;
+      /** @description Numéro du certificat, si obtenu */
+      certificateNumber: string | null;
+    };
+    MyLessonStateDto: {
+      id: string;
+      slug: string;
+      title: string;
+      durationSeconds: number | null;
+      /** @description Leçon d’exemple consultable gratuitement */
+      freePreview: boolean;
+      /** @description Quiz à la fin de la leçon */
+      hasQuiz: boolean;
+      completed: boolean;
+    };
+    MyModuleDto: {
+      id: string;
+      title: string;
+      progressPercent: number;
+      lessons: components['schemas']['MyLessonStateDto'][];
+    };
+    MyCourseDetailDto: {
+      slug: string;
+      title: string;
+      cover: components['schemas']['PublicImageDto'] | null;
+      /** @description Progression (%) */
+      progressPercent: number;
+      /** @description Bouton « Reprendre » */
+      resume: components['schemas']['LessonNavDto'] | null;
+      /** @description Numéro du certificat, si obtenu */
+      certificateNumber: string | null;
+      modules: components['schemas']['MyModuleDto'][];
+    };
+    SaveProgressDto: {
+      /** @description Position de lecture (secondes), envoyée toutes les ~15 s */
+      positionSeconds: number;
+      /** @description La vidéo a été vue jusqu’au bout */
+      videoCompleted?: boolean;
+    };
+    QuizAnswerDto: {
+      questionId: string;
+      choiceIds: string[];
+    };
+    SubmitQuizDto: {
+      answers: components['schemas']['QuizAnswerDto'][];
+    };
+    GradedQuestionDto: {
+      questionId: string;
+      correct: boolean;
+      /** @description Bonnes réponses (révélées après validation) */
+      correctChoiceIds: string[];
+      explanation: string | null;
+    };
+    QuizResultDto: {
+      scorePercent: number;
+      passed: boolean;
+      questions: components['schemas']['GradedQuestionDto'][];
+      /** @description Tentatives restantes (null = illimité) */
+      attemptsRemaining: number | null;
+      /** @description Leçon terminée après cette tentative */
+      lessonCompleted: boolean;
+    };
+    CertificateDto: {
+      id: string;
+      /** @example DIANI-2026-7K3QF9XA */
+      number: string;
+      courseTitle: string;
+      holderName: string;
+      /** Format: date-time */
+      issuedAt: string;
+      /** @description PDF prêt au téléchargement */
+      pdfAvailable: boolean;
+      /** @description Page publique de vérification */
+      verificationUrl: string;
+    };
+    PerksDto: {
+      /** @description Appels personnalisés inclus dans les packs détenus */
+      callsIncluded: number;
+      callsUsed: number;
+      callsRemaining: number;
+      /** @description Avantages des packs détenus (fournisseurs offerts…) */
+      features: string[];
+    };
+    CallRequestDto: {
+      id: string;
+      /** @enum {string} */
+      status: 'requested' | 'scheduled' | 'done' | 'cancelled';
+      message: string;
+      /** Format: date-time */
+      scheduledAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    CreateCallRequestDto: {
+      /**
+       * @description Sujet et disponibilités
+       * @example Organisation d’un buffet ; mardi ou jeudi soir
+       */
+      message: string;
+    };
+    CertificateVerificationDto: {
+      number: string;
+      valid: boolean;
+      holderName: string | null;
+      courseTitle: string | null;
+      /** Format: date-time */
+      issuedAt: string | null;
+    };
+    AdminPackDto: {
+      id: string;
+      slug: string;
+      name: string;
+      summary: string | null;
+      priceCents: number;
+      /** @description Niveau : un pack ouvre les formations de niveau inférieur ou égal */
+      rank: number;
+      features: string[];
+      callsIncluded: number;
+      visible: boolean;
+    };
+    CreatePackDto: {
+      /** @example Premium */
+      name: string;
+      slug?: string;
+      summary?: string | null;
+      /** @example 19999 */
+      priceCents: number;
+      /**
+       * @description Niveau (unique) : un pack inclut les niveaux inférieurs
+       * @example 3
+       */
+      rank: number;
+      features?: string[];
+      /** @default 0 */
+      callsIncluded: number;
+      /** @default true */
+      visible: boolean;
+    };
+    UpdatePackDto: {
+      /** @example Premium */
+      name?: string;
+      slug?: string;
+      summary?: string | null;
+      /** @example 19999 */
+      priceCents?: number;
+      /**
+       * @description Niveau (unique) : un pack inclut les niveaux inférieurs
+       * @example 3
+       */
+      rank?: number;
+      features?: string[];
+      /** @default 0 */
+      callsIncluded: number;
+      /** @default true */
+      visible: boolean;
+    };
+    AccessPackRefDto: {
+      id: string;
+      slug: string;
+      name: string;
+      rank: number;
+    };
+    AdminAccessDto: {
+      id: string;
+      /** @enum {string} */
+      source: 'purchase' | 'gift' | 'admin';
+      orderId: string | null;
+      /** Format: date-time */
+      expiresAt: string | null;
+      /** Format: date-time */
+      revokedAt: string | null;
+      note: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      pack: components['schemas']['AccessPackRefDto'];
+    };
+    GrantAccessDto: {
+      userId: string;
+      packId: string;
+      /** @enum {string} */
+      source: 'gift' | 'admin';
+      /** @description Fin de l’accès (vide = sans limite) */
+      expiresAt?: string;
+      note?: string | null;
+    };
+    GrantedAccessDto: {
+      id: string;
+    };
+    RevokeAccessDto: {
+      /** @example Accès offert par erreur */
+      note: string;
+    };
+    CourseStatsDto: {
+      courseId: string;
+      title: string;
+      /** @description Clientes ayant accès */
+      enrolled: number;
+      /** @description Clientes ayant commencé (au moins une leçon ouverte) */
+      started: number;
+      /** @description Certificats délivrés */
+      completed: number;
+      /** @description Taux de complétion (%) des inscrites */
+      completionRate: number;
+    };
+    CallRequestUserDto: {
+      id: string;
+      email: string;
+      firstName: string | null;
+      lastName: string | null;
+    };
+    AdminCallRequestDto: {
+      id: string;
+      /** @enum {string} */
+      status: 'requested' | 'scheduled' | 'done' | 'cancelled';
+      message: string;
+      /** Format: date-time */
+      scheduledAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      adminNote: string | null;
+      user: components['schemas']['CallRequestUserDto'];
+    };
+    UpdateCallRequestDto: {
+      /** @enum {string} */
+      status?: 'requested' | 'scheduled' | 'done' | 'cancelled';
+      scheduledAt?: string | null;
+      adminNote?: string | null;
+    };
+    ModuleInputDto: {
+      title: string;
+    };
+    AdminResourceDto: {
+      id: string;
+      mediaId: string;
+      title: string;
+      watermark: boolean;
+    };
+    AdminQuizChoiceDto: {
+      id: string;
+      label: string;
+      isCorrect: boolean;
+    };
+    AdminQuizQuestionDto: {
+      id: string;
+      prompt: string;
+      explanation: string | null;
+      choices: components['schemas']['AdminQuizChoiceDto'][];
+    };
+    AdminQuizDto: {
+      passScorePercent: number;
+      /** @description Vide : tentatives illimitées */
+      maxAttempts: number | null;
+      questions: components['schemas']['AdminQuizQuestionDto'][];
+    };
+    AdminLessonDto: {
+      id: string;
+      slug: string;
+      title: string;
+      summary: string | null;
+      /** @description Identifiant Bunny Stream */
+      videoId: string | null;
+      videoDurationSeconds: number | null;
+      tipsMarkdown: string;
+      freePreview: boolean;
+      published: boolean;
+      position: number;
+      resources: components['schemas']['AdminResourceDto'][];
+      quiz: components['schemas']['AdminQuizDto'] | null;
+    };
+    AdminModuleDto: {
+      id: string;
+      title: string;
+      position: number;
+      lessons: components['schemas']['AdminLessonDto'][];
+    };
+    AdminCourseDto: {
+      id: string;
+      slug: string;
+      title: string;
+      summary: string;
+      descriptionMarkdown: string;
+      packId: string;
+      coverMediaId: string | null;
+      coverAlt: string;
+      featured: boolean;
+      /** @enum {string} */
+      status: 'draft' | 'published';
+      position: number;
+      seoTitle: string | null;
+      seoDescription: string | null;
+      /** Format: date-time */
+      updatedAt: string;
+      /** @description Modules et leçons, quiz avec réponses */
+      modules: components['schemas']['AdminModuleDto'][];
+    };
+    CreateLessonDto: {
+      title: string;
+      slug?: string;
+      summary?: string | null;
+      /** @description Identifiant de la vidéo Bunny Stream */
+      videoId?: string | null;
+      videoDurationSeconds?: number | null;
+      /** @description Conseils & astuces (Markdown) */
+      tipsMarkdown?: string;
+      /**
+       * @description Leçon d’exemple gratuite
+       * @default false
+       */
+      freePreview: boolean;
+      /** @default true */
+      published: boolean;
+    };
+    UpdateLessonDto: {
+      title?: string;
+      slug?: string;
+      summary?: string | null;
+      /** @description Identifiant de la vidéo Bunny Stream */
+      videoId?: string | null;
+      videoDurationSeconds?: number | null;
+      /** @description Conseils & astuces (Markdown) */
+      tipsMarkdown?: string;
+      /**
+       * @description Leçon d’exemple gratuite
+       * @default false
+       */
+      freePreview: boolean;
+      /** @default true */
+      published: boolean;
+      /** @description Déplacer la leçon dans un autre module de la formation */
+      moduleId?: string;
+    };
+    ResourceInputDto: {
+      /** @description Document PDF de la médiathèque */
+      mediaId: string;
+      /** @example Fiche recette */
+      title: string;
+      /**
+       * @description Filigrane au nom de la cliente
+       * @default false
+       */
+      watermark: boolean;
+    };
+    SetResourcesDto: {
+      /** @description Liste complète, dans l’ordre */
+      resources: components['schemas']['ResourceInputDto'][];
+    };
+    QuizChoiceInputDto: {
+      label: string;
+      isCorrect: boolean;
+    };
+    QuizQuestionInputDto: {
+      prompt: string;
+      explanation?: string | null;
+      choices: components['schemas']['QuizChoiceInputDto'][];
+    };
+    SetQuizDto: {
+      /** @default 70 */
+      passScorePercent: number;
+      /** @description Vide = illimité */
+      maxAttempts?: number | null;
+      questions: components['schemas']['QuizQuestionInputDto'][];
+    };
+    AdminCoursePackRefDto: {
+      name: string;
+      rank: number;
+    };
+    LessonCountDto: {
+      lessons: number;
+    };
+    AdminCourseListItemDto: {
+      id: string;
+      slug: string;
+      title: string;
+      /** @enum {string} */
+      status: 'draft' | 'published';
+      featured: boolean;
+      position: number;
+      pack: components['schemas']['AdminCoursePackRefDto'];
+      _count: components['schemas']['LessonCountDto'];
+    };
+    CreateCourseDto: {
+      title: string;
+      slug?: string;
+      summary: string;
+      /** @description Markdown */
+      descriptionMarkdown?: string;
+      /** @description Pack minimal qui donne accès à la formation */
+      packId: string;
+      coverMediaId?: string | null;
+      coverAlt?: string;
+      /**
+       * @description Formation phare
+       * @default false
+       */
+      featured: boolean;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+    };
+    UpdateCourseDto: {
+      title?: string;
+      slug?: string;
+      summary?: string;
+      /** @description Markdown */
+      descriptionMarkdown?: string;
+      /** @description Pack minimal qui donne accès à la formation */
+      packId?: string;
+      coverMediaId?: string | null;
+      coverAlt?: string;
+      /**
+       * @description Formation phare
+       * @default false
+       */
+      featured: boolean;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+    };
+    ContactDto: {
+      /** @example Awa Diallo */
+      name: string;
+      /** @example awa@example.com */
+      email: string;
+      /** @example +33612345678 */
+      phone?: string | null;
+      /** @enum {string} */
+      subject: 'general' | 'catering' | 'courses' | 'shop' | 'partnership' | 'other';
+      message: string;
+      /** @description Jeton Cloudflare Turnstile (obligatoire en production) */
+      captchaToken?: string;
+      /** @description Piège à robots : champ caché, toujours vide pour un humain */
+      website?: string;
+    };
+    MessageDto: {
+      message: string;
+    };
+    ContactMessageDto: {
+      id: string;
+      name: string;
+      email: string;
+      phone: string | null;
+      /** @enum {string} */
+      subject: 'general' | 'catering' | 'courses' | 'shop' | 'partnership' | 'other';
+      message: string;
+      /** @enum {string} */
+      status: 'new' | 'read' | 'answered' | 'archived';
+      adminNote: string | null;
+      /** Format: date-time */
+      handledAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    ContactMessageListDto: {
+      items: components['schemas']['ContactMessageDto'][];
+      nextCursor: string | null;
+    };
+    UpdateContactDto: {
+      /** @enum {string} */
+      status?: 'new' | 'read' | 'answered' | 'archived';
+      adminNote?: string | null;
+    };
+    SubscribeDto: {
+      /** @example awa@example.com */
+      email: string;
+      /** @description Case de consentement cochée : « J’accepte de recevoir par e-mail les nouvelles des Secrets de Diani (recettes, formations, nouveautés). Désinscription possible à tout moment, en un clic. » */
+      consent: boolean;
+      /** @description Jeton Cloudflare Turnstile (obligatoire en production) */
+      captchaToken?: string;
+      /** @description Piège à robots : toujours vide pour un humain */
+      website?: string;
+    };
+    NewsletterTokenDto: {
+      token: string;
+    };
+    SubscriberDto: {
+      id: string;
+      email: string;
+      /** @enum {string} */
+      status: 'pending' | 'confirmed' | 'unsubscribed';
+      /** @enum {string} */
+      source: 'form' | 'account';
+      /** Format: date-time */
+      requestedAt: string;
+      /** Format: date-time */
+      confirmedAt: string | null;
+      /** Format: date-time */
+      unsubscribedAt: string | null;
+    };
+    SubscriberListDto: {
+      items: components['schemas']['SubscriberDto'][];
+      nextCursor: string | null;
+    };
+    SocialLinksDto: {
+      instagram: string;
+      tiktok: string;
+      facebook: string;
+      youtube: string;
+    };
+    AnnouncementDto: {
+      enabled: boolean;
+      text: string;
+      /** @description Chemin du site ou adresse https ; vide : pas de lien */
+      link: string;
+    };
+    SiteFeaturesDto: {
+      /** @description Validation du panier de la boutique possible */
+      shopOpen: boolean;
+      /** @description Achat des packs de formation possible */
+      courseSalesOpen: boolean;
+    };
+    PublicSiteSettingsDto: {
+      /** @description Numéro WhatsApp (vide : bouton masqué) */
+      whatsappNumber: string;
+      contactEmail: string;
+      socialLinks: components['schemas']['SocialLinksDto'];
+      announcement?: components['schemas']['AnnouncementDto'] | null;
+      features: components['schemas']['SiteFeaturesDto'];
+    };
+    HomeUniverseDto: {
+      /** @description Texte court de présentation de l’univers */
+      text: string;
+      /** @description Absente : fond uni */
+      image?: components['schemas']['PublicImageDto'] | null;
+    };
+    HomeUniversesDto: {
+      catering: components['schemas']['HomeUniverseDto'];
+      courses: components['schemas']['HomeUniverseDto'];
+      shop: components['schemas']['HomeUniverseDto'];
+    };
+    DianiWordDto: {
+      text: string;
+      /** @example Diani */
+      signature: string;
+    };
+    PublicHomeDto: {
+      /** @description Image d’ambiance */
+      heroImage?: components['schemas']['PublicImageDto'] | null;
+      universes: components['schemas']['HomeUniversesDto'];
+      /** @description Absent : section masquée */
+      dianiWord?: components['schemas']['DianiWordDto'] | null;
+    };
+    SettingDto: {
+      /** @example catering.deposit_below_cents */
+      key: string;
+      /** @enum {string} */
+      group: 'site' | 'home' | 'features' | 'catering' | 'shop' | 'legal';
+      /** @example Traiteur */
+      groupLabel: string;
+      description: string;
+      /** @description Valeur en vigueur (valeur par défaut si jamais modifiée) */
+      value: Record<string, never>;
+      defaultValue: Record<string, never>;
+      isDefault: boolean;
+      /** @description Schéma JSON */
+      schema: {
+        [key: string]: unknown;
+      };
+      /** Format: date-time */
+      updatedAt: string | null;
+    };
+    UpdateSettingDto: {
+      /**
+       * @description Nouvelle valeur, au format décrit par le schéma JSON du paramètre
+       * @example 1500
+       */
+      value: Record<string, never>;
+    };
+    PeriodDto: {
+      days: number;
+      /** @example 2026-09-14 */
+      from: string;
+      /** @example 2026-10-13 */
+      to: string;
+    };
+    SalesSplitDto: {
+      orders: number;
+      grossCents: number;
+    };
+    DailySalesDto: {
+      orders: number;
+      grossCents: number;
+      /** @example 2026-10-13 */
+      day: string;
+    };
+    SalesDto: {
+      orders: number;
+      grossCents: number;
+      refundedCents: number;
+      netCents: number;
+      /** @description Boutique (kits, produits) */
+      shop: components['schemas']['SalesSplitDto'];
+      /** @description Packs de formation */
+      courses: components['schemas']['SalesSplitDto'];
+      /** @description Un point par jour, zéro compris */
+      daily: components['schemas']['DailySalesDto'][];
+    };
+    TodoDto: {
+      /** @description Commandes payées ou en préparation à expédier ou à remettre */
+      ordersToShip: number;
+      /** @description Demandes traiteur nouvelles ou en discussion */
+      cateringPending: number;
+      /** @description Événements traiteur confirmés dans les 14 prochains jours */
+      cateringUpcoming: number;
+      contactMessagesNew: number;
+      callRequestsPending: number;
+    };
+    CustomersDto: {
+      newAccounts: number;
+      verifiedNewAccounts: number;
+      totalActive: number;
+    };
+    CoursesSummaryDto: {
+      newAccesses: number;
+      activeAccesses: number;
+    };
+    NewsletterSummaryDto: {
+      confirmed: number;
+      newConfirmed: number;
+    };
+    LowStockLineDto: {
+      variantId: string;
+      productName: string;
+      label: string;
+      sku: string;
+      available: number;
+      threshold: number;
+    };
+    DashboardDto: {
+      period: components['schemas']['PeriodDto'];
+      sales: components['schemas']['SalesDto'];
+      todo: components['schemas']['TodoDto'];
+      customers: components['schemas']['CustomersDto'];
+      courses: components['schemas']['CoursesSummaryDto'];
+      newsletter: components['schemas']['NewsletterSummaryDto'];
+      lowStock: components['schemas']['LowStockLineDto'][];
+    };
+    AdminUserDto: {
+      id: string;
+      email: string;
+      firstName: string | null;
+      lastName: string | null;
+      /** @enum {string} */
+      role: 'client' | 'admin';
+      /** @enum {string} */
+      status: 'active' | 'locked' | 'deleted';
+      emailVerified: boolean;
+      mfaEnabled: boolean;
+      /** Format: date-time */
+      lastLoginAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AdminUserListDto: {
+      items: components['schemas']['AdminUserDto'][];
+      nextCursor: string | null;
+    };
+    AdminUserStatsDto: {
+      orders: number;
+      paidOrders: number;
+      activeSessions: number;
+      /** @description Accès actifs à des packs de formation */
+      activeAccesses: number;
+    };
+    AdminUserOrderDto: {
+      id: string;
+      number: number;
+      status: string;
+      totalCents: number;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    AdminUserDetailDto: {
+      id: string;
+      email: string;
+      firstName: string | null;
+      lastName: string | null;
+      /** @enum {string} */
+      role: 'client' | 'admin';
+      /** @enum {string} */
+      status: 'active' | 'locked' | 'deleted';
+      emailVerified: boolean;
+      mfaEnabled: boolean;
+      /** Format: date-time */
+      lastLoginAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      phone: string | null;
+      /** Format: date-time */
+      lockedAt: string | null;
+      marketingConsent: boolean;
+      stats: components['schemas']['AdminUserStatsDto'];
+      /** @description 5 dernières commandes */
+      recentOrders: components['schemas']['AdminUserOrderDto'][];
+    };
+    RevokedSessionsDto: {
+      revoked: number;
     };
   };
   responses: never;
@@ -1731,6 +5798,14 @@ export interface operations {
         limit?: number;
         action?: string;
         actorId?: string;
+        /** @description Type de la cible (user, order, setting…) */
+        targetType?: string;
+        /** @description Identifiant de la cible (historique d’un compte, d’une commande…) */
+        targetId?: string;
+        /** @description À partir de (inclus) */
+        from?: string;
+        /** @description Jusqu’à (exclu) */
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -1738,12 +5813,13 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Page d’entrées et curseur suivant */
       200: {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          'application/json': components['schemas']['AuditLogPageDto'];
+        };
       };
     };
   };
@@ -3603,7 +7679,11 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          'application/json': {
+            [key: string]: unknown;
+          };
+        };
       };
     };
   };
@@ -3616,6 +7696,3298 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CateringController_catalogue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CateringCatalogDto'];
+        };
+      };
+    };
+  };
+  CateringController_product: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CateringProductDetailDto'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CateringController_conditions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CateringConditionsDto'];
+        };
+      };
+    };
+  };
+  CateringController_availableSlots: {
+    parameters: {
+      query?: {
+        fulfilment?: 'pickup' | 'delivery';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CateringSlotDto'][];
+        };
+      };
+      /** @description Commande en ligne fermée */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CateringController_order: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateOnlineCateringOrderDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CateringRequestReceiptDto'];
+        };
+      };
+      /** @description Commande en ligne fermée */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Créneau complet */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CateringRequestsController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCateringRequestDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CateringRequestReceiptDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_listCategories: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringCategoryDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_createCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCateringCategoryDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringCategoryDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_reorderCategories: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringCategoryDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_removeCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCateringCatalogController_updateCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateCateringCategoryDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringCategoryDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_listProducts: {
+    parameters: {
+      query?: {
+        categoryId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringProductDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_createProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCateringProductDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringProductDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_reorderProducts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringProductDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_getProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringProductDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_removeProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCateringCatalogController_updateProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateCateringProductDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringProductDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_listFlavours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminFlavourDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_createFlavour: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateFlavourDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminFlavourDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_reorderFlavours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminFlavourDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_removeFlavour: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCateringCatalogController_updateFlavour: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFlavourDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminFlavourDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_listSlots: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminSlotDto'][];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_createSlot: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateSlotDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminSlotDto'];
+        };
+      };
+    };
+  };
+  AdminCateringCatalogController_removeSlot: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCateringCatalogController_updateSlot: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateSlotDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminSlotDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_list: {
+    parameters: {
+      query?: {
+        /** @description Identifiant du dernier élément de la page précédente */
+        cursor?: string;
+        limit?: number;
+        status?: 'new' | 'contacted' | 'deposit_received' | 'confirmed' | 'delivered' | 'cancelled';
+        /** @description Événements à partir de cette date (AAAA-MM-JJ) */
+        from?: string;
+        /** @description Événements jusqu’à cette date incluse (AAAA-MM-JJ) */
+        to?: string;
+        /** @description Référence (TR-000042) ou adresse e-mail */
+        q?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringRequestListDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AdminCreateCateringRequestDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringRequestDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringRequestDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AdminUpdateCateringRequestDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringRequestDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_recordDeposit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecordDepositDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringRequestDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_changeStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangeRequestStatusDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCateringRequestDto'];
+        };
+      };
+    };
+  };
+  AdminCateringRequestsController_recap: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecapDto'];
+        };
+      };
+    };
+  };
+  ShopController_list: {
+    parameters: {
+      query?: {
+        kind?: 'kit' | 'accessory';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShopProductCardDto'][];
+        };
+      };
+    };
+  };
+  ShopController_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShopProductDetailDto'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  ShopController_comparison: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KitComparisonDto'];
+        };
+      };
+    };
+  };
+  ShopController_track: {
+    parameters: {
+      query: {
+        /** @description Jeton du lien de suivi reçu par e-mail */
+        token: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrderDto'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  ShopController_trackedInvoice: {
+    parameters: {
+      query: {
+        /** @description Jeton du lien de suivi reçu par e-mail */
+        token: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DownloadUrlDto'];
+        };
+      };
+      /** @description Facture en préparation */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CartController_view: {
+    parameters: {
+      query?: {
+        /** @description Pays de livraison (ISO 3166-1 alpha-2) pour calculer les options de livraison */
+        country?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CartDto'];
+        };
+      };
+    };
+  };
+  CartController_add: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Valeur quelconque non vide (protection CSRF du cookie de panier) */
+        'x-csrf-token': string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddCartItemDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CartDto'];
+        };
+      };
+      /** @description Stock insuffisant ou plafond atteint */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CartController_remove: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Valeur quelconque non vide (protection CSRF du cookie de panier) */
+        'x-csrf-token': string;
+      };
+      path: {
+        variantId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CartDto'];
+        };
+      };
+    };
+  };
+  CartController_set: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Valeur quelconque non vide (protection CSRF du cookie de panier) */
+        'x-csrf-token': string;
+      };
+      path: {
+        variantId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SetCartItemDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CartDto'];
+        };
+      };
+    };
+  };
+  CartController_checkout: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Valeur quelconque non vide (protection CSRF du cookie de panier) */
+        'x-csrf-token': string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CheckoutDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CheckoutResultDto'];
+        };
+      };
+      /** @description Panier modifié ou stock insuffisant */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CartMergeController_merge: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Valeur quelconque non vide (protection CSRF du cookie de panier) */
+        'x-csrf-token': string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CartDto'];
+        };
+      };
+    };
+  };
+  MyOrdersController_list: {
+    parameters: {
+      query?: {
+        /** @description Identifiant du dernier élément de la page précédente */
+        cursor?: string;
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrderListDto'];
+        };
+      };
+    };
+  };
+  MyOrdersController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrderDto'];
+        };
+      };
+    };
+  };
+  MyOrdersController_invoice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DownloadUrlDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_listProducts: {
+    parameters: {
+      query?: {
+        kind?: 'kit' | 'accessory';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminShopProductDto'][];
+        };
+      };
+    };
+  };
+  AdminShopController_createProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateShopProductDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminShopProductDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_reorderProducts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminShopProductDto'][];
+        };
+      };
+    };
+  };
+  AdminShopController_getProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminShopProductDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_removeProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminShopController_updateProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateShopProductDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminShopProductDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_listStock: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminStockDto'][];
+        };
+      };
+    };
+  };
+  AdminShopController_adjustStock: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        variantId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AdjustStockDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminStockDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_setThreshold: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        variantId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StockThresholdDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminStockDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_movements: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        variantId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StockMovementDto'][];
+        };
+      };
+    };
+  };
+  AdminShopController_listRates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShippingRateDto'][];
+        };
+      };
+    };
+  };
+  AdminShopController_createRate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateShippingRateDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShippingRateDto'];
+        };
+      };
+    };
+  };
+  AdminShopController_reorderRates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShippingRateDto'][];
+        };
+      };
+    };
+  };
+  AdminShopController_removeRate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminShopController_updateRate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateShippingRateDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShippingRateDto'];
+        };
+      };
+    };
+  };
+  AdminOrdersController_list: {
+    parameters: {
+      query?: {
+        /** @description Identifiant du dernier élément de la page précédente */
+        cursor?: string;
+        limit?: number;
+        status?:
+          | 'pending_payment'
+          | 'paid'
+          | 'preparing'
+          | 'shipped'
+          | 'delivered'
+          | 'cancelled'
+          | 'refunded';
+        /** @description Commandes passées à partir de cette date (AAAA-MM-JJ) */
+        from?: string;
+        /** @description Commandes passées jusqu’à cette date incluse (AAAA-MM-JJ) */
+        to?: string;
+        /** @description Référence (CMD-000042), e-mail ou nom */
+        q?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminOrderListDto'];
+        };
+      };
+    };
+  };
+  AdminOrdersController_export: {
+    parameters: {
+      query?: {
+        status?:
+          | 'pending_payment'
+          | 'paid'
+          | 'preparing'
+          | 'shipped'
+          | 'delivered'
+          | 'cancelled'
+          | 'refunded';
+        /** @description AAAA-MM-JJ */
+        from?: string;
+        /** @description AAAA-MM-JJ (inclus) */
+        to?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fichier CSV (séparateur « ; », UTF-8 avec BOM) */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/csv': string;
+        };
+      };
+    };
+  };
+  AdminOrdersController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminOrderDto'];
+        };
+      };
+    };
+  };
+  AdminOrdersController_changeStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangeOrderStatusDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminOrderDto'];
+        };
+      };
+    };
+  };
+  AdminOrdersController_invoice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DownloadUrlDto'];
+        };
+      };
+    };
+  };
+  PaymentsController_methods: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaymentMethodsDto'];
+        };
+      };
+    };
+  };
+  PaymentsController_checkout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StartPaymentDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StartedPaymentDto'];
+        };
+      };
+      /** @description Délai dépassé ou déjà payée */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  PaymentsController_capture: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapturePayPalDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaymentResultDto'];
+        };
+      };
+    };
+  };
+  AdminPaymentsController_payments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminPaymentDto'][];
+        };
+      };
+    };
+  };
+  AdminPaymentsController_refund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateRefundDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminOrderDto'];
+        };
+      };
+    };
+  };
+  CoursesController_packs: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PackDto'][];
+        };
+      };
+    };
+  };
+  CoursesController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CourseCardDto'][];
+        };
+      };
+    };
+  };
+  CoursesController_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CourseDetailDto'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CoursesController_lesson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+        lessonSlug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LessonDto'];
+        };
+      };
+      /** @description Pack requis */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CoursesController_buy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PackCheckoutDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CheckoutResultDto'];
+        };
+      };
+      /** @description Pack déjà détenu */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_myCourses: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MyCourseDto'][];
+        };
+      };
+    };
+  };
+  MyLearningController_myCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MyCourseDetailDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_progress: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SaveProgressDto'];
+      };
+    };
+    responses: {
+      /** @description Leçon terminée ou non */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            completed?: boolean;
+          };
+        };
+      };
+    };
+  };
+  MyLearningController_quiz: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitQuizDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['QuizResultDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_resource: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DownloadUrlDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_myCertificates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CertificateDto'][];
+        };
+      };
+    };
+  };
+  MyLearningController_downloadCertificate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DownloadUrlDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_claim: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CertificateDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_myPerks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PerksDto'];
+        };
+      };
+    };
+  };
+  MyLearningController_myCalls: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CallRequestDto'][];
+        };
+      };
+    };
+  };
+  MyLearningController_requestCall: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCallRequestDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CallRequestDto'];
+        };
+      };
+    };
+  };
+  CertificatesController_verify: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        number: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CertificateVerificationDto'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_listPacks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminPackDto'][];
+        };
+      };
+    };
+  };
+  AdminCoursesController_createPack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreatePackDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminPackDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_updatePack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdatePackDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminPackDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_accesses: {
+    parameters: {
+      query: {
+        userId: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminAccessDto'][];
+        };
+      };
+    };
+  };
+  AdminCoursesController_grant: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GrantAccessDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GrantedAccessDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_revoke: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RevokeAccessDto'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCoursesController_stats: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CourseStatsDto'][];
+        };
+      };
+    };
+  };
+  AdminCoursesController_calls: {
+    parameters: {
+      query?: {
+        status?: 'requested' | 'scheduled' | 'done' | 'cancelled';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCallRequestDto'][];
+        };
+      };
+    };
+  };
+  AdminCoursesController_updateCall: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateCallRequestDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCallRequestDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_removeModule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_renameModule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ModuleInputDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_addLesson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateLessonDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_reorderLessons: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_removeLesson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_updateLesson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateLessonDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_setResources: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SetResourcesDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_setQuiz: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SetQuizDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_removeQuiz: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_listCourses: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseListItemDto'][];
+        };
+      };
+    };
+  };
+  AdminCoursesController_createCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCourseDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_reorderCourses: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseListItemDto'][];
+        };
+      };
+    };
+  };
+  AdminCoursesController_getCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_removeCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCoursesController_updateCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateCourseDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_publish: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_unpublish: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_addModule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ModuleInputDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  AdminCoursesController_reorderModules: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReorderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminCourseDto'];
+        };
+      };
+    };
+  };
+  ContactController_send: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ContactDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MessageDto'];
+        };
+      };
+    };
+  };
+  AdminContactController_list: {
+    parameters: {
+      query?: {
+        /** @description Identifiant du dernier élément de la page précédente */
+        cursor?: string;
+        limit?: number;
+        status?: 'new' | 'read' | 'answered' | 'archived';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContactMessageListDto'];
+        };
+      };
+    };
+  };
+  AdminContactController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContactMessageDto'];
+        };
+      };
+    };
+  };
+  AdminContactController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateContactDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContactMessageDto'];
+        };
+      };
+    };
+  };
+  NewsletterController_subscribe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubscribeDto'];
+      };
+    };
+    responses: {
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MessageDto'];
+        };
+      };
+    };
+  };
+  NewsletterController_confirm: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NewsletterTokenDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MessageDto'];
+        };
+      };
+    };
+  };
+  NewsletterController_unsubscribe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NewsletterTokenDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MessageDto'];
+        };
+      };
+    };
+  };
+  NewsletterController_oneClick: {
+    parameters: {
+      query: {
+        token: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MessageDto'];
+        };
+      };
+    };
+  };
+  AdminNewsletterController_list: {
+    parameters: {
+      query?: {
+        /** @description Identifiant du dernier élément de la page précédente */
+        cursor?: string;
+        limit?: number;
+        status?: 'pending' | 'confirmed' | 'unsubscribed';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SubscriberListDto'];
+        };
+      };
+    };
+  };
+  AdminNewsletterController_export: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/csv': string;
+        };
+      };
+    };
+  };
+  AdminNewsletterController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  SiteSettingsController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PublicSiteSettingsDto'];
+        };
+      };
+    };
+  };
+  SiteSettingsController_home: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PublicHomeDto'];
+        };
+      };
+    };
+  };
+  AdminSettingsController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingDto'][];
+        };
+      };
+    };
+  };
+  AdminSettingsController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingDto'];
+        };
+      };
+    };
+  };
+  AdminSettingsController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateSettingDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingDto'];
+        };
+      };
+    };
+  };
+  AdminSettingsController_reset: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingDto'];
+        };
+      };
+    };
+  };
+  DashboardController_get: {
+    parameters: {
+      query?: {
+        /** @description Période en jours */
+        days?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DashboardDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_list: {
+    parameters: {
+      query?: {
+        /** @description Identifiant du dernier élément de la page précédente */
+        cursor?: string;
+        limit?: number;
+        /** @description Recherche dans l’e-mail, le prénom et le nom */
+        q?: string;
+        role?: 'client' | 'admin';
+        /** @description Par défaut : tous les comptes sauf les comptes supprimés */
+        status?: 'active' | 'locked' | 'deleted';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminUserListDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminUserDetailDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_lock: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminUserDetailDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_unlock: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminUserDetailDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_resetMfa: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminUserDetailDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_revokeSessions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RevokedSessionsDto'];
+        };
+      };
+    };
+  };
+  AdminUsersController_export: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Même contenu que GET /me/export */
       200: {
         headers: {
           [name: string]: unknown;

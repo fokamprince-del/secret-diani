@@ -109,7 +109,10 @@ describe('États', () => {
 
   it('invite à agir quand c’est vide', () => {
     render(
-      <EmptyState title="Votre panier est vide" action={<a href="/boutique">Voir les kits</a>} />,
+      <EmptyState
+        title="Votre panier est vide"
+        action={<ButtonLink href="/boutique">Voir les kits</ButtonLink>}
+      />,
     );
     expect(screen.getByRole('heading', { name: 'Votre panier est vide' })).toBeInTheDocument();
   });

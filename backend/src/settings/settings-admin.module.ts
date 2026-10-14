@@ -12,8 +12,13 @@ import { IsDefined, Matches } from 'class-validator';
 import type { AuthenticatedUser } from '../common/auth/authenticated-user';
 import { CurrentUser, Roles } from '../common/auth/decorators';
 import { PublicContent } from '../content/common/content.helpers';
+import { PublicImageDto } from '../content/common/content-responses.dto';
 import { SETTING_GROUP_LABELS } from './settings.registry';
-import { type PublicSiteSettings, SettingsAdminService } from './settings-admin.service';
+import {
+  type PublicHome,
+  type PublicSiteSettings,
+  SettingsAdminService,
+} from './settings-admin.service';
 
 const KEY_PATTERN = /^[a-z_]+\.[a-z_]+$/;
 
@@ -76,6 +81,35 @@ export class PublicSiteSettingsDto implements PublicSiteSettings {
   @ApiProperty({ type: SiteFeaturesDto }) features!: SiteFeaturesDto;
 }
 
+class HomeUniverseDto {
+  @ApiProperty({ description: 'Texte court de présentation de l’univers' }) text!: string;
+  @ApiPropertyOptional({ type: PublicImageDto, nullable: true, description: 'Absente : fond uni' })
+  image!: PublicImageDto | null;
+}
+
+class HomeUniversesDto {
+  @ApiProperty({ type: HomeUniverseDto }) catering!: HomeUniverseDto;
+  @ApiProperty({ type: HomeUniverseDto }) courses!: HomeUniverseDto;
+  @ApiProperty({ type: HomeUniverseDto }) shop!: HomeUniverseDto;
+}
+
+class DianiWordDto {
+  @ApiProperty() text!: string;
+  @ApiProperty({ example: 'Diani' }) signature!: string;
+}
+
+export class PublicHomeDto implements PublicHome {
+  @ApiPropertyOptional({ type: PublicImageDto, nullable: true, description: 'Image d’ambiance' })
+  heroImage!: PublicImageDto | null;
+  @ApiProperty({ type: HomeUniversesDto }) universes!: HomeUniversesDto;
+  @ApiPropertyOptional({
+    type: DianiWordDto,
+    nullable: true,
+    description: 'Absent : section masquée',
+  })
+  dianiWord!: DianiWordDto | null;
+}
+
 @ApiTags('Site')
 @Controller('site')
 export class SiteSettingsController {
@@ -89,6 +123,14 @@ export class SiteSettingsController {
   @ApiOkResponse({ type: PublicSiteSettingsDto })
   get(): Promise<PublicSiteSettingsDto> {
     return this.settings.publicSettings();
+  }
+
+  @Get('home')
+  @PublicContent()
+  @ApiOperation({ summary: 'Contenus de l’accueil (image d’ambiance, univers, mot de Diani)' })
+  @ApiOkResponse({ type: PublicHomeDto })
+  home(): Promise<PublicHomeDto> {
+    return this.settings.publicHome();
   }
 }
 

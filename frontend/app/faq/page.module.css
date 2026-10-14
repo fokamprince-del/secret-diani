@@ -1,0 +1,53 @@
+.faq {
+  display: grid;
+  gap: var(--e-8);
+}
+
+/* Colonne de lecture : alignée sur le titre, jamais plus large que 48 rem. */
+.faq > * {
+  max-width: 48rem;
+}
+
+.rubriques ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.rubrique {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+  padding-inline: var(--e-4);
+  border: 1px solid var(--nude);
+  border-radius: var(--rayon-pilule);
+  color: var(--cacao);
+  font-size: var(--taille-petit);
+  transition:
+    background-color var(--duree-courte) ease,
+    border-color var(--duree-courte) ease;
+}
+
+.rubrique:hover {
+  border-color: var(--terra);
+  background-color: var(--sable);
+  color: var(--cacao);
+}
+
+.groupe {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.titre {
+  font-size: var(--t-h3);
+}
+
+.contact {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+  padding: var(--e-6);
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+}

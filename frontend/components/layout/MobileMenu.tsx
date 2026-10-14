@@ -5,14 +5,15 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { Icon } from '../ui/Icon';
 import { Logo } from './Logo';
-import { isCurrent, mainNavigation, socialLinks } from './navigation';
+import type { SocialLink } from '@/lib/social';
+import { isCurrent, mainNavigation } from './navigation';
 import styles from './MobileMenu.module.css';
 
 /**
  * Menu plein écran (mobile). `<dialog>` modal natif : le reste de la page devient inerte
  * (piège de focus), Échap ferme le menu et le focus revient sur le bouton d'ouverture.
  */
-export function MobileMenu() {
+export function MobileMenu({ social }: { social: SocialLink | null }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const pathname = usePathname();
 
@@ -68,16 +69,18 @@ export function MobileMenu() {
             <Icon name="user" size={20} />
             Se connecter
           </Link>
-          <a
-            href={socialLinks.instagram.href}
-            className={`${styles.secondaire} sans-filet`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Icon name="instagram" size={20} />
-            {socialLinks.instagram.handle}
-            <span className="visually-hidden"> sur Instagram (nouvel onglet)</span>
-          </a>
+          {social && (
+            <a
+              href={social.href}
+              className={`${styles.secondaire} sans-filet`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Icon name={social.network} size={20} />
+              {social.handle}
+              <span className="visually-hidden"> sur {social.label} (nouvel onglet)</span>
+            </a>
+          )}
         </div>
       </dialog>
     </>

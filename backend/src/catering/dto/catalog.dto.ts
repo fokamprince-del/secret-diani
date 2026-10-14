@@ -163,6 +163,10 @@ export class CateringProductDetailDto extends CateringProductCardDto {
   @ApiProperty({ type: SeoDto })
   seo!: SeoDto;
 
-  @ApiProperty({ description: 'Données structurées schema.org (Product + offres)' })
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: true,
+    description: 'Données structurées schema.org (Product + offres)',
+  })
   jsonLd!: Record<string, unknown>;
 }

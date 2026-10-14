@@ -16,6 +16,10 @@ const mediaOrigin = origin(process.env.NEXT_PUBLIC_MEDIA_URL);
 const analyticsOrigin = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN
   ? (origin(process.env.NEXT_PUBLIC_PLAUSIBLE_SRC) ?? 'https://plausible.io')
   : null;
+// Anti-robot des formulaires (Cloudflare Turnstile), seulement si une clé est configurée.
+const captchaOrigin = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  ? 'https://challenges.cloudflare.com'
+  : null;
 // Lecture vidéo des leçons (Bunny Stream, URL signées fournies par l'API).
 const videoOrigins = ['https://*.b-cdn.net', 'https://*.mediadelivery.net'];
 
@@ -29,14 +33,14 @@ const sources = (...values: (string | null | false)[]) => values.filter(Boolean)
  */
 const csp = [
   `default-src 'self'`,
-  `script-src ${sources(`'self'`, `'unsafe-inline'`, isDev && `'unsafe-eval'`, analyticsOrigin)}`,
+  `script-src ${sources(`'self'`, `'unsafe-inline'`, isDev && `'unsafe-eval'`, analyticsOrigin, captchaOrigin)}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src ${sources(`'self'`, 'data:', 'blob:', apiOrigin, mediaOrigin)}`,
   `font-src 'self'`,
   `connect-src ${sources(`'self'`, apiOrigin, analyticsOrigin, ...videoOrigins, isDev && 'ws:')}`,
   `media-src ${sources(`'self'`, 'blob:', mediaOrigin, ...videoOrigins)}`,
   `worker-src 'self' blob:`,
-  `frame-src 'none'`,
+  `frame-src ${captchaOrigin ?? `'none'`}`,
   `object-src 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,

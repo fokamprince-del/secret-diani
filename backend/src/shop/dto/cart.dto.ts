@@ -158,7 +158,7 @@ export class CheckoutAddressDto {
   @MaxLength(200)
   line1!: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String, nullable: true })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -207,7 +207,7 @@ export class CheckoutDto {
   @MaxLength(100)
   lastName!: string;
 
-  @ApiPropertyOptional({ example: '+33612345678' })
+  @ApiPropertyOptional({ type: String, nullable: true, example: '+33612345678' })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -236,7 +236,7 @@ export class CheckoutDto {
   @Type(() => CheckoutAddressDto)
   billingAddress?: CheckoutAddressDto;
 
-  @ApiPropertyOptional({ maxLength: 1000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 1000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()

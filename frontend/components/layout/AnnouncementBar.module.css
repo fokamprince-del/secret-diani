@@ -1,0 +1,33 @@
+.bandeau {
+  background-color: var(--cacao);
+  color: var(--blanc);
+  font-size: var(--taille-petit);
+}
+
+.texte {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-block: var(--e-2);
+  text-align: center;
+}
+
+.lien {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--cible);
+  color: var(--blanc);
+  background-size: 0% 1px;
+}
+
+.lien:hover {
+  color: var(--blanc);
+  background-size: 100% 1px;
+  background-position: 0 85%;
+}
+
+.lien:focus-visible {
+  outline-color: var(--blanc);
+}

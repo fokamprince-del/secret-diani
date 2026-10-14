@@ -40,7 +40,7 @@ export class ProfileDto {
 
 /** Champs modifiables du profil. Chaîne vide = effacer la valeur. */
 export class UpdateProfileDto {
-  @ApiPropertyOptional({ nullable: true, maxLength: 100 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 100 })
   @IsOptional()
   @EmptyToNull()
   @ValidateIf((_, value) => value !== null)
@@ -48,7 +48,7 @@ export class UpdateProfileDto {
   @MaxLength(100)
   firstName?: string | null;
 
-  @ApiPropertyOptional({ nullable: true, maxLength: 100 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 100 })
   @IsOptional()
   @EmptyToNull()
   @ValidateIf((_, value) => value !== null)
@@ -56,7 +56,7 @@ export class UpdateProfileDto {
   @MaxLength(100)
   lastName?: string | null;
 
-  @ApiPropertyOptional({ nullable: true, example: '+33 6 12 34 56 78' })
+  @ApiPropertyOptional({ type: String, nullable: true, example: '+33 6 12 34 56 78' })
   @IsOptional()
   @EmptyToNull()
   @ValidateIf((_, value) => value !== null)

@@ -1,0 +1,38 @@
+.entete {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+  padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) var(--e-7);
+}
+
+.surtitre {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--terra-d);
+}
+
+.surtitre::before {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background-color: var(--or);
+}
+
+.titre {
+  max-width: 22ch;
+}
+
+.intro {
+  max-width: 56ch;
+  font-size: 1.125rem;
+}
+
+.meta {
+  font-size: var(--taille-petit);
+  color: var(--texte);
+}

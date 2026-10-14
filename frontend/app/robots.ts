@@ -17,6 +17,7 @@ export default function robots(): MetadataRoute.Robots {
         '/mot-de-passe-oublie',
         '/reinitialiser',
         '/verifier-email',
+        '/newsletter/',
       ],
     },
     sitemap: siteUrl('/sitemap.xml'),

@@ -55,7 +55,7 @@ export class ContactDto {
   @MaxLength(254)
   email!: string;
 
-  @ApiPropertyOptional({ example: '+33612345678' })
+  @ApiPropertyOptional({ type: String, nullable: true, example: '+33612345678' })
   @IsOptional()
   @EmptyToNull()
   @IsString()
@@ -106,7 +106,7 @@ export class UpdateContactDto {
   @IsEnum(ContactStatus)
   status?: ContactStatus;
 
-  @ApiPropertyOptional({ maxLength: 2000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2000 })
   @IsOptional()
   @EmptyToNull()
   @IsString()

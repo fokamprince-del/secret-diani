@@ -3,6 +3,7 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
   type Ref,
+  type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
 import { Icon } from '../ui/Icon';
@@ -107,6 +108,49 @@ export function TextAreaField({
   );
 }
 
+interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  label: string;
+  options: readonly { value: string; label: string }[];
+  hint?: ReactNode;
+  error?: string;
+  optional?: boolean;
+  ref?: Ref<HTMLSelectElement>;
+}
+
+/** Liste native : clavier, lecteurs d'écran et sélecteur du téléphone sans JavaScript. */
+export function SelectField({
+  label,
+  options,
+  hint,
+  error,
+  optional,
+  id,
+  ref,
+  ...rest
+}: SelectFieldProps) {
+  const generatedId = useId();
+  const fieldId = id ?? generatedId;
+  return (
+    <FieldShell id={fieldId} label={label} hint={hint} error={error} optional={optional}>
+      <select
+        ref={ref}
+        id={fieldId}
+        className={`${styles.saisie} ${styles.liste}`}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(fieldId, hint, error)}
+        required={!optional}
+        {...rest}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </FieldShell>
+  );
+}
+
 interface CheckboxFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label: ReactNode;
   error?: string;
@@ -135,6 +179,24 @@ export function CheckboxField({ label, error, id, ref, ...rest }: CheckboxFieldP
           <span>{error}</span>
         </p>
       )}
+    </div>
+  );
+}
+
+/**
+ * Champ piège (« honeypot ») : invisible et hors du parcours clavier pour un humain, il reste
+ * vide ; un robot qui remplit tout se trahit et l'API ignore son envoi.
+ */
+export function HoneypotField({
+  ref,
+  ...rest
+}: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) {
+  return (
+    <div className={styles.piege} aria-hidden="true">
+      <label>
+        Ne pas remplir ce champ
+        <input ref={ref} type="text" tabIndex={-1} autoComplete="off" {...rest} />
+      </label>
     </div>
   );
 }
