@@ -89,7 +89,9 @@ export function NewsletterForm() {
       <h2 id="newsletter-titre" className={styles.titre}>
         La lettre de Diani
       </h2>
-      <p className={styles.texte}>Recettes, astuces et nouveautés, une à deux fois par mois.</p>
+      <p className={styles.texte}>
+        Mes recettes, mes astuces et les nouveautés, directement dans votre boîte mail.
+      </p>
       <TextField
         ref={emailRef}
         name="email"

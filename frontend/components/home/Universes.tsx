@@ -10,21 +10,21 @@ const UNIVERSES = [
     number: '01',
     title: 'Traiteur & commandes',
     href: '/traiteur',
-    action: 'Découvrir le traiteur',
+    action: 'Je commande un plateau',
   },
   {
     key: 'courses',
     number: '02',
     title: 'Formations en ligne',
     href: '/formations',
-    action: 'Découvrir les formations',
+    action: 'Je veux apprendre',
   },
   {
     key: 'shop',
     number: '03',
     title: 'Boutique & kits',
     href: '/boutique',
-    action: 'Découvrir la boutique',
+    action: 'Je choisis mon kit',
   },
 ] as const;
 

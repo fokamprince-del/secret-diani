@@ -109,11 +109,11 @@ export function Cart() {
       <>
         <FormStatus tone="succes">{notice}</FormStatus>
         <EmptyState
-          title="Votre panier est vide"
+          title="Votre panier est vide… pour l’instant."
           icon="bag"
-          action={<ButtonLink href="/boutique">Découvrir les kits</ButtonLink>}
+          action={<ButtonLink href="/boutique">Je choisis mon kit</ButtonLink>}
         >
-          <p>Les kits de Diani vous attendent dans la boutique.</p>
+          <p>Les kits sont prêts, il ne manque plus que vous.</p>
         </EmptyState>
       </>
     );

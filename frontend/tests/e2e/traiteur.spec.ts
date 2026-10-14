@@ -20,7 +20,9 @@ test.describe('Traiteur', () => {
     const conditions = page.getByRole('region', { name: 'Comment commander' });
     await expect(conditions).toContainText('Un acompte de 10,00 €');
     await expect(conditions).toContainText('n’est pas remboursable');
-    await expect(page.getByRole('region', { name: 'Ce qu’en disent nos clients' })).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'Ce qu’on m’écrit après la fête' }),
+    ).toBeVisible();
   });
 
   test('« Contacter » ouvre WhatsApp avec un message pré-rempli sur le produit', async ({

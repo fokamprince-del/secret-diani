@@ -28,15 +28,15 @@ export const UNIVERSES = defineSetting({
   schema: universesSchema,
   defaultValue: {
     catering: {
-      text: 'Plateaux, bouchées et layer cakes faits maison pour vos anniversaires, baptêmes et fêtes de famille.',
+      text: 'Des plateaux qui disparaissent avant le dessert et des layer cakes à vos parfums, faits maison pour vos anniversaires, baptêmes et fêtes de famille.',
       imageId: '',
     },
     courses: {
-      text: 'Des formations vidéo pas à pas pour maîtriser la pâtisserie et lancer votre activité.',
+      text: 'Je vous montre le geste en vidéo, vous le refaites chez vous : de la crème au beurre lisse jusqu’à votre première commande.',
       imageId: '',
     },
     shop: {
-      text: 'Les kits d’accessoires choisis par Diani pour bien démarrer et travailler comme une pro.',
+      text: 'Les accessoires que j’utilise vraiment, réunis en kits : de quoi bien démarrer, puis travailler comme à l’atelier.',
       imageId: '',
     },
   },

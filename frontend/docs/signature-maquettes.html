@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signature visuelle — trois pistes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --creme: #f9eee8; --sable: #f0e2d9; --peche: #e9cdb8; --nude: #dab6aa;
+    --terra: #9b6155; --terra-d: #82493f; --cacao: #5e2f1b; --texte: #5a504a;
+    --or: #b8935a; --blanc: #fffbf8; --courbe: cubic-bezier(.2, .7, .2, 1);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--creme); color: var(--texte); font: 17px/1.65 'DM Sans', system-ui, sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 48px 20px 80px; display: grid; gap: 40px; }
+  h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; color: var(--cacao); margin: 0; }
+  h1 { font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem); }
+  .intro { max-width: 60ch; }
+  .piste { background: var(--blanc); border-radius: 14px; padding: clamp(20px, 3vw, 40px); display: grid; gap: 20px; }
+  .piste header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .lettre { font-family: 'Playfair Display', serif; font-style: italic; color: var(--terra); font-size: 1.4rem; margin-right: 8px; }
+  .reco { font-size: .85rem; font-weight: 600; color: var(--cacao); background: var(--sable); padding: 2px 12px; border-radius: 999px; }
+  button.rejouer { min-height: 44px; padding: 0 18px; border: 1px solid var(--terra-d); border-radius: 999px; background: none; color: var(--terra-d); font: inherit; cursor: pointer; }
+  button.rejouer:hover { background: var(--sable); }
+  .scene { background: var(--creme); border-radius: 14px; padding: clamp(24px, 4vw, 56px); overflow: hidden; }
+  .note { font-size: .95rem; max-width: 70ch; }
+
+  /* ---------- Piste A : le trait de crème ---------- */
+  .heroA h2 { font-size: clamp(2rem, 1.3rem + 3vw, 3.6rem); line-height: 1.08; max-width: 16ch; }
+  .heroA h2 span { display: inline-block; }
+  .trait { display: block; width: min(420px, 80%); height: 34px; margin: 14px 0 22px; overflow: visible; }
+  .trait path { fill: none; stroke: var(--terra); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+  .trait path.reflet { stroke: var(--blanc); stroke-width: 2; opacity: .6; }
+  .exemplesA { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 32px; }
+  .exemplesA > div { background: var(--blanc); border-radius: 12px; padding: 18px; }
+  .exemplesA small { display: block; color: var(--texte); margin-bottom: 8px; }
+  .lienA { position: relative; color: var(--cacao); text-decoration: none; font-weight: 500; }
+  .lienA svg { position: absolute; left: 0; bottom: -10px; width: 100%; height: 12px; overflow: visible; }
+  .lienA path { fill: none; stroke: var(--terra); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 160; stroke-dashoffset: 160; transition: stroke-dashoffset 500ms var(--courbe); }
+  .lienA:hover path, .lienA:focus-visible path { stroke-dashoffset: 0; }
+  .progression svg { width: 100%; height: 20px; overflow: visible; }
+  .progression .fond { fill: none; stroke: var(--sable); stroke-width: 8; stroke-linecap: round; }
+  .progression .plein { fill: none; stroke: var(--terra); stroke-width: 8; stroke-linecap: round; }
+  .separateur { width: 100%; height: 24px; }
+  .separateur path { fill: none; stroke: var(--nude); stroke-width: 3; stroke-linecap: round; }
+
+  .joue .trait path, .joue .separateur path { stroke-dasharray: 600; stroke-dashoffset: 600; animation: dessine 900ms var(--courbe) 250ms forwards; }
+  .joue .trait path.reflet { animation-delay: 420ms; }
+  .joue .heroA h2 span { opacity: 0; transform: translateY(14px); animation: monte 520ms var(--courbe) forwards; }
+  .joue .heroA h2 span:nth-child(2) { animation-delay: 90ms; } .joue .heroA h2 span:nth-child(3) { animation-delay: 180ms; }
+  .joue .heroA h2 span:nth-child(4) { animation-delay: 270ms; } .joue .heroA h2 span:nth-child(5) { animation-delay: 360ms; }
+  .joue .heroA h2 span:nth-child(6) { animation-delay: 450ms; } .joue .heroA h2 span:nth-child(7) { animation-delay: 540ms; }
+  .joue .heroA .sous { opacity: 0; animation: monte 520ms var(--courbe) 700ms forwards; }
+  .joue .progression .plein { stroke-dasharray: 400; stroke-dashoffset: 400; animation: remplit 1200ms var(--courbe) 400ms forwards; }
+  @keyframes dessine { to { stroke-dashoffset: 0; } }
+  @keyframes remplit { to { stroke-dashoffset: 160; } }
+  @keyframes monte { to { opacity: 1; transform: none; } }
+
+  /* ---------- Piste B : la note manuscrite ---------- */
+  .sceneB { display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 760px) { .sceneB { grid-template-columns: 1.2fr 1fr; } }
+  .photo { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; background: var(--peche); display: grid; place-items: center; color: color-mix(in srgb, var(--cacao) 45%, transparent); font-size: .9rem; }
+  .annotation { position: absolute; right: -8px; bottom: -18px; display: flex; align-items: flex-end; gap: 6px; transform: rotate(-4deg); }
+  .annotation p { margin: 0; font-family: 'Allura', cursive; font-size: 2.1rem; line-height: 1; color: var(--terra-d); background: var(--creme); padding: 4px 10px; border-radius: 8px; }
+  .annotation svg { width: 60px; height: 50px; overflow: visible; }
+  .annotation path { fill: none; stroke: var(--terra-d); stroke-width: 2.5; stroke-linecap: round; }
+  .joue .annotation p { opacity: 0; transform: translateY(8px) rotate(2deg); animation: monte 600ms var(--courbe) 300ms forwards; }
+  .joue .annotation path { stroke-dasharray: 120; stroke-dashoffset: 120; animation: dessine 600ms var(--courbe) 700ms forwards; }
+
+  /* ---------- Piste C : la part de gâteau ---------- */
+  .sceneC { display: grid; gap: 24px; align-items: center; justify-items: center; }
+  @media (min-width: 760px) { .sceneC { grid-template-columns: auto 1fr; justify-items: start; } }
+  .gateau { width: 220px; height: 220px; position: relative; margin-right: 48px; }
+  .gateau svg { width: 100%; height: 100%; overflow: visible; }
+  .part { transform-origin: 110px 110px; }
+  .joue .part { animation: ouvre 900ms var(--courbe) 300ms forwards; }
+  .revele { opacity: 1; }
+  .joue .revele { opacity: 0; animation: monte 500ms var(--courbe) 900ms forwards; }
+  @keyframes ouvre { to { transform: translate(34px, -26px) rotate(14deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .joue .trait path, .joue .separateur path, .joue .annotation path, .joue .progression .plein { stroke-dashoffset: 0 !important; }
+    .joue .progression .plein { stroke-dashoffset: 160 !important; }
+    .joue .heroA h2 span, .joue .heroA .sous, .joue .annotation p, .joue .revele { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="intro">
+    <h1>Signature visuelle : trois pistes</h1>
+    <p>Maquettes de principe, aux couleurs du site, sans les vraies photos (aplats « photo à venir »). Chaque piste se rejoue avec son bouton. Le mouvement est coupé si votre appareil demande de réduire les animations.</p>
+  </div>
+
+  <section class="piste joue" id="A" aria-labelledby="titre-a">
+    <header>
+      <h2 id="titre-a"><span class="lettre">A.</span>Le trait de crème</h2>
+      <span class="reco">Recommandée</span>
+      <button class="rejouer" type="button" data-cible="A">Rejouer</button>
+    </header>
+    <div class="scene">
+      <div class="heroA">
+        <h2><span>Bien</span> <span>plus</span> <span>qu’une</span> <span>cuisine,</span> <span>une</span> <span>histoire</span> <span>de partage.</span></h2>
+        <svg class="trait" viewBox="0 0 420 34" aria-hidden="true"><path d="M6 22 C 60 6, 110 30, 170 18 S 280 4, 330 16 S 400 24, 414 12"/><path class="reflet" d="M40 15 C 90 6, 120 20, 170 13"/></svg>
+        <p class="sous">Le trait se dessine comme une poche à douille, puis révèle le titre mot à mot. Une seule fois par visite.</p>
+      </div>
+      <div class="exemplesA">
+        <div><small>Lien survolé</small><a class="lienA" href="#A">Je commande un plateau<svg viewBox="0 0 160 12" aria-hidden="true"><path d="M2 8 C 40 2, 80 12, 158 5"/></svg></a></div>
+        <div class="progression"><small>Progression d’une formation (60 %)</small><svg viewBox="0 0 400 20" aria-hidden="true"><path class="fond" d="M6 10 C 100 4, 200 16, 394 8"/><path class="plein" d="M6 10 C 100 4, 200 16, 394 8"/></svg></div>
+        <div><small>Séparateur de section</small><svg class="separateur" viewBox="0 0 400 24" aria-hidden="true"><path d="M10 14 C 90 4, 150 22, 220 12 S 330 6, 390 14"/></svg></div>
+      </div>
+    </div>
+    <p class="note">Le même geste sert de signature (hero), de soulignement, de séparateur et de jauge de progression. Un tracé SVG de quelques centaines d’octets, animé en CSS.</p>
+  </section>
+
+  <section class="piste joue" id="B" aria-labelledby="titre-b">
+    <header>
+      <h2 id="titre-b"><span class="lettre">B.</span>La note manuscrite</h2>
+      <span class="reco">En accent rare</span>
+      <button class="rejouer" type="button" data-cible="B">Rejouer</button>
+    </header>
+    <div class="scene sceneB">
+      <div class="photo">photo à venir : crème au beurre lissée
+        <div class="annotation"><svg viewBox="0 0 60 50" aria-hidden="true"><path d="M56 6 C 40 10, 22 22, 8 42 M8 42 l 12 -3 M8 42 l 1 -12"/></svg><p>le secret : beurre pommade !</p></div>
+      </div>
+      <div>
+        <h3>La crème au beurre qui ne retombe plus.</h3>
+        <p>Une annotation de la main de Diani, posée près d’une grande photo, comme dans un carnet de recettes. Une par écran au plus, avec ses vraies phrases.</p>
+      </div>
+    </div>
+    <p class="note">Très personnelle, mais elle dépend des phrases de Diani et de la police manuscrite (moins lisible) : à garder rare.</p>
+  </section>
+
+  <section class="piste joue" id="C" aria-labelledby="titre-c">
+    <header>
+      <h2 id="titre-c"><span class="lettre">C.</span>La part de gâteau</h2>
+      <span class="reco">Déconseillée</span>
+      <button class="rejouer" type="button" data-cible="C">Rejouer</button>
+    </header>
+    <div class="scene sceneC">
+      <div class="gateau">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="96" fill="#e9cdb8"/>
+          <circle cx="110" cy="110" r="70" fill="none" stroke="#fffbf8" stroke-width="3" stroke-dasharray="6 10"/>
+          <g class="part"><path d="M110 110 L 206 110 A 96 96 0 0 0 178 42 Z" fill="#dab6aa"/><path d="M110 110 L 206 110 A 96 96 0 0 0 178 42 Z" fill="none" stroke="#9b6155" stroke-width="2"/></g>
+        </svg>
+      </div>
+      <div class="revele">
+        <h3>Formations en ligne</h3>
+        <p>La part s’écarte pour révéler l’univers suivant. Mémorable, mais lourde à animer, proche du « gadget » interdit par le cahier, et difficile à rendre accessible.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  for (const bouton of document.querySelectorAll('.rejouer')) {
+    bouton.addEventListener('click', () => {
+      const piste = document.getElementById(bouton.dataset.cible);
+      piste.classList.remove('joue');
+      void piste.offsetWidth;
+      piste.classList.add('joue');
+    });
+  }
+</script>
+</body>
+</html>

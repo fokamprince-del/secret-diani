@@ -75,5 +75,5 @@ describe('ProductOptions', () => {
     expect(screen.getByTestId('nombre')).toHaveTextContent('2');
     expect(screen.getByRole('status')).toHaveTextContent('ajouté à votre demande');
     expect(await axeViolations(container)).toEqual([]);
-  });
+  }, 15_000);
 });

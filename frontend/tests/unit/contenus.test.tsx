@@ -33,7 +33,7 @@ describe('Universes', () => {
 
   it('reste lisible sans contenu de l’API (titres et boutons)', () => {
     render(<Universes universes={null} />);
-    expect(screen.getByRole('link', { name: 'Découvrir la boutique' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Je choisis mon kit' })).toHaveAttribute(
       'href',
       '/boutique',
     );

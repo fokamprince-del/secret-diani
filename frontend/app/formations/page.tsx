@@ -51,8 +51,9 @@ export default async function FormationsPage() {
         title="Formations en ligne"
         intro={
           <p>
-            Les techniques de Diani, en vidéo et pas à pas : crème au beurre, chantilly brésilienne,
-            organisation d’une commande, vente sur les réseaux.
+            Je vous montre le geste, vous le refaites chez vous. Crème au beurre, chantilly
+            brésilienne, organisation d’une commande, vente sur les réseaux : tout est filmé pas à
+            pas.
           </p>
         }
       />
@@ -101,8 +102,8 @@ export default async function FormationsPage() {
               <div>
                 <h2 id="exemple-titre">Essayez avant de choisir</h2>
                 <p>
-                  Une leçon complète est offerte, sans compte : vidéo, conseils et fiche. Vous
-                  verrez exactement comment se passe une formation.
+                  Une leçon complète vous est offerte, sans compte : regardez comment j’explique
+                  avant de choisir votre pack.
                 </p>
               </div>
               <ButtonLink

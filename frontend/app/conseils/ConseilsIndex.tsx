@@ -26,7 +26,7 @@ export async function ConseilsIndex({ category }: ConseilsIndexProps) {
         intro={
           <p>
             {category?.description ||
-              'Recettes, techniques et organisation : les secrets de Diani pour réussir vos gâteaux et vos buffets.'}
+              'Mes astuces, sans secret gardé : techniques, recettes et organisation pour réussir vos gâteaux et vos buffets.'}
           </p>
         }
       />
@@ -41,7 +41,7 @@ export async function ConseilsIndex({ category }: ConseilsIndexProps) {
             title="Les premiers conseils arrivent bientôt"
             action={<ButtonLink href="/formations">Découvrir les formations</ButtonLink>}
           >
-            <p>En attendant, les formations de Diani vous guident pas à pas.</p>
+            <p>En attendant, mes formations vous guident pas à pas.</p>
           </EmptyState>
         ) : (
           <ArticleFeed
