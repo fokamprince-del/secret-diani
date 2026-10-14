@@ -1,0 +1,78 @@
+.trait {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.titre {
+  width: min(26rem, 82%);
+  height: auto;
+}
+
+.souligne {
+  width: 9rem;
+  height: auto;
+}
+
+.puce {
+  width: 2.5rem;
+  height: auto;
+}
+
+/* Terracotta, jamais l'or en aplat ni le noir. */
+.creme {
+  fill: none;
+  stroke: var(--terra);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.souligne .creme {
+  stroke-width: 4;
+}
+
+.puce .creme {
+  stroke-width: 3;
+}
+
+.reflet {
+  fill: none;
+  stroke: var(--blanc);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  opacity: 0.6;
+}
+
+/*
+ * Hero : le trait se dessine une fois, à l'ouverture, après le titre (900 ms, puis le reflet).
+ * Sans préférence de mouvement réduit seulement ; sinon il est là d'emblée.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-mouvement='chargement'] .creme {
+    animation: dessine 900ms var(--courbe) 250ms both;
+  }
+
+  [data-mouvement='chargement'] .reflet {
+    animation: dessine 600ms var(--courbe) 700ms both;
+  }
+
+  /* Apparition : caché seulement quand le script l'a mis en attente, dessiné ensuite. */
+  [data-etat='attente'] .creme,
+  [data-etat='attente'] .reflet {
+    stroke-dashoffset: 1;
+  }
+
+  [data-etat='visible'] .creme {
+    transition: stroke-dashoffset 800ms var(--courbe) 150ms;
+  }
+}
+
+@keyframes dessine {
+  from {
+    stroke-dashoffset: 1;
+  }
+}

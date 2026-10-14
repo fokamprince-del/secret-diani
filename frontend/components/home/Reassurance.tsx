@@ -34,7 +34,7 @@ export function Reassurance() {
         </h2>
         <ul role="list" className={styles.liste}>
           {COMMITMENTS.map((item) => (
-            <li key={item.title} className={styles.item}>
+            <li key={item.title} className={styles.item} data-apparition="monte">
               <Icon name={item.icon} size={28} className={styles.icone} />
               <h3 className={styles.titre}>{item.title}</h3>
               <p className={styles.texte}>{item.text}</p>

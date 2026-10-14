@@ -13,15 +13,36 @@
   align-items: center;
 }
 
+/*
+ * Grand écran : chaque bandeau a sa propre composition, réglée sur le format de sa photo.
+ * Traiteur : visuel horizontal large ; formations : visuel vertical plus étroit, à droite ;
+ * boutique : visuel carré, texte calé en bas.
+ */
 @media (min-width: 64rem) {
   .bandeau {
     grid-template-columns: 1.15fr 1fr;
     gap: clamp(2.5rem, 1rem + 4vw, 5rem);
   }
 
-  /* Les bandeaux alternent : le visuel passe à droite une fois sur deux. */
-  .bandeau:nth-child(even) .visuel {
+  .bandeau[data-univers='courses'] {
+    grid-template-columns: 1fr 0.8fr;
+  }
+
+  .bandeau[data-univers='courses'] .visuel {
     order: 2;
+  }
+
+  .bandeau[data-univers='courses'] .texte {
+    justify-self: end;
+  }
+
+  .bandeau[data-univers='shop'] {
+    grid-template-columns: 0.9fr 1fr;
+    align-items: end;
+  }
+
+  .bandeau[data-univers='shop'] .texte {
+    padding-bottom: var(--e-6);
   }
 }
 
@@ -57,6 +78,7 @@
 }
 
 .texte {
+  --delai: 150ms;
   display: grid;
   justify-items: start;
   gap: var(--e-4);
@@ -71,14 +93,6 @@
   font-weight: 500;
   letter-spacing: 0.12em;
   color: var(--terra-d);
-}
-
-/* Filet doré : micro-accent décoratif, jamais porteur de texte. */
-.numero::after {
-  content: '';
-  width: 2.5rem;
-  height: 1px;
-  background-color: var(--or);
 }
 
 .titre {

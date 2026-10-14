@@ -26,6 +26,18 @@
   align-content: start;
 }
 
+.item:nth-child(2) {
+  --delai: 90ms;
+}
+
+.item:nth-child(3) {
+  --delai: 180ms;
+}
+
+.item:nth-child(4) {
+  --delai: 270ms;
+}
+
 .icone {
   margin-bottom: var(--e-2);
   color: var(--terra);

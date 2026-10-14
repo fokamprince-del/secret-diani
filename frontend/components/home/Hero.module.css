@@ -39,16 +39,15 @@
   padding-block: var(--e-8) clamp(3rem, 2rem + 6vw, 6.5rem);
 }
 
-.filet {
-  width: 3rem;
-  height: 1px;
-  background-color: var(--or);
-}
-
 .titre {
   max-width: 16ch;
+  margin-top: var(--e-6);
   font-size: var(--t-display);
   line-height: 1.06;
+}
+
+.trait {
+  margin-top: calc(-1 * var(--e-2));
 }
 
 .texte {
@@ -61,18 +60,12 @@
   margin-top: var(--e-2);
 }
 
-/* Moment mémorable : entrée échelonnée du filet, du titre, du texte puis du bouton. */
+/* Moment mémorable : le titre, le trait de crème (CremeTrait), puis le texte et le bouton. */
 @media (prefers-reduced-motion: no-preference) {
-  .filet,
   .titre,
   .texte,
   .action {
     animation: entree 700ms var(--courbe) both;
-  }
-
-  .filet {
-    animation-name: trace;
-    transform-origin: left;
   }
 
   /*
@@ -85,11 +78,11 @@
   }
 
   .texte {
-    animation-delay: 260ms;
+    animation-delay: 650ms;
   }
 
   .action {
-    animation-delay: 400ms;
+    animation-delay: 800ms;
   }
 }
 
@@ -104,11 +97,5 @@
   from {
     opacity: 0.35;
     transform: translateY(10px);
-  }
-}
-
-@keyframes trace {
-  from {
-    transform: scaleX(0);
   }
 }

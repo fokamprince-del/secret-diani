@@ -1,5 +1,6 @@
 import type { HomeContent } from '@/lib/api/types';
 import { ButtonLink } from '../ui/Button';
+import { CremeTrait } from '../ui/CremeTrait';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 import styles from './Universes.module.css';
 
@@ -11,6 +12,7 @@ const UNIVERSES = [
     title: 'Traiteur & commandes',
     href: '/traiteur',
     action: 'Je commande un plateau',
+    ratio: '4 / 3',
   },
   {
     key: 'courses',
@@ -18,6 +20,7 @@ const UNIVERSES = [
     title: 'Formations en ligne',
     href: '/formations',
     action: 'Je veux apprendre',
+    ratio: '4 / 5',
   },
   {
     key: 'shop',
@@ -25,12 +28,15 @@ const UNIVERSES = [
     title: 'Boutique & kits',
     href: '/boutique',
     action: 'Je choisis mon kit',
+    ratio: '1 / 1',
   },
 ] as const;
 
 /**
  * Les trois univers en grands bandeaux : un visuel, un texte court, un bouton. Jamais de
  * produit ni de prix ici (« la home présente, les pages univers détaillent »).
+ * Chaque bandeau a son format, celui des photos prévues (LISTE_PRISES_DE_VUE.md : plateau
+ * horizontal, mains à la spatule en vertical, kit carré) : pas trois rangées identiques.
  */
 export function Universes({ universes }: { universes: HomeContent['universes'] | null }) {
   return (
@@ -44,24 +50,26 @@ export function Universes({ universes }: { universes: HomeContent['universes'] |
             const content = universes?.[universe.key];
             return (
               <li key={universe.key} className={styles.bandeau} data-univers={universe.key}>
-                <div className={styles.visuel}>
+                <div className={styles.visuel} data-apparition="devoile">
                   {content?.image ? (
                     <ResponsiveImage
                       image={content.image}
                       sizes="(min-width: 64rem) 560px, calc(100vw - 2 * var(--gouttiere))"
-                      aspectRatio="4 / 3"
+                      aspectRatio={universe.ratio}
                       zoomOnHover
                     />
                   ) : (
                     <div
                       className={styles.aplat}
+                      style={{ aspectRatio: universe.ratio }}
                       data-numero={universe.number}
                       aria-hidden="true"
                     />
                   )}
                 </div>
-                <div className={styles.texte}>
+                <div className={styles.texte} data-apparition="monte">
                   <p className={styles.numero} aria-hidden="true">
+                    <CremeTrait variant="puce" />
                     {universe.number}
                   </p>
                   <h3 className={styles.titre}>{universe.title}</h3>

@@ -240,3 +240,24 @@ main:focus {
   overflow-x: auto;
   border-collapse: collapse;
 }
+
+/* ---------- Apparitions au défilement (components/ui/Apparitions.tsx) ---------- */
+/* L'état n'est posé que par le script, jamais si le mouvement est réduit : visible au repos. */
+[data-apparition='monte'][data-etat='attente'] {
+  opacity: 0;
+  transform: translateY(1.25rem);
+}
+
+[data-apparition='devoile'][data-etat='attente'] {
+  clip-path: inset(10% 10% 10% 10% round var(--rayon));
+  opacity: 0.4;
+}
+
+[data-apparition='monte'][data-etat='visible'],
+[data-apparition='devoile'][data-etat='visible'] {
+  transition:
+    opacity 700ms var(--courbe),
+    transform 700ms var(--courbe),
+    clip-path 900ms var(--courbe);
+  transition-delay: var(--delai, 0ms);
+}

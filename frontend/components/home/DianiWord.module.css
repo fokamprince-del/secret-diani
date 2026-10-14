@@ -36,8 +36,16 @@
 }
 
 .signature {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-2);
   font-family: var(--font-manuscrit);
   font-size: 2.5rem;
   line-height: 1;
   color: var(--terra-d);
+}
+
+/* La signature de Diani, soulignée d'un trait de crème qui se dessine. */
+.trait {
+  width: 7rem;
 }

@@ -5,6 +5,7 @@
 
 .entete {
   display: grid;
+  justify-items: start;
   gap: var(--e-3);
   margin-bottom: var(--e-7);
 }
@@ -38,14 +39,28 @@
     overflow: visible;
   }
 
+  /* Autant de colonnes que la largeur le permet : pas de carte orpheline seule en bas. */
   .liste {
     grid-auto-flow: row;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   }
 }
 
 .carte {
   scroll-snap-align: start;
+}
+
+/* Les cartes arrivent l'une après l'autre (Apparitions). */
+.carte:nth-child(2) {
+  --delai: 90ms;
+}
+
+.carte:nth-child(3) {
+  --delai: 180ms;
+}
+
+.carte:nth-child(n + 4) {
+  --delai: 270ms;
 }
 
 .figure {
