@@ -125,3 +125,9 @@ export async function getArticle(slug: string) {
     { notFoundOn404: true },
   );
 }
+
+export function getCateringCatalog() {
+  return load('catalogue traiteur', () =>
+    serverApi.GET('/api/v1/catering/catalog', { fetch: cached(['catering', 'media']) }),
+  );
+}

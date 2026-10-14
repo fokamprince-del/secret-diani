@@ -1,0 +1,55 @@
+.conditions {
+  display: grid;
+  gap: var(--e-5);
+  padding: clamp(1.5rem, 1rem + 2vw, 3rem);
+  border-radius: var(--rayon);
+  background-color: var(--sable);
+}
+
+.titre {
+  font-size: var(--t-h2);
+}
+
+.etapes {
+  display: grid;
+  gap: var(--e-3);
+  margin: 0;
+  padding-left: 1.4em;
+  max-width: var(--mesure);
+}
+
+.etapes li::marker {
+  font-family: var(--font-titre);
+  color: var(--terra-d);
+}
+
+.etapes strong {
+  font-weight: 600;
+  color: var(--cacao);
+}
+
+.liste {
+  display: grid;
+  gap: var(--e-3);
+  padding-top: var(--e-5);
+  border-top: 1px solid var(--filet);
+}
+
+@media (min-width: 48rem) {
+  .liste {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--e-7);
+  }
+}
+
+.condition {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-3);
+}
+
+.icone {
+  flex: none;
+  margin-top: 0.2em;
+  color: var(--terra);
+}

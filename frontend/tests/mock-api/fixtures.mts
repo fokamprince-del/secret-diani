@@ -243,3 +243,156 @@ export const movedArticles: Record<string, string> = {
 };
 
 export const NEWSLETTER_VALID_TOKEN = 'jeton-valide';
+
+// ---------- Traiteur (données de référence du cahier des charges) ----------
+
+const WHATSAPP = '33612345678';
+const wa = (message: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
+const productMessage = (name: string, variant?: string) =>
+  `Bonjour Diani, je souhaite commander : ${variant ? `${name} (${variant})` : name}. Pouvez-vous me donner vos disponibilités ?`;
+
+export const flavours: S['FlavourDto'][] = [
+  'Mangue-passion',
+  'Chocolat blanc',
+  'Vanille',
+  'Fraise',
+  'Framboise',
+  'Kinder Bueno white',
+  'Kinder Bueno',
+].map((name, index) => ({
+  id: `p${index + 1}`,
+  slug: name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-'),
+  name,
+}));
+
+type ProductInput = {
+  slug: string;
+  name: string;
+  description?: string;
+  composition?: [string, number][];
+  variants: [string, number, number?, number?][];
+  maxFlavours?: number;
+};
+
+let variantCounter = 0;
+function product(input: ProductInput): S['CateringProductCardDto'] {
+  const variants = input.variants.map(([label, priceCents, servingsMin, servingsMax]) => ({
+    id: `v${++variantCounter}`,
+    label,
+    priceCents,
+    servingsMin: servingsMin ?? null,
+    servingsMax: servingsMax ?? null,
+  }));
+  return {
+    id: `prod-${input.slug}`,
+    slug: input.slug,
+    name: input.name,
+    description: input.description ?? null,
+    composition: (input.composition ?? []).map(([label, quantity]) => ({ label, quantity })),
+    variants,
+    fromPriceCents: Math.min(...variants.map((variant) => variant.priceCents)),
+    maxFlavours: input.maxFlavours ?? 0,
+    flavours: input.maxFlavours ? flavours : [],
+    image: null,
+    gallery: [],
+    whatsappUrl: wa(
+      productMessage(input.name, variants.length === 1 ? variants[0]!.label : undefined),
+    ),
+  };
+}
+
+export const cateringConditions: S['CateringConditionsDto'] = {
+  items: [
+    'Un acompte de 10,00 € est demandé pour une commande de moins de 50,00 €, de 20,00 € à partir de 50,00 €.',
+    'La commande n’est validée qu’après réception de l’acompte.',
+    'L’acompte n’est pas remboursable en cas d’annulation de votre part.',
+    'Le solde est réglé au retrait ou à la livraison.',
+  ],
+  deposit: { thresholdCents: 5_000, belowCents: 1_000, fromCents: 2_000 },
+  minNoticeDays: 2,
+  onlineOrdering: false,
+  whatsappUrl: wa('Bonjour Diani, je souhaite des informations sur votre service traiteur.'),
+};
+
+export const cateringCatalog: S['CateringCatalogDto'] = {
+  flavours,
+  conditions: cateringConditions,
+  categories: [
+    {
+      slug: 'plateaux',
+      name: 'Plateaux',
+      kind: 'platter',
+      description: 'Des plateaux de mini bouchées à partager, prêts à servir.',
+      products: [
+        product({
+          slug: 'plateau-decouverte',
+          name: 'Plateau découverte',
+          composition: [
+            ['mini burgers', 5],
+            ['mini hot-dogs', 5],
+            ['mini wraps', 5],
+            ['mini pizzas', 5],
+          ],
+          variants: [['Plateau de 20 pièces', 4_000]],
+        }),
+        product({
+          slug: 'plateau-mix-gourmand',
+          name: 'Plateau mix gourmand',
+          composition: [
+            ['mini pizzas', 5],
+            ['nems', 5],
+            ['mini samoussas', 5],
+            ['beignets africains', 5],
+            ['mini bricks', 5],
+          ],
+          variants: [['Plateau de 25 pièces', 4_200]],
+        }),
+      ],
+    },
+    {
+      slug: 'a-la-carte',
+      name: 'À la carte',
+      kind: 'a_la_carte',
+      description: 'Les mini bouchées à l’unité de commande, pour composer votre buffet.',
+      products: [
+        product({ slug: 'mini-burgers', name: 'Mini burgers', variants: [['Lot de 10', 1_800]] }),
+        product({ slug: 'mini-hot-dogs', name: 'Mini hot-dogs', variants: [['Lot de 10', 1_600]] }),
+        product({ slug: 'mini-wraps', name: 'Mini wraps', variants: [['Lot de 10', 2_100]] }),
+        product({
+          slug: 'mini-samoussas',
+          name: 'Mini samoussas',
+          variants: [['Lot de 10', 1_400]],
+        }),
+        product({ slug: 'pastels', name: 'Pastels', variants: [['Lot de 12', 1_500]] }),
+      ],
+    },
+    {
+      slug: 'layer-cakes',
+      name: 'Layer cakes',
+      kind: 'layer_cake',
+      description: 'Des layer cakes sur mesure, à composer avec vos parfums préférés.',
+      products: [
+        product({
+          slug: 'layer-cake',
+          name: 'Layer cake',
+          maxFlavours: 3,
+          variants: [
+            ['Bento', 1_500],
+            ['4–6 parts', 3_500, 4, 6],
+            ['6–8 parts', 5_000, 6, 8],
+            ['8–10 parts', 6_000, 8, 10],
+            ['10–15 parts', 7_000, 10, 15],
+            ['15–20 parts', 8_000, 15, 20],
+            ['20–25 parts', 9_000, 20, 25],
+          ],
+        }),
+      ],
+    },
+  ],
+};
+
+export const CATERING_WHATSAPP = WHATSAPP;

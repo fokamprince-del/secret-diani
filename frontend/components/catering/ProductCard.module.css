@@ -1,0 +1,91 @@
+.carte {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--e-5);
+  height: 100%;
+  padding: var(--e-4);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+@media (min-width: 64rem) {
+  /* Layer cakes : galerie à gauche, choix à droite. */
+  .large {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: var(--e-7);
+    padding: var(--e-6);
+  }
+}
+
+.galerie {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.large .galerie[data-nombre='2'],
+.large .galerie[data-nombre='3'] {
+  grid-template-columns: 1fr 1fr;
+}
+
+.large .galerie[data-nombre='3'] li:first-child,
+.large .galerie[data-nombre='2'] li:first-child {
+  grid-column: 1 / -1;
+}
+
+/* Sans photo : aplat de la palette, jamais un faux visuel. */
+.aplat {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--rayon);
+  background-color: var(--peche);
+}
+
+.aplat[data-type='a_la_carte'] {
+  aspect-ratio: 16 / 9;
+  background-color: var(--sable);
+}
+
+.aplat[data-type='layer_cake'] {
+  background-color: var(--nude);
+}
+
+.texte {
+  display: grid;
+  align-content: start;
+  gap: var(--e-3);
+  padding-inline: var(--e-2);
+}
+
+.nom {
+  font-size: var(--t-h3);
+}
+
+.composition {
+  display: grid;
+  gap: var(--e-1);
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.composition li::marker {
+  color: var(--or);
+}
+
+.prix {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--e-1) var(--e-3);
+  padding-block: var(--e-2);
+  border-block: 1px solid var(--filet);
+}
+
+.montant {
+  font-family: var(--font-titre);
+  font-size: 1.5rem;
+  color: var(--cacao);
+}
+
+.conditionnement {
+  font-size: var(--taille-petit);
+}

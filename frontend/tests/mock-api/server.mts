@@ -5,12 +5,16 @@
  *
  * Comportements simulés pour les formulaires :
  * - contact : e-mail contenant « refuse » → 400 avec erreur sur le champ ; « limite » → 429 ;
- * - newsletter : jeton « jeton-valide » accepté, tout autre jeton refusé (400).
+ * - newsletter : jeton « jeton-valide » accepté, tout autre jeton refusé (400) ;
+ * - demande traiteur : date d'événement à moins de 2 jours → 400 sur le champ `eventDate`.
  */
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import {
   articleCards,
   articleDetail,
+  CATERING_WHATSAPP,
+  cateringCatalog,
+  cateringConditions,
   categories,
   faq,
   home,
@@ -113,6 +117,11 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
     if (path === '/content/articles') return send(res, 200, listArticles(url));
     if (path === '/seo/organization') return send(res, 200, organization);
     if (path === '/seo/sitemap') return send(res, 200, sitemap);
+    if (path === '/catering/catalog') return send(res, 200, cateringCatalog);
+    if (path === '/catering/conditions') return send(res, 200, cateringConditions);
+    if (path === '/catering/slots') {
+      return error(res, 403, 'FEATURE_DISABLED', 'La commande en ligne n’est pas ouverte.');
+    }
 
     const pageMatch = /^\/content\/pages\/([a-z0-9-]+)$/.exec(path);
     if (pageMatch) {
@@ -156,6 +165,34 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
       }
       return send(res, 201, {
         message: 'Merci, votre message a bien été envoyé. Diani vous répond sous 48 heures.',
+      });
+    }
+    if (path === '/catering-requests') {
+      const minDate = new Date(Date.now() + 2 * 86_400_000).toISOString().slice(0, 10);
+      if (String(body.eventDate ?? '') < minDate) {
+        return error(res, 400, 'VALIDATION_ERROR', 'Les données envoyées sont invalides.', [
+          { field: 'eventDate', messages: [`doit être au plus tôt le ${minDate}`] },
+        ]);
+      }
+      const variants = cateringCatalog.categories.flatMap((category) =>
+        category.products.flatMap((item) => item.variants),
+      );
+      const items = Array.isArray(body.items)
+        ? (body.items as { variantId: string; quantity: number }[])
+        : [];
+      const total = items.reduce(
+        (sum, item) =>
+          sum +
+          (variants.find((variant) => variant.id === item.variantId)?.priceCents ?? 0) *
+            item.quantity,
+        0,
+      );
+      const reference = 'TR-000042';
+      return send(res, 201, {
+        reference,
+        message: 'Merci ! Votre demande est bien reçue : Diani vous recontacte rapidement.',
+        estimatedTotalCents: items.length > 0 ? total : null,
+        whatsappUrl: `https://wa.me/${CATERING_WHATSAPP}?text=${encodeURIComponent(`Bonjour Diani, je viens d’envoyer la demande ${reference}.`)}`,
       });
     }
     if (path === '/newsletter/subscribe') {

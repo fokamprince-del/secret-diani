@@ -1,0 +1,161 @@
+.options {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.groupe {
+  display: grid;
+  gap: var(--e-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.legende {
+  padding: 0;
+  margin-bottom: var(--e-2);
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.aide {
+  margin-top: calc(-1 * var(--e-2));
+  font-size: var(--taille-petit);
+}
+
+/* Tailles : pastilles cliquables (vrais boutons radio, focus visible sur la pastille). */
+.tailles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: var(--e-2);
+}
+
+.taille {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  min-height: 3.5rem;
+  padding: var(--e-2) var(--e-3);
+  border: 1px solid var(--nude);
+  border-radius: 10px;
+  background-color: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color var(--duree-courte) ease,
+    background-color var(--duree-courte) ease;
+}
+
+.taille input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.taille:hover {
+  border-color: var(--terra);
+}
+
+.taille:has(input:checked) {
+  border-color: var(--terra-d);
+  background-color: var(--sable);
+  box-shadow: inset 0 0 0 1px var(--terra-d);
+}
+
+.taille:has(input:focus-visible) {
+  outline: var(--focus-anneau);
+  outline-offset: 3px;
+}
+
+.tailleLibelle {
+  font-weight: 500;
+  color: var(--cacao);
+  line-height: 1.3;
+}
+
+.taillePrix {
+  font-size: var(--taille-petit);
+}
+
+.parfums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.parfum {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--cible);
+  padding-inline: var(--e-3);
+  border: 1px solid var(--nude);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--surface);
+  cursor: pointer;
+  font-size: var(--taille-petit);
+}
+
+.parfum input {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  accent-color: var(--terra-d);
+}
+
+.parfum:has(input:checked) {
+  border-color: var(--terra-d);
+  background-color: var(--sable);
+}
+
+.parfum:has(input:disabled) {
+  cursor: not-allowed;
+  color: var(--texte-s);
+}
+
+.prix {
+  font-family: var(--font-titre);
+  font-size: 1.5rem;
+  color: var(--cacao);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}
+
+/* Bouton WhatsApp : même gabarit que le bouton principal. */
+.contacter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-2);
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--rayon-pilule);
+  background-color: var(--terra);
+  color: var(--blanc);
+  font-weight: 500;
+  transition: background-color var(--duree-courte) ease;
+}
+
+.contacter:hover {
+  background-color: var(--terra-d);
+  color: var(--blanc);
+}
+
+.ajoute {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-2);
+  font-size: var(--taille-petit);
+  color: var(--succes);
+}
+
+.ajoute svg {
+  flex: none;
+  margin-top: 0.2em;
+}

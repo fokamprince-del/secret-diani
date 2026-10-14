@@ -13,6 +13,7 @@ import {
  */
 const PAGES = [
   '/',
+  '/traiteur',
   '/a-propos',
   '/contact',
   '/faq',
