@@ -35,7 +35,7 @@ Décisions prises quand le cahier des charges ne tranchait pas : option la plus 
 
 **Recommandation :** option 1. Risque résiduel limité : React échappe tout le contenu, le seul `dangerouslySetInnerHTML` (JSON-LD) échappe `<`, le HTML riche de l'API est déjà assaini côté serveur, `object-src 'none'`, `base-uri 'self'` et `frame-ancestors 'none'` restent verrouillés.
 
-**État :** option 1 validée le 2026-10-13. `script-src 'self' 'unsafe-inline'` (+ SRI) appliqué à toutes les pages dans `next.config.ts` ; la CSP à nonce des routes dynamiques (membre, panier, commande) est à livrer avec la phase 4.
+**État :** option 1 validée le 2026-10-13. `script-src 'self' 'unsafe-inline'` (+ SRI) appliqué à toutes les pages dans `next.config.ts` ; la CSP à nonce des routes dynamiques (membre, panier, commande) est livrée en phase 4 (`proxy.ts`, `lib/csp.ts`).
 
 ### D-F06 · Polices
 
@@ -116,3 +116,33 @@ La date minimale de l'événement dépend du jour et du délai réglé dans l'ad
 ### D-F23 · Parcours de commande en ligne prêt mais masqué
 
 Si l'administration ouvre la commande en ligne (`onlineOrdering`), le même formulaire demande un créneau (`GET /catering/slots`) et envoie une commande (`POST /catering/orders`). Fermée par défaut (`CATERING_ONLINE_ORDERING=false` côté API) : rien n'en apparaît.
+
+## Phase 4 — Authentification et espace membre
+
+### D-F24 · Session : jeton en mémoire, cookie de l'API, témoin sans secret
+
+Le jeton d'accès (court) reste en mémoire dans le navigateur, jamais dans un stockage ; le jeton de renouvellement est le cookie HttpOnly de l'API (chemin `/api/v1/auth`, invisible du serveur Next comme du JavaScript). Au chargement, la session est restaurée par `POST /auth/refresh` (en-tête CSRF). Un témoin `diani_session=1` sur le domaine du site indique seulement qu'une session existe : il évite un appel inutile pour les visiteurs jamais connectés et permet au proxy de rediriger `/espace-membre` vers `/connexion?retour=…` sans attendre le JavaScript. Ce témoin n'est **pas** une preuve : chaque donnée de l'espace membre est demandée par le navigateur avec le jeton, l'API reste seule juge. L'adresse de retour n'accepte qu'un chemin interne (pas de redirection ouverte).
+
+### D-F25 · Plusieurs onglets : renouvellement sérialisé et partagé
+
+L'API révoque toute la session si un jeton de renouvellement sert deux fois (détection de vol). Deux onglets qui renouvellent en même temps se déconnecteraient donc mutuellement. Les renouvellements passent par un verrou du navigateur (Web Locks, `diani-auth-refresh`) ; le jeton obtenu est diffusé aux autres onglets (BroadcastChannel, en mémoire, même origine), qui n'ont plus à renouveler. Les appels simultanés d'un même onglet partagent le même renouvellement. La déconnexion (ou la perte de session) est diffusée de la même façon : tous les onglets quittent l'espace membre. Test e2e dédié (trois onglets restaurés en même temps).
+
+### D-F26 · Requêtes authentifiées : un seul nouvel essai
+
+`authedApi` ajoute le jeton, le renouvelle s'il expire dans moins de 30 secondes, et sur une réponse 401 renouvelle une fois puis réessaie ; au second refus, la session est close partout. Pas de boucle de renouvellement.
+
+### D-F27 · Pages de compte et espace membre rendus à la demande
+
+Connexion, inscription, liens reçus par e-mail et espace membre sont rendus à chaque requête (`connection()`), reçoivent la CSP à nonce du proxy (`script-src 'self' 'nonce-…' 'strict-dynamic'`, sans `'unsafe-inline'` pour les scripts) et `Cache-Control: private, no-store`. Les styles en ligne restent autorisés (attributs `style` de React, sans risque d'exécution). Jamais indexés.
+
+### D-F28 · Second facteur de l'administration dans le formulaire de connexion
+
+Si l'API demande le second facteur, la connexion enchaîne sur le code de l'application (ou un code de secours). À la première connexion d'un compte administrateur, la clé est affichée (texte et lien `otpauth://`, sans bibliothèque de QR code), puis les codes de secours, une seule fois, avant d'entrer.
+
+### D-F29 · Liens reçus par e-mail
+
+L'activation du compte se fait à l'ouverture du lien (elle prouve seulement l'accès à la boîte mail). Le changement d'adresse attend un clic (un robot qui ouvre les liens ne doit pas pouvoir le valider). Dans tous les cas, le jeton est retiré de la barre d'adresse dès sa lecture.
+
+### D-F30 · Suppression du compte et export
+
+L'export (`GET /me/export`) est téléchargé en fichier JSON. La suppression demande le mot de passe dans une fenêtre native (`<dialog>`), puis ferme la session dans tous les onglets ; l'API anonymise le compte et ne garde que les factures (obligation légale).

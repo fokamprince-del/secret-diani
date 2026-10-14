@@ -109,3 +109,62 @@ export function cateringRequestSchema(minDate: string, minDateLabel: string) {
 }
 
 export type CateringRequestValues = z.infer<ReturnType<typeof cateringRequestSchema>>;
+
+export const PASSWORD_MIN_LENGTH = 12;
+
+const newPasswordField = z
+  .string()
+  .min(
+    PASSWORD_MIN_LENGTH,
+    `Choisissez un mot de passe d’au moins ${PASSWORD_MIN_LENGTH} caractères.`,
+  )
+  .max(128, 'Ce mot de passe est trop long (128 caractères au plus).');
+
+export const loginSchema = z.object({
+  email: emailField,
+  password: z.string().min(1, 'Indiquez votre mot de passe.'),
+});
+export type LoginValues = z.infer<typeof loginSchema>;
+
+export const registerSchema = z.object({
+  firstName: z.string().trim().min(1, 'Indiquez votre prénom.').max(100, 'Prénom trop long.'),
+  lastName: z.string().trim().max(100, 'Nom trop long.'),
+  email: emailField,
+  password: newPasswordField,
+  acceptTerms: z.boolean().refine((value) => value, {
+    message: 'Acceptez les conditions pour créer votre compte.',
+  }),
+  marketingConsent: z.boolean(),
+});
+export type RegisterValues = z.infer<typeof registerSchema>;
+
+export const forgotSchema = z.object({ email: emailField });
+export type ForgotValues = z.infer<typeof forgotSchema>;
+
+export const newPasswordSchema = z
+  .object({ password: newPasswordField, confirmation: z.string() })
+  .refine((values) => values.password === values.confirmation, {
+    path: ['confirmation'],
+    message: 'Les deux mots de passe ne sont pas identiques.',
+  });
+export type NewPasswordValues = z.infer<typeof newPasswordSchema>;
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Indiquez votre mot de passe actuel.'),
+    password: newPasswordField,
+    confirmation: z.string(),
+  })
+  .refine((values) => values.password === values.confirmation, {
+    path: ['confirmation'],
+    message: 'Les deux mots de passe ne sont pas identiques.',
+  });
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
+export const mfaCodeSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'Saisissez les 6 chiffres affichés par votre application.'),
+});
+export type MfaCodeValues = z.infer<typeof mfaCodeSchema>;

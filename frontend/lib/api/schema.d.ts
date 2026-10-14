@@ -3127,6 +3127,20 @@ export interface components {
       newEmail: string;
       currentPassword: string;
     };
+    SessionViewDto: {
+      id: string;
+      /** @description Session de l’appareil qui fait la requête */
+      current: boolean;
+      userAgent: string | null;
+      /** @description Adresse IP tronquée */
+      ipTruncated: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      lastUsedAt: string;
+      /** Format: date-time */
+      expiresAt: string;
+    };
     ProfileDto: {
       id: string;
       /** @example cliente@example.com */
@@ -6489,7 +6503,9 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          'application/json': components['schemas']['SessionViewDto'][];
+        };
       };
     };
   };

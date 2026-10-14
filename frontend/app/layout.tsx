@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Analytics } from '@/components/layout/Analytics';
 import { CookieConsent } from '@/components/layout/CookieConsent';
@@ -38,17 +39,19 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       className={[playfair, playfairItalic, dmSans, allura].map((font) => font.variable).join(' ')}
     >
       <body>
-        <a href="#contenu" className="lien-evitement">
-          Aller au contenu
-        </a>
-        <AnnouncementBar announcement={settings?.announcement ?? null} />
-        <Header social={socials[0] ?? null} />
-        <main id="contenu" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer settings={settings} socials={socials} />
-        <CookieConsent />
-        <Analytics />
+        <AuthProvider>
+          <a href="#contenu" className="lien-evitement">
+            Aller au contenu
+          </a>
+          <AnnouncementBar announcement={settings?.announcement ?? null} />
+          <Header social={socials[0] ?? null} />
+          <main id="contenu" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer settings={settings} socials={socials} />
+          <CookieConsent />
+          <Analytics />
+        </AuthProvider>
       </body>
     </html>
   );

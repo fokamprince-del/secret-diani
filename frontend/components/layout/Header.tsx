@@ -1,6 +1,5 @@
-import Link from 'next/link';
 import type { SocialLink } from '@/lib/social';
-import { Icon } from '../ui/Icon';
+import { AccountLink } from '../auth/AccountLink';
 import { Logo } from './Logo';
 import { MainNav } from './MainNav';
 import { MobileMenu } from './MobileMenu';
@@ -8,7 +7,7 @@ import styles from './Header.module.css';
 
 /**
  * En-tête collant. Le panier et l'espace membre n'apparaissent que lorsqu'ils servent :
- * badge de quantité (phase 5) et état connecté (phase 4). En attendant, un lien de connexion.
+ * badge de quantité (panier) et état connecté (« Mon espace » au lieu de « Se connecter »).
  */
 export function Header({ social }: { social: SocialLink | null }) {
   return (
@@ -17,10 +16,7 @@ export function Header({ social }: { social: SocialLink | null }) {
         <Logo />
         <MainNav />
         <div className={styles.actions}>
-          <Link href="/connexion" className={`${styles.action} sans-filet`}>
-            <Icon name="user" />
-            <span className="visually-hidden">Se connecter</span>
-          </Link>
+          <AccountLink className={`${styles.action} sans-filet`} />
           <MobileMenu social={social} />
         </div>
       </div>

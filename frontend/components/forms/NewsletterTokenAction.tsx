@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { browserApi, unwrap } from '@/lib/api/client';
 import { userMessage } from '@/lib/api/errors';
 import { Button, ButtonLink } from '../ui/Button';
 import { FormStatus } from '../ui/States';
 import styles from './Form.module.css';
+import { useUrlToken } from './useUrlToken';
 
 type Action = 'confirm' | 'unsubscribe';
 
@@ -27,23 +28,10 @@ const LABELS: Record<Action, { button: string; missing: string }> = {
  * Le jeton est retiré de la barre d'adresse dès la lecture (historique, mesure d'audience).
  */
 export function NewsletterTokenAction({ action }: { action: Action }) {
-  // undefined : adresse pas encore lue (avant l'hydratation) ; null : lien sans jeton.
-  const [token, setToken] = useState<string | null | undefined>(undefined);
+  const token = useUrlToken();
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
-
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    const value = url.searchParams.get('token');
-    if (value) {
-      url.searchParams.delete('token');
-      window.history.replaceState(null, '', url.pathname + url.search + url.hash);
-    }
-    // Lecture de l'adresse : possible seulement après l'hydratation.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setToken(value);
-  }, []);
 
   const submit = async () => {
     if (!token) return;

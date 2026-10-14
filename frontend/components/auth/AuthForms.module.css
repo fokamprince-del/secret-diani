@@ -1,0 +1,55 @@
+.formulaire {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.etape {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.oubli {
+  margin-top: calc(-1 * var(--e-3));
+  font-size: var(--taille-petit);
+}
+
+.lienBouton {
+  display: inline;
+  min-height: var(--cible);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--lien);
+  font-size: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.secret {
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cacao);
+}
+
+.codes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--e-2);
+  padding: var(--e-4);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+  list-style: none;
+}
+
+.codes code {
+  font-size: 1.0625rem;
+  letter-spacing: 0.06em;
+  color: var(--cacao);
+}
+
+.confirmation:focus {
+  outline: none;
+}

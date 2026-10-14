@@ -1,0 +1,87 @@
+.formulaire {
+  display: grid;
+  gap: var(--e-5);
+  max-width: 40rem;
+}
+
+.grille {
+  display: grid;
+  gap: var(--e-5);
+}
+
+@media (min-width: 48rem) {
+  .grille {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}
+
+.liste {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.element {
+  display: grid;
+  gap: var(--e-3);
+  padding: var(--e-4);
+  border: 1px solid var(--filet);
+  border-radius: 10px;
+}
+
+@media (min-width: 48rem) {
+  .element {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.elementTitre {
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.elementDetail {
+  font-size: var(--taille-petit);
+}
+
+.pastille {
+  display: inline-block;
+  margin-left: var(--e-2);
+  padding: 0 var(--e-2);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--sable);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cacao);
+  vertical-align: middle;
+}
+
+.dialogue {
+  width: min(32rem, calc(100vw - 2rem));
+  padding: var(--e-6);
+  border: 0;
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+  color: var(--texte);
+  box-shadow: var(--ombre);
+}
+
+.dialogue::backdrop {
+  background-color: rgb(94 47 27 / 0.35);
+}
+
+.dialogue h2 {
+  margin-bottom: var(--e-4);
+  font-size: var(--t-h3);
+}
+
+.boutonDanger {
+  border-color: var(--erreur);
+  color: var(--erreur);
+}

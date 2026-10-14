@@ -9,6 +9,7 @@
  * - demande traiteur : date d'événement à moins de 2 jours → 400 sur le champ `eventDate`.
  */
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { handleAuth, refreshStats } from './auth.mts';
 import {
   articleCards,
   articleDetail,
@@ -32,7 +33,12 @@ const PORT = Number(process.env.MOCK_API_PORT ?? 3999);
 const PREFIX = '/api/v1';
 const ALLOWED_ORIGIN = new URL(SITE_URL).origin;
 
-function send(res: ServerResponse, status: number, body?: unknown, headers = {}) {
+function send(
+  res: ServerResponse,
+  status: number,
+  body?: unknown,
+  headers: Record<string, string | string[]> = {},
+) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     ...headers,
@@ -95,8 +101,14 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
     return;
   }
 
+  // Statistiques réservées aux tests (jamais exposées par le vrai backend).
+  if (url.pathname === '/__mock/stats') return send(res, 200, refreshStats());
+
   const path = url.pathname.startsWith(PREFIX) ? url.pathname.slice(PREFIX.length) : null;
   if (path === null) return notFound(res);
+
+  const body = req.method === 'GET' ? {} : await readJson(req);
+  if (await handleAuth(req, res, path, body, send, error)) return;
 
   if (req.method === 'GET') {
     if (path === '/site/settings') return send(res, 200, settings);
@@ -147,7 +159,6 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
   }
 
   if (req.method === 'POST') {
-    const body = await readJson(req);
     if (path === '/contact') {
       const email = String(body.email ?? '');
       if (email.includes('limite')) {
