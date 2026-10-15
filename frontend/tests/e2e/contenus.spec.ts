@@ -109,7 +109,7 @@ test.describe('Pages éditoriales', () => {
       ['Découvrir les formations', '/formations'],
       ['Voir les kits', '/boutique'],
       ['Écrivez-moi', '/contact'],
-    ]) {
+    ] as const) {
       await expect(page.getByRole('link', { name })).toHaveAttribute('href', href);
     }
     await expect(
