@@ -249,15 +249,51 @@ main:focus {
 }
 
 [data-apparition='devoile'][data-etat='attente'] {
-  clip-path: inset(10% 10% 10% 10% round var(--rayon));
-  opacity: 0.4;
+  opacity: 0;
+  transform: translateY(2.5rem) scale(0.9);
 }
 
 [data-apparition='monte'][data-etat='visible'],
 [data-apparition='devoile'][data-etat='visible'] {
   transition:
     opacity 700ms var(--courbe),
-    transform 700ms var(--courbe),
-    clip-path 900ms var(--courbe);
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--delai, 0ms);
+}
+
+/* Le drip coule : la nappe se dévoile de haut en bas. */
+[data-apparition='coule'][data-etat='attente'] {
+  clip-path: inset(0 0 100% 0);
+}
+
+[data-apparition='coule'][data-etat='visible'] {
+  transition: clip-path 1400ms cubic-bezier(0.3, 0.6, 0.2, 1);
+}
+
+/* Dessin au trait (illustrations) : chaque tracé se dessine à l'apparition. */
+[data-apparition='dessin'][data-etat='attente'] .trace {
+  stroke-dashoffset: 1;
+}
+
+[data-apparition='dessin'][data-etat='visible'] .trace {
+  transition: stroke-dashoffset 1200ms var(--courbe);
+  transition-delay: calc(var(--i, 0) * 180ms);
+}
+
+[data-apparition='dessin'][data-etat='attente'] .pepite {
+  transform: scale(0);
+}
+
+[data-apparition='dessin'][data-etat='visible'] .pepite {
+  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: calc(900ms + var(--i, 0) * 70ms);
+}
+
+/* Cartes en grille : elles arrivent en léger décalé, colonne après colonne. */
+li:nth-child(3n + 2) > [data-apparition] {
+  --delai: 90ms;
+}
+
+li:nth-child(3n) > [data-apparition] {
+  --delai: 180ms;
 }

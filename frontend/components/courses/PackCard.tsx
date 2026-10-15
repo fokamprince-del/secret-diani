@@ -16,6 +16,7 @@ export function PackCard({
 }) {
   return (
     <article
+      data-apparition="monte"
       className={styles.pack}
       data-mis-en-avant={highlighted || undefined}
       aria-labelledby={`pack-${pack.slug}`}

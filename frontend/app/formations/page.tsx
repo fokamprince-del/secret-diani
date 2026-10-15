@@ -47,6 +47,7 @@ export default async function FormationsPage() {
   return (
     <>
       <PageHeader
+        accent="framboise"
         eyebrow="Univers 02"
         title="Formations en ligne"
         intro={

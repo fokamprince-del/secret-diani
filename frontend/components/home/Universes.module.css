@@ -1,5 +1,22 @@
+/* Les aplats décalés derrière les visuels ne doivent pas créer de défilement horizontal. */
 .univers {
-  padding-block: var(--section);
+  overflow-x: clip;
+  padding-block: calc(var(--section) + 3rem) var(--section);
+}
+
+.entete {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-2);
+  margin-bottom: var(--section);
+  text-align: center;
+}
+
+.surtitre {
+  font-family: var(--font-manuscrit);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--terra-d);
 }
 
 .liste {
@@ -8,27 +25,35 @@
 }
 
 .bandeau {
+  --accent: var(--mangue);
   display: grid;
-  gap: var(--e-6);
+  gap: var(--e-7);
   align-items: center;
 }
 
+.bandeau[data-univers='courses'] {
+  --accent: var(--framboise);
+}
+
+.bandeau[data-univers='shop'] {
+  --accent: var(--caramel);
+}
+
 /*
- * Grand écran : chaque bandeau a sa propre composition, réglée sur le format de sa photo.
- * Traiteur : visuel horizontal large ; formations : visuel vertical plus étroit, à droite ;
- * boutique : visuel carré, texte calé en bas.
+ * Grand écran : chaque bandeau a sa composition. Traiteur : arche à gauche ; formations :
+ * carte inclinée à droite ; boutique : médaillon, texte calé en bas.
  */
 @media (min-width: 64rem) {
   .bandeau {
-    grid-template-columns: 1.15fr 1fr;
-    gap: clamp(2.5rem, 1rem + 4vw, 5rem);
+    grid-template-columns: 0.85fr 1fr;
+    gap: clamp(3rem, 1rem + 5vw, 6rem);
   }
 
   .bandeau[data-univers='courses'] {
-    grid-template-columns: 1fr 0.8fr;
+    grid-template-columns: 1fr 0.85fr;
   }
 
-  .bandeau[data-univers='courses'] .visuel {
+  .bandeau[data-univers='courses'] .scene {
     order: 2;
   }
 
@@ -37,7 +62,6 @@
   }
 
   .bandeau[data-univers='shop'] {
-    grid-template-columns: 0.9fr 1fr;
     align-items: end;
   }
 
@@ -46,35 +70,100 @@
   }
 }
 
+/* La scène : un aplat de couleur saveur décalé derrière le visuel. */
+.scene {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 26rem);
+}
+
+.fond {
+  position: absolute;
+  inset: 6% -5% -5% 6%;
+  border-radius: var(--rayon);
+  background-color: color-mix(in srgb, var(--accent) 70%, var(--creme));
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .visuel {
-  border-radius: var(--rayon);
+  position: relative;
   overflow: hidden;
-}
-
-/* Sans photo : un aplat chaud de la palette, jamais un faux visuel. */
-.aplat {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 4 / 3;
+  border: 5px solid var(--ivoire);
   border-radius: var(--rayon);
-  background-color: var(--peche);
+  background-color: var(--ivoire);
+  box-shadow: 0 26px 50px -26px rgb(94 47 27 / 0.45);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-[data-univers='courses'] .aplat {
+.visuel > *,
+.visuel picture,
+.visuel img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.visuel img {
+  object-fit: cover;
+  object-position: 50% 70%;
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Traiteur : l'arche de la cloche à gâteau. */
+[data-univers='catering'] .visuel,
+[data-univers='catering'] .fond {
+  border-radius: 999px 999px var(--rayon) var(--rayon);
+}
+
+/* Formations : carte inclinée, comme posée sur le plan de travail. */
+[data-univers='courses'] .visuel {
+  rotate: 2.5deg;
+}
+
+[data-univers='courses'] .fond {
+  rotate: -4deg;
+}
+
+/* Boutique : médaillon, illustration au trait sur fond nude. */
+[data-univers='shop'] .visuel,
+[data-univers='shop'] .fond {
+  border-radius: 50%;
+}
+
+[data-univers='shop'] .visuel {
   background-color: var(--sable);
 }
 
-[data-univers='shop'] .aplat {
-  background-color: var(--nude);
+.illustration {
+  padding: 12%;
+  overflow: visible;
 }
 
-/* Numéro en filigrane, purement décoratif (pseudo-élément : ignoré des lecteurs d'écran). */
-.aplat::after {
-  content: attr(data-numero);
-  font-family: var(--font-titre);
-  font-size: clamp(4rem, 2rem + 8vw, 8rem);
-  line-height: 1;
-  color: color-mix(in srgb, var(--cacao) 18%, transparent);
+.illustration :global(.trace) {
+  fill: none;
+  stroke: var(--terra);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+}
+
+.illustration :global(.pepite) {
+  transform-box: view-box;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .bandeau:hover .fond {
+    transform: translate(10px, 10px) rotate(-2deg);
+  }
+
+  .bandeau:hover .visuel {
+    transform: translate(-6px, -8px);
+  }
+
+  .bandeau:hover .visuel img {
+    transform: scale(1.05);
+  }
 }
 
 .texte {
@@ -97,6 +186,22 @@
 
 .titre {
   font-size: var(--t-h2);
+}
+
+/* Petit trait couleur saveur sous le titre. */
+.titre::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 4px;
+  margin-top: var(--e-3);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--accent);
+  transition: width 600ms var(--courbe);
+}
+
+.bandeau:hover .titre::after {
+  width: 6rem;
 }
 
 .description {

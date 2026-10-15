@@ -1,5 +1,7 @@
 import type { CateringCategory, CateringProduct } from '@/lib/api/types';
 import { formatPrice } from '@/lib/format';
+import { CREATIONS } from '@/lib/vitrine';
+import { LoopVideo } from '../ui/LoopVideo';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 import { ProductOptions } from './ProductOptions';
 import styles from './ProductCard.module.css';
@@ -7,6 +9,35 @@ import styles from './ProductCard.module.css';
 interface ProductCardProps {
   product: CateringProduct;
   kind: CateringCategory['kind'];
+}
+
+/** Layer cakes sans photo saisie : trois vrais gâteaux de Diani, le premier filmé. */
+function LayerCakeShowcase() {
+  const [first, ...others] = CREATIONS.filter((creation) => creation.video).slice(0, 3);
+  if (!first) return null;
+  return (
+    <ul role="list" className={styles.arches}>
+      <li>
+        <LoopVideo src={first.video!} poster={first.poster} focus={first.focus} />
+        <span className="visually-hidden">{first.title}</span>
+      </li>
+      {others.map((creation) => (
+        <li key={creation.slug}>
+          <picture>
+            <img
+              src={creation.poster}
+              alt={`Layer cake ${creation.title.toLowerCase()}`}
+              width={464}
+              height={848}
+              loading="lazy"
+              decoding="async"
+              style={{ objectPosition: creation.focus }}
+            />
+          </picture>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 /**
@@ -20,7 +51,7 @@ export function ProductCard({ product, kind }: ProductCardProps) {
     product.gallery.length > 0 ? product.gallery : product.image ? [product.image] : [];
 
   return (
-    <article className={`${styles.carte} ${wide ? styles.large : ''}`}>
+    <article className={`${styles.carte} ${wide ? styles.large : ''}`} data-apparition="monte">
       <div className={styles.visuels}>
         {gallery.length > 0 ? (
           <ul role="list" className={styles.galerie} data-nombre={Math.min(gallery.length, 3)}>
@@ -37,6 +68,8 @@ export function ProductCard({ product, kind }: ProductCardProps) {
               </li>
             ))}
           </ul>
+        ) : wide ? (
+          <LayerCakeShowcase />
         ) : (
           <div className={styles.aplat} data-type={kind} aria-hidden="true" />
         )}

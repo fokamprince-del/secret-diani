@@ -1,0 +1,295 @@
+/* Chaque saveur pose sa couleur ; la section entière la suit en fondu. */
+.vitrine[data-accent='mangue'],
+.carte[data-accent='mangue'] {
+  --accent: var(--mangue);
+}
+
+.vitrine[data-accent='framboise'],
+.carte[data-accent='framboise'] {
+  --accent: var(--framboise);
+}
+
+.vitrine[data-accent='caramel'],
+.carte[data-accent='caramel'] {
+  --accent: var(--caramel);
+}
+
+.vitrine[data-accent='ganache'],
+.carte[data-accent='ganache'] {
+  --accent: var(--ganache);
+}
+
+.vitrine[data-accent='or'],
+.carte[data-accent='or'] {
+  --accent: var(--or);
+}
+
+.vitrine {
+  position: relative;
+  overflow: hidden;
+  padding-block: calc(var(--section) + 2rem) var(--section);
+  background-color: color-mix(in srgb, var(--accent) 16%, var(--creme));
+  transition: background-color 900ms var(--courbe);
+}
+
+/* Le nom du gâteau actif, en géant derrière le rail. */
+.filigrane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max-content;
+  margin: 0;
+  font-family: var(--font-titre-italique);
+  font-size: clamp(5rem, 2rem + 12vw, 13rem);
+  font-style: italic;
+  line-height: 1;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--accent) 22%, transparent);
+  transform: translate(-50%, -30%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.entete {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--e-5);
+  margin-bottom: var(--e-6);
+}
+
+.surtitre {
+  margin-bottom: var(--e-2);
+  font-family: var(--font-manuscrit);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--terra-d);
+}
+
+.fleches {
+  display: none;
+  gap: var(--e-3);
+}
+
+.fleche {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid var(--cacao);
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--cacao);
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    color var(--duree) var(--courbe),
+    transform var(--duree) var(--courbe);
+}
+
+.fleche:hover {
+  background-color: var(--cacao);
+  color: var(--ivoire);
+  transform: scale(1.06);
+}
+
+.gauche {
+  transform: rotate(180deg);
+}
+
+/*
+ * Le rail : centrage de chaque carte, défilement au doigt avec arrêt sur chacune.
+ * Sélecteur doublé : il doit l'emporter sur la remise à zéro des listes (`ul[role='list']`).
+ */
+.rail.rail {
+  --carte: clamp(14rem, 62vw, 19rem);
+  position: relative;
+  display: flex;
+  gap: clamp(1rem, 0.5rem + 2vw, 2rem);
+  margin: 0;
+  padding: var(--e-6) calc(50% - var(--carte) / 2) var(--e-5);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.carte {
+  flex: none;
+  width: var(--carte);
+  scroll-snap-align: center;
+  opacity: 0.7;
+  transform: scale(0.88) rotate(-1.5deg);
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 700ms var(--courbe);
+}
+
+.carte:nth-child(even) {
+  transform: scale(0.88) rotate(1.5deg);
+}
+
+.carte[aria-current] {
+  opacity: 1;
+  transform: none;
+}
+
+.figure {
+  display: grid;
+  gap: var(--e-4);
+  margin: 0;
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 3 / 5;
+  overflow: hidden;
+  border: 5px solid var(--ivoire);
+  border-radius: 999px 999px var(--rayon) var(--rayon);
+  background-color: var(--ivoire);
+  box-shadow: 0 24px 50px -24px color-mix(in srgb, var(--accent) 70%, transparent);
+  transition: box-shadow 700ms var(--courbe);
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Pastille couleur de la saveur, qui « bat » sur la carte active. */
+.pastille {
+  position: absolute;
+  top: 14%;
+  right: 10%;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 3px solid var(--ivoire);
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+.legende {
+  display: grid;
+  gap: var(--e-1);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 500ms var(--courbe),
+    transform 500ms var(--courbe);
+}
+
+.carte[aria-current] .legende {
+  opacity: 1;
+  transform: none;
+  transition-delay: 200ms;
+}
+
+.legende strong {
+  font-family: var(--font-titre);
+  font-size: 1.375rem;
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.legende span {
+  font-size: var(--taille-petit);
+}
+
+.pied {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-5);
+  margin-top: var(--e-5);
+}
+
+.points {
+  display: flex;
+  gap: var(--e-1);
+  margin: 0;
+  padding: 0;
+}
+
+/* Cible de 44 px, point visible plus petit. */
+.point {
+  display: grid;
+  place-items: center;
+  width: var(--cible);
+  height: var(--cible);
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.point::before {
+  content: '';
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: var(--rayon-pilule);
+  background-color: color-mix(in srgb, var(--cacao) 30%, transparent);
+  transition:
+    width 500ms var(--courbe),
+    background-color 500ms var(--courbe);
+}
+
+.point[aria-current]::before {
+  width: 2rem;
+  background-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .filigrane {
+    animation: filigrane 900ms var(--courbe) both;
+  }
+
+  .carte[aria-current] .pastille {
+    animation: bat 1.8s ease-in-out infinite;
+  }
+
+  @media (hover: hover) {
+    .carte:hover {
+      opacity: 1;
+    }
+
+    .carte[aria-current]:hover .media {
+      box-shadow: 0 34px 60px -24px color-mix(in srgb, var(--accent) 85%, transparent);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carte,
+  .carte:nth-child(even) {
+    transform: none;
+  }
+}
+
+@keyframes filigrane {
+  from {
+    opacity: 0;
+    transform: translate(-46%, -30%);
+  }
+}
+
+@keyframes bat {
+  50% {
+    transform: scale(1.35);
+  }
+}
+
+/* Les flèches à partir de la tablette ; au doigt, on fait glisser le rail. */
+@media (min-width: 40rem) {
+  .fleches {
+    display: flex;
+  }
+}

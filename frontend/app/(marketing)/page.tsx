@@ -3,7 +3,9 @@ import { DianiWord } from '@/components/home/DianiWord';
 import { Hero } from '@/components/home/Hero';
 import { Reassurance } from '@/components/home/Reassurance';
 import { Reviews } from '@/components/home/Reviews';
+import { Saveurs } from '@/components/home/Saveurs';
 import { Universes } from '@/components/home/Universes';
+import { Vitrine } from '@/components/home/Vitrine';
 import { JsonLd } from '@/components/ui/JsonLd';
 import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
 import { getHomeContent, getOrganization, getReviews } from '@/lib/api/content';
@@ -22,8 +24,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * Accueil, dans l'ordre imposé : hero d'ambiance → trois univers → avis traiteur → mot de
- * Diani → réassurance. Les textes, images et avis viennent de l'API (modifiables sans
+ * Accueil : hero (vitrine vidéo) → bandeau des saveurs → trois univers → vitrine des gâteaux →
+ * avis traiteur → mot de Diani → réassurance (ordre du cahier, enrichi : D-F48). Les textes, images et avis viennent de l'API (modifiables sans
  * développeur) ; une section sans contenu n'est pas affichée.
  */
 export default async function HomePage() {
@@ -45,7 +47,9 @@ export default async function HomePage() {
           ) : undefined
         }
       />
+      <Saveurs />
       <Universes universes={home?.universes ?? null} />
+      <Vitrine />
       <Reviews reviews={reviews} />
       <DianiWord word={home?.dianiWord} />
       <Reassurance />

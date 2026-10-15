@@ -7,6 +7,19 @@
   background-color: var(--sable);
 }
 
+/* Vitrine : fond chaud, une lueur mangue derrière le gâteau. */
+.vitrine {
+  align-items: center;
+  min-height: auto;
+  background:
+    radial-gradient(
+      60rem 40rem at 85% 40%,
+      color-mix(in srgb, var(--mangue) 22%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--sable), var(--creme));
+}
+
 .media {
   position: absolute;
   inset: 0;
@@ -31,17 +44,32 @@
   );
 }
 
-.contenu {
+.grille {
   position: relative;
+  display: grid;
+  gap: var(--e-7);
+  padding-block: var(--e-8) clamp(3rem, 2rem + 6vw, 6.5rem);
+}
+
+.vitrine .grille {
+  padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem) clamp(4rem, 3rem + 4vw, 6rem);
+}
+
+@media (min-width: 56rem) {
+  .vitrine .grille {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+  }
+}
+
+.contenu {
   display: grid;
   justify-items: start;
   gap: var(--e-5);
-  padding-block: var(--e-8) clamp(3rem, 2rem + 6vw, 6.5rem);
 }
 
 .titre {
   max-width: 16ch;
-  margin-top: var(--e-6);
   font-size: var(--t-display);
   line-height: 1.06;
 }
@@ -58,6 +86,101 @@
 
 .action {
   margin-top: var(--e-2);
+}
+
+/* ---------- La scène : arche, halo, macaron, note ---------- */
+.scene {
+  position: relative;
+  justify-self: center;
+  width: min(80vw, 29rem);
+  padding: var(--e-5) var(--e-6) 0;
+}
+
+/* Forme couleur mangue qui ondule lentement derrière l'arche. */
+.halo {
+  position: absolute;
+  inset: 10% -7% -5% -3%;
+  border-radius: 58% 42% 46% 54% / 48% 56% 44% 52%;
+  background: linear-gradient(
+    150deg,
+    var(--mangue),
+    color-mix(in srgb, var(--mangue) 55%, var(--peche))
+  );
+  opacity: 0.85;
+}
+
+/* L'arche : une cloche à gâteau. */
+.arche {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  overflow: hidden;
+  border: 6px solid var(--ivoire);
+  border-radius: 999px 999px var(--rayon) var(--rayon);
+  background-color: var(--ivoire);
+  box-shadow: 0 30px 60px -28px rgb(94 47 27 / 0.45);
+}
+
+.macaron {
+  position: absolute;
+  right: -0.5rem;
+  bottom: 12%;
+  width: clamp(5.5rem, 4rem + 4vw, 7.5rem);
+  height: auto;
+  overflow: visible;
+}
+
+.macaron circle {
+  fill: var(--framboise);
+}
+
+.macaron text {
+  font-family: var(--font-texte);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  fill: var(--blanc);
+}
+
+.coeur {
+  fill: var(--mangue);
+}
+
+.note {
+  position: absolute;
+  top: 0;
+  left: -1rem;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--e-1);
+  margin: 0;
+  transform: rotate(-6deg);
+}
+
+.note span {
+  padding: 0.1rem 0.6rem;
+  border-radius: 10px;
+  background-color: var(--ivoire);
+  font-family: var(--font-manuscrit);
+  font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
+  line-height: 1.1;
+  color: var(--terra-d);
+  box-shadow: var(--ombre);
+}
+
+.note svg {
+  width: 3.25rem;
+  height: auto;
+  margin-bottom: -1.75rem;
+  overflow: visible;
+}
+
+.note path {
+  fill: none;
+  stroke: var(--terra-d);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
 }
 
 /* Moment mémorable : le titre, le trait de crème (CremeTrait), puis le texte et le bouton. */
@@ -84,6 +207,35 @@
   .action {
     animation-delay: 800ms;
   }
+
+  .arche {
+    animation: arche 1100ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both;
+  }
+
+  .halo {
+    animation:
+      halo-entree 1200ms var(--courbe) both,
+      ondule 14s ease-in-out 1200ms infinite alternate;
+  }
+
+  .macaron {
+    animation:
+      pop 700ms cubic-bezier(0.34, 1.56, 0.64, 1) 900ms both,
+      tourne 24s linear 1600ms infinite;
+  }
+
+  .macaron .coeur {
+    transform-origin: 60px 62px;
+    animation: bat 1.6s ease-in-out 2s infinite;
+  }
+
+  .note {
+    animation: note 700ms var(--courbe) 1300ms both;
+  }
+
+  .note path {
+    animation: dessin 700ms var(--courbe) 1700ms both;
+  }
 }
 
 @keyframes entree {
@@ -97,5 +249,70 @@
   from {
     opacity: 0.35;
     transform: translateY(10px);
+  }
+}
+
+/* L'arche monte et s'ouvre comme une cloche qu'on soulève. */
+@keyframes arche {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.94);
+    clip-path: inset(30% 0 0 0 round 999px 999px 14px 14px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 999px 999px 14px 14px);
+  }
+}
+
+@keyframes halo-entree {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-20deg);
+  }
+}
+
+@keyframes ondule {
+  to {
+    border-radius: 42% 58% 54% 46% / 56% 44% 56% 44%;
+    transform: rotate(8deg) scale(1.03);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+@keyframes tourne {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes bat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.18);
+  }
+  30% {
+    transform: scale(1);
+  }
+}
+
+@keyframes note {
+  from {
+    opacity: 0;
+    transform: translateY(10px) rotate(2deg);
+  }
+}
+
+@keyframes dessin {
+  from {
+    stroke-dashoffset: 1;
   }
 }

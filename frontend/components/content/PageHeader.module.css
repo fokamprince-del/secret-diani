@@ -1,4 +1,6 @@
 .entete {
+  --accent: var(--mangue);
+  position: relative;
   display: grid;
   justify-items: start;
   gap: var(--e-4);
@@ -16,15 +18,82 @@
   color: var(--terra-d);
 }
 
-.surtitre::before {
-  content: '';
-  width: 2rem;
-  height: 1px;
-  background-color: var(--or);
+.titre {
+  position: relative;
+  max-width: 22ch;
 }
 
-.titre {
-  max-width: 22ch;
+.trait {
+  margin-top: calc(-1 * var(--e-2));
+}
+
+.surtitre,
+.intro,
+.meta {
+  position: relative;
+}
+
+.entete[data-accent='framboise'] {
+  --accent: var(--framboise);
+}
+
+.entete[data-accent='caramel'] {
+  --accent: var(--caramel);
+}
+
+/* Tache couleur saveur, en haut à droite, qui ondule lentement. */
+.tache {
+  position: absolute;
+  top: 1.5rem;
+  right: max(var(--gouttiere), 4%);
+  width: clamp(9rem, 6rem + 14vw, 20rem);
+  aspect-ratio: 1;
+  border-radius: 58% 42% 46% 54% / 48% 56% 44% 52%;
+  background: radial-gradient(
+    circle at 35% 35%,
+    color-mix(in srgb, var(--accent) 80%, var(--creme)),
+    color-mix(in srgb, var(--accent) 30%, var(--creme)) 70%
+  );
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tache {
+    animation:
+      tache-entree 1100ms cubic-bezier(0.22, 1, 0.36, 1) both,
+      tache-ondule 12s ease-in-out 1100ms infinite alternate;
+  }
+
+  .titre {
+    animation: titre-entree 700ms var(--courbe) both;
+  }
+
+  .intro {
+    animation: titre-entree 700ms var(--courbe) 350ms both;
+  }
+}
+
+@keyframes tache-entree {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-30deg);
+  }
+}
+
+@keyframes tache-ondule {
+  to {
+    border-radius: 42% 58% 54% 46% / 56% 44% 56% 44%;
+    transform: rotate(14deg) translateY(10px);
+  }
+}
+
+/* Comme au hero : le titre (LCP) glisse sans partir de l'opacité 0. */
+@keyframes titre-entree {
+  from {
+    opacity: 0.35;
+    transform: translateY(10px);
+  }
 }
 
 .intro {

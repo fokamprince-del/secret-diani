@@ -1,0 +1,12 @@
+@media (prefers-reduced-motion: no-preference) {
+  .page {
+    animation: entree-page 450ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+}
+
+@keyframes entree-page {
+  from {
+    opacity: 0.4;
+    transform: translateY(12px);
+  }
+}

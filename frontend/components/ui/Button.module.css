@@ -1,4 +1,7 @@
 .bouton {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -113,5 +116,32 @@
 @media (prefers-reduced-motion: reduce) {
   .chargement::after {
     animation-duration: 2s;
+  }
+}
+
+/* Reflet de glaçage qui traverse le bouton principal au survol. */
+.principal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    color-mix(in srgb, var(--blanc) 35%, transparent) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .principal:hover:not(:disabled)::after {
+    transition: transform 800ms var(--courbe);
+    transform: translateX(120%);
+  }
+
+  .principal:hover:not(:disabled),
+  .secondaire:hover:not(:disabled) {
+    transform: translateY(-2px);
   }
 }

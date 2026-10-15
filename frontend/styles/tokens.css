@@ -24,6 +24,16 @@
   --or: #b8935a;
   --blanc: #fffbf8;
 
+  /*
+   * Saveurs : les couleurs des gâteaux de Diani (drip mangue, framboise, caramel, ganache).
+   * Aplats, fonds teintés et décor uniquement ; le texte posé dessus reste --cacao ou --blanc.
+   */
+  --mangue: #e8b923;
+  --framboise: #b8324a;
+  --caramel: #b8742f;
+  --ganache: #3e2418;
+  --ivoire: #fbf3e2;
+
   /* Rôles */
   --fond: var(--creme);
   --fond-alt: var(--sable);
