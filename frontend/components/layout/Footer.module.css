@@ -1,19 +1,31 @@
 .pied {
   margin-top: var(--section);
-  padding-top: var(--e-8);
+  padding-top: clamp(2.5rem, 1.5rem + 4vw, 4rem);
   background-color: var(--sable);
   border-top: 1px solid var(--filet);
 }
 
 .grille {
   display: grid;
-  gap: var(--e-7);
-  padding-bottom: var(--e-7);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--e-6) var(--e-5);
+  padding-bottom: var(--e-6);
+}
+
+/* Mobile : la marque sur toute la largeur, les deux colonnes de liens côte à côte. */
+.marque {
+  grid-column: 1 / -1;
 }
 
 @media (min-width: 48rem) {
   .grille {
     grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--e-7);
+    padding-bottom: var(--e-7);
+  }
+
+  .marque {
+    grid-column: auto;
   }
 }
 
@@ -104,4 +116,19 @@
 
 .lienBouton:hover {
   color: var(--terra-d);
+}
+
+/* Mobile : bas de page centré, mentions sur une ligne quand c'est possible. */
+@media (max-width: 47.99rem) {
+  .legal {
+    flex-direction: column-reverse;
+    justify-content: center;
+    gap: var(--e-2);
+    text-align: center;
+  }
+
+  .liensLegaux {
+    justify-content: center;
+    gap: 0 var(--e-4);
+  }
 }

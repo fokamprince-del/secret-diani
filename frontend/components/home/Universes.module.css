@@ -207,3 +207,30 @@
 .description {
   max-width: 44ch;
 }
+
+/* Mobile : visuels moins hauts et resserrés, pour que chaque univers tienne presque en un écran. */
+@media (max-width: 47.99rem) {
+  .univers {
+    padding-block: calc(var(--section) + 2.5rem) var(--e-8);
+  }
+
+  .entete {
+    margin-bottom: var(--e-7);
+  }
+
+  .liste {
+    gap: var(--e-8);
+  }
+
+  .bandeau {
+    gap: var(--e-5);
+  }
+
+  .scene {
+    width: min(78vw, 20rem);
+  }
+
+  .texte {
+    gap: var(--e-3);
+  }
+}

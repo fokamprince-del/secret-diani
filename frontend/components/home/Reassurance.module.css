@@ -5,13 +5,8 @@
 
 .liste {
   display: grid;
-  gap: var(--e-6);
-}
-
-@media (min-width: 40rem) {
-  .liste {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--e-6) var(--e-4);
 }
 
 @media (min-width: 64rem) {
@@ -77,4 +72,24 @@
 
 .texte {
   font-size: var(--taille-petit);
+}
+
+/* Mobile : 2 × 2, centré et resserré. */
+@media (max-width: 47.99rem) {
+  .engagements {
+    padding-block: var(--e-7);
+  }
+
+  .item {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .titre {
+    font-size: 0.9375rem;
+  }
+
+  .texte {
+    font-size: 0.875rem;
+  }
 }

@@ -151,3 +151,23 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* Carte sans photo : un filet couleur saveur en haut, et la carte se resserre. */
+.carte[data-sans-photo] {
+  position: relative;
+  grid-template-rows: auto;
+  padding-top: var(--e-5);
+  overflow: hidden;
+}
+
+.carte[data-sans-photo]::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background-color: var(--mangue);
+}
+
+.carte[data-sans-photo][data-type='a_la_carte']::before {
+  background-color: var(--caramel);
+}

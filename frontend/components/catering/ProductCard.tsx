@@ -50,30 +50,38 @@ export function ProductCard({ product, kind }: ProductCardProps) {
   const gallery =
     product.gallery.length > 0 ? product.gallery : product.image ? [product.image] : [];
 
+  // Sans photo (hors layer cakes, qui ont leurs vraies vidéos) : carte texte, sans aplat vide.
+  const textOnly = gallery.length === 0 && !wide;
+
   return (
-    <article className={`${styles.carte} ${wide ? styles.large : ''}`} data-apparition="monte">
-      <div className={styles.visuels}>
-        {gallery.length > 0 ? (
-          <ul role="list" className={styles.galerie} data-nombre={Math.min(gallery.length, 3)}>
-            {gallery.slice(0, wide ? 3 : 1).map((image, index) => (
-              <li key={image.url}>
-                <ResponsiveImage
-                  image={image}
-                  sizes={
-                    wide ? '(min-width: 64rem) 380px, 100vw' : '(min-width: 64rem) 360px, 100vw'
-                  }
-                  aspectRatio={wide && index > 0 ? '1 / 1' : '4 / 3'}
-                  zoomOnHover
-                />
-              </li>
-            ))}
-          </ul>
-        ) : wide ? (
-          <LayerCakeShowcase />
-        ) : (
-          <div className={styles.aplat} data-type={kind} aria-hidden="true" />
-        )}
-      </div>
+    <article
+      className={`${styles.carte} ${wide ? styles.large : ''}`}
+      data-apparition="monte"
+      data-sans-photo={textOnly || undefined}
+      data-type={kind}
+    >
+      {!textOnly && (
+        <div className={styles.visuels}>
+          {gallery.length > 0 ? (
+            <ul role="list" className={styles.galerie} data-nombre={Math.min(gallery.length, 3)}>
+              {gallery.slice(0, wide ? 3 : 1).map((image, index) => (
+                <li key={image.url}>
+                  <ResponsiveImage
+                    image={image}
+                    sizes={
+                      wide ? '(min-width: 64rem) 380px, 100vw' : '(min-width: 64rem) 360px, 100vw'
+                    }
+                    aspectRatio={wide && index > 0 ? '1 / 1' : '4 / 3'}
+                    zoomOnHover
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <LayerCakeShowcase />
+          )}
+        </div>
+      )}
 
       <div className={styles.texte}>
         <h3 className={styles.nom}>{product.name}</h3>

@@ -1,5 +1,3 @@
-# Politique de confidentialité
-
 > Rédigée à partir du registre des traitements du site. Mentions **[À compléter]** à renseigner avant la mise en ligne.
 
 Vos données sont utilisées uniquement pour vous servir : vos commandes, vos formations, vos questions. Elles ne sont jamais vendues.

@@ -1,6 +1,7 @@
 .entete {
   --accent: var(--mangue);
   position: relative;
+  overflow-x: clip;
   display: grid;
   justify-items: start;
   gap: var(--e-4);
@@ -104,4 +105,14 @@
 .meta {
   font-size: var(--taille-petit);
   color: var(--texte);
+}
+
+/* Mobile : la tache se fait petite et discrète, dans le coin, jamais derrière le titre. */
+@media (max-width: 47.99rem) {
+  .tache {
+    top: -1.5rem;
+    right: -2.5rem;
+    width: 8rem;
+    opacity: 0.35;
+  }
 }

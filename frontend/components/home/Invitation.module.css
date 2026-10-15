@@ -1,5 +1,7 @@
 .invitation {
   position: relative;
+  /* Dernière section : elle rejoint le pied de page, sans bande vide entre les deux. */
+  margin-bottom: calc(-1 * var(--section));
   overflow: hidden;
   padding-block: var(--section);
   background:

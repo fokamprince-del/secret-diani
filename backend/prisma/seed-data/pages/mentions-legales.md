@@ -1,5 +1,3 @@
-# Mentions légales
-
 > Modèle à compléter avant la mise en ligne : chaque mention **[À compléter]** dépend de la situation de l’entreprise.
 
 ## Éditeur du site

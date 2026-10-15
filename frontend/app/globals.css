@@ -99,8 +99,8 @@ button {
   cursor: pointer;
 }
 
-ul[role='list'],
-ol[role='list'] {
+/* :where() : spécificité nulle, les marges posées par les composants l'emportent. */
+:where(ul, ol)[role='list'] {
   list-style: none;
   margin: 0;
   padding: 0;

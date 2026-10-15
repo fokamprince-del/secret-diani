@@ -378,3 +378,20 @@
     stroke-dashoffset: 1;
   }
 }
+
+/* Petits écrans : la note reste entière dans le cadre, le macaron un peu plus petit. */
+@media (max-width: 47.99rem) {
+  .note {
+    left: 0;
+    transform: rotate(-4deg);
+  }
+
+  .note span {
+    font-size: 1.6rem;
+  }
+
+  .macaron {
+    width: 5rem;
+    right: 0;
+  }
+}

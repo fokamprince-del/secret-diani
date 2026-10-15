@@ -116,3 +116,56 @@
   justify-content: center;
   margin-top: var(--e-7);
 }
+
+/* Mobile : frise verticale, numéro à gauche, texte aligné à gauche, fil pointillé. */
+@media (max-width: 47.99rem) {
+  .entete {
+    margin-bottom: var(--e-6);
+  }
+
+  .liste {
+    gap: 0;
+  }
+
+  .liste::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: 2px;
+    background-image: linear-gradient(180deg, var(--nude) 50%, transparent 50%);
+    background-size: 2px 14px;
+  }
+
+  .etape {
+    grid-template-columns: 3rem 1fr;
+    grid-template-rows: auto auto;
+    justify-items: start;
+    column-gap: var(--e-4);
+    row-gap: var(--e-1);
+    padding: 0 0 var(--e-6);
+    text-align: left;
+  }
+
+  .numero {
+    grid-row: 1 / span 2;
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+
+  .titre {
+    align-self: end;
+    font-size: 1.25rem;
+  }
+
+  .etape p {
+    font-size: var(--taille-petit);
+  }
+
+  .action {
+    margin-top: var(--e-3);
+  }
+}

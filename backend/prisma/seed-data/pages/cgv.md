@@ -1,5 +1,3 @@
-# Conditions générales de vente
-
 > Modèle à relire et compléter avant la mise en ligne (mentions **[À compléter]**).
 
 Les présentes conditions s’appliquent à toute commande passée auprès de **Les Secrets de Diani** ([À compléter : raison sociale, adresse, SIRET], voir les [mentions légales](/mentions-legales)) : prestations de traiteur, formations en ligne et produits de la boutique. Elles sont acceptées au moment de la commande.

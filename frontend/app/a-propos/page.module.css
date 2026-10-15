@@ -282,3 +282,35 @@
     transform: translateY(-4px);
   }
 }
+
+/* Mobile : visuels moins hauts, galerie resserrée, légendes sur une ligne. */
+@media (max-width: 47.99rem) {
+  .partageVisuel,
+  .valeursPhoto {
+    width: min(78vw, 20rem);
+  }
+
+  .centre {
+    margin-bottom: var(--e-6);
+  }
+
+  .mosaique {
+    grid-auto-rows: 11rem;
+    gap: var(--e-3);
+  }
+
+  .legende {
+    bottom: var(--e-2);
+    left: var(--e-2);
+    max-width: calc(100% - var(--e-4));
+    overflow: hidden;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8125rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .metier {
+    padding: var(--e-5);
+  }
+}
