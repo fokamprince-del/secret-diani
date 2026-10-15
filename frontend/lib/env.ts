@@ -32,6 +32,8 @@ export const publicEnv = {
   )!,
   /** Clé publique Cloudflare Turnstile (anti-robot des formulaires) ; absente : pas de captcha. */
   turnstileSiteKey: empty(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
+  /** Connexion avec Google proposée (l'API doit avoir GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET). */
+  googleAuth: process.env.NEXT_PUBLIC_GOOGLE_AUTH === 'true',
 } as const;
 
 /** URL absolue sur le site public, sans barre finale en double. */

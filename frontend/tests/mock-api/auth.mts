@@ -117,6 +117,8 @@ function profile(user: User): S['ProfileDto'] {
     phone: user.phone ?? '',
     emailVerified: true,
     mfaEnabled: user.role === 'admin',
+    hasPassword: true,
+    googleLinked: false,
     marketingConsent: user.marketingConsent,
     createdAt: user.createdAt,
   };

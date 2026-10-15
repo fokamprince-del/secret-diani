@@ -31,6 +31,12 @@ export class ProfileDto {
   @ApiProperty()
   mfaEnabled!: boolean;
 
+  @ApiProperty({ description: 'Un mot de passe est défini (faux : compte créé avec Google)' })
+  hasPassword!: boolean;
+
+  @ApiProperty({ description: 'Connexion avec Google reliée au compte' })
+  googleLinked!: boolean;
+
   @ApiProperty({ description: 'Consentement aux e-mails d’information' })
   marketingConsent!: boolean;
 
@@ -71,8 +77,12 @@ export class UpdateProfileDto {
 }
 
 export class DeleteAccountDto {
-  @ApiProperty({ description: 'Mot de passe actuel (confirmation)' })
+  @ApiPropertyOptional({
+    description:
+      'Mot de passe actuel (confirmation). Compte sans mot de passe (Google) : omis, une connexion de moins de 15 minutes est exigée.',
+  })
+  @IsOptional()
   @IsString()
   @MaxLength(PASSWORD_MAX_LENGTH)
-  password!: string;
+  password?: string;
 }

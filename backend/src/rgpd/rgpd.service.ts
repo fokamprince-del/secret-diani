@@ -250,12 +250,12 @@ export class RgpdService {
   }
 
   /**
-   * Suppression du compte : mot de passe exigé, sessions révoquées, données personnelles effacées
+   * Suppression du compte : mot de passe (ou connexion récente pour un compte Google) exigé, sessions révoquées, données personnelles effacées
    * (anonymisation de la ligne `users`, suppression des adresses, jetons et codes).
    */
   async deleteAccount(
     current: AuthenticatedUser,
-    password: string,
+    password: string | undefined,
     context: ClientContext,
   ): Promise<void> {
     if (current.role === 'admin') {
@@ -265,7 +265,7 @@ export class RgpdService {
         'Un compte administrateur ne peut pas être supprimé depuis l’espace client.',
       );
     }
-    const user = await this.auth.verifyCurrentPassword(current.id, password, context);
+    const user = await this.auth.confirmIdentity(current, password, context);
 
     await this.sessions.revokeAllForUser(current.id, 'account_deleted');
     await this.prisma.$transaction([
@@ -287,6 +287,7 @@ export class RgpdService {
         data: {
           email: anonymizedEmail(current.id),
           passwordHash: null,
+          googleSubject: null,
           status: 'deleted',
           deletedAt: new Date(),
           firstName: null,

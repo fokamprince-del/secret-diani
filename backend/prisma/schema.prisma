@@ -55,6 +55,8 @@ model User {
   role               UserRole   @default(client)
   status             UserStatus @default(active)
   emailVerifiedAt    DateTime?  @map("email_verified_at") @db.Timestamptz(3)
+  /// Identifiant stable du compte Google (« sub » OpenID Connect) : connexion avec Google.
+  googleSubject      String?    @unique @map("google_subject") @db.VarChar(255)
   firstName          String?    @map("first_name") @db.VarChar(100)
   lastName           String?    @map("last_name") @db.VarChar(100)
   phone              String?    @db.VarChar(20)

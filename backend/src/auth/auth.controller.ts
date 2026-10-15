@@ -1,4 +1,15 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiAcceptedResponse,
   ApiBadRequestResponse,
@@ -9,6 +20,7 @@ import {
   ApiHeader,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiTags,
   ApiTooManyRequestsResponse,
@@ -21,6 +33,7 @@ import type { AuthenticatedUser } from '../common/auth/authenticated-user';
 import { clientContext } from '../common/auth/client-context';
 import { CurrentUser, Public, Roles } from '../common/auth/decorators';
 import { ErrorResponseDto } from '../common/errors/error-response';
+import { AppConfigService } from '../config/app-config.service';
 import { REFRESH_COOKIE, REFRESH_COOKIE_PATH } from './auth.constants';
 import { type AuthenticatedOutcome, AuthService } from './auth.service';
 import {
@@ -44,6 +57,11 @@ import {
   MfaEnrolledResponseDto,
   MfaEnrollmentResponseDto,
 } from './dto/auth-responses.dto';
+import {
+  GOOGLE_FLOW_TTL_SECONDS,
+  GoogleAuthError,
+  GoogleOAuthService,
+} from './google/google-oauth.service';
 import { CSRF_HEADER, CsrfGuard } from './guards/csrf.guard';
 
 const MINUTE = 60_000;
@@ -55,6 +73,18 @@ const REFRESH_COOKIE_OPTIONS: CookieOptions = {
   secure: true,
   sameSite: 'strict',
   path: REFRESH_COOKIE_PATH,
+};
+
+/**
+ * Cookie liant le retour de Google au navigateur qui est parti (paramètre `state`). `lax` : le
+ * retour est une navigation venue de google.com, un cookie `strict` n'y serait pas envoyé.
+ */
+const GOOGLE_STATE_COOKIE = 'diani_google_state';
+const GOOGLE_STATE_COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'lax',
+  path: '/api/v1/auth/google',
 };
 
 const csrfHeader = ApiHeader({
@@ -75,7 +105,15 @@ function readRefreshCookie(req: Request): string | undefined {
 @ApiTooManyRequestsResponse({ type: ErrorResponseDto })
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  private readonly siteUrl: string;
+
+  constructor(
+    private readonly auth: AuthService,
+    private readonly google: GoogleOAuthService,
+    config: AppConfigService,
+  ) {
+    this.siteUrl = config.get('PUBLIC_SITE_URL').replace(/\/$/, '');
+  }
 
   private setSessionCookie(res: Response, outcome: AuthenticatedOutcome): void {
     res.cookie(REFRESH_COOKIE, outcome.session.refreshToken, {
@@ -160,6 +198,62 @@ export class AuthController {
 
   @Public()
   @limit(10)
+  // --- Connexion avec Google ---------------------------------------------------------------
+  @Public()
+  @limit(20)
+  @Get('google')
+  @ApiOperation({
+    summary: 'Connexion avec Google : redirige vers Google',
+    description:
+      '`?suite=` : page du site où revenir après la connexion. Sans configuration Google, renvoie vers /connexion avec `erreur=google_indisponible`.',
+  })
+  async googleStart(@Query('suite') next: string | undefined, @Res() res: Response): Promise<void> {
+    if (!this.google.enabled) {
+      res.redirect(HttpStatus.FOUND, `${this.siteUrl}/connexion?erreur=google_indisponible`);
+      return;
+    }
+    const { url, state } = await this.google.start(next ?? '/espace-membre');
+    res.cookie(GOOGLE_STATE_COOKIE, state, {
+      ...GOOGLE_STATE_COOKIE_OPTIONS,
+      maxAge: GOOGLE_FLOW_TTL_SECONDS * 1000,
+    });
+    res.redirect(HttpStatus.FOUND, url);
+  }
+
+  @Public()
+  @limit(20)
+  @Get('google/callback')
+  @ApiExcludeEndpoint()
+  async googleCallback(
+    @Query('code') code: string | undefined,
+    @Query('state') state: string | undefined,
+    @Query('error') error: string | undefined,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    const cookies = req.cookies as Record<string, unknown> | undefined;
+    const cookieState = cookies?.[GOOGLE_STATE_COOKIE];
+    res.clearCookie(GOOGLE_STATE_COOKIE, GOOGLE_STATE_COOKIE_OPTIONS);
+    try {
+      const { profile, next } = await this.google.finish({
+        code,
+        state,
+        error,
+        cookieState: typeof cookieState === 'string' ? cookieState : undefined,
+      });
+      const outcome = await this.auth.loginWithGoogle(profile, clientContext(req));
+      this.setSessionCookie(res, outcome);
+      // Le site ouvre la session (renouvellement par le cookie) puis rejoint `suite`.
+      res.redirect(
+        HttpStatus.FOUND,
+        `${this.siteUrl}/connexion/google?suite=${encodeURIComponent(next)}`,
+      );
+    } catch (failure) {
+      if (!(failure instanceof GoogleAuthError)) throw failure;
+      res.redirect(HttpStatus.FOUND, `${this.siteUrl}/connexion?erreur=${failure.code}`);
+    }
+  }
+
   @Post('2fa/enroll')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Administrateur, première connexion : générer le secret TOTP' })

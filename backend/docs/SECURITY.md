@@ -122,6 +122,18 @@
 | Script d'exploitation fautif | shellcheck en CI ; tag d'image validé avant usage | `scripts/*.sh` |
 | Saturation sous charge | Deux instances d'API, cache Redis des catalogues, limites de débit, mesures k6 | `load/`, D-093 |
 
+## Modèle de menaces — connexion avec Google (STRIDE)
+
+| Menace | Parade |
+|---|---|
+| **S** Usurpation : faux retour de Google, code volé ou rejoué | `state` lié au navigateur par cookie et consommé une fois (Redis `GETDEL`) ; PKCE S256 ; `nonce` vérifié dans le jeton ; code échangé de serveur à serveur avec le secret client |
+| **S** Prise de compte par un e-mail non vérifié chez Google | Liaison et création refusées si `email_verified` n'est pas vrai |
+| **T** Redirection ouverte via la page de retour | `suite` limité à un chemin interne (`safeNextPath`) ; l'URL de retour vers le site est construite à partir de `PUBLIC_SITE_URL` |
+| **R** Traçabilité | Journal d'audit : inscription (`provider: google`) et connexion, comme pour un mot de passe |
+| **I** Fuite d'information | Aucune donnée Google conservée hors e-mail, prénom, nom et identifiant `sub` ; aucun jeton Google stocké |
+| **D** Abus des routes | Limitation de débit (20/min par IP) ; flux expirés au bout de 10 minutes |
+| **E** Élévation : administrateur sans second facteur | Connexion Google refusée aux administrateurs ; suppression d'un compte sans mot de passe seulement dans les 15 minutes suivant une connexion |
+
 ## OWASP ASVS 4.0 niveau 2 — chapitres V2 (authentification) et V3 (sessions)
 
 | Exigence | État | Référence |

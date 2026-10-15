@@ -3,8 +3,9 @@
 import { useRef, useState } from 'react';
 import { authedApi } from '@/lib/api/authed';
 import { unwrap } from '@/lib/api/client';
-import { userMessage } from '@/lib/api/errors';
+import { ApiError, userMessage } from '@/lib/api/errors';
 import { dropSession } from '@/lib/auth/session';
+import { GoogleButton } from '../auth/GoogleButton';
 import { PasswordField } from '../forms/PasswordField';
 import { Button } from '../ui/Button';
 import { Icon } from '../ui/Icon';
@@ -53,26 +54,42 @@ function ExportButton() {
 /**
  * Suppression du compte (droit à l'effacement) : confirmation par mot de passe dans une
  * fenêtre native (`<dialog>`) ; l'API anonymise le compte et garde seulement les factures
- * (obligation légale de 10 ans).
+ * (obligation légale de 10 ans). Compte créé avec Google (sans mot de passe) : une connexion
+ * de moins de 15 minutes suffit, sinon l'API demande de se reconnecter avec Google.
  */
 function DeleteAccount() {
   const dialog = useRef<HTMLDialogElement>(null);
   const [password, setPassword] = useState('');
   const [failure, setFailure] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [hasPassword, setHasPassword] = useState(true);
+  const [reauth, setReauth] = useState(false);
+
+  const open = async () => {
+    setFailure(null);
+    setReauth(false);
+    dialog.current?.showModal();
+    try {
+      const profile = unwrap(await authedApi.GET('/api/v1/me'));
+      setHasPassword(profile.hasPassword);
+    } catch {
+      // Profil indisponible : on garde la demande de mot de passe.
+    }
+  };
 
   const confirm = async () => {
-    if (!password) {
+    if (hasPassword && !password) {
       setFailure('Indiquez votre mot de passe pour confirmer.');
       return;
     }
     setBusy(true);
     setFailure(null);
     try {
-      unwrap(await authedApi.DELETE('/api/v1/me', { body: { password } }));
+      unwrap(await authedApi.DELETE('/api/v1/me', { body: hasPassword ? { password } : {} }));
       dialog.current?.close();
       dropSession();
     } catch (error) {
+      setReauth(error instanceof ApiError && error.code === 'REAUTH_REQUIRED');
       setFailure(userMessage(error));
       setBusy(false);
     }
@@ -81,11 +98,7 @@ function DeleteAccount() {
   return (
     <>
       <div>
-        <Button
-          variant="secondaire"
-          className={styles.boutonDanger}
-          onClick={() => dialog.current?.showModal()}
-        >
+        <Button variant="secondaire" className={styles.boutonDanger} onClick={() => void open()}>
           Supprimer mon compte
         </Button>
       </div>
@@ -96,13 +109,18 @@ function DeleteAccount() {
             Vos accès aux formations, votre profil et vos adresses seront effacés. Cette action est
             irréversible.
           </p>
-          <PasswordField
-            label="Mot de passe"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
+          {hasPassword ? (
+            <PasswordField
+              label="Mot de passe"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          ) : (
+            <p>Votre compte est relié à Google : aucun mot de passe n’est demandé.</p>
+          )}
           <FormStatus tone="erreur">{failure}</FormStatus>
+          {reauth && <GoogleButton returnTo="/espace-membre/donnees" />}
           <div className={styles.actions}>
             <Button
               className={styles.boutonDanger}

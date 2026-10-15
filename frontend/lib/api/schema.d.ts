@@ -129,6 +129,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auth/google': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Connexion avec Google : redirige vers Google
+     * @description `?suite=` : page du site où revenir après la connexion. Sans configuration Google, renvoie vers /connexion avec `erreur=google_indisponible`.
+     */
+    get: operations['AuthController_googleStart'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auth/2fa/enroll': {
     parameters: {
       query?: never;
@@ -3152,6 +3172,10 @@ export interface components {
       phone: string | null;
       emailVerified: boolean;
       mfaEnabled: boolean;
+      /** @description Un mot de passe est défini (faux : compte créé avec Google) */
+      hasPassword: boolean;
+      /** @description Connexion avec Google reliée au compte */
+      googleLinked: boolean;
       /** @description Consentement aux e-mails d’information */
       marketingConsent: boolean;
       /** Format: date-time */
@@ -3230,8 +3254,8 @@ export interface components {
       isDefault: boolean;
     };
     DeleteAccountDto: {
-      /** @description Mot de passe actuel (confirmation) */
-      password: string;
+      /** @description Mot de passe actuel (confirmation). Compte sans mot de passe (Google) : omis, une connexion de moins de 15 minutes est exigée. */
+      password?: string;
     };
     MediaVariantDto: {
       /** @enum {string} */
@@ -5996,6 +6020,39 @@ export interface operations {
       };
       /** @description E-mail non confirmé ou compte suspendu */
       403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AuthController_googleStart: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
         headers: {
           [name: string]: unknown;
         };

@@ -108,6 +108,13 @@ export const envSchema = z
     // Ancien secret, accepté en vérification seulement pendant une rotation (voir RUNBOOK).
     JWT_ACCESS_SECRET_PREVIOUS: jwtSecret.optional(),
     FIELD_ENCRYPTION_KEY: base64Key,
+    // Connexion avec Google (OpenID Connect) : facultative, les deux valeurs ensemble.
+    // Console Google Cloud → API et services → Identifiants → ID client OAuth (application Web).
+    GOOGLE_CLIENT_ID: z
+      .string()
+      .regex(/\.apps\.googleusercontent\.com$/, 'identifiant client OAuth Google attendu')
+      .optional(),
+    GOOGLE_CLIENT_SECRET: z.string().min(10).optional(),
     FIELD_ENCRYPTION_KEY_PREVIOUS: base64Key.optional(),
     // Version des CGU/politique de confidentialité acceptée à l'inscription.
     TERMS_VERSION: z.string().min(1).max(20).default('2026-10'),
@@ -161,6 +168,13 @@ export const envSchema = z
     CONTENT_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).max(86400).default(300),
   })
   .superRefine((env, ctx) => {
+    if (!!env.GOOGLE_CLIENT_ID !== !!env.GOOGLE_CLIENT_SECRET) {
+      ctx.addIssue({
+        code: 'custom',
+        path: [env.GOOGLE_CLIENT_ID ? 'GOOGLE_CLIENT_SECRET' : 'GOOGLE_CLIENT_ID'],
+        message: 'GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET vont ensemble',
+      });
+    }
     if (env.FRONTEND_REVALIDATE_URL && !env.FRONTEND_REVALIDATE_SECRET) {
       ctx.addIssue({
         code: 'custom',

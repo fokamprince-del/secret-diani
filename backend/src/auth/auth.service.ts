@@ -32,6 +32,7 @@ import type {
   MfaChallengeResponseDto,
   MfaEnrollmentResponseDto,
 } from './dto/auth-responses.dto';
+import { type GoogleProfile, GoogleAuthError } from './google/google-oauth.service';
 import { LoginAttemptsService } from './login-attempts.service';
 import { MfaService, mfaError, tooManyCodes } from './mfa/mfa.service';
 import { PasswordService } from './password/password.service';
@@ -47,6 +48,9 @@ export interface AuthenticatedOutcome {
 export type LoginOutcome =
   | ({ kind: 'authenticated' } & AuthenticatedOutcome)
   | { kind: 'challenge'; body: MfaChallengeResponseDto };
+
+/** Fenêtre de « connexion récente » qui remplace le mot de passe pour un compte Google. */
+const RECENT_LOGIN_MS = 15 * 60_000;
 
 const USER_SELECT = {
   id: true,
@@ -290,6 +294,69 @@ export class AuthService {
     return { kind: 'authenticated', ...(await this.openSession(user, false, context)) };
   }
 
+  /**
+   * Connexion avec Google (profil déjà vérifié par GoogleOAuthService). Le compte est retrouvé
+   * par son identifiant Google, sinon par son e-mail, que Google garantit vérifié : il est alors
+   * relié et l'e-mail marqué confirmé. Sinon un compte client est créé, sans mot de passe (il
+   * pourra en définir un avec « mot de passe oublié »). Les administrateurs restent sur
+   * mot de passe + second facteur.
+   */
+  async loginWithGoogle(
+    profile: GoogleProfile,
+    context: ClientContext,
+  ): Promise<AuthenticatedOutcome> {
+    const now = new Date();
+    let user =
+      (await this.prisma.user.findUnique({
+        where: { googleSubject: profile.subject },
+        select: USER_SELECT,
+      })) ??
+      (await this.prisma.user.findUnique({ where: { email: profile.email }, select: USER_SELECT }));
+
+    if (user?.role === 'admin') {
+      throw new GoogleAuthError('google_admin', 'connexion Google refusée à un administrateur');
+    }
+    if (user && user.status !== 'active') {
+      throw new GoogleAuthError('google_suspendu', `compte ${user.status}`);
+    }
+
+    if (user) {
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          googleSubject: profile.subject,
+          emailVerifiedAt: user.emailVerifiedAt ?? now,
+          firstName: user.firstName ?? profile.firstName,
+          lastName: user.lastName ?? profile.lastName,
+        },
+        select: USER_SELECT,
+      });
+    } else {
+      user = await this.prisma.user.create({
+        data: {
+          email: profile.email,
+          passwordHash: null,
+          googleSubject: profile.subject,
+          emailVerifiedAt: now,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          termsAcceptedAt: now,
+          termsVersion: this.config.get('TERMS_VERSION'),
+        },
+        select: USER_SELECT,
+      });
+      await this.audit.log({
+        action: AuditAction.REGISTERED,
+        actorId: user.id,
+        targetType: 'user',
+        targetId: user.id,
+        metadata: { provider: 'google' },
+        ipTruncated: context.ipTruncated,
+      });
+    }
+    return this.openSession(user, false, context);
+  }
+
   async startMfaEnrollment(mfaToken: string): Promise<MfaEnrollmentResponseDto> {
     // Le libellé du compte dans l'application d'authentification reste générique (pas d'e-mail).
     return this.mfa.startEnrollment(mfaToken, 'administration');
@@ -498,6 +565,37 @@ export class AuthService {
    * Re-saisie du mot de passe pour une action sensible, protégée par le même verrouillage
    * progressif que la connexion.
    */
+  /**
+   * Confirmation d'identité avant une action irréversible (suppression du compte) : le mot de
+   * passe s'il existe ; sinon (compte créé avec Google) une session ouverte il y a moins de
+   * 15 minutes, comme une nouvelle saisie du mot de passe.
+   */
+  async confirmIdentity(
+    current: AuthenticatedUser,
+    password: string | undefined,
+    context: ClientContext,
+  ): Promise<{ email: string; firstName: string | null; lastName: string | null }> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: current.id },
+      select: { email: true, firstName: true, lastName: true, passwordHash: true },
+    });
+    if (user.passwordHash) {
+      return this.verifyCurrentPassword(current.id, password ?? '', context);
+    }
+    const session = await this.prisma.session.findUnique({
+      where: { id: current.sessionId },
+      select: { createdAt: true },
+    });
+    if (!session || Date.now() - session.createdAt.getTime() > RECENT_LOGIN_MS) {
+      throw new AppException(
+        HttpStatus.FORBIDDEN,
+        ErrorCode.REAUTH_REQUIRED,
+        'Pour confirmer, reconnectez-vous avec Google puis recommencez dans les 15 minutes.',
+      );
+    }
+    return { email: user.email, firstName: user.firstName, lastName: user.lastName };
+  }
+
   async verifyCurrentPassword(
     userId: string,
     password: string,

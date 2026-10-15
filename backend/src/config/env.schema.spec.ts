@@ -113,6 +113,25 @@ describe('validateEnv', () => {
     expect(validateEnv(base).TURNSTILE_SECRET_KEY).toBeUndefined();
   });
 
+  it('connexion Google : identifiant et secret vont ensemble, identifiant au bon format', () => {
+    const id = 'abc123.apps.googleusercontent.com';
+    expect(() => validateEnv({ ...base, GOOGLE_CLIENT_ID: id })).toThrow(/GOOGLE_CLIENT_SECRET/);
+    expect(() => validateEnv({ ...base, GOOGLE_CLIENT_SECRET: 'secret-google' })).toThrow(
+      /GOOGLE_CLIENT_ID/,
+    );
+    expect(() =>
+      validateEnv({
+        ...base,
+        GOOGLE_CLIENT_ID: 'pas-un-id',
+        GOOGLE_CLIENT_SECRET: 'secret-google',
+      }),
+    ).toThrow(/GOOGLE_CLIENT_ID/);
+    expect(
+      validateEnv({ ...base, GOOGLE_CLIENT_ID: id, GOOGLE_CLIENT_SECRET: 'secret-google' })
+        .GOOGLE_CLIENT_ID,
+    ).toBe(id);
+  });
+
   it('interdit la documentation Swagger en production', () => {
     expect(() => validateEnv({ ...production, SWAGGER_ENABLED: 'true' })).toThrow(
       /SWAGGER_ENABLED/,

@@ -412,6 +412,42 @@
         ]
       }
     },
+    "/api/v1/auth/google": {
+      "get": {
+        "description": "`?suite=` : page du site où revenir après la connexion. Sans configuration Google, renvoie vers /connexion avec `erreur=google_indisponible`.",
+        "operationId": "AuthController_googleStart",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Connexion avec Google : redirige vers Google",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
     "/api/v1/auth/2fa/enroll": {
       "post": {
         "operationId": "AuthController_startMfaEnrollment",
@@ -9104,6 +9140,14 @@
           "mfaEnabled": {
             "type": "boolean"
           },
+          "hasPassword": {
+            "type": "boolean",
+            "description": "Un mot de passe est défini (faux : compte créé avec Google)"
+          },
+          "googleLinked": {
+            "type": "boolean",
+            "description": "Connexion avec Google reliée au compte"
+          },
           "marketingConsent": {
             "type": "boolean",
             "description": "Consentement aux e-mails d’information"
@@ -9122,6 +9166,8 @@
           "phone",
           "emailVerified",
           "mfaEnabled",
+          "hasPassword",
+          "googleLinked",
           "marketingConsent",
           "createdAt"
         ]
@@ -9338,12 +9384,9 @@
         "properties": {
           "password": {
             "type": "string",
-            "description": "Mot de passe actuel (confirmation)"
+            "description": "Mot de passe actuel (confirmation). Compte sans mot de passe (Google) : omis, une connexion de moins de 15 minutes est exigée."
           }
-        },
-        "required": [
-          "password"
-        ]
+        }
       },
       "MediaVariantDto": {
         "type": "object",
