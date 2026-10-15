@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { HomeContent } from '@/lib/api/types';
-import { COURONNE, CREATIONS } from '@/lib/vitrine';
+import { BUFFET_VIDEO, CREATIONS } from '@/lib/vitrine';
 import { ButtonLink } from '../ui/Button';
 import { CremeTrait } from '../ui/CremeTrait';
 import { LoopVideo } from '../ui/LoopVideo';
@@ -90,18 +90,7 @@ type UniverseKey = (typeof UNIVERSES)[number]['key'];
 /** Visuel par défaut, tant que Diani n'a pas choisi d'image dans l'administration. */
 const FALLBACK: Record<UniverseKey, ReactNode> = {
   catering: (
-    <picture>
-      <source type="image/avif" srcSet={COURONNE.avif} sizes="(min-width: 64rem) 480px, 90vw" />
-      <source type="image/webp" srcSet={COURONNE.webp} sizes="(min-width: 64rem) 480px, 90vw" />
-      <img
-        src={COURONNE.fallback}
-        alt={COURONNE.alt}
-        width={COURONNE.width}
-        height={COURONNE.height}
-        loading="lazy"
-        decoding="async"
-      />
-    </picture>
+    <LoopVideo src={BUFFET_VIDEO.video} poster={BUFFET_VIDEO.poster} focus={BUFFET_VIDEO.focus} />
   ),
   courses: (
     <LoopVideo src={FRAMBOISES.video!} poster={FRAMBOISES.poster} focus={FRAMBOISES.focus} />

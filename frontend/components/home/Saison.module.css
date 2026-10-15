@@ -1,0 +1,187 @@
+/* Fond ganache, texte ivoire : la section « soirée » de la page. Le bas reste ganache pur,
+   pour que le drip prolonge le fond sans couture. */
+.saison {
+  position: relative;
+  z-index: 2;
+  padding-block: var(--section);
+  background:
+    radial-gradient(
+      40rem 30rem at 15% 20%,
+      color-mix(in srgb, var(--caramel) 35%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      30rem 24rem at 90% 10%,
+      color-mix(in srgb, var(--framboise) 30%, transparent),
+      transparent 70%
+    ),
+    var(--ganache);
+  color: color-mix(in srgb, var(--ivoire) 88%, transparent);
+}
+
+.saison h2 {
+  color: var(--ivoire);
+}
+
+.grille {
+  display: grid;
+  gap: var(--e-8);
+  align-items: center;
+}
+
+@media (min-width: 64rem) {
+  .grille {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.photos {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 30rem);
+  padding: 0 0 var(--e-8) var(--e-6);
+}
+
+.principale,
+.secondaire {
+  overflow: hidden;
+  border: 6px solid var(--ivoire);
+  background-color: var(--ivoire);
+  box-shadow: 0 30px 60px -24px rgb(0 0 0 / 0.55);
+}
+
+.principale {
+  aspect-ratio: 4 / 5;
+  border-radius: 999px 999px var(--rayon) var(--rayon);
+  rotate: -2deg;
+}
+
+.secondaire {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 46%;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--rayon);
+  rotate: 5deg;
+}
+
+.principale picture,
+.secondaire picture,
+.principale img,
+.secondaire img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Étiquette ronde, couleur mangue, posée sur l'angle de la photo. */
+.etiquette {
+  position: absolute;
+  top: 6%;
+  right: -0.5rem;
+  display: grid;
+  place-items: center;
+  width: 6.5rem;
+  height: 6.5rem;
+  margin: 0;
+  border-radius: 50%;
+  background-color: var(--mangue);
+  font-family: var(--font-texte);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ganache);
+  rotate: 12deg;
+}
+
+.etiquette span {
+  display: block;
+  font-family: var(--font-manuscrit);
+  font-size: 1.9rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.texte {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+  max-width: 34rem;
+}
+
+.surtitre {
+  font-family: var(--font-manuscrit);
+  font-size: 2.1rem;
+  line-height: 1;
+  color: var(--mangue);
+}
+
+.points {
+  display: grid;
+  gap: var(--e-2);
+  margin: var(--e-2) 0;
+  padding: 0;
+}
+
+.points li {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+/* Puce : une goutte de crème. */
+.points li::before {
+  content: '';
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50% 0 50% 50%;
+  background-color: var(--mangue);
+  rotate: -45deg;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+  margin-top: var(--e-3);
+}
+
+.lienClair {
+  color: var(--ivoire);
+}
+
+.lienClair:hover {
+  color: var(--ganache);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .etiquette {
+    animation: balance 4s ease-in-out infinite alternate;
+  }
+
+  @media (hover: hover) {
+    .photos:hover .principale {
+      rotate: 0deg;
+      transition: rotate 600ms var(--courbe);
+    }
+
+    .photos:hover .secondaire {
+      rotate: 2deg;
+      transition: rotate 600ms var(--courbe);
+    }
+  }
+}
+
+@keyframes balance {
+  to {
+    rotate: 4deg;
+  }
+}

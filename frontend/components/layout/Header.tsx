@@ -1,6 +1,7 @@
 import type { SocialLink } from '@/lib/social';
 import { AccountLink } from '../auth/AccountLink';
 import { CartLink } from '../shop/CartLink';
+import { ButtonLink } from '../ui/Button';
 import { Logo } from './Logo';
 import { MainNav } from './MainNav';
 import { MobileMenu } from './MobileMenu';
@@ -17,6 +18,9 @@ export function Header({ social }: { social: SocialLink | null }) {
         <Logo />
         <MainNav />
         <div className={styles.actions}>
+          <ButtonLink href="/traiteur#demande" className={styles.devis}>
+            Demander un devis
+          </ButtonLink>
           <AccountLink className={`${styles.action} sans-filet`} />
           <CartLink className={`${styles.action} sans-filet`} />
           <MobileMenu social={social} />

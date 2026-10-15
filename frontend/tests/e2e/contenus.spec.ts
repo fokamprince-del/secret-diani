@@ -94,13 +94,27 @@ test.describe('Pages éditoriales', () => {
       .getByRole('link', { name: 'Seconde partie' })
       .click();
     await expect(page).toHaveURL(/#seconde-partie$/);
+  });
 
+  test('À propos : page composée, avec le récit saisi dans l’administration', async ({ page }) => {
+    await dismissConsent(page);
     await page.goto('/a-propos');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('À propos');
-    await expect(page.getByRole('link', { name: 'Écrire à Diani' })).toHaveAttribute(
-      'href',
-      '/contact',
-    );
+    // Le récit publié dans l'API remplace le texte par défaut.
+    await expect(
+      page.getByText('Page de démonstration sur l’histoire de la marque.'),
+    ).toBeVisible();
+    for (const [name, href] of [
+      ['Voir la carte', '/traiteur'],
+      ['Découvrir les formations', '/formations'],
+      ['Voir les kits', '/boutique'],
+      ['Écrivez-moi', '/contact'],
+    ]) {
+      await expect(page.getByRole('link', { name })).toHaveAttribute('href', href);
+    }
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Sortis de ma cuisine' }),
+    ).toBeVisible();
   });
 
   test('une page inconnue de l’API répond 404', async ({ page }) => {

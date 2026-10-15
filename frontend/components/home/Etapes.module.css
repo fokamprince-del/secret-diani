@@ -1,0 +1,118 @@
+.etapes {
+  padding-block: calc(var(--section) + 3rem) var(--section);
+}
+
+.entete {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-2);
+  margin-bottom: var(--e-8);
+  text-align: center;
+}
+
+.surtitre {
+  font-family: var(--font-manuscrit);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--terra-d);
+}
+
+.liste {
+  position: relative;
+  display: grid;
+  gap: var(--e-6);
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 48rem) {
+  .liste {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .liste {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Le fil qui relie les étapes, derrière les numéros. */
+  .liste::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background-image: linear-gradient(90deg, var(--nude) 50%, transparent 50%);
+    background-size: 14px 2px;
+  }
+}
+
+.etape:nth-child(2) {
+  --delai: 120ms;
+}
+
+.etape:nth-child(3) {
+  --delai: 240ms;
+}
+
+.etape:nth-child(4) {
+  --delai: 360ms;
+}
+
+.etape {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--e-3);
+  padding: var(--e-5);
+  text-align: center;
+}
+
+.numero {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid var(--terra);
+  border-radius: 50%;
+  background-color: var(--creme);
+  font-family: var(--font-titre);
+  font-size: 1.75rem;
+  color: var(--terra-d);
+  transition:
+    background-color 400ms var(--courbe),
+    color 400ms var(--courbe),
+    transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.etape:nth-child(2) .numero {
+  border-color: var(--framboise);
+}
+
+.etape:nth-child(3) .numero {
+  border-color: var(--caramel);
+}
+
+.etape:nth-child(4) .numero {
+  border-color: var(--mangue);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .etape:hover .numero {
+    background-color: var(--terra);
+    color: var(--blanc);
+    transform: scale(1.08) rotate(-6deg);
+  }
+}
+
+.titre {
+  font-size: var(--t-h3);
+}
+
+.action {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--e-7);
+}

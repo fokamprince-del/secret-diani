@@ -1,0 +1,58 @@
+.invitation {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--section);
+  background:
+    radial-gradient(
+      28rem 20rem at 10% 100%,
+      color-mix(in srgb, var(--mangue) 30%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      28rem 20rem at 90% 0%,
+      color-mix(in srgb, var(--framboise) 16%, transparent),
+      transparent 70%
+    ),
+    var(--sable);
+}
+
+.contenu {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-4);
+  text-align: center;
+}
+
+.surtitre {
+  font-family: var(--font-manuscrit);
+  font-size: 2.1rem;
+  line-height: 1;
+  color: var(--terra-d);
+}
+
+.trait {
+  margin-top: calc(-1 * var(--e-2));
+}
+
+.texte {
+  max-width: 46ch;
+  font-size: 1.125rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-4) var(--e-6);
+  margin-top: var(--e-3);
+}
+
+.social {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--cible);
+  font-weight: 500;
+  color: var(--cacao);
+}

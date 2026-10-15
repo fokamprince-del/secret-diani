@@ -20,7 +20,10 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const links = await getPageLinks();
-  return (links ?? []).map((link) => ({ page: link.slug }));
+  // « À propos » a sa propre page composée (app/a-propos).
+  return (links ?? [])
+    .filter((link) => link.slug !== 'a-propos')
+    .map((link) => ({ page: link.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {

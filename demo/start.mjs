@@ -99,11 +99,21 @@ run('docker', ['compose', 'up', '-d', '--wait', 'postgres', 'redis', 's3'], { cw
 spawnSync(
   'docker',
   ['compose', 'exec', '-T', 'postgres', 'psql', '-U', 'diani', '-d', 'diani', '-c', 'CREATE DATABASE diani_demo OWNER diani;'],
-  { cwd: BACKEND, stdio: 'ignore', shell: isWindows },
+  { cwd: BACKEND, stdio: 'ignore' },
 );
 step('Base diani_demo : migrations et données de référence');
 run('npx', ['prisma', 'migrate', 'deploy'], { cwd: BACKEND, env: { DATABASE_URL: DEMO_DB } });
 run('npx', ['prisma', 'db', 'seed'], { cwd: BACKEND, env: { DATABASE_URL: DEMO_DB } });
+// Démo : les pages légales (modèles « [À compléter] ») sont publiées pour que le pied de page
+// ne mène nulle part en erreur. En production, Diani les relit avant de les publier.
+spawnSync(
+  'docker',
+  [
+    'compose', 'exec', '-T', 'postgres', 'psql', '-U', 'diani', '-d', 'diani_demo', '-c',
+    "UPDATE static_pages SET published = true WHERE slug IN ('mentions-legales', 'cgv', 'confidentialite');",
+  ],
+  { cwd: BACKEND, stdio: 'ignore' },
+);
 
 // --- 2. Tunnel Cloudflare --------------------------------------------------------------------
 step('Tunnel Cloudflare');

@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { COURONNE, CREATIONS } from '@/lib/vitrine';
+import { CREATIONS } from '@/lib/vitrine';
 import { ButtonLink } from '../ui/Button';
 import { Icon } from '../ui/Icon';
 import { LoopVideo } from '../ui/LoopVideo';
+import { StaticPhoto } from '../ui/StaticPhoto';
 import styles from './Vitrine.module.css';
 
 const MILIEU = Math.floor(CREATIONS.length / 2);
@@ -103,21 +104,9 @@ export function Vitrine() {
                     focus={item.focus}
                     playing={index === active}
                   />
-                ) : (
-                  <picture>
-                    <source type="image/avif" srcSet={COURONNE.avif} sizes="20rem" />
-                    <source type="image/webp" srcSet={COURONNE.webp} sizes="20rem" />
-                    <img
-                      src={COURONNE.fallback}
-                      alt=""
-                      width={COURONNE.width}
-                      height={COURONNE.height}
-                      loading="lazy"
-                      decoding="async"
-                      style={{ objectPosition: item.focus }}
-                    />
-                  </picture>
-                )}
+                ) : item.photo ? (
+                  <StaticPhoto photo={item.photo} sizes="20rem" focus={item.focus} decorative />
+                ) : null}
                 <span className={styles.pastille} aria-hidden="true" />
               </div>
               <figcaption className={styles.legende}>

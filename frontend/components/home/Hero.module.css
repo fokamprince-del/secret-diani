@@ -68,6 +68,18 @@
   gap: var(--e-5);
 }
 
+.surtitre {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  font-size: clamp(0.75rem, 0.65rem + 0.4vw, 0.9375rem);
+  font-weight: 600;
+  letter-spacing: clamp(0.06em, 0.02em + 0.3vw, 0.14em);
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--terra-d);
+}
+
 .titre {
   max-width: 16ch;
   font-size: var(--t-display);
@@ -88,12 +100,35 @@
   margin-top: var(--e-2);
 }
 
+/* Trois engagements, en pastilles discrètes sous le bouton. */
+.promesses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2) var(--e-5);
+  margin: var(--e-3) 0 0;
+  padding: var(--e-4) 0 0;
+  border-top: 1px solid var(--filet);
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.promesses li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+}
+
+.promesses svg {
+  color: var(--terra);
+}
+
 /* ---------- La scène : arche, halo, macaron, note ---------- */
 .scene {
   position: relative;
   justify-self: center;
-  width: min(80vw, 29rem);
-  padding: var(--e-5) var(--e-6) 0;
+  width: min(78vw, 28rem);
+  padding: var(--e-5) var(--e-6) var(--e-6) var(--e-7);
 }
 
 /* Forme couleur mangue qui ondule lentement derrière l'arche. */
@@ -107,6 +142,29 @@
     color-mix(in srgb, var(--mangue) 55%, var(--peche))
   );
   opacity: 0.85;
+}
+
+/* Le médaillon : un gâteau posé devant le buffet, le sucré à côté du salé. */
+.medaillon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 42%;
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  border: 6px solid var(--ivoire);
+  border-radius: 50%;
+  background-color: var(--ivoire);
+  box-shadow: 0 20px 40px -18px rgb(94 47 27 / 0.5);
+}
+
+.medaillon picture,
+.medaillon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* L'arche : une cloche à gâteau. */
@@ -123,8 +181,8 @@
 
 .macaron {
   position: absolute;
-  right: -0.5rem;
-  bottom: 12%;
+  top: 18%;
+  right: -0.25rem;
   width: clamp(5.5rem, 4rem + 4vw, 7.5rem);
   height: auto;
   overflow: visible;
@@ -149,7 +207,7 @@
 .note {
   position: absolute;
   top: 0;
-  left: -1rem;
+  left: -0.5rem;
   display: flex;
   align-items: flex-end;
   gap: var(--e-1);
@@ -210,6 +268,10 @@
 
   .arche {
     animation: arche 1100ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both;
+  }
+
+  .medaillon {
+    animation: pop 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 700ms both;
   }
 
   .halo {

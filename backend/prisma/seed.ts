@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { type FaqCategory, type Prisma, PrismaClient } from '@prisma/client';
 import { MarkdownService } from '../src/content/markdown/markdown.service';
 import type { AppConfigService } from '../src/config/app-config.service';
@@ -122,19 +124,25 @@ async function main(): Promise<void> {
   }
 
   for (const page of PAGES) {
-    const body = `# ${page.title}\n\nContenu à rédiger depuis l’administration.`;
+    // Pages légales : modèle rédigé (mentions « [À compléter] »), à relire avant publication.
+    const template = join(__dirname, 'seed-data', 'pages', `${page.slug}.md`);
+    const placeholder = `# ${page.title}\n\nContenu à rédiger depuis l’administration.`;
+    const body = existsSync(template) ? readFileSync(template, 'utf8') : placeholder;
     const rendered = markdown.render(body);
+    const content = {
+      bodyMarkdown: body,
+      bodyHtml: rendered.html,
+      toc: rendered.toc as unknown as Prisma.InputJsonValue,
+    };
     await prisma.staticPage.upsert({
       where: { slug: page.slug },
       update: {},
-      create: {
-        slug: page.slug,
-        title: page.title,
-        bodyMarkdown: body,
-        bodyHtml: rendered.html,
-        toc: [],
-        published: false,
-      },
+      create: { slug: page.slug, title: page.title, ...content, published: false },
+    });
+    // Une page encore au texte provisoire reçoit le modèle ; une page rédigée n'est jamais touchée.
+    await prisma.staticPage.updateMany({
+      where: { slug: page.slug, bodyMarkdown: placeholder },
+      data: content,
     });
   }
 
