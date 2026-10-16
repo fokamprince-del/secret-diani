@@ -178,29 +178,19 @@ li:nth-child(3n) > .carte[data-sans-photo][data-type='a_la_carte'] {
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 7.5rem;
-  overflow: hidden;
+  min-height: 6.5rem;
   border-radius: calc(var(--rayon) - 4px);
-  background:
-    radial-gradient(circle at 18% 30%, rgb(255 255 255 / 0.35) 0 3px, transparent 4px) 0 0 / 34px
-      34px,
-    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 0.25) 0 2px, transparent 3px) 0 0 / 22px
-      22px,
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--saveur) 85%, var(--blanc)),
-      color-mix(in srgb, var(--saveur) 45%, var(--peche))
-    );
+  background-color: color-mix(in srgb, var(--saveur) 16%, var(--sable));
 }
 
 .vignetteNom {
   padding-inline: var(--e-4);
-  font-family: var(--font-manuscrit);
-  font-size: clamp(2.25rem, 1.8rem + 1.4vw, 3rem);
-  line-height: 1.1;
+  font-family: var(--font-titre-italique);
+  font-style: italic;
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.9rem);
+  line-height: 1.15;
   text-align: center;
-  color: var(--blanc);
-  text-shadow: 0 2px 12px rgb(94 47 27 / 0.3);
+  color: var(--cacao);
 }
 
 .vignettePastille {
@@ -218,23 +208,12 @@ li:nth-child(3n) > .carte[data-sans-photo][data-type='a_la_carte'] {
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .vignette {
-    transition: background-position 1200ms var(--courbe);
-  }
-
   .vignetteNom {
     transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  .carte:hover .vignette {
-    background-position:
-      17px -17px,
-      -11px 11px,
-      0 0;
-  }
-
   .carte:hover .vignetteNom {
-    transform: scale(1.06) rotate(-2deg);
+    transform: scale(1.04);
   }
 
   .vignettePastille {

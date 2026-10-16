@@ -15,30 +15,60 @@ interface FooterProps {
   socials: SocialLink[];
 }
 
+/**
+ * Pied de page clair, d'après la maquette : logo, liens utiles, aide, lettre d'information et
+ * réseaux, puis les mentions et la devise de la marque.
+ */
 export function Footer({ settings, socials }: FooterProps) {
   const year = new Date().getFullYear();
   const email = settings?.contactEmail;
   return (
     <footer className={styles.pied}>
-      <svg
-        className={styles.vague}
-        viewBox="0 0 1440 60"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path d="M0 60 V34 C 160 6, 320 6, 480 26 S 800 58, 960 34 S 1280 0, 1440 22 V60 Z" />
-      </svg>
-      <p className={styles.filigrane} aria-hidden="true">
-        Diani
-      </p>
       <div className={`conteneur ${styles.grille}`}>
         <div className={styles.marque}>
-          <Logo />
-          <p className={styles.accroche}>
-            Traiteur, formations et boutique d’accessoires pour créer, apprendre et se faire
-            plaisir.
-          </p>
-          {(socials.length > 0 || email) && (
+          <Logo size="grand" />
+        </div>
+
+        <nav aria-labelledby="pied-liens" className={styles.colonne}>
+          <h2 id="pied-liens" className={styles.titre}>
+            Liens utiles
+          </h2>
+          <ul role="list">
+            {footerNavigation.liens.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className={styles.lien}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-labelledby="pied-aide" className={styles.colonne}>
+          <h2 id="pied-aide" className={styles.titre}>
+            Besoin d’aide ?
+          </h2>
+          <ul role="list">
+            {footerNavigation.aide.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className={styles.lien}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+            {email && (
+              <li>
+                <a href={`mailto:${email}`} className={styles.lien}>
+                  {email}
+                </a>
+              </li>
+            )}
+          </ul>
+        </nav>
+
+        <div className={styles.communaute}>
+          <NewsletterForm />
+          {socials.length > 0 && (
             <ul role="list" className={styles.reseaux}>
               {socials.map((social) => (
                 <li key={social.network}>
@@ -49,76 +79,25 @@ export function Footer({ settings, socials }: FooterProps) {
                     target="_blank"
                   >
                     <Icon name={social.network} size={20} />
-                    {social.handle}
-                    <span className="visually-hidden"> sur {social.label} (nouvel onglet)</span>
+                    <span className="visually-hidden">
+                      {social.label} : {social.handle} (nouvel onglet)
+                    </span>
                   </a>
                 </li>
               ))}
-              {email && (
-                <li>
-                  <a href={`mailto:${email}`} className={`${styles.reseau} sans-filet`}>
-                    <Icon name="mail" size={20} />
-                    {email}
-                  </a>
-                </li>
-              )}
             </ul>
           )}
         </div>
-
-        <nav aria-labelledby="pied-univers" className={styles.colonne}>
-          <h2 id="pied-univers" className={styles.titre}>
-            Nos univers
-          </h2>
-          <ul role="list">
-            {footerNavigation.univers.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={styles.lien}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav aria-labelledby="pied-maison" className={styles.colonne}>
-          <h2 id="pied-maison" className={styles.titre}>
-            La maison
-          </h2>
-          <ul role="list">
-            {footerNavigation.maison.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={styles.lien}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-
-      <div className={`conteneur ${styles.lettre}`}>
-        <NewsletterForm />
       </div>
 
       <div className={`conteneur ${styles.legal}`}>
         <p>
-          © {year} {SITE_NAME}
+          © {year} {SITE_NAME}. Tous droits réservés.
         </p>
-        <nav aria-label="Informations légales">
-          <ul role="list" className={styles.liensLegaux}>
-            {footerNavigation.legal.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={styles.lien}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <ManageCookiesButton />
-            </li>
-          </ul>
-        </nav>
+        <ManageCookiesButton />
+        <p className={styles.devise} aria-hidden="true">
+          Cuisiner • Apprendre • Partager • Grandir
+        </p>
       </div>
     </footer>
   );

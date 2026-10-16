@@ -94,18 +94,7 @@
   padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
   align-items: start;
   border-radius: calc(var(--rayon) * 2);
-  background:
-    radial-gradient(
-      circle at 0% 0%,
-      color-mix(in srgb, var(--mangue) 22%, transparent),
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      color-mix(in srgb, var(--framboise) 14%, transparent),
-      transparent 50%
-    ),
-    var(--sable);
+  background-color: var(--sable);
 }
 
 .categorie .entete h2 {
@@ -119,7 +108,7 @@
   height: 3px;
   margin-top: var(--e-2);
   border-radius: 2px;
-  background: linear-gradient(90deg, var(--mangue), var(--framboise));
+  background-color: var(--terra);
 }
 
 @media (min-width: 64rem) {

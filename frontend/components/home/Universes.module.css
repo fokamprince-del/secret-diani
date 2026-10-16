@@ -1,236 +1,261 @@
-/* Les aplats décalés derrière les visuels ne doivent pas créer de défilement horizontal. */
 .univers {
-  overflow-x: clip;
-  padding-block: calc(var(--section) + 3rem) var(--section);
-}
-
-.entete {
   display: grid;
-  justify-items: center;
-  gap: var(--e-2);
-  margin-bottom: var(--section);
-  text-align: center;
+  gap: var(--e-5);
+  padding-block: var(--e-7) var(--section);
 }
 
-.surtitre {
-  font-family: var(--font-manuscrit);
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--terra-d);
-}
-
-.liste {
+.cartes {
   display: grid;
-  gap: var(--section);
+  gap: var(--e-5);
 }
 
-.bandeau {
-  --accent: var(--mangue);
-  display: grid;
-  gap: var(--e-7);
-  align-items: center;
-}
-
-.bandeau[data-univers='courses'] {
-  --accent: var(--framboise);
-}
-
-.bandeau[data-univers='shop'] {
-  --accent: var(--caramel);
-}
-
-/*
- * Grand écran : chaque bandeau a sa composition. Traiteur : arche à gauche ; formations :
- * carte inclinée à droite ; boutique : médaillon, texte calé en bas.
- */
 @media (min-width: 64rem) {
-  .bandeau {
-    grid-template-columns: 0.85fr 1fr;
-    gap: clamp(3rem, 1rem + 5vw, 6rem);
-  }
-
-  .bandeau[data-univers='courses'] {
-    grid-template-columns: 1fr 0.85fr;
-  }
-
-  .bandeau[data-univers='courses'] .scene {
-    order: 2;
-  }
-
-  .bandeau[data-univers='courses'] .texte {
-    justify-self: end;
-  }
-
-  .bandeau[data-univers='shop'] {
-    align-items: end;
-  }
-
-  .bandeau[data-univers='shop'] .texte {
-    padding-bottom: var(--e-6);
+  .cartes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* La scène : un aplat de couleur saveur décalé derrière le visuel. */
-.scene {
+.etiquette {
+  justify-self: start;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--rayon-pilule);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.titre {
+  max-width: 14ch;
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.75rem);
+  line-height: 1.08;
+}
+
+/* ---------- Traiteur : grande photo, texte sur un voile brun doux ---------- */
+.traiteur {
   position: relative;
-  justify-self: center;
-  width: min(100%, 26rem);
-}
-
-.fond {
-  position: absolute;
-  inset: 6% -5% -5% 6%;
-  border-radius: var(--rayon);
-  background-color: color-mix(in srgb, var(--accent) 70%, var(--creme));
-  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.visuel {
-  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 30rem;
   overflow: hidden;
-  border: 5px solid var(--ivoire);
-  border-radius: var(--rayon);
-  background-color: var(--ivoire);
-  box-shadow: 0 26px 50px -26px rgb(94 47 27 / 0.45);
-  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: calc(var(--rayon) * 1.4);
+  background-color: var(--cacao);
 }
 
-.visuel > *,
-.visuel picture,
-.visuel img {
+.photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.photo :is(picture, img) {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-.visuel img {
   object-fit: cover;
-  object-position: 50% 70%;
-  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Traiteur : l'arche de la cloche à gâteau. */
-[data-univers='catering'] .visuel,
-[data-univers='catering'] .fond {
-  border-radius: 999px 999px var(--rayon) var(--rayon);
+.traiteur::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    rgb(94 47 27 / 0.88) 0%,
+    rgb(94 47 27 / 0.62) 45%,
+    rgb(94 47 27 / 0.08) 85%
+  );
 }
 
-/* Formations : carte inclinée, comme posée sur le plan de travail. */
-[data-univers='courses'] .visuel {
-  rotate: 2.5deg;
+.traiteurTexte {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: var(--e-4);
+  max-width: 26rem;
+  padding: clamp(1.75rem, 1rem + 2.5vw, 3rem);
+  color: rgb(255 251 248 / 0.92);
 }
 
-[data-univers='courses'] .fond {
-  rotate: -4deg;
+.traiteur .etiquette {
+  background-color: rgb(255 251 248 / 0.16);
+  color: var(--blanc);
+  backdrop-filter: blur(4px);
 }
 
-/* Boutique : médaillon, illustration au trait sur fond nude. */
-[data-univers='shop'] .visuel,
-[data-univers='shop'] .fond {
-  border-radius: 50%;
+.traiteur .titre {
+  color: var(--blanc);
 }
 
-[data-univers='shop'] .visuel {
+.clair {
+  border-color: var(--blanc);
+  background-color: var(--blanc);
+  color: var(--cacao);
+}
+
+.clair:hover:not(:disabled) {
+  background-color: var(--creme);
+  color: var(--cacao);
+}
+
+/* ---------- Formations : fond nude, liste, téléphone ---------- */
+.formations {
+  display: grid;
+  align-items: center;
+  gap: var(--e-5);
+  overflow: hidden;
+  padding: clamp(1.75rem, 1rem + 2.5vw, 3rem);
+  border-radius: calc(var(--rayon) * 1.4);
   background-color: var(--sable);
 }
 
+@media (min-width: 40rem) {
+  .formations {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+.formationsTexte {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-4);
+}
+
+.formations .etiquette {
+  border: 1px solid var(--nude);
+  background-color: var(--creme);
+  color: var(--terra-d);
+}
+
+.inclus {
+  display: grid;
+  gap: var(--e-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.975rem;
+  color: var(--cacao);
+}
+
+.inclus li {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+}
+
+.inclus svg {
+  flex: none;
+  padding: 3px;
+  border-radius: 50%;
+  background-color: var(--terra);
+  color: var(--blanc);
+  box-sizing: content-box;
+}
+
+/* Téléphone : la leçon se regarde en vertical, comme sur les réseaux. */
+.telephone {
+  position: relative;
+  justify-self: center;
+  width: 11rem;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 6px solid var(--cacao);
+  border-radius: 1.75rem;
+  background-color: var(--cacao);
+  transform: rotate(3deg);
+}
+
+.telephone :is(video, img, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lecture {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: rgb(255 251 248 / 0.9);
+  color: var(--cacao);
+  transform: translate(-50%, -50%);
+}
+
+/* ---------- Boutique : bandeau ---------- */
+.boutique {
+  display: grid;
+  align-items: center;
+  gap: var(--e-5);
+  padding: var(--e-5) clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border: 1px solid var(--filet);
+  border-radius: calc(var(--rayon) * 1.4);
+  background-color: var(--surface);
+}
+
+@media (min-width: 48rem) {
+  .boutique {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+}
+
+.boutiqueVisuel {
+  width: 6.5rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: var(--sable);
+}
+
+.boutiqueTexte {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-2);
+  max-width: 40rem;
+}
+
+.boutique .etiquette {
+  padding: 0;
+  color: var(--terra-d);
+}
+
+.titreBoutique {
+  font-size: var(--t-h3);
+}
+
 .illustration {
-  padding: 12%;
-  overflow: visible;
+  width: 100%;
+  height: 100%;
+  padding: 14%;
 }
 
 .illustration :global(.trace) {
   fill: none;
   stroke: var(--terra);
-  stroke-width: 4;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
 }
 
-.illustration :global(.pepite) {
-  transform-box: view-box;
-}
-
+/* ---------- Survols doux ---------- */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .bandeau:hover .fond {
-    transform: translate(10px, 10px) rotate(-2deg);
+  .photo :is(img, picture) {
+    transition: transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .bandeau:hover .visuel {
-    transform: translate(-6px, -8px);
+  .traiteur:hover .photo img {
+    transform: scale(1.04);
   }
 
-  .bandeau:hover .visuel img {
-    transform: scale(1.05);
-  }
-}
-
-.texte {
-  --delai: 150ms;
-  display: grid;
-  justify-items: start;
-  gap: var(--e-4);
-  max-width: 34rem;
-}
-
-.numero {
-  display: flex;
-  align-items: center;
-  gap: var(--e-3);
-  font-size: var(--taille-petit);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--terra-d);
-}
-
-.titre {
-  font-size: var(--t-h2);
-}
-
-/* Petit trait couleur saveur sous le titre. */
-.titre::after {
-  content: '';
-  display: block;
-  width: 3rem;
-  height: 4px;
-  margin-top: var(--e-3);
-  border-radius: var(--rayon-pilule);
-  background-color: var(--accent);
-  transition: width 600ms var(--courbe);
-}
-
-.bandeau:hover .titre::after {
-  width: 6rem;
-}
-
-.description {
-  max-width: 44ch;
-}
-
-/* Mobile : visuels moins hauts et resserrés, pour que chaque univers tienne presque en un écran. */
-@media (max-width: 47.99rem) {
-  .univers {
-    padding-block: calc(var(--section) + 2.5rem) var(--e-8);
+  .telephone {
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .entete {
-    margin-bottom: var(--e-7);
-  }
-
-  .liste {
-    gap: var(--e-8);
-  }
-
-  .bandeau {
-    gap: var(--e-5);
-  }
-
-  .scene {
-    width: min(78vw, 20rem);
-  }
-
-  .texte {
-    gap: var(--e-3);
+  .formations:hover .telephone {
+    transform: rotate(0deg) translateY(-4px);
   }
 }

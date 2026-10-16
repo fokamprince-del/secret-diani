@@ -13,7 +13,7 @@
   inset: 0 0 auto;
   z-index: 60;
   height: 3px;
-  background: linear-gradient(90deg, var(--mangue), var(--caramel) 45%, var(--framboise));
+  background-color: var(--terra);
   transform-origin: 0 50%;
   transform: scaleX(0);
   pointer-events: none;
@@ -168,10 +168,8 @@
   }
 
   .carte-vivante:hover {
-    transform: translateY(-8px);
-    box-shadow:
-      0 2px 4px rgb(94 47 27 / 0.05),
-      0 28px 50px -22px rgb(130 73 63 / 0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -26px rgb(94 47 27 / 0.4);
   }
 
   .carte-vivante :is(img, video) {
@@ -180,54 +178,6 @@
 
   .carte-vivante:hover :is(img, video) {
     transform: scale(1.06);
-  }
-}
-
-/* ---------- Décor : pépites de sucre qui flottent (jamais devant le texte) ---------- */
-.pepites-flottantes {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.pepites-flottantes span {
-  position: absolute;
-  width: var(--taille, 10px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--couleur, var(--mangue));
-  opacity: 0.55;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .pepites-flottantes span {
-    animation: pepite-flotte var(--duree-flotte, 9s) ease-in-out var(--retard, 0s) infinite
-      alternate;
-  }
-}
-
-@keyframes pepite-flotte {
-  to {
-    transform: translate(var(--dx, 12px), var(--dy, -26px)) rotate(40deg);
-  }
-}
-
-/* Éclat de pépites (components/ui/Pepites.tsx), au clic sur une action gourmande. */
-.eclat-pepite {
-  position: fixed;
-  z-index: 80;
-  width: 9px;
-  height: 9px;
-  border-radius: 3px;
-  pointer-events: none;
-  animation: eclat 900ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
-}
-
-@keyframes eclat {
-  to {
-    transform: translate(var(--x), var(--y)) rotate(var(--r));
-    opacity: 0;
   }
 }
 

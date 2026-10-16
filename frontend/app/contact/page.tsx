@@ -40,7 +40,6 @@ export default async function ContactPage() {
           poster: BUCHES.fallback,
           focus: '50% 55%',
           caption: BUCHES.alt,
-          note: 'à très vite !',
         }}
       />
       <div className={`conteneur ${styles.grille}`}>

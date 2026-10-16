@@ -14,16 +14,17 @@ const socials = socialLinksFrom(settings);
 const instagram = socials[0]!;
 
 describe('Header', () => {
-  it('présente les six rubriques dans l’ordre et signale la page courante', () => {
+  it('présente les rubriques dans l’ordre et signale la page courante', () => {
     navigation.pathname = '/boutique/kit-expert';
     render(<Header social={instagram} />);
     const nav = screen.getAllByRole('navigation', { name: 'Navigation principale' })[0]!;
     const links = within(nav).getAllByRole('link');
     expect(links.map((link) => link.textContent)).toEqual([
-      'Traiteur',
+      'Accueil',
+      'Traiteur & Commandes',
       'Formations',
       'Boutique',
-      'Conseils',
+      'Conseils & Astuces',
       'À propos',
       'Contact',
     ]);

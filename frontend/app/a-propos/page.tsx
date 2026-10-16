@@ -105,7 +105,6 @@ export default async function AboutPage() {
           focus: HERO_CREATION.focus,
           caption: `Layer cake ${HERO_CREATION.title.toLowerCase()} : ${HERO_CREATION.caption}`,
           medaillon: { src: BUFFET_PHOTO.fallback, alt: BUFFET_PHOTO.alt, focus: '50% 40%' },
-          note: 'avec amour',
         }}
       />
 

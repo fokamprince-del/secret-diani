@@ -92,6 +92,14 @@ const paths = {
       <path d="M10.5 9.5v5l4-2.5z" />
     </>
   ),
+  panier: <path d="M4 10h16l-1.6 9H5.6zM8.5 10l2-5M15.5 10l-2-5M9 14v2.5M12 14v2.5M15 14v2.5" />,
+  couverts: (
+    <path d="M7 3.5v6.5a2 2 0 0 0 2 2v8.5M9 3.5V8M11 3.5v6.5a2 2 0 0 1-2 2M17 20.5V3.5c-2.2 1.2-3 3.6-3 6.5 0 1.4.9 2.5 3 2.5" />
+  ),
+  ecran: <path d="M4.5 5.5h15v10h-15zM2.5 18.5h19M10.5 9l3.5 2-3.5 2z" />,
+  accompagnement: (
+    <path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 8.6a3.7 3.7 0 0 1 7 2.1c0 5-7 9.3-7 9.3zM9.5 12.5h5" />
+  ),
 } as const;
 
 export type IconName = keyof typeof paths;

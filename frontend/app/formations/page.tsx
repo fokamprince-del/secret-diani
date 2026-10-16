@@ -66,7 +66,6 @@ export default async function FormationsPage() {
           focus: FRAMBOISES.focus,
           caption: `Layer cake ${FRAMBOISES.title.toLowerCase()} : ${FRAMBOISES.caption}`,
           medaillon: { src: COURONNE.fallback, alt: COURONNE.alt, focus: '50% 70%' },
-          note: 'à vous de jouer !',
         }}
         points={[
           { icon: 'play', label: 'Vidéos pas à pas' },

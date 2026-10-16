@@ -1,19 +1,22 @@
 import type { Metadata } from 'next';
+import { Chiffres } from '@/components/home/Chiffres';
 import { DianiWord } from '@/components/home/DianiWord';
-import { Etapes } from '@/components/home/Etapes';
 import { Hero } from '@/components/home/Hero';
-import { Invitation } from '@/components/home/Invitation';
 import { Reassurance } from '@/components/home/Reassurance';
 import { Reviews } from '@/components/home/Reviews';
-import { Saison } from '@/components/home/Saison';
-import { Saveurs } from '@/components/home/Saveurs';
+import { Selections } from '@/components/home/Selections';
 import { Universes } from '@/components/home/Universes';
-import { Vitrine } from '@/components/home/Vitrine';
 import { JsonLd } from '@/components/ui/JsonLd';
 import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
-import { getHomeContent, getOrganization, getReviews, getSiteSettings } from '@/lib/api/content';
+import {
+  getCateringCatalog,
+  getCourses,
+  getHomeContent,
+  getOrganization,
+  getPacks,
+  getReviews,
+} from '@/lib/api/content';
 import { pageMetadata, SITE_NAME, websiteJsonLd } from '@/lib/seo';
-import { socialLinksFrom } from '@/lib/social';
 
 const TITLE = `${SITE_NAME} · Traiteur, formations et boutique`;
 
@@ -28,17 +31,19 @@ export const metadata: Metadata = {
 };
 
 /**
- * Accueil : hero (buffet et gâteau) → bandeau des saveurs → trois univers → vitrine des gâteaux
- * → saison des fêtes → étapes d'une commande → avis → mot de Diani → réassurance → invitation
- * (ordre du cahier, enrichi : D-F48, D-F50). Les textes, images et avis viennent de l'API (modifiables sans
- * développeur) ; une section sans contenu n'est pas affichée.
+ * Accueil, d'après la maquette : hero → bande de réassurance → univers (Traiteur et Formations
+ * en grandes cartes, Boutique en bandeau) → incontournables et formations populaires → avis →
+ * mot de Diani → citation et chiffres. Les textes, images, prix et avis viennent de l'API
+ * (modifiables sans développeur) ; une section sans contenu n'est pas affichée.
  */
 export default async function HomePage() {
-  const [home, reviews, organization, settings] = await Promise.all([
+  const [home, reviews, organization, catalog, packs, courses] = await Promise.all([
     getHomeContent(),
     getReviews(6),
     getOrganization(),
-    getSiteSettings(),
+    getCateringCatalog(),
+    getPacks(),
+    getCourses(),
   ]);
   const heroImage = home?.heroImage;
 
@@ -49,19 +54,21 @@ export default async function HomePage() {
       <Hero
         media={
           heroImage ? (
-            <ResponsiveImage image={heroImage} sizes="100vw" priority aspectRatio="auto" />
+            <ResponsiveImage
+              image={heroImage}
+              sizes="(min-width: 56rem) 62vw, 100vw"
+              priority
+              aspectRatio="auto"
+            />
           ) : undefined
         }
       />
-      <Saveurs />
+      <Reassurance />
       <Universes universes={home?.universes ?? null} />
-      <Vitrine />
-      <Saison />
-      <Etapes />
+      <Selections catalog={catalog} courses={courses} packs={packs} />
       <Reviews reviews={reviews} />
       <DianiWord word={home?.dianiWord} />
-      <Reassurance />
-      <Invitation social={socialLinksFrom(settings)[0] ?? null} />
+      <Chiffres catalog={catalog} packs={packs} />
     </>
   );
 }

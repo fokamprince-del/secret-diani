@@ -47,7 +47,6 @@ export function PackCard({
             href={`/commande/pack/${pack.slug}`}
             variant={highlighted ? 'principal' : 'secondaire'}
             fullWidth
-            data-pepites
           >
             Choisir ce pack<span className="visually-hidden"> {pack.name}</span>
           </ButtonLink>

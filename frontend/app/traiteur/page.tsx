@@ -46,10 +46,9 @@ export default async function TraiteurPage() {
             alt: `Layer cake ${CREATIONS[0]!.title.toLowerCase()}`,
             focus: CREATIONS[0]!.focus,
           },
-          note: 'fait maison !',
         }}
         actions={
-          <ButtonLink href="#demande" withArrow data-pepites>
+          <ButtonLink href="#demande" withArrow>
             Je demande un devis
           </ButtonLink>
         }

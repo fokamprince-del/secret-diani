@@ -298,3 +298,8 @@ li:nth-child(3n + 2) > [data-apparition] {
 li:nth-child(3n) > [data-apparition] {
   --delai: 180ms;
 }
+
+/* Une page qui se termine par une bande pleine (accueil) se colle au pied de page. */
+main:has([data-bande-finale]) + footer {
+  margin-top: 0;
+}

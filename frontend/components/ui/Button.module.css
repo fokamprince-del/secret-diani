@@ -144,6 +144,6 @@
   .principal:hover:not(:disabled),
   .secondaire:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px -12px rgb(130 73 63 / 0.55);
+    box-shadow: 0 8px 18px -14px rgb(130 73 63 / 0.5);
   }
 }

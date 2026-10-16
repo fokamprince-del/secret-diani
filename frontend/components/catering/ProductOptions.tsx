@@ -138,7 +138,7 @@ export function ProductOptions({ id, name, variants, flavours, maxFlavours, what
         ) : (
           <ButtonLink href="#demande">Contacter</ButtonLink>
         )}
-        <Button variant="secondaire" onClick={addToRequest} data-pepites>
+        <Button variant="secondaire" onClick={addToRequest}>
           Ajouter à ma demande
         </Button>
       </div>

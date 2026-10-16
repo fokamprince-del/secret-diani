@@ -44,20 +44,22 @@ test.describe('Accueil', () => {
   test('présente les trois univers sans prix, chacun avec un seul bouton', async ({ page }) => {
     const universes = page.locator('#univers');
     await expect(universes.getByRole('heading', { level: 3 })).toHaveText([
-      'Traiteur & commandes',
-      'Formations en ligne',
-      'Boutique & kits',
+      'Des saveurs qui marquent vos moments',
+      'Apprenez, cuisinez, réalisez vos rêves',
+      'Équipez-vous comme à l’atelier',
     ]);
     await expect(universes.getByText('Plateaux, bouchées et layer cakes')).toBeVisible();
     await expect(universes).not.toContainText('€');
     await expect(universes.getByRole('link')).toHaveCount(3);
-    await expect(universes.getByRole('link', { name: 'Je commande un plateau' })).toHaveAttribute(
+    await expect(universes.getByRole('link', { name: 'Passer commande' })).toHaveAttribute(
       'href',
       '/traiteur',
     );
-    // Le bouton du hero mène aux univers.
-    await page.getByRole('link', { name: 'Découvrir nos univers' }).click();
-    await expect(page).toHaveURL(/#univers$/);
+    // Les deux actions du hero mènent aux univers.
+    await expect(page.getByRole('link', { name: 'Découvrir les formations' })).toHaveAttribute(
+      'href',
+      '/formations',
+    );
   });
 
   test('affiche les avis traiteur de l’API, le mot de Diani et la réassurance', async ({
@@ -70,7 +72,8 @@ test.describe('Accueil', () => {
     const word = page.getByRole('region', { name: 'Le mot de Diani' });
     await expect(word).toContainText('Bienvenue dans ma cuisine.');
     await expect(word.locator('figcaption')).toHaveText('Diani');
-    await expect(page.getByRole('heading', { name: 'Paiement sécurisé' })).toBeVisible();
+    const commitments = page.getByRole('region', { name: 'Nos engagements' });
+    await expect(commitments.getByText('Paiement sécurisé')).toBeVisible();
     expect(await jsonLdTypes(page)).toContain('Organization');
   });
 

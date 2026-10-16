@@ -50,7 +50,6 @@ export default async function BoutiquePage() {
           poster: CARAMEL.poster,
           focus: CARAMEL.focus,
           caption: `Layer cake ${CARAMEL.title.toLowerCase()} : ${CARAMEL.caption}`,
-          note: 'mes outils',
         }}
         points={[
           { icon: 'check', label: 'Testés à l’atelier' },
@@ -74,7 +73,7 @@ export default async function BoutiquePage() {
                 pour vous équiper selon votre niveau. En attendant, mes formations vous attendent.
               </p>
               <div className={styles.bientotActions}>
-                <ButtonLink href="/formations" withArrow data-pepites>
+                <ButtonLink href="/formations" withArrow>
                   Découvrir les formations
                 </ButtonLink>
                 <ButtonLink href="#newsletter-titre" variant="secondaire">

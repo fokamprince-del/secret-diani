@@ -1,33 +1,35 @@
 /** Navigation principale, dans l'ordre imposé : les trois univers d'abord. */
 export const mainNavigation = [
-  { href: '/traiteur', label: 'Traiteur' },
+  { href: '/', label: 'Accueil' },
+  { href: '/traiteur', label: 'Traiteur & Commandes' },
   { href: '/formations', label: 'Formations' },
   { href: '/boutique', label: 'Boutique' },
-  { href: '/conseils', label: 'Conseils' },
+  { href: '/conseils', label: 'Conseils & Astuces' },
   { href: '/a-propos', label: 'À propos' },
   { href: '/contact', label: 'Contact' },
 ] as const;
 
 export const footerNavigation = {
-  univers: [
-    { href: '/traiteur', label: 'Traiteur & commandes' },
-    { href: '/formations', label: 'Formations en ligne' },
+  liens: [
+    { href: '/', label: 'Accueil' },
+    { href: '/traiteur', label: 'Traiteur & Commandes' },
+    { href: '/formations', label: 'Formations' },
     { href: '/boutique', label: 'Boutique & kits' },
-  ],
-  maison: [
-    { href: '/conseils', label: 'Conseils & astuces' },
+    { href: '/conseils', label: 'Conseils & Astuces' },
     { href: '/a-propos', label: 'À propos' },
-    { href: '/faq', label: 'Questions fréquentes' },
     { href: '/contact', label: 'Contact' },
   ],
-  legal: [
-    { href: '/mentions-legales', label: 'Mentions légales' },
+  aide: [
+    { href: '/faq', label: 'Questions fréquentes' },
+    { href: '/commande/suivi', label: 'Suivi de commande' },
     { href: '/cgv', label: 'Conditions générales de vente' },
-    { href: '/confidentialite', label: 'Confidentialité' },
+    { href: '/confidentialite', label: 'Politique de confidentialité' },
+    { href: '/mentions-legales', label: 'Mentions légales' },
   ],
 } as const;
 
 /** Une page est « courante » si l'URL est la sienne ou une sous-page (`/boutique/kit-pro`). */
 export function isCurrent(pathname: string, href: string): boolean {
+  if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
 }

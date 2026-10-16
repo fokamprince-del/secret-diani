@@ -82,8 +82,8 @@
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .pack:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 26px 44px -26px rgb(94 47 27 / 0.38);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -26px rgb(94 47 27 / 0.4);
   }
 
   .pack:hover img {
@@ -95,89 +95,26 @@
   transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Pack mis en avant : écrin chocolat, bordure dorée qui tourne lentement, repère qui pulse. */
-@property --angle-pack {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
+/* Pack mis en avant : fond nude, filet camel, repère « Le plus complet ». Sobre, sans noir. */
 .pack[data-mis-en-avant] {
-  position: relative;
-  isolation: isolate;
-  border: 2px solid transparent;
-  background:
-    linear-gradient(160deg, #4a2a1c, var(--ganache)) padding-box,
-    conic-gradient(
-        from var(--angle-pack),
-        var(--mangue),
-        var(--framboise),
-        var(--caramel),
-        var(--ivoire),
-        var(--mangue)
-      )
-      border-box;
-  color: color-mix(in srgb, var(--ivoire) 88%, transparent);
-  box-shadow: 0 30px 60px -30px rgb(62 36 24 / 0.7);
-}
-
-.pack[data-mis-en-avant] :is(.nom, .prix) {
-  color: var(--ivoire);
-}
-
-.pack[data-mis-en-avant] .contenus {
-  border-top-color: rgb(251 243 226 / 0.2);
-}
-
-.pack[data-mis-en-avant] .coche {
-  color: var(--mangue);
+  border: 1.5px solid var(--terra);
+  background-color: color-mix(in srgb, var(--sable) 70%, var(--blanc));
+  box-shadow: 0 18px 40px -32px rgb(94 47 27 / 0.45);
 }
 
 .pack[data-mis-en-avant] .repere {
-  background-color: var(--mangue);
-  color: var(--ganache);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .pack[data-mis-en-avant] {
-    animation: pack-bordure 6s linear infinite;
-  }
-
-  .pack[data-mis-en-avant] .repere {
-    animation: repere-pulse 2.4s ease-in-out infinite;
-  }
-}
-
-@keyframes pack-bordure {
-  to {
-    --angle-pack: 360deg;
-  }
-}
-
-@keyframes repere-pulse {
-  50% {
-    box-shadow: 0 0 0 6px rgb(232 185 35 / 0.25);
-  }
+  background-color: var(--terra);
+  color: var(--blanc);
 }
 
 @media (min-width: 64rem) {
   .pack[data-mis-en-avant] {
-    transform: translateY(-12px);
+    transform: translateY(-8px);
   }
 
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .pack[data-mis-en-avant]:hover {
-      transform: translateY(-18px);
+      transform: translateY(-12px);
     }
   }
-}
-
-.pack[data-mis-en-avant] .action a {
-  background-color: var(--mangue);
-  color: var(--ganache);
-}
-
-.pack[data-mis-en-avant] .action a:hover {
-  background-color: color-mix(in srgb, var(--mangue) 85%, var(--blanc));
-  color: var(--ganache);
 }

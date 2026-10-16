@@ -29,21 +29,14 @@
   max-width: 48rem;
 }
 
-/* Boutique pas encore ouverte : un teaser chaleureux plutôt qu'un état vide. */
+/* Boutique pas encore ouverte : un encart clair et chaleureux plutôt qu'un état vide. */
 .bientot {
-  position: relative;
-  overflow: hidden;
   display: grid;
   gap: var(--e-6);
   align-items: center;
   padding: clamp(1.75rem, 1rem + 4vw, 4rem);
-  border-radius: calc(var(--rayon) * 2);
-  background:
-    radial-gradient(circle at 15% 20%, rgb(232 185 35 / 0.28), transparent 45%),
-    radial-gradient(circle at 85% 90%, rgb(184 50 74 / 0.22), transparent 50%),
-    linear-gradient(140deg, #6b3f22, var(--ganache));
-  color: color-mix(in srgb, var(--ivoire) 88%, transparent);
-  box-shadow: 0 34px 70px -36px rgb(62 36 24 / 0.75);
+  border-radius: calc(var(--rayon) * 1.6);
+  background-color: var(--sable);
 }
 
 @media (min-width: 56rem) {
@@ -54,25 +47,20 @@
 
 .bientotDessin {
   justify-self: center;
-  width: min(60vw, 17rem);
+  width: min(60vw, 15rem);
   height: auto;
   padding: var(--e-5);
-  border-radius: 50%;
   overflow: visible;
-  background-color: rgb(251 243 226 / 0.08);
+  border-radius: 50%;
+  background-color: var(--creme);
 }
 
 .bientotDessin :global(.trace) {
   fill: none;
-  stroke: var(--ivoire);
+  stroke: var(--terra);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
-}
-
-.bientotDessin :global(.pepite) {
-  transform-box: view-box;
 }
 
 .bientotTexte {
@@ -81,15 +69,12 @@
   justify-items: start;
 }
 
-.bientotTexte h2 {
-  color: var(--ivoire);
-}
-
 .bientotSurtitre {
-  font-family: var(--font-manuscrit);
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--mangue);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--terra-d);
 }
 
 .bientotActions {
@@ -97,26 +82,4 @@
   flex-wrap: wrap;
   gap: var(--e-3);
   margin-top: var(--e-2);
-}
-
-.bientotActions a:last-child {
-  border-color: rgb(251 243 226 / 0.6);
-  color: var(--ivoire);
-}
-
-.bientotActions a:last-child:hover:not(:disabled) {
-  background-color: rgb(251 243 226 / 0.12);
-  color: var(--blanc);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .bientotDessin {
-    animation: bientot-flotte 5s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes bientot-flotte {
-  to {
-    transform: translateY(-12px) rotate(-4deg);
-  }
 }

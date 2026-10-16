@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { preload } from 'react-dom';
 import { CremeTrait } from '../ui/CremeTrait';
 import { Icon, type IconName } from '../ui/Icon';
@@ -36,20 +36,10 @@ interface PageHeaderProps {
   actions?: ReactNode;
 }
 
-/** Pépites décoratives : position, taille, couleur, dérive (fixes d'un rendu à l'autre). */
-const PEPITES = [
-  { left: '8%', top: '18%', taille: 10, couleur: 'var(--mangue)', retard: 0 },
-  { left: '88%', top: '12%', taille: 8, couleur: 'var(--framboise)', retard: 1.2 },
-  { left: '72%', top: '78%', taille: 12, couleur: 'var(--caramel)', retard: 2.1 },
-  { left: '18%', top: '82%', taille: 7, couleur: 'var(--nude)', retard: 0.6 },
-  { left: '52%', top: '6%', taille: 6, couleur: 'var(--mangue)', retard: 3 },
-  { left: '95%', top: '55%', taille: 9, couleur: 'var(--nude)', retard: 1.8 },
-];
-
 /**
  * En-tête des pages intérieures : le seul `h1` de la page, souligné du trait de crème qui se
- * dessine. Les grandes pages reçoivent une scène (vraie vidéo de Diani sous une arche, médaillon,
- * note manuscrite, pépites qui flottent) ; les autres gardent une tache couleur saveur.
+ * dessine. Les grandes pages reçoivent une scène (vraie vidéo de Diani sous une arche, médaillon) ;
+ * les autres gardent une tache couleur saveur.
  */
 export function PageHeader({
   title,
@@ -69,22 +59,6 @@ export function PageHeader({
       data-scene-visuelle={!!visual || undefined}
     >
       <span className={styles.fondHalo} aria-hidden="true" />
-      <div className="pepites-flottantes" aria-hidden="true">
-        {PEPITES.map((pepite) => (
-          <span
-            key={`${pepite.left}-${pepite.top}`}
-            style={
-              {
-                left: pepite.left,
-                top: pepite.top,
-                '--taille': `${pepite.taille}px`,
-                '--couleur': pepite.couleur,
-                '--retard': `${pepite.retard}s`,
-              } as CSSProperties
-            }
-          />
-        ))}
-      </div>
       <div className={`conteneur ${styles.entete}`}>
         <div className={styles.texte}>
           {!visual && <span className={styles.tache} aria-hidden="true" />}

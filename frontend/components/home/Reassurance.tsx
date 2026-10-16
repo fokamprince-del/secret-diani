@@ -1,46 +1,34 @@
 import { Icon, type IconName } from '../ui/Icon';
 import styles from './Reassurance.module.css';
 
-/** Engagements de la marque (textes d'interface fixés par le cahier des charges). */
-const COMMITMENTS: { icon: IconName; title: string; text: string }[] = [
-  {
-    icon: 'leaf',
-    title: 'Frais et de qualité',
-    text: 'Des produits choisis un par un, préparés pour votre date.',
-  },
-  {
-    icon: 'heart',
-    title: 'Fait maison avec passion',
-    text: 'Tout sort de ma cuisine, fait à la main.',
-  },
-  {
-    icon: 'lock',
-    title: 'Paiement sécurisé',
-    text: 'Stripe ou PayPal : aucune carte ne passe par le site.',
-  },
-  {
-    icon: 'chat',
-    title: 'À votre écoute',
-    text: 'Une question ? Écrivez-moi, je vous réponds.',
-  },
+/** Engagements de la marque, vrais pour toutes les clientes (cahier des charges + maquette). */
+const COMMITMENTS: { icon: IconName; label: string }[] = [
+  { icon: 'panier', label: 'Produits frais et de qualité' },
+  { icon: 'couverts', label: 'Fait maison, sur mesure' },
+  { icon: 'ecran', label: 'Formations accessibles en ligne' },
+  { icon: 'lock', label: 'Paiement sécurisé' },
+  { icon: 'accompagnement', label: 'Accompagnement à l’écoute' },
 ];
 
+/** Bande de réassurance, juste sous le hero : pictogrammes au trait fin, séparés d'un filet. */
 export function Reassurance() {
   return (
     <section aria-labelledby="engagements-titre" className={styles.engagements}>
-      <div className="conteneur">
+      <div className={`conteneur ${styles.bande}`}>
         <h2 id="engagements-titre" className="visually-hidden">
           Nos engagements
         </h2>
-        <ul role="list" className={styles.liste}>
+        <ul role="list" className={styles.liste} data-apparition="cascade">
           {COMMITMENTS.map((item) => (
-            <li key={item.title} className={styles.item} data-apparition="monte">
-              <Icon name={item.icon} size={28} className={styles.icone} />
-              <h3 className={styles.titre}>{item.title}</h3>
-              <p className={styles.texte}>{item.text}</p>
+            <li key={item.label} className={styles.item}>
+              <Icon name={item.icon} size={30} className={styles.icone} />
+              <span>{item.label}</span>
             </li>
           ))}
         </ul>
+        <p className={styles.note} aria-hidden="true">
+          La cuisine, une source d’opportunités ♡
+        </p>
       </div>
     </section>
   );

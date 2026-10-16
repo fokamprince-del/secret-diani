@@ -38,7 +38,6 @@ export async function ConseilsIndex({ category }: ConseilsIndexProps) {
           poster: ANNIVERSAIRE.poster,
           focus: ANNIVERSAIRE.focus,
           caption: `Layer cake ${ANNIVERSAIRE.title.toLowerCase()} : ${ANNIVERSAIRE.caption}`,
-          note: 'mes astuces',
         }}
       />
       <div className="conteneur">
