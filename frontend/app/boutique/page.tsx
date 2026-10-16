@@ -5,10 +5,14 @@ import { ComparisonTable } from '@/components/shop/ComparisonTable';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { Accordion } from '@/components/ui/Accordion';
 import { ButtonLink } from '@/components/ui/Button';
-import { EmptyState, ErrorState } from '@/components/ui/States';
+import { ErrorState } from '@/components/ui/States';
+import { PocheIllustration } from '@/components/home/Universes';
 import { getFaq, getKitComparison, getShopProducts } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import styles from './page.module.css';
+import { CREATIONS } from '@/lib/vitrine';
+
+const CARAMEL = CREATIONS.find((creation) => creation.slug === 'caramel-18')!;
 
 export const metadata: Metadata = pageMetadata({
   title: 'Boutique & kits',
@@ -41,6 +45,18 @@ export default async function BoutiquePage() {
             compte : un e-mail suffit pour suivre votre commande.
           </p>
         }
+        visual={{
+          video: CARAMEL.video,
+          poster: CARAMEL.poster,
+          focus: CARAMEL.focus,
+          caption: `Layer cake ${CARAMEL.title.toLowerCase()} : ${CARAMEL.caption}`,
+          note: 'mes outils',
+        }}
+        points={[
+          { icon: 'check', label: 'Testés à l’atelier' },
+          { icon: 'mail', label: 'Sans compte' },
+          { icon: 'lock', label: 'Paiement sécurisé' },
+        ]}
       />
       <div className={`conteneur ${styles.boutique}`}>
         {!products ? (
@@ -48,12 +64,25 @@ export default async function BoutiquePage() {
             <p>Revenez dans quelques minutes : les kits seront de retour.</p>
           </ErrorState>
         ) : products.length === 0 ? (
-          <EmptyState
-            title="Les kits arrivent bientôt"
-            action={<ButtonLink href="/formations">Découvrir les formations</ButtonLink>}
-          >
-            <p>En attendant, mes formations vous attendent.</p>
-          </EmptyState>
+          <section aria-labelledby="bientot-titre" className={styles.bientot} data-scene>
+            <PocheIllustration className={styles.bientotDessin} />
+            <div className={styles.bientotTexte}>
+              <p className={styles.bientotSurtitre}>Ça se prépare à l’atelier</p>
+              <h2 id="bientot-titre">Les kits arrivent bientôt</h2>
+              <p>
+                Poches, douilles, spatules : je sélectionne les accessoires que j’utilise vraiment,
+                pour vous équiper selon votre niveau. En attendant, mes formations vous attendent.
+              </p>
+              <div className={styles.bientotActions}>
+                <ButtonLink href="/formations" withArrow data-pepites>
+                  Découvrir les formations
+                </ButtonLink>
+                <ButtonLink href="#newsletter-titre" variant="secondaire">
+                  Être prévenue de l’ouverture
+                </ButtonLink>
+              </div>
+            </div>
+          </section>
         ) : (
           <>
             {kits.length > 0 && (

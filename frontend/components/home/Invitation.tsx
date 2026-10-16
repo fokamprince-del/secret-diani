@@ -10,7 +10,7 @@ import styles from './Invitation.module.css';
  */
 export function Invitation({ social }: { social: SocialLink | null }) {
   return (
-    <section aria-labelledby="invitation-titre" className={styles.invitation}>
+    <section aria-labelledby="invitation-titre" className={styles.invitation} data-scene>
       <div className={`conteneur ${styles.contenu}`} data-apparition="monte">
         <p className={styles.surtitre}>Une date, une envie, une question ?</p>
         <h2 id="invitation-titre">Parlons de votre prochaine fête</h2>

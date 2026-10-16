@@ -7,6 +7,7 @@ import { getSiteSettings } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import { socialLinksFrom, whatsappLink } from '@/lib/social';
 import styles from './page.module.css';
+import { BUCHES } from '@/lib/vitrine';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Contact',
@@ -34,6 +35,13 @@ export default async function ContactPage() {
             la date et le nombre d’invités : j’irai plus vite.
           </p>
         }
+        accent="framboise"
+        visual={{
+          poster: BUCHES.fallback,
+          focus: '50% 55%',
+          caption: BUCHES.alt,
+          note: 'à très vite !',
+        }}
       />
       <div className={`conteneur ${styles.grille}`}>
         <section aria-labelledby="formulaire-titre">

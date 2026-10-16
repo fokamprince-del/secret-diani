@@ -94,3 +94,90 @@
 .pack img {
   transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* Pack mis en avant : écrin chocolat, bordure dorée qui tourne lentement, repère qui pulse. */
+@property --angle-pack {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.pack[data-mis-en-avant] {
+  position: relative;
+  isolation: isolate;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(160deg, #4a2a1c, var(--ganache)) padding-box,
+    conic-gradient(
+        from var(--angle-pack),
+        var(--mangue),
+        var(--framboise),
+        var(--caramel),
+        var(--ivoire),
+        var(--mangue)
+      )
+      border-box;
+  color: color-mix(in srgb, var(--ivoire) 88%, transparent);
+  box-shadow: 0 30px 60px -30px rgb(62 36 24 / 0.7);
+}
+
+.pack[data-mis-en-avant] :is(.nom, .prix) {
+  color: var(--ivoire);
+}
+
+.pack[data-mis-en-avant] .contenus {
+  border-top-color: rgb(251 243 226 / 0.2);
+}
+
+.pack[data-mis-en-avant] .coche {
+  color: var(--mangue);
+}
+
+.pack[data-mis-en-avant] .repere {
+  background-color: var(--mangue);
+  color: var(--ganache);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pack[data-mis-en-avant] {
+    animation: pack-bordure 6s linear infinite;
+  }
+
+  .pack[data-mis-en-avant] .repere {
+    animation: repere-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes pack-bordure {
+  to {
+    --angle-pack: 360deg;
+  }
+}
+
+@keyframes repere-pulse {
+  50% {
+    box-shadow: 0 0 0 6px rgb(232 185 35 / 0.25);
+  }
+}
+
+@media (min-width: 64rem) {
+  .pack[data-mis-en-avant] {
+    transform: translateY(-12px);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .pack[data-mis-en-avant]:hover {
+      transform: translateY(-18px);
+    }
+  }
+}
+
+.pack[data-mis-en-avant] .action a {
+  background-color: var(--mangue);
+  color: var(--ganache);
+}
+
+.pack[data-mis-en-avant] .action a:hover {
+  background-color: color-mix(in srgb, var(--mangue) 85%, var(--blanc));
+  color: var(--ganache);
+}

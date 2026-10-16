@@ -1,0 +1,245 @@
+/*
+ * Mouvement, pour tout le site : progression du défilement, parallaxe, scènes de section,
+ * apparitions en cascade, survols des cartes et des boutons.
+ *
+ * Tout est progressif : les animations liées au défilement (`animation-timeline`) ne s'appliquent
+ * que dans les navigateurs qui les comprennent ; ailleurs la page reste immobile et lisible.
+ * Rien ne bouge si le visiteur a demandé de réduire les animations.
+ */
+
+/* ---------- Barre de progression du défilement (trait de crème en haut de l'écran) ---------- */
+.progression-defilement {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 3px;
+  background: linear-gradient(90deg, var(--mangue), var(--caramel) 45%, var(--framboise));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progression-defilement {
+      animation: progression-avance linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    /* Parallaxe douce : l'image glisse un peu moins vite que la page. */
+    [data-parallaxe] {
+      animation: parallaxe linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+
+    [data-parallaxe='fort'] {
+      animation-name: parallaxe-fort;
+    }
+
+    /* Scène : la section s'ouvre en entrant (elle s'élargit, ses coins arrondis se redressent).
+       Sans fondu : les couleurs restent celles du repos, contrastes compris. */
+    [data-scene] {
+      animation: scene-entree linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+
+    /* Rotation lente au défilement (pastilles, macarons). */
+    [data-tourne] {
+      animation: tourne-defilement linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@keyframes progression-avance {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes parallaxe {
+  from {
+    transform: translateY(-6%) scale(1.08);
+  }
+  to {
+    transform: translateY(6%) scale(1.08);
+  }
+}
+
+@keyframes parallaxe-fort {
+  from {
+    transform: translateY(-14%);
+  }
+  to {
+    transform: translateY(14%);
+  }
+}
+
+@keyframes scene-entree {
+  from {
+    transform: scale(0.94);
+    border-radius: 48px;
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes tourne-defilement {
+  to {
+    rotate: 1turn;
+  }
+}
+
+/* ---------- Apparitions supplémentaires (posées par components/ui/Apparitions.tsx) ---------- */
+[data-apparition='gauche'][data-etat='attente'] {
+  opacity: 0;
+  transform: translateX(-2.5rem);
+}
+
+[data-apparition='droite'][data-etat='attente'] {
+  opacity: 0;
+  transform: translateX(2.5rem);
+}
+
+[data-apparition='zoom'][data-etat='attente'] {
+  opacity: 0;
+  transform: scale(0.82) rotate(-2deg);
+}
+
+[data-apparition='flou'][data-etat='attente'] {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(1rem);
+}
+
+[data-apparition='gauche'][data-etat='visible'],
+[data-apparition='droite'][data-etat='visible'],
+[data-apparition='zoom'][data-etat='visible'],
+[data-apparition='flou'][data-etat='visible'] {
+  transition:
+    opacity 800ms var(--courbe),
+    filter 900ms var(--courbe),
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--delai, 0ms);
+}
+
+/* Cascade : les enfants directs arrivent les uns après les autres. */
+[data-apparition='cascade'][data-etat='attente'] > * {
+  opacity: 0;
+  transform: translateY(1.75rem) scale(0.97);
+}
+
+[data-apparition='cascade'][data-etat='visible'] > * {
+  transition:
+    opacity 700ms var(--courbe),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-apparition='cascade'] > :nth-child(2) {
+  transition-delay: 90ms;
+}
+[data-apparition='cascade'] > :nth-child(3) {
+  transition-delay: 180ms;
+}
+[data-apparition='cascade'] > :nth-child(4) {
+  transition-delay: 270ms;
+}
+[data-apparition='cascade'] > :nth-child(5) {
+  transition-delay: 360ms;
+}
+[data-apparition='cascade'] > :nth-child(6) {
+  transition-delay: 450ms;
+}
+[data-apparition='cascade'] > :nth-child(n + 7) {
+  transition-delay: 540ms;
+}
+
+/* ---------- Survols ---------- */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  /* Carte vivante : elle se soulève, son ombre se réchauffe, sa photo s'approche. */
+  .carte-vivante {
+    transition:
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 500ms var(--courbe),
+      border-color 300ms ease;
+  }
+
+  .carte-vivante:hover {
+    transform: translateY(-8px);
+    box-shadow:
+      0 2px 4px rgb(94 47 27 / 0.05),
+      0 28px 50px -22px rgb(130 73 63 / 0.45);
+  }
+
+  .carte-vivante :is(img, video) {
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .carte-vivante:hover :is(img, video) {
+    transform: scale(1.06);
+  }
+}
+
+/* ---------- Décor : pépites de sucre qui flottent (jamais devant le texte) ---------- */
+.pepites-flottantes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pepites-flottantes span {
+  position: absolute;
+  width: var(--taille, 10px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--couleur, var(--mangue));
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pepites-flottantes span {
+    animation: pepite-flotte var(--duree-flotte, 9s) ease-in-out var(--retard, 0s) infinite
+      alternate;
+  }
+}
+
+@keyframes pepite-flotte {
+  to {
+    transform: translate(var(--dx, 12px), var(--dy, -26px)) rotate(40deg);
+  }
+}
+
+/* Éclat de pépites (components/ui/Pepites.tsx), au clic sur une action gourmande. */
+.eclat-pepite {
+  position: fixed;
+  z-index: 80;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  pointer-events: none;
+  animation: eclat 900ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes eclat {
+  to {
+    transform: translate(var(--x), var(--y)) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+/* Éléments de liste animés eux-mêmes (étapes, engagements) : décalage de l'un à l'autre. */
+li[data-apparition]:nth-child(4n + 2) {
+  --delai: 110ms;
+}
+
+li[data-apparition]:nth-child(4n + 3) {
+  --delai: 220ms;
+}
+
+li[data-apparition]:nth-child(4n + 4) {
+  --delai: 330ms;
+}

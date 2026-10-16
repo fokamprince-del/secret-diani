@@ -295,3 +295,21 @@
     display: flex;
   }
 }
+
+/* Avance automatique : la pastille active se remplit, comme un minuteur de four. */
+@media (prefers-reduced-motion: no-preference) {
+  .vitrine[data-auto] .point[aria-current]::before {
+    background:
+      linear-gradient(var(--accent), var(--accent)) 0 0 / 0% 100% no-repeat,
+      color-mix(in srgb, var(--accent) 35%, transparent);
+    animation: minuteur 5s linear forwards;
+  }
+}
+
+@keyframes minuteur {
+  to {
+    background-size:
+      100% 100%,
+      auto;
+  }
+}

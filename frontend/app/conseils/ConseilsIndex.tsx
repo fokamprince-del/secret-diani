@@ -5,6 +5,9 @@ import { ButtonLink } from '@/components/ui/Button';
 import { EmptyState, ErrorState } from '@/components/ui/States';
 import { ARTICLES_PER_PAGE, getArticleCategories, getArticles } from '@/lib/api/content';
 import type { ArticleCategory } from '@/lib/api/types';
+import { CREATIONS } from '@/lib/vitrine';
+
+const ANNIVERSAIRE = CREATIONS.find((creation) => creation.slug === 'anniversaire-33')!;
 
 interface ConseilsIndexProps {
   /** Catégorie filtrée ; absente : tous les conseils. */
@@ -29,6 +32,14 @@ export async function ConseilsIndex({ category }: ConseilsIndexProps) {
               'Mes astuces, sans secret gardé : techniques, recettes et organisation pour réussir vos gâteaux et vos buffets.'}
           </p>
         }
+        accent="caramel"
+        visual={{
+          video: ANNIVERSAIRE.video,
+          poster: ANNIVERSAIRE.poster,
+          focus: ANNIVERSAIRE.focus,
+          caption: `Layer cake ${ANNIVERSAIRE.title.toLowerCase()} : ${ANNIVERSAIRE.caption}`,
+          note: 'mes astuces',
+        }}
       />
       <div className="conteneur">
         <CategoryFilter categories={categories ?? []} current={category?.slug} />

@@ -28,3 +28,95 @@
 .faq {
   max-width: 48rem;
 }
+
+/* Boutique pas encore ouverte : un teaser chaleureux plutôt qu'un état vide. */
+.bientot {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: var(--e-6);
+  align-items: center;
+  padding: clamp(1.75rem, 1rem + 4vw, 4rem);
+  border-radius: calc(var(--rayon) * 2);
+  background:
+    radial-gradient(circle at 15% 20%, rgb(232 185 35 / 0.28), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgb(184 50 74 / 0.22), transparent 50%),
+    linear-gradient(140deg, #6b3f22, var(--ganache));
+  color: color-mix(in srgb, var(--ivoire) 88%, transparent);
+  box-shadow: 0 34px 70px -36px rgb(62 36 24 / 0.75);
+}
+
+@media (min-width: 56rem) {
+  .bientot {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+.bientotDessin {
+  justify-self: center;
+  width: min(60vw, 17rem);
+  height: auto;
+  padding: var(--e-5);
+  border-radius: 50%;
+  overflow: visible;
+  background-color: rgb(251 243 226 / 0.08);
+}
+
+.bientotDessin :global(.trace) {
+  fill: none;
+  stroke: var(--ivoire);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+}
+
+.bientotDessin :global(.pepite) {
+  transform-box: view-box;
+}
+
+.bientotTexte {
+  display: grid;
+  gap: var(--e-4);
+  justify-items: start;
+}
+
+.bientotTexte h2 {
+  color: var(--ivoire);
+}
+
+.bientotSurtitre {
+  font-family: var(--font-manuscrit);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--mangue);
+}
+
+.bientotActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  margin-top: var(--e-2);
+}
+
+.bientotActions a:last-child {
+  border-color: rgb(251 243 226 / 0.6);
+  color: var(--ivoire);
+}
+
+.bientotActions a:last-child:hover:not(:disabled) {
+  background-color: rgb(251 243 226 / 0.12);
+  color: var(--blanc);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bientotDessin {
+    animation: bientot-flotte 5s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes bientot-flotte {
+  to {
+    transform: translateY(-12px) rotate(-4deg);
+  }
+}

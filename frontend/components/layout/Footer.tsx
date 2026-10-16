@@ -20,6 +20,17 @@ export function Footer({ settings, socials }: FooterProps) {
   const email = settings?.contactEmail;
   return (
     <footer className={styles.pied}>
+      <svg
+        className={styles.vague}
+        viewBox="0 0 1440 60"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M0 60 V34 C 160 6, 320 6, 480 26 S 800 58, 960 34 S 1280 0, 1440 22 V60 Z" />
+      </svg>
+      <p className={styles.filigrane} aria-hidden="true">
+        Diani
+      </p>
       <div className={`conteneur ${styles.grille}`}>
         <div className={styles.marque}>
           <Logo />

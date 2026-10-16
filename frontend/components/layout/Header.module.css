@@ -89,3 +89,22 @@
     display: inline-flex;
   }
 }
+
+/* Au défilement, l'en-tête se pose sur la page : fond plus dense et ombre chaude. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .entete {
+      animation: entete-pose linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 180px;
+    }
+  }
+}
+
+@keyframes entete-pose {
+  to {
+    background-color: color-mix(in srgb, var(--creme) 97%, transparent);
+    border-bottom-color: transparent;
+    box-shadow: 0 10px 30px -18px rgb(94 47 27 / 0.35);
+  }
+}

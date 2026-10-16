@@ -11,7 +11,14 @@ import { StaticPhoto } from '@/components/ui/StaticPhoto';
 import { getPageIfPublished, getSiteSettings } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import { socialLinksFrom } from '@/lib/social';
-import { BUCHES, BUFFET_PHOTO, BUFFET_VIDEO, COURONNE, CREATIONS } from '@/lib/vitrine';
+import {
+  BUCHES,
+  BUFFET_PHOTO,
+  BUFFET_VIDEO,
+  COURONNE,
+  CREATIONS,
+  HERO_CREATION,
+} from '@/lib/vitrine';
 import styles from './page.module.css';
 
 export const metadata: Metadata = pageMetadata({
@@ -92,6 +99,14 @@ export default async function AboutPage() {
             vous. Une seule idée derrière tout ça : une cuisine faite maison, qui se partage.
           </p>
         }
+        visual={{
+          video: HERO_CREATION.video,
+          poster: HERO_CREATION.poster,
+          focus: HERO_CREATION.focus,
+          caption: `Layer cake ${HERO_CREATION.title.toLowerCase()} : ${HERO_CREATION.caption}`,
+          medaillon: { src: BUFFET_PHOTO.fallback, alt: BUFFET_PHOTO.alt, focus: '50% 40%' },
+          note: 'avec amour',
+        }}
       />
 
       <section aria-labelledby="partage-titre" className={styles.partage}>

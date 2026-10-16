@@ -152,22 +152,96 @@
   object-fit: cover;
 }
 
-/* Carte sans photo : un filet couleur saveur en haut, et la carte se resserre. */
+/* Carte sans photo : une vignette gourmande (dégradé couleur saveur, nom manuscrit, prix en
+   pastille) remplace la photo absente. */
 .carte[data-sans-photo] {
+  --saveur: var(--mangue);
   position: relative;
-  grid-template-rows: auto;
-  padding-top: var(--e-5);
+  grid-template-rows: auto 1fr;
+  padding-top: var(--e-4);
   overflow: hidden;
 }
 
-.carte[data-sans-photo]::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 4px;
-  background-color: var(--mangue);
+.carte[data-sans-photo][data-type='a_la_carte'] {
+  --saveur: var(--caramel);
 }
 
-.carte[data-sans-photo][data-type='a_la_carte']::before {
-  background-color: var(--caramel);
+li:nth-child(3n + 2) > .carte[data-sans-photo] {
+  --saveur: var(--framboise);
+}
+
+li:nth-child(3n) > .carte[data-sans-photo][data-type='a_la_carte'] {
+  --saveur: var(--mangue);
+}
+
+.vignette {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 7.5rem;
+  overflow: hidden;
+  border-radius: calc(var(--rayon) - 4px);
+  background:
+    radial-gradient(circle at 18% 30%, rgb(255 255 255 / 0.35) 0 3px, transparent 4px) 0 0 / 34px
+      34px,
+    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 0.25) 0 2px, transparent 3px) 0 0 / 22px
+      22px,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--saveur) 85%, var(--blanc)),
+      color-mix(in srgb, var(--saveur) 45%, var(--peche))
+    );
+}
+
+.vignetteNom {
+  padding-inline: var(--e-4);
+  font-family: var(--font-manuscrit);
+  font-size: clamp(2.25rem, 1.8rem + 1.4vw, 3rem);
+  line-height: 1.1;
+  text-align: center;
+  color: var(--blanc);
+  text-shadow: 0 2px 12px rgb(94 47 27 / 0.3);
+}
+
+.vignettePastille {
+  position: absolute;
+  top: var(--e-3);
+  right: var(--e-3);
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--rayon-pilule);
+  background-color: var(--blanc);
+  font-size: var(--taille-petit);
+  font-weight: 600;
+  color: var(--cacao);
+  box-shadow: var(--ombre);
+  transform: rotate(4deg);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .vignette {
+    transition: background-position 1200ms var(--courbe);
+  }
+
+  .vignetteNom {
+    transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .carte:hover .vignette {
+    background-position:
+      17px -17px,
+      -11px 11px,
+      0 0;
+  }
+
+  .carte:hover .vignetteNom {
+    transform: scale(1.06) rotate(-2deg);
+  }
+
+  .vignettePastille {
+    transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .carte:hover .vignettePastille {
+    transform: rotate(-6deg) scale(1.08);
+  }
 }

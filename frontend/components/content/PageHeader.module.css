@@ -1,11 +1,54 @@
-.entete {
+.bandeau {
   --accent: var(--mangue);
   position: relative;
-  overflow-x: clip;
+  overflow: clip;
+  isolation: isolate;
+}
+
+.bandeau[data-accent='framboise'] {
+  --accent: var(--framboise);
+}
+
+.bandeau[data-accent='caramel'] {
+  --accent: var(--caramel);
+}
+
+/* Lueur chaude, couleur saveur, qui baigne tout le haut de page. */
+.fondHalo {
+  position: absolute;
+  inset: -30% -10% 20% 35%;
+  z-index: -1;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 30%, transparent),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.entete {
+  position: relative;
+  display: grid;
+  align-items: center;
+  gap: var(--e-7);
+  padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) var(--e-7);
+}
+
+.bandeau[data-scene-visuelle] .entete {
+  padding-block-end: clamp(3rem, 2rem + 4vw, 5.5rem);
+}
+
+@media (min-width: 56rem) {
+  .bandeau[data-scene-visuelle] .entete {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+.texte {
+  position: relative;
   display: grid;
   justify-items: start;
   gap: var(--e-4);
-  padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) var(--e-7);
 }
 
 .surtitre {
@@ -24,29 +67,67 @@
   max-width: 22ch;
 }
 
+.bandeau[data-scene-visuelle] .titre {
+  font-size: var(--t-display);
+}
+
 .trait {
   margin-top: calc(-1 * var(--e-2));
 }
 
 .surtitre,
 .intro,
-.meta {
+.meta,
+.actions,
+.points {
   position: relative;
 }
 
-.entete[data-accent='framboise'] {
-  --accent: var(--framboise);
+.intro {
+  max-width: 56ch;
+  font-size: 1.125rem;
 }
 
-.entete[data-accent='caramel'] {
-  --accent: var(--caramel);
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  margin-top: var(--e-2);
 }
 
-/* Tache couleur saveur, en haut à droite, qui ondule lentement. */
+.points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2) var(--e-5);
+  margin: var(--e-2) 0 0;
+  padding: var(--e-4) 0 0;
+  border-top: 1px solid var(--filet);
+  list-style: none;
+  font-size: var(--taille-petit);
+  font-weight: 500;
+  color: var(--cacao);
+}
+
+.points li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+}
+
+.points svg {
+  color: var(--accent);
+}
+
+.meta {
+  font-size: var(--taille-petit);
+  color: var(--texte);
+}
+
+/* Tache couleur saveur (pages sans scène), en haut à droite, qui ondule lentement. */
 .tache {
   position: absolute;
-  top: 1.5rem;
-  right: max(var(--gouttiere), 4%);
+  top: -1.5rem;
+  right: 2%;
   width: clamp(9rem, 6rem + 14vw, 20rem);
   aspect-ratio: 1;
   border-radius: 58% 42% 46% 54% / 48% 56% 44% 52%;
@@ -59,19 +140,148 @@
   pointer-events: none;
 }
 
+/* ---------- Scène : arche vidéo, halo, médaillon, note ---------- */
+.scene {
+  position: relative;
+  justify-self: center;
+  width: min(72vw, 23rem);
+  padding: var(--e-5) var(--e-6) var(--e-6) var(--e-7);
+}
+
+.halo {
+  position: absolute;
+  inset: 12% -8% -4% 0;
+  border-radius: 58% 42% 46% 54% / 48% 56% 44% 52%;
+  background: linear-gradient(
+    150deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 45%, var(--peche))
+  );
+  opacity: 0.85;
+}
+
+.arche {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  overflow: hidden;
+  border: 6px solid var(--ivoire);
+  border-radius: 999px 999px var(--rayon) var(--rayon);
+  background-color: var(--ivoire);
+  box-shadow: 0 30px 60px -28px rgb(94 47 27 / 0.5);
+}
+
+.arche > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.medaillon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  border: 6px solid var(--ivoire);
+  border-radius: 50%;
+  background-color: var(--ivoire);
+  box-shadow: 0 20px 40px -18px rgb(94 47 27 / 0.5);
+}
+
+.medaillon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.note {
+  position: absolute;
+  top: 0.25rem;
+  left: -0.75rem;
+  margin: 0;
+  padding: 0.1rem 0.7rem;
+  border-radius: 10px;
+  background-color: var(--ivoire);
+  box-shadow: var(--ombre);
+  font-family: var(--font-manuscrit);
+  font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
+  line-height: 1.15;
+  color: var(--terra-d);
+  transform: rotate(-6deg);
+}
+
+/* ---------- Entrée ---------- */
 @media (prefers-reduced-motion: no-preference) {
+  .titre {
+    animation: titre-entree 700ms var(--courbe) both;
+  }
+
+  .intro,
+  .actions,
+  .points {
+    animation: monte 700ms var(--courbe) both;
+  }
+
+  .intro {
+    animation-delay: 300ms;
+  }
+
+  .actions {
+    animation-delay: 450ms;
+  }
+
+  .points {
+    animation-delay: 600ms;
+  }
+
   .tache {
     animation:
       tache-entree 1100ms cubic-bezier(0.22, 1, 0.36, 1) both,
       tache-ondule 12s ease-in-out 1100ms infinite alternate;
   }
 
-  .titre {
-    animation: titre-entree 700ms var(--courbe) both;
+  .halo {
+    animation:
+      tache-entree 1200ms var(--courbe) both,
+      tache-ondule 14s ease-in-out 1200ms infinite alternate;
   }
 
-  .intro {
-    animation: titre-entree 700ms var(--courbe) 350ms both;
+  .arche {
+    animation: arche 1100ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both;
+  }
+
+  .medaillon {
+    animation:
+      pop 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 700ms both,
+      flotte 6s ease-in-out 1600ms infinite alternate;
+  }
+
+  .note {
+    animation: note 700ms var(--courbe) 1200ms both;
+  }
+
+  .fondHalo {
+    animation: respire 10s ease-in-out infinite alternate;
+  }
+}
+
+/* Le titre (LCP) glisse sans partir de l'opacité 0. */
+@keyframes titre-entree {
+  from {
+    opacity: 0.35;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes monte {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
 }
 
@@ -85,34 +295,62 @@
 @keyframes tache-ondule {
   to {
     border-radius: 42% 58% 54% 46% / 56% 44% 56% 44%;
-    transform: rotate(14deg) translateY(10px);
+    transform: rotate(10deg) translateY(10px);
   }
 }
 
-/* Comme au hero : le titre (LCP) glisse sans partir de l'opacité 0. */
-@keyframes titre-entree {
+@keyframes arche {
   from {
-    opacity: 0.35;
-    transform: translateY(10px);
+    opacity: 0;
+    clip-path: inset(100% 0 0 0 round 999px 999px 14px 14px);
+    transform: translateY(30px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 999px 999px 14px 14px);
   }
 }
 
-.intro {
-  max-width: 56ch;
-  font-size: 1.125rem;
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-20deg);
+  }
 }
 
-.meta {
-  font-size: var(--taille-petit);
-  color: var(--texte);
+@keyframes flotte {
+  to {
+    transform: translateY(-10px) rotate(3deg);
+  }
 }
 
-/* Mobile : la tache se fait petite et discrète, dans le coin, jamais derrière le titre. */
-@media (max-width: 47.99rem) {
+@keyframes note {
+  from {
+    opacity: 0;
+    transform: rotate(-16deg) scale(0.6);
+  }
+}
+
+@keyframes respire {
+  to {
+    transform: translate(-6%, 8%) scale(1.15);
+  }
+}
+
+/* Mobile : la scène passe sous le texte, plus petite ; la tache se fait discrète. */
+@media (max-width: 55.99rem) {
+  .scene {
+    width: min(78vw, 19rem);
+  }
+
   .tache {
-    top: -1.5rem;
+    top: -3rem;
     right: -2.5rem;
     width: 8rem;
     opacity: 0.35;
   }
+}
+
+.arche > picture,
+.medaillon picture {
+  display: contents;
 }

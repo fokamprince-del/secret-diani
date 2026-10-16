@@ -182,7 +182,8 @@ const siteEnv = {
   NEXT_PUBLIC_SITE_URL: publicUrl,
   NEXT_PUBLIC_API_URL: publicUrl,
   NEXT_PUBLIC_MEDIA_URL: `${publicUrl}/s3`,
-  NEXT_PUBLIC_GOOGLE_AUTH: googleEnabled ? 'true' : 'false',
+  // Bouton toujours visible dans la démo : sans clés, l'API renvoie « momentanément indisponible ».
+  NEXT_PUBLIC_GOOGLE_AUTH: 'true',
   API_INTERNAL_URL: 'http://127.0.0.1:3000',
   REVALIDATE_SECRET: revalidateSecret,
 };

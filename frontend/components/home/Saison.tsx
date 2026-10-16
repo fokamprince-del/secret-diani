@@ -11,7 +11,7 @@ import styles from './Saison.module.css';
  */
 export function Saison() {
   return (
-    <section aria-labelledby="saison-titre" className={styles.saison}>
+    <section aria-labelledby="saison-titre" className={styles.saison} data-scene>
       <div className={`conteneur ${styles.grille}`}>
         <div className={styles.photos}>
           <div className={styles.principale} data-apparition="devoile">

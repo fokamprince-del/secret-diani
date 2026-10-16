@@ -10,6 +10,9 @@ import { ErrorState } from '@/components/ui/States';
 import { getCateringCatalog, getReviews } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import styles from './page.module.css';
+import { ButtonLink } from '@/components/ui/Button';
+import { BUFFET_VIDEO, CREATIONS } from '@/lib/vitrine';
+import { Vitrine } from '@/components/home/Vitrine';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Traiteur & commandes',
@@ -33,6 +36,28 @@ export default async function TraiteurPage() {
             parfums. Vous me donnez la date et le nombre d’invités, je m’occupe du reste.
           </p>
         }
+        visual={{
+          video: BUFFET_VIDEO.video,
+          poster: BUFFET_VIDEO.poster,
+          focus: BUFFET_VIDEO.focus,
+          caption: BUFFET_VIDEO.caption,
+          medaillon: {
+            src: CREATIONS[0]!.poster,
+            alt: `Layer cake ${CREATIONS[0]!.title.toLowerCase()}`,
+            focus: CREATIONS[0]!.focus,
+          },
+          note: 'fait maison !',
+        }}
+        actions={
+          <ButtonLink href="#demande" withArrow data-pepites>
+            Je demande un devis
+          </ButtonLink>
+        }
+        points={[
+          { icon: 'heart', label: 'Fait maison' },
+          { icon: 'leaf', label: 'Préparé pour votre date' },
+          { icon: 'chat', label: 'Réponse personnelle' },
+        ]}
       />
 
       {!catalog ? (
@@ -72,7 +97,7 @@ export default async function TraiteurPage() {
                 aria-labelledby={`${category.slug}-titre`}
                 className={styles.categorie}
               >
-                <div className={styles.entete}>
+                <div className={styles.entete} data-apparition="flou">
                   <h2 id={`${category.slug}-titre`}>{category.name}</h2>
                   {category.description && <p>{category.description}</p>}
                 </div>
@@ -88,6 +113,13 @@ export default async function TraiteurPage() {
 
             <Conditions conditions={catalog.conditions} />
           </div>
+
+          <Vitrine
+            id="traiteur-vitrine"
+            kicker="En images"
+            title="Quelques-unes de mes créations"
+            action={{ href: '#demande', label: 'Je veux le même' }}
+          />
 
           <Reviews reviews={reviews} />
 

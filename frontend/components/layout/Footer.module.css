@@ -1,8 +1,44 @@
 .pied {
-  margin-top: var(--section);
+  /* Pied chocolat : les jetons de couleur sont inversés pour tout ce qu'il contient. */
+  --cacao: var(--ivoire);
+  --titre: var(--ivoire);
+  --texte: rgb(251 243 226 / 0.78);
+  --texte-s: rgb(251 243 226 / 0.62);
+  --terra-d: var(--mangue);
+  --lien: var(--mangue);
+  --filet: rgb(251 243 226 / 0.14);
+  position: relative;
+  isolation: isolate;
+  margin-top: calc(var(--section) + 3rem);
   padding-top: clamp(2.5rem, 1.5rem + 4vw, 4rem);
-  background-color: var(--sable);
-  border-top: 1px solid var(--filet);
+  background:
+    radial-gradient(40rem 20rem at 85% 0%, rgb(184 50 74 / 0.22), transparent 70%),
+    radial-gradient(36rem 22rem at 0% 100%, rgb(232 185 35 / 0.12), transparent 70%), var(--ganache);
+  color: var(--texte);
+}
+
+/* Vague de ganache qui monte sur la page. */
+.vague {
+  position: absolute;
+  bottom: calc(100% - 1px);
+  left: 0;
+  width: 100%;
+  height: clamp(28px, 4vw, 60px);
+  fill: var(--ganache);
+}
+
+/* Signature manuscrite en filigrane. */
+.filigrane {
+  position: absolute;
+  right: 2%;
+  bottom: 3rem;
+  z-index: -1;
+  font-family: var(--font-manuscrit);
+  font-size: clamp(7rem, 4rem + 14vw, 18rem);
+  line-height: 1;
+  color: rgb(251 243 226 / 0.05);
+  pointer-events: none;
+  user-select: none;
 }
 
 .grille {
@@ -45,8 +81,24 @@
 }
 
 .lettre {
-  padding-block: var(--e-7);
-  border-top: 1px solid var(--filet);
+  margin-bottom: var(--e-7);
+}
+
+/* La lettre de Diani : une carte crème, aux couleurs d'origine, posée sur le chocolat. */
+.lettre > * {
+  --cacao: #5e2f1b;
+  --titre: #5e2f1b;
+  --texte: #5a504a;
+  --texte-s: #7a6b63;
+  --terra-d: #82493f;
+  --lien: #82493f;
+  --filet: color-mix(in srgb, #dab6aa 55%, transparent);
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border-radius: calc(var(--rayon) * 1.6);
+  background:
+    radial-gradient(24rem 14rem at 100% 0%, rgb(232 185 35 / 0.18), transparent 70%), var(--creme);
+  color: var(--texte);
+  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.5);
 }
 
 .reseau {
@@ -131,4 +183,7 @@
     justify-content: center;
     gap: 0 var(--e-4);
   }
+}
+.lettre > form {
+  max-width: 40rem;
 }

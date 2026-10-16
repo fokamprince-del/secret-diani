@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { OfflineNotice } from '@/components/layout/OfflineNotice';
 import { Apparitions } from '@/components/ui/Apparitions';
+import { Pepites } from '@/components/ui/Pepites';
 import { getSiteSettings } from '@/lib/api/content';
 import { publicEnv } from '@/lib/env';
 import { SITE_NAME } from '@/lib/seo';
@@ -41,6 +42,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       className={[playfair, playfairItalic, dmSans, allura].map((font) => font.variable).join(' ')}
     >
       <body>
+        <div className="progression-defilement" aria-hidden="true" />
         <AuthProvider>
           <a href="#contenu" className="lien-evitement">
             Aller au contenu
@@ -54,6 +56,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <CookieConsent />
           <OfflineNotice />
           <Apparitions />
+          <Pepites />
           <Analytics />
         </AuthProvider>
       </body>

@@ -23,7 +23,8 @@
     background-color var(--duree-courte) ease,
     color var(--duree-courte) ease,
     border-color var(--duree-courte) ease,
-    transform var(--duree-courte) ease;
+    box-shadow var(--duree) var(--courbe),
+    transform var(--duree) var(--courbe);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -143,5 +144,6 @@
   .principal:hover:not(:disabled),
   .secondaire:hover:not(:disabled) {
     transform: translateY(-2px);
+    box-shadow: 0 12px 24px -12px rgb(130 73 63 / 0.55);
   }
 }

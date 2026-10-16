@@ -1,5 +1,12 @@
 .rubriques {
+  position: sticky;
+  top: var(--hauteur-header);
+  z-index: 20;
   margin-bottom: var(--e-7);
+  padding-block: var(--e-2);
+  background-color: color-mix(in srgb, var(--creme) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .rubriques ul {
@@ -29,10 +36,20 @@
   white-space: nowrap;
 }
 
+.rubrique {
+  background: linear-gradient(var(--terra), var(--terra)) 50% 100% / 0% 100% no-repeat;
+  transition:
+    background-size 400ms var(--courbe),
+    color 300ms ease,
+    border-color 300ms ease,
+    transform 300ms var(--courbe);
+}
+
 .rubrique:hover {
   border-color: var(--terra);
-  background-color: var(--sable);
-  color: var(--cacao);
+  background-size: 100% 100%;
+  color: var(--blanc);
+  transform: translateY(-2px);
 }
 
 .catalogue {
@@ -73,8 +90,36 @@
 .demande {
   display: grid;
   gap: var(--e-7);
-  margin-top: var(--section);
+  margin-block: var(--section);
+  padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
   align-items: start;
+  border-radius: calc(var(--rayon) * 2);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(in srgb, var(--mangue) 22%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(in srgb, var(--framboise) 14%, transparent),
+      transparent 50%
+    ),
+    var(--sable);
+}
+
+.categorie .entete h2 {
+  position: relative;
+}
+
+.categorie .entete h2::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin-top: var(--e-2);
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--mangue), var(--framboise));
 }
 
 @media (min-width: 64rem) {

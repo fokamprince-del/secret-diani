@@ -83,6 +83,15 @@ export function ProductCard({ product, kind }: ProductCardProps) {
         </div>
       )}
 
+      {textOnly && (
+        <div className={styles.vignette} aria-hidden="true">
+          <span className={styles.vignetteNom}>{product.name}</span>
+          <span className={styles.vignettePastille}>
+            {single ? formatPrice(single.priceCents) : `dès ${formatPrice(product.fromPriceCents)}`}
+          </span>
+        </div>
+      )}
+
       <div className={styles.texte}>
         <h3 className={styles.nom}>{product.name}</h3>
         {product.description && <p>{product.description}</p>}

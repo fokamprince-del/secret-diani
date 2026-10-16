@@ -8,6 +8,9 @@ import { ErrorState } from '@/components/ui/States';
 import { getCourses, getPacks, getSiteSettings } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import styles from './page.module.css';
+import { COURONNE, CREATIONS } from '@/lib/vitrine';
+
+const FRAMBOISES = CREATIONS.find((creation) => creation.slug === 'framboises')!;
 
 export const metadata: Metadata = pageMetadata({
   title: 'Formations en ligne',
@@ -57,6 +60,19 @@ export default async function FormationsPage() {
             pas.
           </p>
         }
+        visual={{
+          video: FRAMBOISES.video,
+          poster: FRAMBOISES.poster,
+          focus: FRAMBOISES.focus,
+          caption: `Layer cake ${FRAMBOISES.title.toLowerCase()} : ${FRAMBOISES.caption}`,
+          medaillon: { src: COURONNE.fallback, alt: COURONNE.alt, focus: '50% 70%' },
+          note: 'à vous de jouer !',
+        }}
+        points={[
+          { icon: 'play', label: 'Vidéos pas à pas' },
+          { icon: 'download', label: 'Fiches à télécharger' },
+          { icon: 'star', label: 'Certificat à la fin' },
+        ]}
       />
       <div className={`conteneur ${styles.page}`}>
         {!packs || !courses ? (
@@ -66,7 +82,9 @@ export default async function FormationsPage() {
         ) : (
           <>
             <section aria-labelledby="packs-titre" className={styles.section}>
-              <h2 id="packs-titre">Les packs</h2>
+              <h2 id="packs-titre" data-apparition="flou">
+                Les packs
+              </h2>
               {!salesOpen && (
                 <p className={styles.alerte}>
                   Les inscriptions sont momentanément fermées. Les formations déjà achetées restent
@@ -99,7 +117,7 @@ export default async function FormationsPage() {
               </section>
             )}
 
-            <section aria-labelledby="exemple-titre" className={styles.exemple}>
+            <section aria-labelledby="exemple-titre" className={styles.exemple} data-scene>
               <div>
                 <h2 id="exemple-titre">Essayez avant de choisir</h2>
                 <p>
@@ -117,7 +135,7 @@ export default async function FormationsPage() {
 
             <section aria-labelledby="fonctionnement-titre" className={styles.section}>
               <h2 id="fonctionnement-titre">Comment ça marche</h2>
-              <ol className={styles.etapes}>
+              <ol className={styles.etapes} data-apparition="cascade">
                 {STEPS.map((step, index) => (
                   <li key={step.title} className={styles.etape}>
                     <span className={styles.numero} aria-hidden="true">

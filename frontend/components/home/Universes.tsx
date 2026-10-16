@@ -10,10 +10,10 @@ import styles from './Universes.module.css';
 const FRAMBOISES = CREATIONS.find((creation) => creation.slug === 'framboises')!;
 
 /** Illustration au trait de la boutique : poche à douille, rosace et pépites de couleur. */
-function PocheIllustration() {
+export function PocheIllustration({ className }: { className?: string }) {
   return (
     <svg
-      className={styles.illustration}
+      className={className ?? styles.illustration}
       viewBox="0 0 240 240"
       aria-hidden="true"
       data-apparition="dessin"
