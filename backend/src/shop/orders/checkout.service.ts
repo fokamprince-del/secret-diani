@@ -124,6 +124,10 @@ export class CheckoutService {
     const expiresAt = new Date(now.getTime() + minutes * 60_000);
 
     const order = await this.prisma.$transaction(async (tx) => {
+      // Idempotence : deux validations simultanées du même panier passent l'une après l'autre ;
+      // la seconde annule la tentative de la première, il ne reste qu'une commande en attente.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`cart-checkout:${cart.id}`}, 0))`;
+      await this.cancelPreviousAttempts(tx, cart.id);
       const created = await tx.order.create({
         data: {
           userId: owner.userId ?? null,

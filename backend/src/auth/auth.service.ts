@@ -36,6 +36,7 @@ import { type GoogleProfile, GoogleAuthError } from './google/google-oauth.servi
 import { LoginAttemptsService } from './login-attempts.service';
 import { MfaService, mfaError, tooManyCodes } from './mfa/mfa.service';
 import { PasswordService } from './password/password.service';
+import { RESET_CODE_TTL_MS, ResetCodeService } from './password/reset-code.service';
 import { AccessTokenService } from './tokens/access-token.service';
 import { UserTokensService } from './tokens/user-tokens.service';
 
@@ -113,6 +114,7 @@ export class AuthService {
     private readonly audit: AuditService,
     private readonly config: AppConfigService,
     private readonly newsletter: NewsletterService,
+    private readonly resetCodes: ResetCodeService,
   ) {
     this.siteUrl = config.get('PUBLIC_SITE_URL').replace(/\/$/, '');
   }
@@ -483,9 +485,12 @@ export class AuthService {
         (await this.userTokens.allowEmailSend('password-reset', email))
       ) {
         const token = await this.userTokens.issue(user.id, 'password_reset', PASSWORD_RESET_TTL_MS);
+        const code = await this.resetCodes.issue(email, user.id);
         await this.mail.send('password-reset', email, {
           firstName: user.firstName,
           link: this.link('/reinitialiser', token),
+          code,
+          codeExpiresInMinutes: RESET_CODE_TTL_MS / 60_000,
           expiresInMinutes: PASSWORD_RESET_TTL_MS / 60_000,
         });
         await this.audit.log({
@@ -496,6 +501,27 @@ export class AuthService {
         });
       }
       return { message: MESSAGES.resetSent };
+    });
+  }
+
+  /**
+   * Code à 6 chiffres reçu par e-mail : s'il est juste, renvoie un jeton de réinitialisation
+   * ordinaire (le site enchaîne sur le choix du nouveau mot de passe). Même réponse, et même
+   * durée, que l'adresse existe ou non ; 5 essais par code.
+   */
+  async verifyResetCode(email: string, code: string): Promise<{ token: string }> {
+    return withMinDuration(ANTI_ENUMERATION_MIN_MS, async () => {
+      const userId = await this.resetCodes.verify(email, code);
+      if (!userId) {
+        throw new AppException(
+          HttpStatus.BAD_REQUEST,
+          ErrorCode.INVALID_RESET_CODE,
+          'Ce code est incorrect ou a expiré. Vérifiez l’e-mail reçu, ou demandez un nouveau code.',
+        );
+      }
+      return {
+        token: await this.userTokens.issue(userId, 'password_reset', PASSWORD_RESET_TTL_MS),
+      };
     });
   }
 

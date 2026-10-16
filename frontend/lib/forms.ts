@@ -145,6 +145,14 @@ export type RegisterValues = z.infer<typeof registerSchema>;
 export const forgotSchema = z.object({ email: emailField });
 export type ForgotValues = z.infer<typeof forgotSchema>;
 
+export const resetCodeSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'Saisissez les 6 chiffres reçus par e-mail.'),
+});
+export type ResetCodeValues = z.infer<typeof resetCodeSchema>;
+
 export const newPasswordSchema = z
   .object({ password: newPasswordField, confirmation: z.string() })
   .refine((values) => values.password === values.confirmation, {

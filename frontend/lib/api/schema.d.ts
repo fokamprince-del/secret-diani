@@ -288,6 +288,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auth/password/code': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Mot de passe oublié : vérifier le code à 6 chiffres reçu par e-mail
+     * @description Code juste : jeton de réinitialisation (comme celui du lien), à utiliser sur POST /auth/password/reset. 5 essais par code, 15 minutes.
+     */
+    post: operations['AuthController_verifyResetCode'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auth/password/reset': {
     parameters: {
       query?: never;
@@ -3132,6 +3152,15 @@ export interface components {
     BackupCodesResponseDto: {
       /** @description Codes de secours à usage unique : affichés une seule fois */
       backupCodes: string[];
+    };
+    ResetCodeDto: {
+      /** @example cliente@example.com */
+      email: string;
+      /**
+       * @description Code à 6 chiffres reçu par e-mail
+       * @example 482913
+       */
+      code: string;
     };
     ResetPasswordDto: {
       /** @description Jeton reçu par e-mail */
@@ -6370,6 +6399,45 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['MessageResponseDto'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AuthController_verifyResetCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResetCodeDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TokenDto'];
         };
       };
       400: {

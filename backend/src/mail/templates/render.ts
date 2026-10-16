@@ -66,17 +66,31 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
     ]),
 
   'password-reset': (data) =>
-    mail('Réinitialisation de votre mot de passe', 'Réinitialiser votre mot de passe', [
-      { paragraph: greeting(data.firstName) },
-      {
-        paragraph: `Vous avez demandé à réinitialiser votre mot de passe. Ce lien est valable ${data.expiresInMinutes} minutes et ne peut servir qu’une fois.`,
-      },
-      { button: { label: 'Choisir un nouveau mot de passe', url: data.link } },
-      {
-        paragraph:
-          'Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail : votre mot de passe actuel reste valable.',
-      },
-    ]),
+    mail(
+      `${data.code} : votre code pour réinitialiser votre mot de passe`,
+      'Réinitialiser votre mot de passe',
+      [
+        { paragraph: greeting(data.firstName) },
+        {
+          paragraph:
+            'Vous avez demandé à réinitialiser votre mot de passe. Saisissez ce code sur la page « Mot de passe oublié » :',
+        },
+        {
+          code: {
+            value: data.code,
+            caption: `Votre code · valable ${data.codeExpiresInMinutes} minutes`,
+          },
+        },
+        {
+          paragraph: `Ou, plus simple depuis cet appareil, utilisez directement le bouton ci-dessous (lien valable ${data.expiresInMinutes} minutes, utilisable une seule fois).`,
+        },
+        { button: { label: 'Choisir un nouveau mot de passe', url: data.link } },
+        {
+          paragraph:
+            'Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail : votre mot de passe actuel reste valable.',
+        },
+      ],
+    ),
 
   'password-changed': (data) =>
     mail('Votre mot de passe a été modifié', 'Mot de passe modifié', [
@@ -219,20 +233,42 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       },
     ]),
 
-  'order-confirmed': (data) =>
-    mail(`Votre commande ${data.reference} est confirmée`, 'Merci pour votre commande !', [
-      { paragraph: greeting(data.firstName) },
-      { paragraph: 'Votre paiement est bien reçu : nous préparons votre commande avec soin.' },
-      ...data.itemLines.map((line) => ({ paragraph: line })),
-      { paragraph: `Sous-total : ${data.subtotal} — Livraison : ${data.shipping}` },
-      { paragraph: `Total payé : ${data.total}` },
-      { paragraph: data.deliveryLine },
-      ...(data.coursesLink
-        ? [{ button: { label: 'Accéder à mes formations', url: data.coursesLink } }]
-        : []),
-      { paragraph: 'Votre facture est disponible depuis le suivi de votre commande.' },
-      { button: { label: 'Suivre ma commande', url: data.trackingLink } },
-    ]),
+  'order-confirmed': (data) => {
+    const course = !!data.coursesLink;
+    return mail(
+      course
+        ? `Bienvenue dans votre formation · commande ${data.reference}`
+        : `Votre commande ${data.reference} est confirmée`,
+      course ? 'Bienvenue dans votre formation !' : 'Merci pour votre commande !',
+      [
+        { paragraph: greeting(data.firstName) },
+        {
+          paragraph: course
+            ? 'Votre paiement est bien reçu et votre accès est ouvert : vous pouvez commencer dès maintenant, à votre rythme.'
+            : 'Votre paiement est bien reçu : je prépare votre commande avec soin.',
+        },
+        ...(data.coursesLink
+          ? [{ button: { label: 'Commencer ma formation', url: data.coursesLink } }]
+          : []),
+        { paragraph: `Récapitulatif de la commande ${data.reference} :` },
+        {
+          rows: [
+            ...data.items.map((item) => ({ label: item.label, value: item.amount })),
+            ...(course ? [] : [{ label: 'Sous-total', value: data.subtotal }]),
+            ...(course ? [] : [{ label: 'Livraison', value: data.shipping }]),
+            { label: 'Total payé', value: data.total, total: true },
+          ],
+        },
+        ...(course ? [] : [{ paragraph: data.deliveryLine }]),
+        {
+          note: data.invoiceAttached
+            ? 'Votre facture est jointe à cet e-mail (PDF). Elle reste aussi disponible depuis le suivi de votre commande.'
+            : 'Votre facture est disponible depuis le suivi de votre commande.',
+        },
+        { button: { label: 'Suivre ma commande', url: data.trackingLink } },
+      ],
+    );
+  },
 
   'order-shipped': (data) =>
     mail(`Votre commande ${data.reference} est en route`, 'Votre commande est expédiée', [

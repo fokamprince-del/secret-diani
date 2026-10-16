@@ -249,6 +249,19 @@ export async function handleAuth(
     });
     return true;
   }
+  if (method === 'POST' && path === '/auth/password/code') {
+    if (body.code !== '123456') {
+      fail(
+        res,
+        400,
+        'INVALID_RESET_CODE',
+        'Ce code est incorrect ou a expiré. Vérifiez l’e-mail reçu, ou demandez un nouveau code.',
+      );
+    } else {
+      send(res, 200, { token: 'jeton-valide' });
+    }
+    return true;
+  }
   if (method === 'POST' && path === '/auth/password/reset') {
     if (body.token !== 'jeton-valide') {
       fail(

@@ -357,7 +357,21 @@ describe('Formations (e2e)', () => {
       });
       expect((invoice.lines as { shippingLabel: string | null }).shippingLabel).toBeNull();
       const mail = await inbox.last(student.email, 'order-confirmed');
-      expect(mail.data.coursesLink).toBe('http://localhost:5173/espace-membre');
+      expect(mail.data.coursesLink).toBe('http://localhost:5173/espace-membre/formations');
+      expect(mail.data.invoiceId).toBe(invoice.id);
+    });
+
+    it('double clic : deux validations simultanées ne créent qu’une commande', async () => {
+      const buyer = await registerVerifiedUser(app, inbox);
+      const send = () =>
+        buyer.http
+          .post(`/courses/packs/${slug('essentiel')}/checkout`, buyer.accessToken)
+          .send({ billingAddress: ADDRESS, acceptTerms: true })
+          .expect(201);
+      const [first, second, third] = await Promise.all([send(), send(), send()]);
+      expect(second.body.orderId).toBe(first.body.orderId);
+      expect(third.body.orderId).toBe(first.body.orderId);
+      expect(await prisma.order.count({ where: { userId: buyer.userId } })).toBe(1);
     });
 
     it('déjà inscrite : pas de second achat du pack, ni d’un pack inférieur', async () => {

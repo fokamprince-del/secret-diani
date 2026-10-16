@@ -20,6 +20,8 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
     data: {
       firstName: 'Awa',
       link: 'https://site.fr/reinitialiser?token=abc',
+      code: '048213',
+      codeExpiresInMinutes: 15,
       expiresInMinutes: 30,
     },
   },
@@ -79,7 +81,7 @@ const JOBS: Pick<MailJob, 'template' | 'data'>[] = [
     data: {
       firstName: 'Awa',
       reference: 'CMD-000042',
-      itemLines: ['1 × Kit Débutant (Standard) : 37,99 €'],
+      items: [{ label: '1 × Kit Débutant (Standard)', amount: '37,99 €' }],
       subtotal: '37,99 €',
       shipping: '7,90 €',
       total: '45,89 €',

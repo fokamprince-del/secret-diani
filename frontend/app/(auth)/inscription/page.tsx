@@ -9,6 +9,7 @@ export const metadata: Metadata = { title: 'Créer mon compte' };
 export default function RegisterPage() {
   return (
     <AuthCard
+      visual="buffet"
       title="Créer mon compte"
       intro={
         <p>

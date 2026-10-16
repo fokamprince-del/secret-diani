@@ -69,77 +69,82 @@ export class PackCheckoutService {
       );
     }
     const now = new Date();
-    const pending = await this.prisma.order.findFirst({
-      where: {
-        userId: user.id,
-        status: 'pending_payment',
-        reservationExpiresAt: { gt: new Date(now.getTime() + 5 * 60_000) },
-        items: { some: { kind: 'pack', packId: pack.id } },
-      },
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, number: true, totalCents: true, reservationExpiresAt: true },
-    });
-    if (pending)
-      return this.result(
-        pending.id,
-        pending.number,
-        pending.totalCents,
-        pending.reservationExpiresAt!,
-      );
-
     const account = await this.prisma.user.findUniqueOrThrow({
       where: { id: user.id },
       select: { email: true, phone: true },
     });
     const billing = dto.billingAddress;
     const expiresAt = new Date(now.getTime() + PAYMENT_WINDOW_MINUTES * 60_000);
-    const order = await this.prisma.order.create({
-      data: {
-        userId: user.id,
-        email: account.email,
-        firstName: billing.firstName,
-        lastName: billing.lastName,
-        phone: account.phone,
-        shippingMethod: 'digital',
-        shippingRateName: 'Accès en ligne',
-        billingAddress: {
+
+    // Idempotence : un verrou par cliente et par pack sérialise deux clics simultanés ; le
+    // second retrouve la commande en attente créée par le premier au lieu d'en ouvrir une autre.
+    const outcome = await this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`pack-checkout:${user.id}:${pack.id}`}, 0))`;
+      const pending = await tx.order.findFirst({
+        where: {
+          userId: user.id,
+          status: 'pending_payment',
+          reservationExpiresAt: { gt: new Date(now.getTime() + 5 * 60_000) },
+          items: { some: { kind: 'pack', packId: pack.id } },
+        },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, number: true, totalCents: true, reservationExpiresAt: true },
+      });
+      if (pending) return { reused: true as const, order: pending };
+
+      const created = await tx.order.create({
+        data: {
+          userId: user.id,
+          email: account.email,
           firstName: billing.firstName,
           lastName: billing.lastName,
-          line1: billing.line1,
-          line2: billing.line2 ?? null,
-          postalCode: billing.postalCode,
-          city: billing.city,
-          country: billing.country,
-        },
-        subtotalCents: pack.priceCents,
-        shippingCents: 0,
-        totalCents: pack.priceCents,
-        termsAcceptedAt: now,
-        termsVersion: this.termsVersion,
-        reservationExpiresAt: expiresAt,
-        items: {
-          create: {
-            kind: 'pack',
-            packId: pack.id,
-            productName: `Pack ${pack.name}`,
-            variantLabel: 'Formation en ligne',
-            unitPriceCents: pack.priceCents,
-            quantity: 1,
+          phone: account.phone,
+          shippingMethod: 'digital',
+          shippingRateName: 'Accès en ligne',
+          billingAddress: {
+            firstName: billing.firstName,
+            lastName: billing.lastName,
+            line1: billing.line1,
+            line2: billing.line2 ?? null,
+            postalCode: billing.postalCode,
+            city: billing.city,
+            country: billing.country,
           },
+          subtotalCents: pack.priceCents,
+          shippingCents: 0,
+          totalCents: pack.priceCents,
+          termsAcceptedAt: now,
+          termsVersion: this.termsVersion,
+          reservationExpiresAt: expiresAt,
+          items: {
+            create: {
+              kind: 'pack',
+              packId: pack.id,
+              productName: `Pack ${pack.name}`,
+              variantLabel: 'Formation en ligne',
+              unitPriceCents: pack.priceCents,
+              quantity: 1,
+            },
+          },
+          events: { create: { toStatus: 'pending_payment', actorId: user.id } },
         },
-        events: { create: { toStatus: 'pending_payment', actorId: user.id } },
-      },
-      select: { id: true, number: true, totalCents: true },
+        select: { id: true, number: true, totalCents: true, reservationExpiresAt: true },
+      });
+      return { reused: false as const, order: created };
     });
-    await this.audit.log({
-      action: AuditAction.SHOP_ORDER_CREATED,
-      actorId: user.id,
-      targetType: 'order',
-      targetId: order.id,
-      ipTruncated: client.ipTruncated,
-      metadata: { pack: true },
-    });
-    return this.result(order.id, order.number, order.totalCents, expiresAt);
+
+    const { order } = outcome;
+    if (!outcome.reused) {
+      await this.audit.log({
+        action: AuditAction.SHOP_ORDER_CREATED,
+        actorId: user.id,
+        targetType: 'order',
+        targetId: order.id,
+        ipTruncated: client.ipTruncated,
+        metadata: { pack: true },
+      });
+    }
+    return this.result(order.id, order.number, order.totalCents, order.reservationExpiresAt!);
   }
 
   private result(

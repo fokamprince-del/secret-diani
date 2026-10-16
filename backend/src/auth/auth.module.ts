@@ -10,6 +10,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { LoginAttemptsService } from './login-attempts.service';
 import { MfaService } from './mfa/mfa.service';
 import { PasswordService } from './password/password.service';
+import { ResetCodeService } from './password/reset-code.service';
 import { AccessTokenService } from './tokens/access-token.service';
 import { UserTokensService } from './tokens/user-tokens.service';
 
@@ -21,6 +22,7 @@ import { UserTokensService } from './tokens/user-tokens.service';
     AuthService,
     GoogleOAuthService,
     PasswordService,
+    ResetCodeService,
     LoginAttemptsService,
     AccessTokenService,
     UserTokensService,

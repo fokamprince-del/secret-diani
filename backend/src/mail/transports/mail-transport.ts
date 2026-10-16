@@ -6,6 +6,8 @@ export interface OutgoingMail {
   html: string;
   text: string;
   headers?: Record<string, string>;
+  /** Pièces jointes (facture PDF…). */
+  attachments?: { filename: string; content: Buffer }[];
   /** Clé d'idempotence transmise au prestataire (identifiant du job) : pas de doublon en cas de relance. */
   idempotencyKey: string;
 }

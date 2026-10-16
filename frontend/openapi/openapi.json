@@ -881,6 +881,59 @@
         ]
       }
     },
+    "/api/v1/auth/password/code": {
+      "post": {
+        "description": "Code juste : jeton de réinitialisation (comme celui du lien), à utiliser sur POST /auth/password/reset. 5 essais par code, 15 minutes.",
+        "operationId": "AuthController_verifyResetCode",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Mot de passe oublié : vérifier le code à 6 chiffres reçu par e-mail",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
     "/api/v1/auth/password/reset": {
       "post": {
         "description": "Toutes les sessions sont déconnectées.",
@@ -9010,6 +9063,24 @@
         },
         "required": [
           "backupCodes"
+        ]
+      },
+      "ResetCodeDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "482913",
+            "description": "Code à 6 chiffres reçu par e-mail"
+          }
+        },
+        "required": [
+          "email",
+          "code"
         ]
       },
       "ResetPasswordDto": {

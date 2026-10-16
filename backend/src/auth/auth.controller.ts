@@ -45,6 +45,7 @@ import {
   MfaTokenDto,
   MfaVerifyDto,
   RegisterDto,
+  ResetCodeDto,
   ResetPasswordDto,
   TokenDto,
   TotpCodeDto,
@@ -196,8 +197,6 @@ export class AuthController {
     return outcome.body;
   }
 
-  @Public()
-  @limit(10)
   // --- Connexion avec Google ---------------------------------------------------------------
   @Public()
   @limit(20)
@@ -254,6 +253,8 @@ export class AuthController {
     }
   }
 
+  @Public()
+  @limit(10)
   @Post('2fa/enroll')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Administrateur, première connexion : générer le secret TOTP' })
@@ -384,6 +385,20 @@ export class AuthController {
   @ApiAcceptedResponse({ type: MessageResponseDto })
   forgotPassword(@Body() dto: EmailDto, @Req() req: Request): Promise<MessageResponseDto> {
     return this.auth.forgotPassword(dto.email, clientContext(req));
+  }
+
+  @Public()
+  @limit(10)
+  @Post('password/code')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Mot de passe oublié : vérifier le code à 6 chiffres reçu par e-mail',
+    description:
+      'Code juste : jeton de réinitialisation (comme celui du lien), à utiliser sur POST /auth/password/reset. 5 essais par code, 15 minutes.',
+  })
+  @ApiOkResponse({ type: TokenDto })
+  verifyResetCode(@Body() dto: ResetCodeDto): Promise<{ token: string }> {
+    return this.auth.verifyResetCode(dto.email, dto.code);
   }
 
   @Public()

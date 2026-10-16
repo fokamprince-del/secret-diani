@@ -7,6 +7,7 @@ export const metadata: Metadata = { title: 'Nouveau mot de passe' };
 export default function ResetPasswordPage() {
   return (
     <AuthCard
+      visual="framboises"
       title="Nouveau mot de passe"
       intro={<p>Vos autres appareils seront déconnectés par sécurité.</p>}
     >

@@ -198,9 +198,27 @@ test.describe('Inscription et liens reçus par e-mail', () => {
   test('mot de passe oublié : même réponse que le compte existe ou non', async ({ page }) => {
     await page.goto('/mot-de-passe-oublie');
     await page.getByRole('textbox', { name: 'Adresse e-mail du compte' }).fill(emailFor('inconnu'));
-    await page.getByRole('button', { name: 'Recevoir le lien' }).click();
-    await expect(page.getByRole('main').getByRole('status')).toContainText(
+    await page.getByRole('button', { name: 'Recevoir mon code' }).click();
+    await expect(page.getByRole('main').getByRole('status').first()).toContainText(
       'Si un compte correspond à cette adresse',
+    );
+  });
+
+  test('mot de passe oublié : code reçu par e-mail puis nouveau mot de passe', async ({ page }) => {
+    await page.goto('/mot-de-passe-oublie');
+    await page.getByRole('textbox', { name: 'Adresse e-mail du compte' }).fill(emailFor());
+    await page.getByRole('button', { name: 'Recevoir mon code' }).click();
+    const code = page.getByRole('textbox', { name: 'Code reçu par e-mail' });
+    await code.fill('000000');
+    await page.getByRole('button', { name: 'Valider le code' }).click();
+    await expect(page.getByRole('main').getByRole('alert')).toContainText('Ce code est incorrect');
+    await code.fill('123456');
+    await page.getByRole('button', { name: 'Valider le code' }).click();
+    await page.getByLabel('Nouveau mot de passe').fill('un-mot-de-passe-solide');
+    await page.getByLabel('Confirmez le mot de passe').fill('un-mot-de-passe-solide');
+    await page.getByRole('button', { name: 'Enregistrer mon mot de passe' }).click();
+    await expect(page.getByRole('main').getByRole('status').first()).toContainText(
+      'Votre mot de passe est modifié',
     );
   });
 });

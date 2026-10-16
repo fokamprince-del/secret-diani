@@ -502,10 +502,10 @@ export class OrdersService {
       await this.mail.send('order-confirmed', order.email, {
         firstName: order.firstName,
         reference: orderReference(order.number),
-        itemLines: order.items.map(
-          (item) =>
-            `${item.quantity} × ${item.productName} (${item.variantLabel}) : ${formatEuros(item.unitPriceCents * item.quantity)}`,
-        ),
+        items: order.items.map((item) => ({
+          label: `${item.quantity} × ${item.productName} (${item.variantLabel})`,
+          amount: formatEuros(item.unitPriceCents * item.quantity),
+        })),
         subtotal: formatEuros(order.subtotalCents),
         shipping: order.shippingCents === 0 ? 'offerte' : formatEuros(order.shippingCents),
         total: formatEuros(order.totalCents),
@@ -517,8 +517,9 @@ export class OrdersService {
               : `${order.shippingRateName}${pickup ? ` : ${pickup}` : ''}`,
         trackingLink: this.trackingLink(orderId),
         coursesLink: order.items.some((item) => item.kind === 'pack')
-          ? `${this.siteUrl}/espace-membre`
+          ? `${this.siteUrl}/espace-membre/formations`
           : null,
+        invoiceId,
       });
       await this.stock.refreshLowStockAlert(
         order.items.flatMap((item) => (item.variantId ? [item.variantId] : [])),
