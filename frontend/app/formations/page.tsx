@@ -134,7 +134,7 @@ export default async function FormationsPage() {
 
             <section aria-labelledby="fonctionnement-titre" className={styles.section}>
               <h2 id="fonctionnement-titre">Comment ça marche</h2>
-              <ol className={styles.etapes} data-apparition="cascade">
+              <ol className={styles.etapes} data-apparition="cascade" data-trace-defilement>
                 {STEPS.map((step, index) => (
                   <li key={step.title} className={styles.etape}>
                     <span className={styles.numero} aria-hidden="true">

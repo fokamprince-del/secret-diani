@@ -149,3 +149,17 @@
     margin-left: 0;
   }
 }
+
+.avecIcone {
+  gap: var(--e-2);
+}
+
+.avecIcone svg {
+  flex: none;
+  color: var(--terra);
+}
+
+.paiements {
+  padding-block: var(--e-5);
+  border-top: 1px solid var(--filet);
+}

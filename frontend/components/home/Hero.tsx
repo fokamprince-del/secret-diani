@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { preload } from 'react-dom';
 import { BUFFET_VIDEO } from '@/lib/vitrine';
 import { ButtonLink } from '../ui/Button';
 import { Icon } from '../ui/Icon';
 import { LoopVideo } from '../ui/LoopVideo';
+import { Magnetique } from '../ui/Magnetique';
 import styles from './Hero.module.css';
 
 interface HeroProps {
@@ -45,7 +46,23 @@ export function Hero({ media }: HeroProps) {
             un art de vivre ♡
           </p>
           <h1 id="hero-titre" className={styles.titre}>
-            Les Secrets <span>de Diani</span>
+            {/* Révélation typographique : chaque mot sort de sa ligne, comme d'un moule. */}
+            <span className={styles.ligne}>
+              <span className={styles.mot} style={{ '--i': 0 } as CSSProperties}>
+                Les
+              </span>{' '}
+              <span className={styles.mot} style={{ '--i': 1 } as CSSProperties}>
+                Secrets
+              </span>
+            </span>{' '}
+            <span className={`${styles.ligne} ${styles.ligneDiani}`}>
+              <span className={styles.mot} style={{ '--i': 2 } as CSSProperties}>
+                de
+              </span>{' '}
+              <span className={styles.mot} style={{ '--i': 3 } as CSSProperties}>
+                Diani
+              </span>
+            </span>
           </h1>
           <p className={styles.promesse}>Cuisiner aujourd’hui, réussir demain.</p>
           <p className={styles.texte}>
@@ -53,15 +70,19 @@ export function Hero({ media }: HeroProps) {
             passion un véritable projet.
           </p>
           <div className={styles.actions}>
-            <ButtonLink href="/traiteur" withArrow>
-              Commander maintenant
-            </ButtonLink>
-            <ButtonLink href="/formations" variant="secondaire" className={styles.formations}>
-              <span className={styles.lecture} aria-hidden="true">
-                <Icon name="play" size={14} />
-              </span>
-              Découvrir les formations
-            </ButtonLink>
+            <Magnetique>
+              <ButtonLink href="/traiteur" withArrow>
+                Commander maintenant
+              </ButtonLink>
+            </Magnetique>
+            <Magnetique>
+              <ButtonLink href="/formations" variant="secondaire" className={styles.formations}>
+                <span className={styles.lecture} aria-hidden="true">
+                  <Icon name="play" size={14} />
+                </span>
+                Découvrir les formations
+              </ButtonLink>
+            </Magnetique>
           </div>
         </div>
       </div>

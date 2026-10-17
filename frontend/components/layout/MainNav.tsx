@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Icon } from '../ui/Icon';
 import { isCurrent, mainNavigation } from './navigation';
 import styles from './Header.module.css';
 
@@ -18,6 +19,7 @@ export function MainNav() {
               className={styles.lien}
               aria-current={isCurrent(pathname, item.href) ? 'page' : undefined}
             >
+              <Icon name={item.icon} size={16} className={styles.lienIcone} />
               {item.label}
             </Link>
           </li>

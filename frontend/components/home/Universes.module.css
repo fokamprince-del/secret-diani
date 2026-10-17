@@ -44,8 +44,17 @@
 
 .photo {
   position: absolute;
-  inset: 0;
+  /* Débord : la photo peut glisser (parallaxe interne) sans laisser de bord vide. */
+  inset: -20px;
   z-index: -2;
+}
+
+.inclinee {
+  border-radius: calc(var(--rayon) * 1.4);
+}
+
+.telephoneCouche {
+  justify-self: center;
 }
 
 .photo :is(picture, img) {

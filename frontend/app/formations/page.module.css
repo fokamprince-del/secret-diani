@@ -119,3 +119,23 @@
   margin-top: 0.2em;
   color: var(--terra);
 }
+
+/* Ligne de progression au-dessus des étapes (grand écran), tracée au défilement. */
+@media (min-width: 64rem) {
+  .etapes {
+    position: relative;
+    padding-top: var(--e-5);
+  }
+
+  .etapes::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--terra);
+    transform-origin: 0 50%;
+  }
+}

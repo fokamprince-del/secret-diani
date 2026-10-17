@@ -125,3 +125,32 @@
     box-shadow: 0 8px 24px -20px rgb(94 47 27 / 0.3);
   }
 }
+
+/* Pictogramme de chaque rubrique : visible dès qu'il y a la place, il se colore au survol. */
+.lien {
+  gap: 0.4rem;
+}
+
+.lienIcone {
+  display: none;
+  flex: none;
+  color: var(--terra);
+  transition: transform var(--duree) var(--courbe);
+}
+
+@media (min-width: 80rem) {
+  .lienIcone {
+    display: block;
+  }
+}
+
+.lien:hover .lienIcone,
+.lien[aria-current='page'] .lienIcone {
+  color: var(--terra-d);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lien:hover .lienIcone {
+    transform: translateY(-2px) rotate(-6deg);
+  }
+}

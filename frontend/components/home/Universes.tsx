@@ -2,7 +2,9 @@ import type { HomeContent } from '@/lib/api/types';
 import { BUFFET_PHOTO, CREATIONS } from '@/lib/vitrine';
 import { ButtonLink } from '../ui/Button';
 import { Icon } from '../ui/Icon';
+import { Inclinaison } from '../ui/Inclinaison';
 import { LoopVideo } from '../ui/LoopVideo';
+import { Magnetique } from '../ui/Magnetique';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 import { StaticPhoto } from '../ui/StaticPhoto';
 import styles from './Universes.module.css';
@@ -66,77 +68,92 @@ export function Universes({ universes }: { universes: HomeContent['universes'] |
         Nos univers
       </h2>
       <div className={`conteneur ${styles.cartes}`}>
-        <article className={styles.traiteur} data-apparition="monte">
-          <div className={styles.photo}>
-            {catering?.image ? (
-              <ResponsiveImage
-                image={catering.image}
-                sizes="(min-width: 64rem) 580px, 100vw"
-                aspectRatio="auto"
-              />
-            ) : (
-              <StaticPhoto
-                photo={BUFFET_PHOTO}
-                sizes="(min-width: 64rem) 580px, 100vw"
-                focus="50% 45%"
-                decorative
-              />
-            )}
-          </div>
-          <div className={styles.traiteurTexte}>
-            <p className={styles.etiquette}>Traiteur & commandes</p>
-            <h3 className={styles.titre}>Des saveurs qui marquent vos moments</h3>
-            <p>
-              {catering?.text ??
-                'Plateaux, mini bouchées et layer cakes pour vos événements : frais, savoureux et faits avec passion.'}
-            </p>
-            <div>
-              <ButtonLink href="/traiteur" variant="secondaire" withArrow className={styles.clair}>
-                Passer commande
-              </ButtonLink>
+        <Inclinaison className={styles.inclinee}>
+          <article className={styles.traiteur} data-apparition="monte">
+            <div className={styles.photo} data-profondeur="-1" data-revele>
+              {catering?.image ? (
+                <ResponsiveImage
+                  image={catering.image}
+                  sizes="(min-width: 64rem) 580px, 100vw"
+                  aspectRatio="auto"
+                />
+              ) : (
+                <StaticPhoto
+                  photo={BUFFET_PHOTO}
+                  sizes="(min-width: 64rem) 580px, 100vw"
+                  focus="50% 45%"
+                  decorative
+                />
+              )}
             </div>
-          </div>
-        </article>
+            <div className={styles.traiteurTexte} data-profondeur="0.5">
+              <p className={styles.etiquette}>Traiteur & commandes</p>
+              <h3 className={styles.titre}>Des saveurs qui marquent vos moments</h3>
+              <p>
+                {catering?.text ??
+                  'Plateaux, mini bouchées et layer cakes pour vos événements : frais, savoureux et faits avec passion.'}
+              </p>
+              <div>
+                <Magnetique>
+                  <ButtonLink
+                    href="/traiteur"
+                    variant="secondaire"
+                    withArrow
+                    className={styles.clair}
+                  >
+                    Passer commande
+                  </ButtonLink>
+                </Magnetique>
+              </div>
+            </div>
+          </article>
+        </Inclinaison>
 
-        <article className={styles.formations} data-apparition="monte">
-          <div className={styles.formationsTexte}>
-            <p className={styles.etiquette}>Plateforme de formation</p>
-            <h3 className={styles.titre}>Apprenez, cuisinez, réalisez vos rêves</h3>
-            {courses?.text && <p>{courses.text}</p>}
-            <ul role="list" className={styles.inclus}>
-              {INCLUS.map((item) => (
-                <li key={item}>
-                  <Icon name="check" size={16} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div>
-              <ButtonLink href="/formations" withArrow>
-                Commencer une formation
-              </ButtonLink>
+        <Inclinaison className={styles.inclinee}>
+          <article className={styles.formations} data-apparition="monte">
+            <div className={styles.formationsTexte}>
+              <p className={styles.etiquette}>Plateforme de formation</p>
+              <h3 className={styles.titre}>Apprenez, cuisinez, réalisez vos rêves</h3>
+              {courses?.text && <p>{courses.text}</p>}
+              <ul role="list" className={styles.inclus}>
+                {INCLUS.map((item) => (
+                  <li key={item}>
+                    <Icon name="check" size={16} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div>
+                <Magnetique>
+                  <ButtonLink href="/formations" withArrow>
+                    Commencer une formation
+                  </ButtonLink>
+                </Magnetique>
+              </div>
             </div>
-          </div>
-          <div className={styles.telephone} aria-hidden="true">
-            {courses?.image ? (
-              <ResponsiveImage image={courses.image} sizes="14rem" aspectRatio="9 / 16" />
-            ) : (
-              <LoopVideo
-                src={FRAMBOISES.video!}
-                poster={FRAMBOISES.poster}
-                focus={FRAMBOISES.focus}
-              />
-            )}
-            <span className={styles.lecture}>
-              <Icon name="play" size={18} />
-            </span>
-          </div>
-        </article>
+            <div className={styles.telephoneCouche} data-profondeur="1">
+              <div className={styles.telephone} aria-hidden="true">
+                {courses?.image ? (
+                  <ResponsiveImage image={courses.image} sizes="14rem" aspectRatio="9 / 16" />
+                ) : (
+                  <LoopVideo
+                    src={FRAMBOISES.video!}
+                    poster={FRAMBOISES.poster}
+                    focus={FRAMBOISES.focus}
+                  />
+                )}
+                <span className={styles.lecture}>
+                  <Icon name="play" size={18} />
+                </span>
+              </div>
+            </div>
+          </article>
+        </Inclinaison>
       </div>
 
       <div className="conteneur">
         <article className={styles.boutique} data-apparition="monte">
-          <div className={styles.boutiqueVisuel}>
+          <div className={styles.boutiqueVisuel} data-revele>
             {shop?.image ? (
               <ResponsiveImage image={shop.image} sizes="10rem" aspectRatio="1 / 1" />
             ) : (

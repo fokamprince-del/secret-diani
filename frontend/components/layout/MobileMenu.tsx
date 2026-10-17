@@ -60,6 +60,9 @@ export function MobileMenu({ social }: { social: SocialLink | null }) {
                   aria-current={isCurrent(pathname, item.href) ? 'page' : undefined}
                   onClick={close}
                 >
+                  <span className={styles.icone} aria-hidden="true">
+                    <Icon name={item.icon} size={20} />
+                  </span>
                   {item.label}
                 </Link>
               </li>

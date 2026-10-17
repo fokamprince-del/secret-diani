@@ -87,8 +87,20 @@
   color: var(--cacao);
 }
 
-.titre span {
+.ligne {
+  display: block;
+  /* Le masque : les mots montent depuis le bas de leur ligne. */
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  padding-bottom: 0.06em;
+}
+
+.ligneDiani {
   color: var(--terra-d);
+}
+
+.mot {
+  display: inline-block;
 }
 
 .promesse {
@@ -155,8 +167,9 @@
 
 /* ---------- Entrée ---------- */
 @media (prefers-reduced-motion: no-preference) {
-  .titre {
-    animation: glisse 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  .mot {
+    animation: mot 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(80ms + var(--i) * 110ms);
   }
 
   .note,
@@ -183,15 +196,14 @@
   }
 
   .visuel {
-    animation: visuel 1400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: visuel 1600ms cubic-bezier(0.7, 0, 0.2, 1) both;
   }
 }
 
-/* Le titre (LCP) glisse sans partir de l'opacité 0. */
-@keyframes glisse {
+/* Le titre (LCP) reste opaque : seuls les mots glissent hors de leur masque. */
+@keyframes mot {
   from {
-    opacity: 0.35;
-    transform: translateY(14px);
+    transform: translateY(105%) rotate(3deg);
   }
 }
 
@@ -202,9 +214,30 @@
   }
 }
 
+/* Rideau : le visuel s'ouvre de droite à gauche en se posant. */
 @keyframes visuel {
   from {
-    opacity: 0;
-    transform: scale(1.04);
+    clip-path: inset(0 0 0 100%);
+    transform: scale(1.08);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Parallaxe au défilement : le visuel descend plus lentement que la page. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .visuel > :first-child {
+      animation: visuel-parallaxe linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 90vh;
+    }
+  }
+}
+
+@keyframes visuel-parallaxe {
+  to {
+    transform: translateY(18%) scale(1.06);
   }
 }

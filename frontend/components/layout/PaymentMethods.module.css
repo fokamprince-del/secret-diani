@@ -1,0 +1,53 @@
+.paiements {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.titre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--cacao);
+}
+
+.titre svg {
+  color: var(--terra-d);
+}
+
+.liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pastille {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 2.25rem;
+  padding: 0.3rem 0.45rem;
+  border: 1px solid var(--filet);
+  border-radius: 6px;
+  background-color: var(--blanc);
+}
+
+.pastille svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .pastille {
+    transition: transform var(--duree) var(--courbe);
+  }
+
+  .pastille:hover {
+    transform: translateY(-2px);
+  }
+}

@@ -45,6 +45,20 @@
       animation-range: entry 0% entry 60%;
     }
 
+    /* Révélation : la photo s'ouvre depuis son centre en entrant à l'écran, puis se pose. */
+    [data-revele] {
+      animation: revele linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+
+    /* Tracé de progression : une ligne qui se dessine au rythme du défilement. */
+    [data-trace-defilement]::before {
+      animation: trace-defilement linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 55%;
+    }
+
     /* Rotation lente au défilement (pastilles, macarons). */
     [data-tourne] {
       animation: tourne-defilement linear both;
@@ -84,6 +98,21 @@
   }
   to {
     transform: none;
+  }
+}
+
+@keyframes revele {
+  from {
+    clip-path: inset(18% 10% 18% 10% round 32px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 0);
+  }
+}
+
+@keyframes trace-defilement {
+  from {
+    transform: scaleX(0);
   }
 }
 

@@ -6,6 +6,7 @@ import { NewsletterForm } from '../forms/NewsletterForm';
 import { Icon } from '../ui/Icon';
 import { Logo } from './Logo';
 import { ManageCookiesButton } from './ManageCookiesButton';
+import { PaymentMethods } from './PaymentMethods';
 import { footerNavigation } from './navigation';
 import styles from './Footer.module.css';
 
@@ -51,14 +52,16 @@ export function Footer({ settings, socials }: FooterProps) {
           <ul role="list">
             {footerNavigation.aide.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={styles.lien}>
+                <Link href={item.href} className={`${styles.lien} ${styles.avecIcone}`}>
+                  <Icon name={item.icon} size={16} />
                   {item.label}
                 </Link>
               </li>
             ))}
             {email && (
               <li>
-                <a href={`mailto:${email}`} className={styles.lien}>
+                <a href={`mailto:${email}`} className={`${styles.lien} ${styles.avecIcone}`}>
+                  <Icon name="mail" size={16} />
                   {email}
                 </a>
               </li>
@@ -88,6 +91,10 @@ export function Footer({ settings, socials }: FooterProps) {
             </ul>
           )}
         </div>
+      </div>
+
+      <div className={`conteneur ${styles.paiements}`}>
+        <PaymentMethods />
       </div>
 
       <div className={`conteneur ${styles.legal}`}>

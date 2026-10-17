@@ -61,7 +61,7 @@ export function ProductCard({ product, kind }: ProductCardProps) {
       data-type={kind}
     >
       {!textOnly && (
-        <div className={styles.visuels}>
+        <div className={styles.visuels} data-revele>
           {gallery.length > 0 ? (
             <ul role="list" className={styles.galerie} data-nombre={Math.min(gallery.length, 3)}>
               {gallery.slice(0, wide ? 3 : 1).map((image, index) => (
