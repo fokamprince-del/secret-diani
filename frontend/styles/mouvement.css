@@ -135,12 +135,12 @@
 
 [data-apparition='zoom'][data-etat='attente'] {
   opacity: 0;
-  transform: scale(0.82) rotate(-2deg);
+  transform: scale(0.92);
 }
 
 [data-apparition='flou'][data-etat='attente'] {
   opacity: 0;
-  filter: blur(12px);
+  filter: blur(10px);
   transform: translateY(1rem);
 }
 
@@ -149,22 +149,22 @@
 [data-apparition='zoom'][data-etat='visible'],
 [data-apparition='flou'][data-etat='visible'] {
   transition:
-    opacity 800ms var(--courbe),
-    filter 900ms var(--courbe),
-    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--duree-longue) var(--courbe),
+    filter var(--duree-apparition) var(--courbe),
+    transform var(--duree-apparition) var(--courbe-douce);
   transition-delay: var(--delai, 0ms);
 }
 
 /* Cascade : les enfants directs arrivent les uns après les autres. */
 [data-apparition='cascade'][data-etat='attente'] > * {
   opacity: 0;
-  transform: translateY(1.75rem) scale(0.97);
+  transform: translateY(1.5rem);
 }
 
 [data-apparition='cascade'][data-etat='visible'] > * {
   transition:
-    opacity 700ms var(--courbe),
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--duree-longue) var(--courbe),
+    transform var(--duree-apparition) var(--courbe-douce);
 }
 
 [data-apparition='cascade'] > :nth-child(2) {
@@ -191,22 +191,23 @@
   /* Carte vivante : elle se soulève, son ombre se réchauffe, sa photo s'approche. */
   .carte-vivante {
     transition:
-      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 500ms var(--courbe),
-      border-color 300ms ease;
+      transform var(--duree-longue) var(--courbe-douce),
+      box-shadow var(--duree-longue) var(--courbe),
+      border-color var(--duree) ease;
   }
 
   .carte-vivante:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 32px -26px rgb(94 47 27 / 0.4);
+    transform: translateY(-6px);
+    border-color: var(--filet-or);
+    box-shadow: var(--ombre-elevee);
   }
 
   .carte-vivante :is(img, video) {
-    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--duree-apparition) var(--courbe-douce);
   }
 
   .carte-vivante:hover :is(img, video) {
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
 }
 

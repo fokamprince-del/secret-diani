@@ -36,6 +36,26 @@ body {
   overflow-x: clip;
 }
 
+/*
+ * Grain de papier, à peine perceptible (3 %), posé sur toute la page : le crème prend la
+ * matière d'un carton de pâtissier. Une seule texture en mosaïque, fixe, sans clic possible.
+ */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .37 0 0 0 0 .18 0 0 0 0 .1 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+@media print {
+  body::after {
+    display: none;
+  }
+}
+
 /* Le menu mobile ouvert bloque le défilement de la page. */
 body:has(dialog[open]) {
   overflow: hidden;
@@ -53,9 +73,18 @@ h4 {
   font-family: var(--font-titre);
   font-weight: 500;
   color: var(--titre);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  line-height: var(--interligne-titre);
+  letter-spacing: var(--approche-titre);
   text-wrap: balance;
+  /* Ligatures et chiffres elzéviriens de Playfair : le titre prend une allure d'imprimerie. */
+  font-feature-settings: 'liga', 'kern';
+  font-kerning: normal;
+}
+
+/* Les grands titres en graisse 400 : plus fins, plus élégants à grande taille. */
+h1,
+h2 {
+  font-weight: 400;
 }
 
 h1 {
@@ -113,6 +142,7 @@ button {
 }
 
 /* ---------- Liens : soulignement animé ---------- */
+/* Le filet se retire vers la droite au survol puis revient : un geste de plume. */
 a {
   color: var(--lien);
   text-decoration: none;
@@ -121,7 +151,7 @@ a {
   background-repeat: no-repeat;
   background-size: 100% 1px;
   transition:
-    background-size var(--duree) var(--courbe),
+    background-size var(--duree-longue) var(--courbe-douce),
     color var(--duree-courte) ease;
 }
 
@@ -169,6 +199,25 @@ a.sans-filet,
 
 main:focus {
   outline: none;
+}
+
+/* ---------- Studio : gâteau photographié seul, sur fond blanc ---------- */
+/*
+ * Le cadre prend le blanc pur de la photo et montre le gâteau en entier (contain) : les médias
+ * sont recadrés serré, le blanc autour du gâteau se fond dans celui du cadre. Prioritaire sur
+ * les cadrages « cover » des composants et sur le `objectPosition` inline : d'où la double
+ * classe et les `!important`.
+ */
+.studio.studio,
+.studio.studio :is(picture, img, video) {
+  background-color: var(--studio);
+}
+
+.studio.studio :is(img, video) {
+  box-sizing: border-box;
+  padding: var(--studio-marge, 4%);
+  object-fit: contain !important;
+  object-position: 50% 55% !important;
 }
 
 /* ---------- Utilitaires ---------- */
@@ -246,19 +295,20 @@ main:focus {
 /* L'état n'est posé que par le script, jamais si le mouvement est réduit : visible au repos. */
 [data-apparition='monte'][data-etat='attente'] {
   opacity: 0;
-  transform: translateY(1.25rem);
+  transform: translateY(1.5rem);
 }
 
+/* Dévoilement : le visuel monte et se pose, sans grossir trop (4 %). */
 [data-apparition='devoile'][data-etat='attente'] {
   opacity: 0;
-  transform: translateY(2.5rem) scale(0.9);
+  transform: translateY(2rem) scale(0.96);
 }
 
 [data-apparition='monte'][data-etat='visible'],
 [data-apparition='devoile'][data-etat='visible'] {
   transition:
-    opacity 700ms var(--courbe),
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--duree-longue) var(--courbe),
+    transform var(--duree-apparition) var(--courbe-douce);
   transition-delay: var(--delai, 0ms);
 }
 

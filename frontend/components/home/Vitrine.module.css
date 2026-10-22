@@ -147,6 +147,7 @@
 }
 
 .media {
+  --studio-marge: 18% 3% 6%;
   position: relative;
   aspect-ratio: 3 / 5;
   overflow: hidden;

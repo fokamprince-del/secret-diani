@@ -34,6 +34,18 @@
   --ganache: #3e2418;
   --ivoire: #fbf3e2;
 
+  /*
+   * Nuances dérivées (jamais de nouvelle teinte) : voiles, filets et verre tirés de la palette.
+   * --studio : le blanc pur des photos de gâteaux détourés, pour qu'aucun bord ne se voie.
+   */
+  --studio: #fff;
+  --creme-clair: color-mix(in srgb, var(--creme) 50%, var(--blanc));
+  --sable-voile: color-mix(in srgb, var(--sable) 60%, transparent);
+  --filet-or: color-mix(in srgb, var(--or) 40%, transparent);
+  --filet-fin: color-mix(in srgb, var(--nude) 38%, transparent);
+  --verre: color-mix(in srgb, var(--creme) 74%, transparent);
+  --verre-flou: saturate(1.5) blur(18px);
+
   /* Rôles */
   --fond: var(--creme);
   --fond-alt: var(--sable);
@@ -55,6 +67,11 @@
   --interligne: 1.7;
   --mesure: 65ch;
 
+  --interligne-titre: 1.12;
+  --approche-titre: -0.018em;
+  /* Petites capitales des surtitres : très espacées, comme une étiquette de pâtisserie. */
+  --approche-surtitre: 0.2em;
+
   --t-display: clamp(2.375rem, 1.55rem + 3.6vw, 4.25rem);
   --t-h1: clamp(2.125rem, 1.6rem + 2.4vw, 3.5rem);
   --t-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.625rem);
@@ -69,7 +86,7 @@
   --e-6: 2rem;
   --e-7: 3rem;
   --e-8: 4rem;
-  --section: clamp(3.5rem, 2.5rem + 5vw, 7rem);
+  --section: clamp(4rem, 2.6rem + 6vw, 8.5rem);
 
   /* Gabarit */
   --rayon: 14px;
@@ -79,14 +96,22 @@
   --hauteur-header: 4.5rem;
   --cible: 44px;
 
-  /* Ombres très douces, teintées brun (jamais de noir) */
-  --ombre: 0 1px 2px rgb(94 47 27 / 0.04), 0 10px 30px -12px rgb(94 47 27 / 0.12);
+  /* Ombres très douces et diffuses, en couches, teintées cacao (jamais de noir) */
+  --ombre:
+    0 1px 1px rgb(94 47 27 / 0.03), 0 6px 14px -8px rgb(94 47 27 / 0.08),
+    0 24px 48px -30px rgb(94 47 27 / 0.16);
+  --ombre-elevee:
+    0 2px 4px rgb(94 47 27 / 0.04), 0 16px 32px -18px rgb(94 47 27 / 0.18),
+    0 42px 80px -42px rgb(94 47 27 / 0.28);
+  --ombre-bouton: 0 10px 22px -14px rgb(130 73 63 / 0.55);
 
-  /* Mouvement : bref et au service de l'action */
-  --duree-courte: 160ms;
-  --duree: 260ms;
-  --duree-longue: 400ms;
+  /* Mouvement : doux, entre 300 et 800 ms (retours de couleur un peu plus vifs) */
+  --duree-courte: 200ms;
+  --duree: 320ms;
+  --duree-longue: 600ms;
+  --duree-apparition: 800ms;
   --courbe: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --courbe-douce: cubic-bezier(0.22, 1, 0.36, 1);
 
   --focus-anneau: 2px solid var(--terra-d);
 }
@@ -96,5 +121,6 @@
     --duree-courte: 0ms;
     --duree: 0ms;
     --duree-longue: 0ms;
+    --duree-apparition: 0ms;
   }
 }

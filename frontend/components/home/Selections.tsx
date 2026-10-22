@@ -13,20 +13,13 @@ import styles from './Selections.module.css';
 
 /** Affiche d'une création de Diani (image fixe : les vidéos jouent ailleurs). */
 function Poster({ creation }: { creation: Creation }) {
+  // Gâteau sur fond blanc : montré en entier dans un cadre studio (voir globals.css).
   if (creation.photo) {
-    return <StaticPhoto photo={creation.photo} sizes="12rem" focus={creation.focus} decorative />;
+    return <StaticPhoto photo={creation.photo} sizes="12rem" className="studio" decorative />;
   }
   return (
-    <picture>
-      <img
-        src={creation.poster}
-        alt=""
-        width={464}
-        height={848}
-        loading="lazy"
-        decoding="async"
-        style={{ objectPosition: creation.focus }}
-      />
+    <picture className="studio">
+      <img src={creation.poster} alt="" width={464} height={848} loading="lazy" decoding="async" />
     </picture>
   );
 }
@@ -76,12 +69,9 @@ function cateringTabs(catalog: CateringCatalog | null): RailTab[] {
   const cakes: RailItem[] = CREATIONS.map((creation) => ({
     id: creation.slug,
     title: creation.title,
-    meta: creation.slug === 'buches' ? 'Bûches de fête' : 'Layer cake',
-    price:
-      creation.slug === 'buches' || !layerCake
-        ? 'Sur demande'
-        : `Dès ${shortPrice(layerCake.fromPriceCents)}`,
-    href: creation.slug === 'buches' ? '/traiteur#demande' : '/traiteur#layer-cakes',
+    meta: 'Layer cake',
+    price: layerCake ? `Dès ${shortPrice(layerCake.fromPriceCents)}` : 'Sur demande',
+    href: '/traiteur#layer-cakes',
     visual: <Poster creation={creation} />,
   }));
 

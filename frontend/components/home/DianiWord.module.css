@@ -27,7 +27,7 @@
   font-family: var(--font-texte);
   font-size: var(--taille-petit);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--approche-surtitre);
   text-transform: uppercase;
   color: var(--terra-d);
 }

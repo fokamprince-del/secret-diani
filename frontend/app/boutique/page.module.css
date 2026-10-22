@@ -72,7 +72,7 @@
 .bientotSurtitre {
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--approche-surtitre);
   text-transform: uppercase;
   color: var(--terra-d);
 }

@@ -17,12 +17,12 @@ function LayerCakeShowcase() {
   if (!first) return null;
   return (
     <ul role="list" className={styles.arches}>
-      <li>
+      <li className="studio">
         <LoopVideo src={first.video!} poster={first.poster} focus={first.focus} />
         <span className="visually-hidden">{first.title}</span>
       </li>
       {others.map((creation) => (
-        <li key={creation.slug}>
+        <li key={creation.slug} className="studio">
           <picture>
             <img
               src={creation.poster}
@@ -31,7 +31,6 @@ function LayerCakeShowcase() {
               height={848}
               loading="lazy"
               decoding="async"
-              style={{ objectPosition: creation.focus }}
             />
           </picture>
         </li>

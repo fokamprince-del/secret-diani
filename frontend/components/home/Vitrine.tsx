@@ -158,7 +158,7 @@ export function Vitrine({
             aria-current={index === active || undefined}
           >
             <figure className={styles.figure}>
-              <div className={styles.media}>
+              <div className={`${styles.media} studio`}>
                 {item.video ? (
                   <LoopVideo
                     src={item.video}

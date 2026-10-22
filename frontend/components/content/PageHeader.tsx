@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { preload } from 'react-dom';
+import { surFondBlanc } from '@/lib/vitrine';
 import { CremeTrait } from '../ui/CremeTrait';
 import { Icon, type IconName } from '../ui/Icon';
 import { LoopVideo } from '../ui/LoopVideo';
@@ -88,7 +89,7 @@ export function PageHeader({
         {visual && (
           <div className={styles.scene}>
             <span className={styles.halo} aria-hidden="true" />
-            <figure className={styles.arche}>
+            <figure className={`${styles.arche} ${surFondBlanc(visual.poster) ? 'studio' : ''}`}>
               {visual.video ? (
                 <LoopVideo src={visual.video} poster={visual.poster} focus={visual.focus} />
               ) : (
@@ -106,7 +107,9 @@ export function PageHeader({
               <figcaption className="visually-hidden">{visual.caption}</figcaption>
             </figure>
             {visual.medaillon && (
-              <figure className={styles.medaillon}>
+              <figure
+                className={`${styles.medaillon} ${surFondBlanc(visual.medaillon.src) ? 'studio' : ''}`}
+              >
                 <picture>
                   <img
                     src={visual.medaillon.src}

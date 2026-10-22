@@ -1,8 +1,13 @@
 /**
  * Vraies créations de Diani (photos et vidéos), en fichiers statiques dans `public/media/vitrine`
- * en attendant que la médiathèque de l'API accepte la vidéo (D-F48). Vidéos 464 × 848 en H.264
- * sans son, index en tête de fichier (lecture immédiate) ; affiches WebP tirées des vidéos ;
- * photos déclinées en AVIF, WebP et JPEG.
+ * en attendant que la médiathèque de l'API accepte la vidéo (D-F48). Vidéos H.264 sans son,
+ * index en tête de fichier (lecture immédiate) ; affiches WebP tirées des vidéos ; photos
+ * déclinées en AVIF, WebP et JPEG.
+ *
+ * Les gâteaux sont photographiés seuls, sur fond blanc pur (#fff), et recadrés au plus près
+ * (8 % de marge blanche) : dans les cadres « studio » du site (jeton --studio), ils s'affichent
+ * en entier et en grand, quelle que soit la forme du cadre. Une création sans version fond blanc n'est pas
+ * publiée (bûches, retirées le 2026-10-22) ; originaux dans `medias-non-publies/originaux`.
  *
  * Les légendes décrivent seulement ce que l'on voit à l'image : aucun parfum ni aucune
  * composition qui n'ait été confirmé par Diani. À relire avec elle.
@@ -34,9 +39,9 @@ function photo(name: string, widths: number[], height: (w: number) => number, al
 
 export const COURONNE = photo(
   'couronne',
-  [480, 720],
-  (w) => Math.round((w * 16) / 9),
-  'Gâteau d’anniversaire ivoire coiffé d’une couronne dorée, rosaces de crème et drip blanc.',
+  [480, 600],
+  (w) => Math.round((w * 765) / 617),
+  'Gâteau d’anniversaire ivoire coiffé d’une couronne dorée, rosaces de crème et drip blanc, sur fond blanc.',
 );
 
 export const BUFFET_PHOTO = photo(
@@ -44,13 +49,6 @@ export const BUFFET_PHOTO = photo(
   [400, 590],
   () => 1046,
   'Buffet salé dressé sur des présentoirs blancs : mini burgers, samoussas, wraps et verrines, entre deux bouquets de fleurs.',
-);
-
-export const BUCHES = photo(
-  'buches',
-  [480, 720],
-  (w) => Math.round((w * 16) / 9),
-  'Trois bûches roulées dans leurs boîtes : deux à la noix de coco et à la fraise, une à la mangue et aux fruits de la passion.',
 );
 
 /** Vidéo d'ambiance : tour du buffet salé (mini burgers, samoussas, wraps, verrines). */
@@ -99,18 +97,9 @@ export const CREATIONS: Creation[] = [
     title: 'La couronne',
     caption: 'Rosaces ivoire, drip blanc et couronne dorée pour une reine de la fête.',
     accent: 'or',
-    poster: `${DOSSIER}/couronne-720.webp`,
+    poster: `${DOSSIER}/couronne-600.webp`,
     photo: COURONNE,
     focus: '50% 70%',
-  },
-  {
-    slug: 'buches',
-    title: 'Les bûches roulées',
-    caption: 'Coco et fraise, ou mangue et passion : des roulés à partager pour les fêtes.',
-    accent: 'mangue',
-    poster: `${DOSSIER}/buches-720.webp`,
-    photo: BUCHES,
-    focus: '50% 55%',
   },
   {
     slug: 'caramel-18',
@@ -131,6 +120,15 @@ export const CREATIONS: Creation[] = [
     focus: '50% 70%',
   },
 ];
+
+/** Affiches et photos des créations, toutes sur fond blanc pur : elles vont dans un cadre `.studio`. */
+const FOND_BLANC = new Set(
+  CREATIONS.flatMap((creation) => [creation.poster, creation.photo?.fallback ?? creation.poster]),
+);
+
+export function surFondBlanc(src: string): boolean {
+  return FOND_BLANC.has(src);
+}
 
 /** Le gâteau mis en avant dans le haut de l'accueil, à côté du buffet. */
 export const HERO_CREATION = CREATIONS[0]!;

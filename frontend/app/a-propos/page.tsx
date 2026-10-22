@@ -11,14 +11,7 @@ import { StaticPhoto } from '@/components/ui/StaticPhoto';
 import { getPageIfPublished, getSiteSettings } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import { socialLinksFrom } from '@/lib/social';
-import {
-  BUCHES,
-  BUFFET_PHOTO,
-  BUFFET_VIDEO,
-  COURONNE,
-  CREATIONS,
-  HERO_CREATION,
-} from '@/lib/vitrine';
+import { BUFFET_PHOTO, BUFFET_VIDEO, COURONNE, CREATIONS, HERO_CREATION } from '@/lib/vitrine';
 import styles from './page.module.css';
 
 export const metadata: Metadata = pageMetadata({
@@ -86,7 +79,7 @@ const METIERS = [
  */
 export default async function AboutPage() {
   const [story, settings] = await Promise.all([getPageIfPublished('a-propos'), getSiteSettings()]);
-  const galerie = CREATIONS.filter((creation) => !['couronne', 'buches'].includes(creation.slug));
+  const galerie = CREATIONS.filter((creation) => creation.slug !== 'couronne');
 
   return (
     <>
@@ -202,15 +195,12 @@ export default async function AboutPage() {
             Sortis de ma cuisine
           </h2>
           <ul role="list" className={styles.mosaique}>
-            <li className={styles.grand} data-apparition="devoile">
-              <StaticPhoto
-                photo={COURONNE}
-                sizes="(min-width: 64rem) 380px, 50vw"
-                focus="50% 70%"
-              />
+            <li className={`${styles.grand} studio`} data-apparition="devoile">
+              <StaticPhoto photo={COURONNE} sizes="(min-width: 64rem) 380px, 50vw" />
+              <span className={styles.legende}>La couronne</span>
             </li>
             {galerie.map((creation) => (
-              <li key={creation.slug} data-apparition="devoile">
+              <li key={creation.slug} className="studio" data-apparition="devoile">
                 {creation.video ? (
                   <LoopVideo src={creation.video} poster={creation.poster} focus={creation.focus} />
                 ) : creation.photo ? (
@@ -220,13 +210,9 @@ export default async function AboutPage() {
               </li>
             ))}
             <li className={styles.large} data-apparition="devoile">
-              <StaticPhoto photo={BUCHES} sizes="(min-width: 64rem) 560px, 100vw" focus="50% 55%" />
-              <span className={styles.legende}>Les bûches roulées</span>
-            </li>
-            <li className={styles.large} data-apparition="devoile">
               <StaticPhoto
                 photo={BUFFET_PHOTO}
-                sizes="(min-width: 64rem) 560px, 100vw"
+                sizes="(min-width: 64rem) 1180px, 100vw"
                 focus="50% 70%"
               />
               <span className={styles.legende}>Un buffet de fête</span>

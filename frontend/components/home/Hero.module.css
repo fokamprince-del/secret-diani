@@ -5,6 +5,25 @@
   background-color: var(--creme);
 }
 
+/* Halo pêche, forme organique et floue derrière le titre ; il dérive très lentement. */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: max(-8rem, calc((100vw - var(--largeur-max)) / 2 - 12rem));
+  z-index: -2;
+  width: min(38rem, 90vw);
+  aspect-ratio: 1.15;
+  border-radius: 62% 38% 55% 45% / 48% 58% 42% 52%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--peche) 55%, transparent),
+    transparent
+  );
+  filter: blur(8px);
+  pointer-events: none;
+}
+
 /* ---------- Visuel : grand, à droite, fondu dans le crème ---------- */
 .visuel {
   position: relative;
@@ -197,6 +216,17 @@
 
   .visuel {
     animation: visuel 1600ms cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+
+  .hero::before {
+    animation: halo-derive 22s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes halo-derive {
+  to {
+    transform: translate(3rem, 2rem) rotate(18deg) scale(1.06);
+    border-radius: 45% 55% 40% 60% / 58% 42% 58% 42%;
   }
 }
 

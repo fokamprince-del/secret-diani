@@ -234,17 +234,19 @@
 .mosaique li {
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--filet-fin);
   border-radius: var(--rayon);
   background-color: var(--ivoire);
+  box-shadow: var(--ombre);
 }
 
 .mosaique .grand {
   grid-row: span 2;
 }
 
-/* Dernière ligne : deux photos larges. */
+/* Dernière ligne : le buffet en bandeau panoramique, sur toute la largeur. */
 .mosaique .large {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 @media (min-width: 56rem) {

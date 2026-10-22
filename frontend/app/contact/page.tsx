@@ -7,7 +7,9 @@ import { getSiteSettings } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import { socialLinksFrom, whatsappLink } from '@/lib/social';
 import styles from './page.module.css';
-import { BUCHES } from '@/lib/vitrine';
+import { CREATIONS } from '@/lib/vitrine';
+
+const FRAMBOISES = CREATIONS.find((creation) => creation.slug === 'framboises')!;
 
 export const metadata: Metadata = pageMetadata({
   title: 'Contact',
@@ -37,9 +39,10 @@ export default async function ContactPage() {
         }
         accent="framboise"
         visual={{
-          poster: BUCHES.fallback,
-          focus: '50% 55%',
-          caption: BUCHES.alt,
+          video: FRAMBOISES.video,
+          poster: FRAMBOISES.poster,
+          focus: FRAMBOISES.focus,
+          caption: `${FRAMBOISES.title} : ${FRAMBOISES.caption}`,
         }}
       />
       <div className={`conteneur ${styles.grille}`}>
