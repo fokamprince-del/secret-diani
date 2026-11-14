@@ -12,7 +12,7 @@ import styles from './Header.module.css';
  */
 export function Header({ social }: { social: SocialLink | null }) {
   return (
-    <header className={styles.entete}>
+    <header className={styles.entete} data-chrome-public>
       <div className={`conteneur ${styles.barre}`}>
         <Logo />
         <MainNav />

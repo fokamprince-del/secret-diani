@@ -1,0 +1,56 @@
+.figure {
+  display: grid;
+  gap: var(--e-2);
+  margin: 0;
+}
+
+.lecture {
+  min-height: 1.5em;
+  color: var(--texte);
+  font-size: 0.9rem;
+}
+
+.lecture strong {
+  color: var(--cacao);
+}
+
+/* Barres : 2 px d'écart, sommet arrondi 4 px, posées sur la ligne de base. */
+.zone {
+  display: grid;
+  gap: 2px;
+  align-items: end;
+  height: 9rem;
+  border-bottom: 1px solid var(--filet);
+}
+
+.colonne {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.barre {
+  width: 100%;
+  max-width: 14px;
+  margin-inline: auto;
+  border-radius: 4px 4px 0 0;
+  background: var(--terra);
+  transition: background-color var(--duree-courte) ease;
+}
+
+.colonne[data-actif] .barre {
+  background: var(--cacao);
+}
+
+.colonne[data-actif] {
+  background: color-mix(in srgb, var(--sable) 55%, transparent);
+  border-radius: 4px 4px 0 0;
+}
+
+.axe {
+  display: flex;
+  justify-content: space-between;
+  color: var(--texte-s);
+  font-size: 0.75rem;
+}

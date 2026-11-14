@@ -24,7 +24,7 @@ export function Footer({ settings, socials }: FooterProps) {
   const year = new Date().getFullYear();
   const email = settings?.contactEmail;
   return (
-    <footer className={styles.pied}>
+    <footer className={styles.pied} data-chrome-public>
       <div className={`conteneur ${styles.grille}`}>
         <div className={styles.marque}>
           <Logo size="grand" />

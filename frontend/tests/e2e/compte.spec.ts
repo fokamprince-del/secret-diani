@@ -130,7 +130,8 @@ test.describe('Connexion et protection de l’espace membre', () => {
     await expect(page.getByRole('main').getByRole('alert')).toContainText('Code incorrect');
     await code.fill('123456');
     await page.getByRole('button', { name: 'Valider le code' }).click();
-    await expect(page).toHaveURL(/\/espace-membre$/);
+    // Sans page demandée, une administratrice arrive dans le back-office.
+    await expect(page).toHaveURL(/\/admin$/);
   });
 
   test('administration, première connexion : configuration puis codes de secours', async ({
@@ -144,7 +145,7 @@ test.describe('Connexion et protection de l’espace membre', () => {
       page.getByRole('list', { name: 'Codes de secours' }).getByRole('listitem'),
     ).toHaveCount(4);
     await page.getByRole('button', { name: 'J’ai noté mes codes, continuer' }).click();
-    await expect(page).toHaveURL(/\/espace-membre$/);
+    await expect(page).toHaveURL(/\/admin$/);
   });
 });
 

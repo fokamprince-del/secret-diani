@@ -118,6 +118,41 @@ const paths = {
   camion: (
     <path d="M3.5 6.5h10v9h-10zM13.5 9.5h4l3 3v3h-7M7 18.5a1.5 1.5 0 1 0 0-.01M17 18.5a1.5 1.5 0 1 0 0-.01" />
   ),
+  // Administration
+  grille: <path d="M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM13.5 13.5h6v6h-6z" />,
+  reglages: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4L18 18M6 18l1.6-1.6M16.4 7.6L18 6" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" />
+    </>
+  ),
+  utilisateurs: (
+    <>
+      <circle cx="9" cy="9" r="3" />
+      <path d="M3.5 19c.7-3 2.8-4.6 5.5-4.6s4.8 1.6 5.5 4.6M15.5 6.2a3 3 0 0 1 0 5.6M17.5 14.6c1.7.5 2.7 2 3 4.4" />
+    </>
+  ),
+  document: <path d="M6.5 3.5h7.5l4 4v13h-11.5zM13.5 3.5v4.5h4.5M9 12.5h6M9 16h6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  crayon: <path d="M14.5 5.5l4 4L8.5 19.5h-4v-4zM12.5 7.5l4 4" />,
+  corbeille: <path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5M10 10.5v6M14 10.5v6" />,
+  recherche: (
+    <>
+      <circle cx="10.5" cy="10.5" r="6" />
+      <path d="M15 15l5 5" />
+    </>
+  ),
+  calendrier: <path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4v4M15.5 4v4M8 14h2M14 14h2M8 17h2" />,
+  journal: <path d="M5 5.5h14M5 10h14M5 14.5h9M5 19h6" />,
+  externe: <path d="M13.5 4.5h6v6M19.5 4.5l-8 8M17 13.5v6h-12.5v-12.5h6" />,
+  copier: <path d="M8.5 8.5h11v11h-11zM15.5 8.5v-4h-11v11h4" />,
 } as const;
 
 export type IconName = keyof typeof paths;

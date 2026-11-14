@@ -17,15 +17,20 @@ export function AccountLink({
 }) {
   const { status, user } = useAuth();
   const connected = status === 'authenticated';
+  const admin = connected && user?.role === 'admin';
   return (
     <Link
-      href={connected ? '/espace-membre' : '/connexion'}
+      href={admin ? '/admin' : connected ? '/espace-membre' : '/connexion'}
       className={className}
       data-connecte={connected || undefined}
     >
       {!withLabel && <Icon name="user" />}
       <span className={withLabel ? undefined : 'visually-hidden'}>
-        {connected ? `Mon espace${user?.firstName ? ` (${user.firstName})` : ''}` : 'Se connecter'}
+        {admin
+          ? 'Administration'
+          : connected
+            ? `Mon espace${user?.firstName ? ` (${user.firstName})` : ''}`
+            : 'Se connecter'}
       </span>
     </Link>
   );

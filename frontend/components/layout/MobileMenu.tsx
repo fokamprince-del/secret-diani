@@ -17,8 +17,9 @@ import styles from './MobileMenu.module.css';
 export function MobileMenu({ social }: { social: SocialLink | null }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const pathname = usePathname();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const connected = status === 'authenticated';
+  const admin = connected && user?.role === 'admin';
 
   const open = () => dialogRef.current?.showModal();
   const close = () => dialogRef.current?.close();
@@ -72,12 +73,12 @@ export function MobileMenu({ social }: { social: SocialLink | null }) {
 
         <div className={`conteneur ${styles.bas}`}>
           <Link
-            href={connected ? '/espace-membre' : '/connexion'}
+            href={admin ? '/admin' : connected ? '/espace-membre' : '/connexion'}
             className={`${styles.secondaire} sans-filet`}
             onClick={close}
           >
             <Icon name="user" size={20} />
-            {connected ? 'Mon espace' : 'Se connecter'}
+            {admin ? 'Administration' : connected ? 'Mon espace' : 'Se connecter'}
           </Link>
           {social && (
             <a

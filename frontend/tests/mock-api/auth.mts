@@ -186,6 +186,11 @@ export function userIdForEmail(email: string): string | undefined {
   return users.get(email.trim().toLowerCase())?.id;
 }
 
+/** Rôle du compte connecté : les routes d'administration exigent `admin` (et le second facteur). */
+export function bearerRole(req: IncomingMessage): 'client' | 'admin' | null {
+  return bearer(req)?.user.role ?? null;
+}
+
 /** E-mail du compte connecté (commandes passées avec un compte). */
 export function bearerEmail(req: IncomingMessage): string | null {
   return bearer(req)?.user.email ?? null;

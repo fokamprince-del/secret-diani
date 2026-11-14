@@ -9,6 +9,7 @@
  * - demande traiteur : date d'événement à moins de 2 jours → 400 sur le champ `eventDate`.
  */
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { handleAdmin, resetAdmin } from './admin.mts';
 import { handleAuth, refreshStats, userIdForEmail } from './auth.mts';
 import { completeCourse, handleCourses } from './courses.mts';
 import { handleShop, paymentPage } from './shop.mts';
@@ -105,6 +106,10 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
 
   // Statistiques réservées aux tests (jamais exposées par le vrai backend).
   if (url.pathname === '/__mock/stats') return send(res, 200, refreshStats());
+  if (url.pathname === '/__mock/admin/reset') {
+    resetAdmin();
+    return send(res, 200, { reset: true });
+  }
   if (url.pathname === '/__mock/paiement') return paymentPage(url, res, SITE_URL);
   if (url.pathname === '/__mock/terminer') {
     const done = completeCourse(
@@ -120,6 +125,7 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
 
   const body = req.method === 'GET' ? {} : await readJson(req);
   if (await handleAuth(req, res, path, body, send, error)) return;
+  if (await handleAdmin(req, res, path, body, send, error)) return;
   if (await handleShop(req, res, url, path, body, send, error, SITE_URL)) return;
   if (await handleCourses(req, res, path, body, send, error)) return;
 

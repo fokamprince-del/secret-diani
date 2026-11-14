@@ -12,7 +12,7 @@ export function AnnouncementBar({ announcement }: { announcement: SiteSettings['
   const { text, link } = announcement;
   const external = link.startsWith('https://');
   return (
-    <aside className={styles.bandeau} aria-label="Annonce">
+    <aside className={styles.bandeau} aria-label="Annonce" data-chrome-public>
       <p className={`conteneur ${styles.texte}`}>
         {link ? (
           external ? (

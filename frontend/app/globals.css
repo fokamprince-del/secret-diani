@@ -353,3 +353,12 @@ li:nth-child(3n) > [data-apparition] {
 main:has([data-bande-finale]) + footer {
   margin-top: 0;
 }
+
+/* Administration : plein écran, sans l'en-tête, le pied de page ni les décors du site public. */
+body:has([data-espace-admin]) :is([data-chrome-public], .progression-defilement, .lien-evitement) {
+  display: none;
+}
+
+body:has([data-espace-admin]) {
+  background: var(--admin-fond, #f6efe9);
+}

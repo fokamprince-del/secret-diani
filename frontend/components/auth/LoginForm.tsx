@@ -57,7 +57,8 @@ export function LoginForm({ returnTo }: { returnTo?: string }) {
       const cart = await mergeGuestCart();
       if (cart) writeCartCount(cart.itemCount);
     }
-    router.replace(safeReturnPath(returnTo));
+    // Sans page demandée, une administratrice arrive directement dans le back-office.
+    router.replace(!returnTo && data.user.role === 'admin' ? '/admin' : safeReturnPath(returnTo));
     router.refresh();
   };
 
