@@ -78,6 +78,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
     handleSubmit,
     setError,
     setFocus,
+    setValue,
     control,
     formState: { errors, isSubmitting },
   } = useForm<CateringRequestValues>({
@@ -98,6 +99,13 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
     },
   });
   const fulfilment = useWatch({ control, name: 'fulfilment' });
+
+  // Arrivée depuis « Pour quelle occasion ? » (/traiteur?occasion=wedding#demande) : déjà choisie.
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('occasion');
+    const match = CATERING_OCCASIONS.find((option) => option.value === wanted);
+    if (match) setValue('occasion', match.value);
+  }, [setValue]);
 
   // Parcours avancé : créneaux disponibles pour le mode choisi.
   useEffect(() => {

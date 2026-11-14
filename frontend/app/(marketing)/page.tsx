@@ -3,8 +3,10 @@ import { Chiffres } from '@/components/home/Chiffres';
 import { DianiWord } from '@/components/home/DianiWord';
 import { Etapes } from '@/components/home/Etapes';
 import { Hero } from '@/components/home/Hero';
+import { Occasions } from '@/components/home/Occasions';
 import { Reassurance } from '@/components/home/Reassurance';
 import { Reviews } from '@/components/home/Reviews';
+import { Saveurs } from '@/components/home/Saveurs';
 import { Selections } from '@/components/home/Selections';
 import { Universes } from '@/components/home/Universes';
 import { JsonLd } from '@/components/ui/JsonLd';
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * Accueil, d'après la maquette : hero → bande de réassurance → univers (Traiteur et Formations
+ * Accueil, d'après la maquette : hero → bande de réassurance → occasions (mariage, anniversaire…) → bandeau des saveurs → univers (Traiteur et Formations
  * en grandes cartes, Boutique en bandeau) → étapes d’une commande traiteur → incontournables et formations populaires → avis →
  * mot de Diani → citation et chiffres. Les textes, images, prix et avis viennent de l'API
  * (modifiables sans développeur) ; une section sans contenu n'est pas affichée.
@@ -65,6 +67,8 @@ export default async function HomePage() {
         }
       />
       <Reassurance />
+      <Occasions />
+      <Saveurs />
       <Universes universes={home?.universes ?? null} />
       <Etapes />
       <Selections catalog={catalog} courses={courses} packs={packs} />

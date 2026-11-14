@@ -26,7 +26,7 @@ export function StaticPhoto({
 }: StaticPhotoProps) {
   return (
     <picture className={className} style={style}>
-      <source type="image/avif" srcSet={photo.avif} sizes={sizes} />
+      {photo.avif && <source type="image/avif" srcSet={photo.avif} sizes={sizes} />}
       <source type="image/webp" srcSet={photo.webp} sizes={sizes} />
       <img
         src={photo.fallback}

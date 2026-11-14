@@ -13,7 +13,7 @@ describe('MemoryRedis (sans REDIS_URL)', () => {
     const ttl = await redis.pttl('code');
     await redis.set('code', 'b', 'KEEPTTL');
     expect(await redis.pttl('code')).toBeLessThanOrEqual(ttl);
-    await new Promise((resolve) => setTimeout(resolve, 70));
+    await new Promise((resolve) => setTimeout(resolve, 120));
     expect(await redis.get('code')).toBeNull();
     expect(await redis.pttl('code')).toBe(-2);
   });
@@ -36,7 +36,12 @@ describe('MemoryRedis (sans REDIS_URL)', () => {
 });
 
 describe('InlineQueue (tâches dans l’API)', () => {
-  const flush = () => new Promise((resolve) => setTimeout(resolve, 20));
+  // Attente active (machine chargée pendant la suite complète) plutôt qu'un délai fixe.
+  const until = async (check: () => boolean, ms = 3_000) => {
+    const end = Date.now() + ms;
+    while (!check() && Date.now() < end) await new Promise((resolve) => setTimeout(resolve, 10));
+  };
+  const flush = () => new Promise((resolve) => setTimeout(resolve, 50));
 
   it('exécute la tâche, ignore un jobId déjà vu', async () => {
     const queue = new InlineQueue('test');
@@ -49,6 +54,7 @@ describe('InlineQueue (tâches dans l’API)', () => {
     });
     await queue.add('a', {}, { jobId: 'x' });
     await queue.add('a', {}, { jobId: 'x' });
+    await until(() => seen.length > 0);
     await flush();
     expect(seen).toEqual(['a']);
     queue.close();
@@ -59,7 +65,7 @@ describe('InlineQueue (tâches dans l’API)', () => {
     const seen: unknown[] = [];
     await queue.add('a', { n: 1 });
     queue.bind({ process: async (job) => void seen.push(job.data), onFailed: [] });
-    await flush();
+    await until(() => seen.length > 0);
     expect(seen).toEqual([{ n: 1 }]);
     queue.close();
   });
@@ -76,7 +82,7 @@ describe('InlineQueue (tâches dans l’API)', () => {
       onFailed: [(job) => void failed.push(job)],
     });
     await queue.add('a', {}, { attempts: 3, backoff: { type: 'fixed', delay: 1 } });
-    await new Promise((resolve) => setTimeout(resolve, 80));
+    await until(() => failed.length > 0);
     expect(calls).toBe(3);
     expect(failed).toHaveLength(1);
     expect(failed[0]!.attemptsMade).toBe(3);
@@ -96,7 +102,8 @@ describe('InlineQueue (tâches dans l’API)', () => {
       onFailed: [],
     });
     await queue.add('a', {}, { backoff: { type: 'fixed', delay: 1 } });
-    await new Promise((resolve) => setTimeout(resolve, 40));
+    await until(() => calls > 0);
+    await flush();
     expect(calls).toBe(1);
     queue.close();
   });

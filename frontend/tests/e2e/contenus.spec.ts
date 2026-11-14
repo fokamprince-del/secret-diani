@@ -56,10 +56,9 @@ test.describe('Accueil', () => {
       '/traiteur',
     );
     // Les deux actions du hero mènent au traiteur : devis d'abord, puis la carte.
-    await expect(page.getByRole('link', { name: 'Demander un devis' })).toHaveAttribute(
-      'href',
-      '/traiteur#demande',
-    );
+    await expect(
+      page.getByRole('link', { name: 'Demander un devis', exact: true }),
+    ).toHaveAttribute('href', '/traiteur#demande');
     await expect(page.getByRole('link', { name: 'Voir la carte du traiteur' })).toHaveAttribute(
       'href',
       '/traiteur',

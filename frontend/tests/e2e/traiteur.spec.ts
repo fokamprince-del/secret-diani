@@ -113,3 +113,13 @@ test.describe('Traiteur', () => {
     await expect(form.getByText(/Choisissez une date à partir du/)).toBeVisible();
   });
 });
+
+test('accueil : « Mariage » mène au devis avec l’occasion déjà choisie', async ({ page }) => {
+  await dismissConsent(page);
+  await page.goto('/');
+  const occasions = page.getByRole('region', { name: 'Pour quelle occasion ?' });
+  await expect(occasions.getByRole('link')).toHaveCount(4);
+  await occasions.getByRole('link', { name: /Mariage/ }).click();
+  await expect(page).toHaveURL(/\/traiteur\?occasion=wedding#demande$/);
+  await expect(page.getByRole('combobox', { name: /Votre événement/ })).toHaveValue('wedding');
+});

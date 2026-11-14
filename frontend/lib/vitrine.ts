@@ -48,30 +48,56 @@ export const COURONNE = photo(
 
 export const COURONNE_DOREE = photo(
   'couronne-doree',
-  [400, 579],
+  [400, 579, 900],
   (w) => Math.round((w * 966) / 579),
   'Gâteau d’anniversaire ivoire semé de perles et de feuilles d’or, chiffre 18 doré, coiffé d’une couronne dorée à pierres claires et d’une bougie torsadée, sur fond blanc.',
 );
 
 export const COURONNE_ARGENT = photo(
   'couronne-argent',
-  [400, 600],
+  [400, 600, 900],
   (w) => Math.round((w * 934) / 600),
   'Gâteau d’anniversaire ivoire parsemé de perles et d’éclats dorés, inscription « Happy Birthday » dorée, coiffé d’une couronne argentée à pierres noires, sur fond blanc.',
 );
 
 export const RUBAN_NOIR = photo(
   'ruban-noir',
-  [400, 585],
+  [400, 585, 900],
   (w) => Math.round((w * 713) / 585),
   'Gâteau rouge aux bordures de crème festonnées, inscription « Happy Birthday » dorée et nœuds de ruban noir, sur fond blanc.',
 );
 
 export const BUFFET_PHOTO = photo(
   'buffet-photo',
-  [400, 590],
-  () => 1046,
+  // 1180 : agrandissement Lanczos x2 + netteté de l'original 590 px (pas de source plus grande).
+  [400, 590, 1180],
+  (w) => Math.round((w * 1046) / 590),
   'Buffet salé dressé sur des présentoirs blancs : mini burgers, samoussas, wraps et verrines, entre deux bouquets de fleurs.',
+);
+
+/** Affiche d'une vidéo (WebP seul) utilisée comme photo fixe. */
+function poster(name: string, width: number, height: number, alt: string): Photo {
+  return {
+    avif: '',
+    webp: `${DOSSIER}/${name}.webp ${width}w`,
+    fallback: `${DOSSIER}/${name}.webp`,
+    width,
+    height,
+    alt,
+  };
+}
+
+export const BUFFET_BURGERS = poster(
+  'buffet',
+  928,
+  1696,
+  'Mini burgers dressés sur un présentoir de buffet.',
+);
+export const MANGUE_PASSION = poster(
+  'mangue-passion',
+  642,
+  840,
+  'Gâteau au drip mangue, rosaces de crème et fruits de la passion ouverts, sur fond blanc.',
 );
 
 /** Vidéo d'ambiance : tour du buffet salé (mini burgers, samoussas, wraps, verrines). */
