@@ -208,6 +208,7 @@ const RENDERERS: { [T in MailTemplate]: Renderer<T> } = {
       { paragraph: `${data.reference} (${data.source})` },
       { paragraph: `Cliente : ${data.customerName}` },
       { paragraph: `E-mail : ${data.email}${data.phone ? ` — Téléphone : ${data.phone}` : ''}` },
+      ...(data.occasion ? [{ paragraph: `Occasion : ${data.occasion}` }] : []),
       {
         paragraph: `Date : ${data.eventDate}${data.guestCount ? ` — ${data.guestCount} invités` : ''}${data.fulfilment ? ` — ${data.fulfilment}` : ''}`,
       },

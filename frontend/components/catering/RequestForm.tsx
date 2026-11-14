@@ -8,7 +8,7 @@ import { fieldMessages, userMessage } from '@/lib/api/errors';
 import type { CateringConditions, CateringReceipt, CateringSlot } from '@/lib/api/types';
 import { depositHint, describeChoice, isoDateIn, selectionTotal } from '@/lib/catering';
 import { formatDate, formatPrice } from '@/lib/format';
-import { type CateringRequestValues, cateringRequestSchema } from '@/lib/forms';
+import { CATERING_OCCASIONS, type CateringRequestValues, cateringRequestSchema } from '@/lib/forms';
 import { HoneypotField, SelectField, TextAreaField, TextField } from '../forms/Field';
 import {
   CAPTCHA_PENDING_MESSAGE,
@@ -29,6 +29,7 @@ const FIELDS = [
   'phone',
   'eventDate',
   'guestCount',
+  'occasion',
   'fulfilment',
   'deliveryAddress',
   'message',
@@ -88,6 +89,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
       phone: '',
       eventDate: '',
       guestCount: '',
+      occasion: '',
       fulfilment: 'pickup',
       deliveryAddress: '',
       message: '',
@@ -139,6 +141,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
       phone: values.phone || null,
       eventDate: values.eventDate,
       guestCount: values.guestCount ? Number(values.guestCount) : null,
+      occasion: values.occasion || null,
       fulfilment: values.fulfilment,
       deliveryAddress: values.fulfilment === 'delivery' ? values.deliveryAddress : null,
       message: values.message || null,
@@ -295,6 +298,13 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
           hint="Pratique pour caler les détails rapidement."
           error={errors.phone?.message}
           {...register('phone')}
+        />
+        <SelectField
+          label="Votre événement"
+          optional
+          options={[{ value: '', label: 'Choisissez…' }, ...CATERING_OCCASIONS]}
+          error={errors.occasion?.message}
+          {...register('occasion')}
         />
         <TextField
           label="Date de l’événement"

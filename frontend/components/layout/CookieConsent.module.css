@@ -51,3 +51,23 @@
   gap: var(--e-3);
   margin-top: var(--e-4);
 }
+
+/* Téléphone : bandeau ramassé (environ un sixième de l'écran au lieu d'un tiers). */
+@media (max-width: 39.99rem) {
+  .contenu {
+    padding: var(--e-4);
+  }
+
+  .titre {
+    font-size: 1.05rem;
+  }
+
+  .texte {
+    margin-top: var(--e-1);
+    line-height: 1.45;
+  }
+
+  .boutons {
+    margin-top: var(--e-3);
+  }
+}

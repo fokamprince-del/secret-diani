@@ -33,6 +33,14 @@ export function Conditions({ conditions }: { conditions: CateringConditions }) {
             <span>{item}</span>
           </li>
         ))}
+        {/* Règlement INCO : l'information sur les allergènes doit être disponible avant la commande. */}
+        <li className={styles.condition}>
+          <Icon name="check" size={20} className={styles.icone} />
+          <span>
+            Allergies ou régime particulier ? Précisez-le dans votre demande : je vous indique les
+            allergènes de chaque préparation avant de confirmer.
+          </span>
+        </li>
       </ul>
     </section>
   );

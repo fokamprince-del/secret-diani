@@ -8,6 +8,8 @@
  * (8 % de marge blanche) : dans les cadres « studio » du site (jeton --studio), ils s'affichent
  * en entier et en grand, quelle que soit la forme du cadre. Une création sans version fond blanc n'est pas
  * publiée (bûches, retirées le 2026-10-22) ; originaux dans `medias-non-publies/originaux`.
+ * Photos du 2026-11-14 détourées par `scripts/detoure-photo.mjs` ; écartées (dans un carton,
+ * logo de club et joueur réel) : `medias-non-publies/originaux/a-ecarter`.
  *
  * Les légendes décrivent seulement ce que l'on voit à l'image : aucun parfum ni aucune
  * composition qui n'ait été confirmé par Diani. À relire avec elle.
@@ -42,6 +44,27 @@ export const COURONNE = photo(
   [480, 600],
   (w) => Math.round((w * 765) / 617),
   'Gâteau d’anniversaire ivoire coiffé d’une couronne dorée, rosaces de crème et drip blanc, sur fond blanc.',
+);
+
+export const COURONNE_DOREE = photo(
+  'couronne-doree',
+  [400, 579],
+  (w) => Math.round((w * 966) / 579),
+  'Gâteau d’anniversaire ivoire semé de perles et de feuilles d’or, chiffre 18 doré, coiffé d’une couronne dorée à pierres claires et d’une bougie torsadée, sur fond blanc.',
+);
+
+export const COURONNE_ARGENT = photo(
+  'couronne-argent',
+  [400, 600],
+  (w) => Math.round((w * 934) / 600),
+  'Gâteau d’anniversaire ivoire parsemé de perles et d’éclats dorés, inscription « Happy Birthday » dorée, coiffé d’une couronne argentée à pierres noires, sur fond blanc.',
+);
+
+export const RUBAN_NOIR = photo(
+  'ruban-noir',
+  [400, 585],
+  (w) => Math.round((w * 713) / 585),
+  'Gâteau rouge aux bordures de crème festonnées, inscription « Happy Birthday » dorée et nœuds de ruban noir, sur fond blanc.',
 );
 
 export const BUFFET_PHOTO = photo(
@@ -102,6 +125,15 @@ export const CREATIONS: Creation[] = [
     focus: '50% 70%',
   },
   {
+    slug: 'ruban-noir',
+    title: 'Rouge et ruban noir',
+    caption: 'Crème rouge pailletée, bordures festonnées, nœuds de satin noir et lettres dorées.',
+    accent: 'framboise',
+    poster: RUBAN_NOIR.fallback,
+    photo: RUBAN_NOIR,
+    focus: '50% 55%',
+  },
+  {
     slug: 'caramel-18',
     title: 'Caramel, 18 ans',
     caption: 'Drip caramel, rosaces pailletées et chiffre doré.',
@@ -111,6 +143,15 @@ export const CREATIONS: Creation[] = [
     focus: '50% 70%',
   },
   {
+    slug: 'couronne-argent',
+    title: 'Couronne d’argent',
+    caption: 'Crème ivoire, perles et éclats dorés, couronne argentée aux pierres noires.',
+    accent: 'or',
+    poster: COURONNE_ARGENT.fallback,
+    photo: COURONNE_ARGENT,
+    focus: '50% 55%',
+  },
+  {
     slug: 'anniversaire-33',
     title: 'Anniversaire, 33 ans',
     caption: 'Drip ganache, décor de billets et éclats dorés.',
@@ -118,6 +159,15 @@ export const CREATIONS: Creation[] = [
     poster: `${DOSSIER}/anniversaire-33.webp`,
     video: `${DOSSIER}/anniversaire-33.mp4`,
     focus: '50% 70%',
+  },
+  {
+    slug: 'couronne-doree',
+    title: 'Couronne dorée',
+    caption: 'Crème ivoire, perles et feuilles d’or, chiffre doré sous une couronne de strass.',
+    accent: 'or',
+    poster: COURONNE_DOREE.fallback,
+    photo: COURONNE_DOREE,
+    focus: '50% 55%',
   },
 ];
 

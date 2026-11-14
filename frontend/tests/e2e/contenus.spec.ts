@@ -55,10 +55,14 @@ test.describe('Accueil', () => {
       'href',
       '/traiteur',
     );
-    // Les deux actions du hero mènent aux univers.
-    await expect(page.getByRole('link', { name: 'Découvrir les formations' })).toHaveAttribute(
+    // Les deux actions du hero mènent au traiteur : devis d'abord, puis la carte.
+    await expect(page.getByRole('link', { name: 'Demander un devis' })).toHaveAttribute(
       'href',
-      '/formations',
+      '/traiteur#demande',
+    );
+    await expect(page.getByRole('link', { name: 'Voir la carte du traiteur' })).toHaveAttribute(
+      'href',
+      '/traiteur',
     );
   });
 

@@ -11,10 +11,10 @@ test.describe('Socle : gabarit, sécurité et accessibilité', () => {
     await dismissConsent(page);
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-    await expect(page).toHaveTitle('Les Secrets de Diani · Traiteur, formations et boutique');
+    await expect(page).toHaveTitle('Les Secrets de Diani · Traiteur et pâtisserie faits maison');
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Les Secrets de Diani');
-    await expect(page.getByRole('link', { name: 'Commander maintenant' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Demander un devis' })).toBeVisible();
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
       // Next retire la barre finale de la racine : « https://site » et « https://site/ » se valent.

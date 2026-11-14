@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Chiffres } from '@/components/home/Chiffres';
 import { DianiWord } from '@/components/home/DianiWord';
+import { Etapes } from '@/components/home/Etapes';
 import { Hero } from '@/components/home/Hero';
 import { Reassurance } from '@/components/home/Reassurance';
 import { Reviews } from '@/components/home/Reviews';
@@ -18,13 +19,13 @@ import {
 } from '@/lib/api/content';
 import { pageMetadata, SITE_NAME, websiteJsonLd } from '@/lib/seo';
 
-const TITLE = `${SITE_NAME} · Traiteur, formations et boutique`;
+const TITLE = `${SITE_NAME} · Traiteur et pâtisserie faits maison`;
 
 export const metadata: Metadata = {
   ...pageMetadata({
     title: TITLE,
     description:
-      'Traiteur, formations et boutique d’accessoires pour créer, apprendre et se faire plaisir.',
+      'Traiteur et pâtisserie faits maison pour vos mariages, anniversaires, baptêmes et événements d’entreprise : buffets salés, plateaux et layer cakes. Formations et kits pour apprendre.',
     path: '/',
   }),
   title: { absolute: TITLE },
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 
 /**
  * Accueil, d'après la maquette : hero → bande de réassurance → univers (Traiteur et Formations
- * en grandes cartes, Boutique en bandeau) → incontournables et formations populaires → avis →
+ * en grandes cartes, Boutique en bandeau) → étapes d’une commande traiteur → incontournables et formations populaires → avis →
  * mot de Diani → citation et chiffres. Les textes, images, prix et avis viennent de l'API
  * (modifiables sans développeur) ; une section sans contenu n'est pas affichée.
  */
@@ -65,6 +66,7 @@ export default async function HomePage() {
       />
       <Reassurance />
       <Universes universes={home?.universes ?? null} />
+      <Etapes />
       <Selections catalog={catalog} courses={courses} packs={packs} />
       <Reviews reviews={reviews} />
       <DianiWord word={home?.dianiWord} />

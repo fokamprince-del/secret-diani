@@ -25,6 +25,9 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:seed": "prisma db seed",
+    "db:deploy": "node scripts/prisma-direct.mjs migrate deploy",
+    "db:status": "node scripts/prisma-direct.mjs migrate status",
+    "db:seed": "node scripts/prisma-direct.mjs db seed",
     "openapi:export": "ts-node --transpile-only scripts/export-openapi.ts",
     "openapi:check": "npm run openapi:export && git diff --exit-code -- docs/openapi.json"
   },
@@ -36,11 +39,11 @@
     "@aws-sdk/s3-request-presigner": "3.1149.0",
     "@cantoo/pdf-lib": "2.11.1",
     "@nestjs/bullmq": "11.0.5",
-    "@nestjs/common": "11.2.7",
+    "@nestjs/common": "11.2.10",
     "@nestjs/config": "4.0.4",
-    "@nestjs/core": "11.2.7",
+    "@nestjs/core": "11.2.10",
     "@nestjs/jwt": "11.0.2",
-    "@nestjs/platform-express": "11.2.7",
+    "@nestjs/platform-express": "11.2.10",
     "@nestjs/swagger": "11.4.7",
     "@nestjs/throttler": "6.7.1",
     "@prisma/client": "6.19.3",
@@ -52,23 +55,23 @@
     "cookie-parser": "1.4.7",
     "helmet": "8.3.0",
     "ioredis": "5.11.1",
-    "markdown-it": "15.0.2",
+    "markdown-it": "15.0.3",
     "nestjs-pino": "5.3.1",
     "pdfkit": "0.20.2",
     "pino": "10.4.0",
     "pino-http": "11.0.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
-    "sanitize-html": "2.18.0",
+    "sanitize-html": "2.18.2",
     "sharp": "0.35.5",
     "stripe": "22.6.2",
-    "zod": "4.6.5"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@nestjs/cli": "11.0.24",
     "@nestjs/schematics": "11.1.0",
-    "@nestjs/testing": "11.2.7",
+    "@nestjs/testing": "11.2.10",
     "@types/cookie-parser": "1.4.10",
     "@types/express": "5.0.6",
     "@types/jest": "30.0.0",
@@ -77,7 +80,7 @@
     "@types/pdfkit": "0.17.6",
     "@types/sanitize-html": "2.16.2",
     "@types/supertest": "6.0.3",
-    "eslint": "10.12.0",
+    "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "17.0.0",
     "jest": "30.5.2",
@@ -97,6 +100,8 @@
     },
     "@prisma/config": {
       "deepmerge-ts": "8.0.2"
-    }
+    },
+    "glob": "14.0.6",
+    "minimatch": "11.0.8"
   }
 }

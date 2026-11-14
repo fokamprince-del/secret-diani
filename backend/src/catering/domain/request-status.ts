@@ -1,4 +1,4 @@
-import type { CateringRequestStatus } from '@prisma/client';
+import type { CateringOccasion, CateringRequestStatus } from '@prisma/client';
 
 /**
  * Cycle de vie d'une demande traiteur :
@@ -48,3 +48,12 @@ export function parseReference(input: string): number | null {
   const match = /^(?:tr-?)?0*(\d{1,9})$/i.exec(input.trim());
   return match ? Number(match[1]) : null;
 }
+
+/** Libellés des types d'événement (formulaire de devis, e-mails, récapitulatif). */
+export const OCCASION_LABELS: Record<CateringOccasion, string> = {
+  wedding: 'Mariage',
+  birthday: 'Anniversaire',
+  baptism: 'Baptême',
+  corporate: 'Événement d’entreprise',
+  other: 'Autre événement',
+};

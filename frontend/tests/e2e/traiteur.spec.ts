@@ -42,6 +42,7 @@ test.describe('Traiteur', () => {
     const cake = page.getByRole('article').filter({ hasText: 'Layer cake' });
     await cake.getByRole('radio', { name: /6–8 parts/ }).check();
     await expect(cake.getByText('Prix pour la taille choisie')).toBeAttached();
+    await expect(cake.getByText('Allergènes : gluten, œufs, lait')).toBeVisible();
     await expect(cake.locator('[aria-live="polite"]')).toContainText('50,00 €');
     for (const name of ['Vanille', 'Fraise', 'Framboise']) {
       await cake.getByRole('checkbox', { name }).check();
@@ -84,11 +85,18 @@ test.describe('Traiteur', () => {
     const date = new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10);
     await form.getByLabel('Date de l’événement').fill(date);
     await form.getByRole('spinbutton', { name: /Nombre d’invités/ }).fill('30');
+    await form
+      .getByRole('combobox', { name: /Votre événement/ })
+      .selectOption({ label: 'Mariage' });
     await form.getByRole('radio', { name: 'Je souhaite une livraison' }).check();
     await form.getByRole('button', { name: 'Envoyer ma demande' }).click();
     await expect(form.getByText('Indiquez la ville ou l’adresse de livraison.')).toBeVisible();
     await form.getByRole('textbox', { name: 'Ville ou adresse de livraison' }).fill('Créteil');
+    const sent = page.waitForRequest(
+      (request) => request.method() === 'POST' && request.url().endsWith('/catering-requests'),
+    );
     await form.getByRole('button', { name: 'Envoyer ma demande' }).click();
+    expect((await sent).postDataJSON()).toMatchObject({ occasion: 'wedding', guestCount: 30 });
 
     const receipt = form.getByRole('status').filter({ hasText: 'TR-000042' });
     await expect(receipt).toBeVisible();

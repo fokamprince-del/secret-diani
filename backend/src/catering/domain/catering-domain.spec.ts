@@ -140,6 +140,11 @@ describe('buildRecap', () => {
     expect(recap).toContain('- 1 × Layer cake (Bento) : 15,00 € — parfums : Vanille, Fraise');
     expect(recap).toContain('Total estimé : 82,00 €');
     expect(recap).not.toContain('Acompte');
+    expect(recap).not.toContain('Occasion');
+  });
+
+  it('indique le type d’événement quand la cliente l’a choisi', () => {
+    expect(buildRecap({ ...base, occasion: 'wedding' }, [])).toContain('Occasion : Mariage');
   });
 
   it('indique l’acompte et le solde une fois le total convenu', () => {

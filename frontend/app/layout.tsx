@@ -18,11 +18,11 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(publicEnv.siteUrl),
   title: {
-    default: `${SITE_NAME} · Traiteur, formations et boutique`,
+    default: `${SITE_NAME} · Traiteur et pâtisserie faits maison`,
     template: `%s · ${SITE_NAME}`,
   },
   description:
-    'Traiteur, formations et boutique d’accessoires pour créer, apprendre et se faire plaisir.',
+    'Traiteur et pâtisserie faits maison pour vos mariages, anniversaires, baptêmes et événements d’entreprise : buffets salés, plateaux et layer cakes. Formations et kits pour apprendre.',
   applicationName: SITE_NAME,
   formatDetection: { telephone: false, email: false, address: false },
 };

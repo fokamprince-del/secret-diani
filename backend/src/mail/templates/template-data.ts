@@ -38,6 +38,7 @@ export interface MailTemplateData {
     phone: string | null;
     eventDate: string;
     guestCount: number | null;
+    occasion?: string | null;
     fulfilment: string | null;
     itemLines: string[];
     estimatedTotal: string | null;

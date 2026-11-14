@@ -73,6 +73,12 @@ const METIERS = [
 ] as const;
 
 /**
+ * Création qui prend deux colonnes dans la galerie : avec la grande vignette, la grille se remplit
+ * sans trou (7 vignettes autour d'une grande, sur 2 comme sur 4 colonnes).
+ */
+const GALERIE_DUO = 'ruban-noir';
+
+/**
  * À propos : une page composée (vidéo du buffet, métiers, valeurs, galerie) plutôt qu'un simple
  * texte. Aucune biographie inventée : le récit personnel de Diani vient de l'administration
  * (page « a-propos ») et s'affiche ici dès qu'il est publié.
@@ -200,7 +206,11 @@ export default async function AboutPage() {
               <span className={styles.legende}>La couronne</span>
             </li>
             {galerie.map((creation) => (
-              <li key={creation.slug} className="studio" data-apparition="devoile">
+              <li
+                key={creation.slug}
+                className={`${creation.slug === GALERIE_DUO ? styles.duo : ''} studio`}
+                data-apparition="devoile"
+              >
                 {creation.video ? (
                   <LoopVideo src={creation.video} poster={creation.poster} focus={creation.focus} />
                 ) : creation.photo ? (

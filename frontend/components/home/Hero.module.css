@@ -142,18 +142,9 @@
   margin-top: var(--e-3);
 }
 
-.formations {
+/* Bouton secondaire lisible sur le visuel. */
+.secondaire {
   background-color: color-mix(in srgb, var(--blanc) 70%, transparent);
-}
-
-.lecture {
-  display: inline-grid;
-  place-items: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 50%;
-  background-color: var(--cacao);
-  color: var(--blanc);
 }
 
 /* Devise verticale à droite (grand écran seulement). */

@@ -28,7 +28,7 @@ export default async function TraiteurPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Univers 01"
+        eyebrow="Mariages, anniversaires, baptêmes, entreprises"
         title="Traiteur & commandes"
         intro={
           <p>

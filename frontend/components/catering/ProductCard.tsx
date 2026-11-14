@@ -1,5 +1,6 @@
 import type { CateringCategory, CateringProduct } from '@/lib/api/types';
 import { formatPrice } from '@/lib/format';
+import { ALLERGEN_LABELS } from '@/lib/forms';
 import { CREATIONS } from '@/lib/vitrine';
 import { LoopVideo } from '../ui/LoopVideo';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
@@ -102,6 +103,12 @@ export function ProductCard({ product, kind }: ProductCardProps) {
               </li>
             ))}
           </ul>
+        )}
+        {product.allergens.length > 0 && (
+          <p className={styles.allergenes}>
+            <span className={styles.allergenesTitre}>Allergènes :</span>{' '}
+            {product.allergens.map((allergen) => ALLERGEN_LABELS[allergen] ?? allergen).join(', ')}
+          </p>
         )}
         <p className={styles.prix}>
           {single ? (

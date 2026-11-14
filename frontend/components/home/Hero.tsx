@@ -2,7 +2,6 @@ import type { CSSProperties, ReactNode } from 'react';
 import { preload } from 'react-dom';
 import { BUFFET_VIDEO } from '@/lib/vitrine';
 import { ButtonLink } from '../ui/Button';
-import { Icon } from '../ui/Icon';
 import { LoopVideo } from '../ui/LoopVideo';
 import { Magnetique } from '../ui/Magnetique';
 import styles from './Hero.module.css';
@@ -17,7 +16,7 @@ interface HeroProps {
 
 /**
  * Hero de l'accueil, d'après la maquette : le nom de la marque en grand, la promesse, deux
- * actions (commander, se former) et un grand visuel qui se fond dans le crème. Entrée échelonnée
+ * actions (devis traiteur, carte) et un grand visuel qui se fond dans le crème. Entrée échelonnée
  * en CSS, immobile si le mouvement est réduit.
  */
 export function Hero({ media }: HeroProps) {
@@ -64,23 +63,21 @@ export function Hero({ media }: HeroProps) {
               </span>
             </span>
           </h1>
-          <p className={styles.promesse}>Cuisiner aujourd’hui, réussir demain.</p>
+          <p className={styles.promesse}>Traiteur et pâtisserie faits maison pour vos fêtes.</p>
           <p className={styles.texte}>
-            Des plats savoureux, des formations pratiques et des conseils pour faire de votre
-            passion un véritable projet.
+            Buffets salés, plateaux à partager et layer cakes sur mesure pour vos mariages,
+            anniversaires, baptêmes et événements d’entreprise. Dites-moi la date et le nombre
+            d’invités : je vous réponds avec une proposition.
           </p>
           <div className={styles.actions}>
             <Magnetique>
-              <ButtonLink href="/traiteur" withArrow>
-                Commander maintenant
+              <ButtonLink href="/traiteur#demande" withArrow>
+                Demander un devis
               </ButtonLink>
             </Magnetique>
             <Magnetique>
-              <ButtonLink href="/formations" variant="secondaire" className={styles.formations}>
-                <span className={styles.lecture} aria-hidden="true">
-                  <Icon name="play" size={14} />
-                </span>
-                Découvrir les formations
+              <ButtonLink href="/traiteur" variant="secondaire" className={styles.secondaire}>
+                Voir la carte du traiteur
               </ButtonLink>
             </Magnetique>
           </div>

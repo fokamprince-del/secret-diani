@@ -37,7 +37,7 @@ export default async function BoutiquePage() {
     <>
       <PageHeader
         accent="caramel"
-        eyebrow="Univers 03"
+        eyebrow="Le matériel de Diani"
         title="Boutique & kits"
         intro={
           <p>

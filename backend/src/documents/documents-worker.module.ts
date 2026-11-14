@@ -1,9 +1,10 @@
-import { BullModule, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import type { Job } from 'bullmq';
 import { CertificatesService } from '../courses/certificates/certificates.service';
 import { WatermarkService } from '../courses/resources/watermark.service';
 import { InvoicesService } from '../shop/invoices/invoices.service';
+import { registerQueue } from '../jobs/queue-mode';
 import { DOCUMENTS_QUEUE, type DocumentJobData } from '../shop/shop.constants';
 
 /** Documents PDF produits hors requête (relances automatiques de BullMQ en cas d'échec). */
@@ -32,7 +33,7 @@ export class DocumentsProcessor extends WorkerHost {
 
 /** Factures, certificats et fiches filigranées (worker). */
 @Module({
-  imports: [BullModule.registerQueue({ name: DOCUMENTS_QUEUE })],
+  imports: [registerQueue(DOCUMENTS_QUEUE)],
   providers: [InvoicesService, CertificatesService, WatermarkService, DocumentsProcessor],
 })
 export class DocumentsWorkerModule {}

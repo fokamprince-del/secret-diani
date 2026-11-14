@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { CateringKind } from '@prisma/client';
+import { CateringAllergen, CateringKind } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
@@ -243,6 +243,17 @@ export class CreateCateringProductDto {
   @Max(10)
   maxFlavours?: number;
 
+  @ApiPropertyOptional({
+    enum: CateringAllergen,
+    isArray: true,
+    description: 'Allergènes majeurs présents (règlement INCO)',
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsEnum(CateringAllergen, { each: true })
+  allergens?: CateringAllergen[];
+
   @ApiPropertyOptional({ type: [String], description: 'Parfums proposés' })
   @IsOptional()
   @IsArray()
@@ -329,6 +340,9 @@ export class AdminCateringProductDto {
 
   @ApiProperty({ type: [FlavourDto] })
   flavours!: FlavourDto[];
+
+  @ApiProperty({ enum: CateringAllergen, isArray: true })
+  allergens!: CateringAllergen[];
 
   @ApiProperty({ type: [AdminProductImageDto] })
   images!: AdminProductImageDto[];

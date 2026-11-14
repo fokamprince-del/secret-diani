@@ -51,7 +51,7 @@ export default async function FormationsPage() {
     <>
       <PageHeader
         accent="framboise"
-        eyebrow="Univers 02"
+        eyebrow="Apprendre avec Diani"
         title="Formations en ligne"
         intro={
           <p>

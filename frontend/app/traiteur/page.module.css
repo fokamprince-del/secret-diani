@@ -63,6 +63,12 @@
   gap: var(--e-6);
 }
 
+/* Ancres des rubriques : le titre s'arrête sous la barre collante des rubriques, pas dessous. */
+.categorie,
+.demande {
+  scroll-margin-top: 4.5rem;
+}
+
 .entete {
   display: grid;
   gap: var(--e-2);

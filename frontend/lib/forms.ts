@@ -66,6 +66,15 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
  * Demande traiteur. `minDate` (AAAA-MM-JJ) applique le délai de préparation réglé dans
  * l'administration ; l'API le revérifie.
  */
+/** Types d'événement proposés dans le formulaire de devis (valeurs de l'API). */
+export const CATERING_OCCASIONS = [
+  { value: 'wedding', label: 'Mariage' },
+  { value: 'birthday', label: 'Anniversaire' },
+  { value: 'baptism', label: 'Baptême' },
+  { value: 'corporate', label: 'Événement d’entreprise' },
+  { value: 'other', label: 'Autre événement' },
+] as const;
+
 export function cateringRequestSchema(minDate: string, minDateLabel: string) {
   return z
     .object({
@@ -89,6 +98,7 @@ export function cateringRequestSchema(minDate: string, minDateLabel: string) {
         .refine((value) => value === '' || (/^\d+$/.test(value) && +value >= 1 && +value <= 5000), {
           message: 'Indiquez un nombre d’invités entre 1 et 5 000, ou laissez vide.',
         }),
+      occasion: z.enum(['', ...CATERING_OCCASIONS.map((option) => option.value)]),
       fulfilment: z.enum(['pickup', 'delivery'], { message: 'Choisissez retrait ou livraison.' }),
       deliveryAddress: z
         .string()
@@ -251,3 +261,21 @@ export function checkoutSchema(guest: boolean, deliveryIds: string[]) {
 }
 
 export type CheckoutValues = z.infer<ReturnType<typeof checkoutSchema>>;
+
+/** Libellés des 14 allergènes à déclaration obligatoire (règlement INCO), dans l'ordre de l'annexe II. */
+export const ALLERGEN_LABELS: Record<string, string> = {
+  gluten: 'gluten',
+  crustaceans: 'crustacés',
+  eggs: 'œufs',
+  fish: 'poisson',
+  peanuts: 'arachides',
+  soy: 'soja',
+  milk: 'lait',
+  nuts: 'fruits à coque',
+  celery: 'céleri',
+  mustard: 'moutarde',
+  sesame: 'sésame',
+  sulphites: 'sulfites',
+  lupin: 'lupin',
+  molluscs: 'mollusques',
+};

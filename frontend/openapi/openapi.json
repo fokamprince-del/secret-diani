@@ -10941,6 +10941,29 @@
               "$ref": "#/components/schemas/FlavourDto"
             }
           },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (vide : non renseignés, liste sur demande)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "image": {
             "nullable": true,
             "description": "Vignette (1re image)",
@@ -10974,6 +10997,7 @@
           "fromPriceCents",
           "maxFlavours",
           "flavours",
+          "allergens",
           "image",
           "gallery",
           "whatsappUrl"
@@ -11145,6 +11169,29 @@
               "$ref": "#/components/schemas/FlavourDto"
             }
           },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (vide : non renseignés, liste sur demande)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "image": {
             "nullable": true,
             "description": "Vignette (1re image)",
@@ -11189,6 +11236,7 @@
           "fromPriceCents",
           "maxFlavours",
           "flavours",
+          "allergens",
           "image",
           "gallery",
           "whatsappUrl",
@@ -11289,6 +11337,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",
@@ -11396,6 +11456,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",
@@ -11610,6 +11682,28 @@
               "$ref": "#/components/schemas/FlavourDto"
             }
           },
+          "allergens": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "images": {
             "type": "array",
             "items": {
@@ -11645,6 +11739,7 @@
           "variants",
           "maxFlavours",
           "flavours",
+          "allergens",
           "images",
           "position",
           "visible",
@@ -11753,6 +11848,29 @@
             "default": 0,
             "description": "Nombre maximal de parfums au choix"
           },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (règlement INCO)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "flavourIds": {
             "description": "Parfums proposés",
             "type": "array",
@@ -11824,6 +11942,29 @@
             "type": "number",
             "default": 0,
             "description": "Nombre maximal de parfums au choix"
+          },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (règlement INCO)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
           },
           "flavourIds": {
             "description": "Parfums proposés",
@@ -12066,6 +12207,17 @@
             "type": "number",
             "nullable": true
           },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true
+          },
           "estimatedTotalCents": {
             "type": "number",
             "nullable": true
@@ -12088,6 +12240,7 @@
           "lastName",
           "eventDate",
           "guestCount",
+          "occasion",
           "estimatedTotalCents",
           "agreedTotalCents",
           "createdAt"
@@ -12144,6 +12297,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",
@@ -12303,6 +12468,17 @@
             "type": "number",
             "nullable": true
           },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true
+          },
           "estimatedTotalCents": {
             "type": "number",
             "nullable": true
@@ -12426,6 +12602,7 @@
           "lastName",
           "eventDate",
           "guestCount",
+          "occasion",
           "estimatedTotalCents",
           "agreedTotalCents",
           "createdAt",
@@ -12481,6 +12658,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",

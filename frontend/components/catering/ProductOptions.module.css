@@ -115,12 +115,6 @@
   color: var(--texte-s);
 }
 
-.prix {
-  font-family: var(--font-titre);
-  font-size: 1.5rem;
-  color: var(--cacao);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;

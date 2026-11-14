@@ -100,6 +100,7 @@ export class RgpdService {
         phone: true,
         eventDate: true,
         guestCount: true,
+        occasion: true,
         fulfilment: true,
         deliveryAddress: true,
         message: true,

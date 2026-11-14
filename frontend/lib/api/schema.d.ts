@@ -3748,6 +3748,23 @@ export interface components {
       maxFlavours: number;
       /** @description Parfums proposés pour ce produit */
       flavours: components['schemas']['FlavourDto'][];
+      /** @description Allergènes majeurs présents (vide : non renseignés, liste sur demande) */
+      allergens: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Vignette (1re image) */
       image: components['schemas']['PublicImageDto'] | null;
       /** @description Galerie complète */
@@ -3811,6 +3828,23 @@ export interface components {
       maxFlavours: number;
       /** @description Parfums proposés pour ce produit */
       flavours: components['schemas']['FlavourDto'][];
+      /** @description Allergènes majeurs présents (vide : non renseignés, liste sur demande) */
+      allergens: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Vignette (1re image) */
       image: components['schemas']['PublicImageDto'] | null;
       /** @description Galerie complète */
@@ -3859,6 +3893,11 @@ export interface components {
       eventDate: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -3899,6 +3938,11 @@ export interface components {
       eventDate: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -3967,6 +4011,22 @@ export interface components {
       variants: components['schemas']['CateringVariantDto'][];
       maxFlavours: number;
       flavours: components['schemas']['FlavourDto'][];
+      allergens: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       images: components['schemas']['AdminProductImageDto'][];
       position: number;
       visible: boolean;
@@ -4014,6 +4074,23 @@ export interface components {
        * @default 0
        */
       maxFlavours: number;
+      /** @description Allergènes majeurs présents (règlement INCO) */
+      allergens?: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Parfums proposés */
       flavourIds?: string[];
       /** @description Galerie ; la première image sert de vignette */
@@ -4038,6 +4115,23 @@ export interface components {
        * @default 0
        */
       maxFlavours: number;
+      /** @description Allergènes majeurs présents (règlement INCO) */
+      allergens?: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Parfums proposés */
       flavourIds?: string[];
       /** @description Galerie ; la première image sert de vignette */
@@ -4117,6 +4211,8 @@ export interface components {
       /** @example 2026-11-14 */
       eventDate: string;
       guestCount: number | null;
+      /** @enum {string|null} */
+      occasion: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       estimatedTotalCents: number | null;
       agreedTotalCents: number | null;
       /** Format: date-time */
@@ -4142,6 +4238,11 @@ export interface components {
       eventDate: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -4182,6 +4283,8 @@ export interface components {
       /** @example 2026-11-14 */
       eventDate: string;
       guestCount: number | null;
+      /** @enum {string|null} */
+      occasion: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       estimatedTotalCents: number | null;
       agreedTotalCents: number | null;
       /** Format: date-time */
@@ -4231,6 +4334,11 @@ export interface components {
       eventDate?: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */

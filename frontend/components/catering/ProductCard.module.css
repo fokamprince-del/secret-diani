@@ -224,3 +224,13 @@ li:nth-child(3n) > .carte[data-sans-photo][data-type='a_la_carte'] {
     transform: rotate(-6deg) scale(1.08);
   }
 }
+
+.allergenes {
+  font-size: var(--taille-petit);
+  color: var(--texte);
+}
+
+.allergenesTitre {
+  font-weight: 600;
+  color: var(--cacao);
+}

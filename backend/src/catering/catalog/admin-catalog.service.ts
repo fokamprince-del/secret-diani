@@ -50,6 +50,7 @@ const PRODUCT_SELECT = {
   description: true,
   composition: true,
   maxFlavours: true,
+  allergens: true,
   position: true,
   visible: true,
   seoTitle: true,
@@ -304,6 +305,7 @@ export class AdminCateringCatalogService {
             quantity: quantity ?? null,
           })),
           maxFlavours: dto.maxFlavours ?? 0,
+          allergens: dto.allergens ?? [],
           visible: dto.visible ?? true,
           seoTitle: dto.seoTitle ?? null,
           seoDescription: dto.seoDescription ?? null,
@@ -378,6 +380,7 @@ export class AdminCateringCatalogService {
                 }
               : {}),
             ...(dto.maxFlavours !== undefined ? { maxFlavours: dto.maxFlavours } : {}),
+            ...(dto.allergens !== undefined ? { allergens: dto.allergens } : {}),
             ...(dto.visible !== undefined ? { visible: dto.visible } : {}),
             ...(dto.seoTitle !== undefined ? { seoTitle: dto.seoTitle } : {}),
             ...(dto.seoDescription !== undefined ? { seoDescription: dto.seoDescription } : {}),
@@ -508,6 +511,7 @@ export class AdminCateringCatalogService {
       variants: row.variants,
       maxFlavours: row.maxFlavours,
       flavours: row.flavours.map(({ flavour }) => flavour),
+      allergens: row.allergens,
       images: row.images.map((image) => ({
         mediaId: image.mediaId,
         alt: image.alt,

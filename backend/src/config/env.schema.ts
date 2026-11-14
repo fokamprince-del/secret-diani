@@ -38,7 +38,9 @@ export const envSchema = z
     CORS_ORIGINS: urlList.optional(),
 
     DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/ }),
-    REDIS_URL: z.url({ protocol: /^rediss?$/ }),
+    // Facultatif : sans Redis, l'API garde son état en mémoire et exécute elle-même les tâches
+    // (e-mails, PDF, images) ; une seule instance de l'API dans ce cas.
+    REDIS_URL: z.url({ protocol: /^rediss?$/ }).optional(),
 
     LOG_LEVEL: z
       .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
