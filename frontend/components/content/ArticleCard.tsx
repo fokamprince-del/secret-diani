@@ -20,7 +20,7 @@ interface ArticleCardProps {
 export function ArticleCard({ article, headingLevel = 2, linkRef }: ArticleCardProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <article className={styles.carte}>
+    <article className={styles.carte} data-apparition="monte">
       <div className={styles.visuel}>
         {article.cover ? (
           <ResponsiveImage

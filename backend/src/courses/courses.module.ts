@@ -1,4 +1,3 @@
-import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ContentModule } from '../content/content.module';
 import { ShopCoreModule } from '../shop/shop-core.module';
@@ -17,11 +16,12 @@ import { LearningService } from './learning/learning.service';
 import { PerksService } from './perks/perks.service';
 import { PackCheckoutService } from './purchase/pack-checkout.service';
 import { WatermarkService } from './resources/watermark.service';
+import { registerQueue } from '../jobs/queue-mode';
 import { VideoService } from './video/video.service';
 
 /** Formations : catalogue, achat des packs, leçons, quiz, progression, certificats, administration. */
 @Module({
-  imports: [ContentModule, ShopCoreModule, BullModule.registerQueue({ name: DOCUMENTS_QUEUE })],
+  imports: [ContentModule, ShopCoreModule, registerQueue(DOCUMENTS_QUEUE)],
   controllers: [
     CoursesController,
     MyLearningController,

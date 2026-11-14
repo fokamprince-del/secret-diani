@@ -1,5 +1,6 @@
 import type { ReviewList } from '@/lib/api/types';
 import { formatDate, pluralize } from '@/lib/format';
+import { CremeTrait } from '../ui/CremeTrait';
 import { Rating } from '../ui/Rating';
 import styles from './Reviews.module.css';
 
@@ -19,6 +20,7 @@ export function Reviews({ reviews }: { reviews: ReviewList | null }) {
     <section aria-labelledby="avis-titre" className={styles.avis}>
       <div className={`conteneur ${styles.entete}`}>
         <h2 id="avis-titre">Ce qu’on m’écrit après la fête</h2>
+        <CremeTrait mouvement="apparition" />
         {reviews.average !== null && (
           <p className={styles.moyenne}>
             <Rating value={reviews.average} />
@@ -32,7 +34,7 @@ export function Reviews({ reviews }: { reviews: ReviewList | null }) {
       <div className={`conteneur ${styles.defilement}`} tabIndex={0} aria-labelledby="avis-titre">
         <ul role="list" className={styles.liste}>
           {reviews.items.map((review) => (
-            <li key={review.id} className={styles.carte}>
+            <li key={review.id} className={styles.carte} data-apparition="monte">
               <figure className={styles.figure}>
                 <Rating value={review.rating} />
                 <blockquote className={styles.citation}>

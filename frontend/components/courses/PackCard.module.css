@@ -72,3 +72,49 @@
   font-size: var(--taille-petit);
   text-align: center;
 }
+
+/* Survol : la carte se soulève, son visuel zoome légèrement. */
+.pack {
+  transition:
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 500ms var(--courbe);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .pack:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -26px rgb(94 47 27 / 0.4);
+  }
+
+  .pack:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.pack img {
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Pack mis en avant : fond nude, filet camel, repère « Le plus complet ». Sobre, sans noir. */
+.pack[data-mis-en-avant] {
+  border: 1.5px solid var(--terra);
+  background-color: color-mix(in srgb, var(--sable) 70%, var(--blanc));
+  box-shadow: 0 18px 40px -32px rgb(94 47 27 / 0.45);
+}
+
+.pack[data-mis-en-avant] .repere {
+  background-color: var(--terra);
+  color: var(--blanc);
+}
+
+@media (min-width: 64rem) {
+  .pack[data-mis-en-avant] {
+    transform: translateY(-8px);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .pack[data-mis-en-avant]:hover {
+      transform: translateY(-12px);
+    }
+  }
+}

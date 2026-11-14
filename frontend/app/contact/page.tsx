@@ -7,6 +7,9 @@ import { getSiteSettings } from '@/lib/api/content';
 import { pageMetadata } from '@/lib/seo';
 import { socialLinksFrom, whatsappLink } from '@/lib/social';
 import styles from './page.module.css';
+import { CREATIONS } from '@/lib/vitrine';
+
+const FRAMBOISES = CREATIONS.find((creation) => creation.slug === 'framboises')!;
 
 export const metadata: Metadata = pageMetadata({
   title: 'Contact',
@@ -34,6 +37,13 @@ export default async function ContactPage() {
             la date et le nombre d’invités : j’irai plus vite.
           </p>
         }
+        accent="framboise"
+        visual={{
+          video: FRAMBOISES.video,
+          poster: FRAMBOISES.poster,
+          focus: FRAMBOISES.focus,
+          caption: `${FRAMBOISES.title} : ${FRAMBOISES.caption}`,
+        }}
       />
       <div className={`conteneur ${styles.grille}`}>
         <section aria-labelledby="formulaire-titre">

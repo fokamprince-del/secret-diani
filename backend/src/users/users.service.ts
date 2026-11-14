@@ -16,6 +16,8 @@ const PROFILE_SELECT = {
   totpEnabledAt: true,
   marketingConsentAt: true,
   createdAt: true,
+  passwordHash: true,
+  googleSubject: true,
 } as const;
 
 @Injectable()
@@ -40,6 +42,8 @@ export class UsersService {
       phone: user.phone,
       emailVerified: user.emailVerifiedAt !== null,
       mfaEnabled: user.totpEnabledAt !== null,
+      hasPassword: user.passwordHash !== null,
+      googleLinked: user.googleSubject !== null,
       marketingConsent: user.marketingConsentAt !== null,
       createdAt: user.createdAt,
     };

@@ -13,3 +13,6 @@ next-env.d.ts
 *.log
 .DS_Store
 .idea/
+
+# Médias reçus mais non publiés (droits à vérifier, originaux)
+medias-non-publies/

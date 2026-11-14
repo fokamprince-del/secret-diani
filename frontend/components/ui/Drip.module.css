@@ -1,0 +1,11 @@
+/* Suspendu sous sa section, par-dessus la suivante. */
+.drip {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: clamp(3.5rem, 2rem + 4vw, 6.5rem);
+  pointer-events: none;
+}

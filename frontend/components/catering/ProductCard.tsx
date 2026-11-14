@@ -1,5 +1,8 @@
 import type { CateringCategory, CateringProduct } from '@/lib/api/types';
 import { formatPrice } from '@/lib/format';
+import { ALLERGEN_LABELS } from '@/lib/forms';
+import { CREATIONS } from '@/lib/vitrine';
+import { LoopVideo } from '../ui/LoopVideo';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 import { ProductOptions } from './ProductOptions';
 import styles from './ProductCard.module.css';
@@ -7,6 +10,34 @@ import styles from './ProductCard.module.css';
 interface ProductCardProps {
   product: CateringProduct;
   kind: CateringCategory['kind'];
+}
+
+/** Layer cakes sans photo saisie : trois vrais gâteaux de Diani, le premier filmé. */
+function LayerCakeShowcase() {
+  const [first, ...others] = CREATIONS.filter((creation) => creation.video).slice(0, 3);
+  if (!first) return null;
+  return (
+    <ul role="list" className={styles.arches}>
+      <li className="studio">
+        <LoopVideo src={first.video!} poster={first.poster} focus={first.focus} />
+        <span className="visually-hidden">{first.title}</span>
+      </li>
+      {others.map((creation) => (
+        <li key={creation.slug} className="studio">
+          <picture>
+            <img
+              src={creation.poster}
+              alt={`Layer cake ${creation.title.toLowerCase()}`}
+              width={464}
+              height={848}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 /**
@@ -19,28 +50,47 @@ export function ProductCard({ product, kind }: ProductCardProps) {
   const gallery =
     product.gallery.length > 0 ? product.gallery : product.image ? [product.image] : [];
 
+  // Sans photo (hors layer cakes, qui ont leurs vraies vidéos) : carte texte, sans aplat vide.
+  const textOnly = gallery.length === 0 && !wide;
+
   return (
-    <article className={`${styles.carte} ${wide ? styles.large : ''}`}>
-      <div className={styles.visuels}>
-        {gallery.length > 0 ? (
-          <ul role="list" className={styles.galerie} data-nombre={Math.min(gallery.length, 3)}>
-            {gallery.slice(0, wide ? 3 : 1).map((image, index) => (
-              <li key={image.url}>
-                <ResponsiveImage
-                  image={image}
-                  sizes={
-                    wide ? '(min-width: 64rem) 380px, 100vw' : '(min-width: 64rem) 360px, 100vw'
-                  }
-                  aspectRatio={wide && index > 0 ? '1 / 1' : '4 / 3'}
-                  zoomOnHover
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className={styles.aplat} data-type={kind} aria-hidden="true" />
-        )}
-      </div>
+    <article
+      className={`${styles.carte} ${wide ? styles.large : ''}`}
+      data-apparition="monte"
+      data-sans-photo={textOnly || undefined}
+      data-type={kind}
+    >
+      {!textOnly && (
+        <div className={styles.visuels} data-revele>
+          {gallery.length > 0 ? (
+            <ul role="list" className={styles.galerie} data-nombre={Math.min(gallery.length, 3)}>
+              {gallery.slice(0, wide ? 3 : 1).map((image, index) => (
+                <li key={image.url}>
+                  <ResponsiveImage
+                    image={image}
+                    sizes={
+                      wide ? '(min-width: 64rem) 380px, 100vw' : '(min-width: 64rem) 360px, 100vw'
+                    }
+                    aspectRatio={wide && index > 0 ? '1 / 1' : '4 / 3'}
+                    zoomOnHover
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <LayerCakeShowcase />
+          )}
+        </div>
+      )}
+
+      {textOnly && (
+        <div className={styles.vignette} aria-hidden="true">
+          <span className={styles.vignetteNom}>{product.name}</span>
+          <span className={styles.vignettePastille}>
+            {single ? formatPrice(single.priceCents) : `dès ${formatPrice(product.fromPriceCents)}`}
+          </span>
+        </div>
+      )}
 
       <div className={styles.texte}>
         <h3 className={styles.nom}>{product.name}</h3>
@@ -53,6 +103,12 @@ export function ProductCard({ product, kind }: ProductCardProps) {
               </li>
             ))}
           </ul>
+        )}
+        {product.allergens.length > 0 && (
+          <p className={styles.allergenes}>
+            <span className={styles.allergenesTitre}>Allergènes :</span>{' '}
+            {product.allergens.map((allergen) => ALLERGEN_LABELS[allergen] ?? allergen).join(', ')}
+          </p>
         )}
         <p className={styles.prix}>
           {single ? (

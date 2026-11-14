@@ -15,6 +15,8 @@
 | Transferts hors UE | Resend : à encadrer par clauses contractuelles types, à vérifier avant la mise en production (phase 10) |
 | Sécurité | Voir `docs/SECURITY.md` : chiffrement TLS, Argon2id, 2FA administrateur, journal d'audit, sauvegardes chiffrées |
 
+**Connexion avec Google (facultative)** : à la connexion, Google transmet l'e-mail (vérifié), le prénom, le nom et un identifiant de compte stable (`google_subject`), seul ajout conservé ; aucun jeton Google n'est stocké. Base légale : exécution du contrat. Destinataire supplémentaire : Google (choix de la personne au moment de se connecter). L'identifiant est effacé à la suppression du compte, qui reste possible sans mot de passe (connexion récente exigée).
+
 ### Durées de conservation
 
 | Donnée | Durée | Mécanisme |

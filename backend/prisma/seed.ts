@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { type FaqCategory, type Prisma, PrismaClient } from '@prisma/client';
 import { MarkdownService } from '../src/content/markdown/markdown.service';
 import type { AppConfigService } from '../src/config/app-config.service';
@@ -78,6 +80,38 @@ const FAQ: { category: FaqCategory; question: string; answer: string }[] = [
     question: 'L’acompte est-il remboursable ?',
     answer: 'Non : en cas d’annulation de votre part, l’acompte n’est pas remboursé.',
   },
+  // Questions propres au traiteur (2026-11-14) : réponses à faire valider par Diani (délais,
+  // zone et frais de livraison), créées non publiées comme les autres.
+  {
+    category: 'traiteur',
+    question: 'Pour quels événements puis-je commander ?',
+    answer:
+      'Mariages, anniversaires, baptêmes, fêtes de famille ou événements d’entreprise : indiquez le type d’événement, la date et le nombre d’invités dans votre demande de devis, je vous propose une sélection adaptée.',
+  },
+  {
+    category: 'traiteur',
+    question: 'Combien de temps à l’avance faut-il commander ?',
+    answer:
+      'Le formulaire accepte les demandes à partir de quelques jours avant l’événement. Pour un mariage ou un grand nombre d’invités, contactez-moi le plus tôt possible : les dates partent vite.',
+  },
+  {
+    category: 'traiteur',
+    question: 'Quelle quantité prévoir par invité ?',
+    answer:
+      'Comptez en général 6 à 8 pièces salées par personne pour un apéritif, davantage si le buffet remplace le repas. Indiquez le nombre d’invités dans votre demande : je vous conseille les bonnes quantités.',
+  },
+  {
+    category: 'livraison',
+    question: 'Livrez-vous ? Jusqu’où ?',
+    answer:
+      'Oui, la livraison est possible : indiquez la ville ou l’adresse dans votre demande. La zone desservie et les frais de livraison vous sont confirmés avec le devis. Vous pouvez aussi venir retirer votre commande.',
+  },
+  {
+    category: 'traiteur',
+    question: 'Et les allergies ?',
+    answer:
+      'Signalez toute allergie ou régime particulier dans votre demande. Je vous indique les allergènes de chaque préparation (gluten, œufs, lait, fruits à coque…) avant de confirmer la commande.',
+  },
   {
     category: 'formations',
     question: 'Faut-il un compte pour suivre une formation ?',
@@ -122,19 +156,25 @@ async function main(): Promise<void> {
   }
 
   for (const page of PAGES) {
-    const body = `# ${page.title}\n\nContenu à rédiger depuis l’administration.`;
+    // Pages légales : modèle rédigé (mentions « [À compléter] »), à relire avant publication.
+    const template = join(__dirname, 'seed-data', 'pages', `${page.slug}.md`);
+    const placeholder = `# ${page.title}\n\nContenu à rédiger depuis l’administration.`;
+    const body = existsSync(template) ? readFileSync(template, 'utf8') : placeholder;
     const rendered = markdown.render(body);
+    const content = {
+      bodyMarkdown: body,
+      bodyHtml: rendered.html,
+      toc: rendered.toc as unknown as Prisma.InputJsonValue,
+    };
     await prisma.staticPage.upsert({
       where: { slug: page.slug },
       update: {},
-      create: {
-        slug: page.slug,
-        title: page.title,
-        bodyMarkdown: body,
-        bodyHtml: rendered.html,
-        toc: [],
-        published: false,
-      },
+      create: { slug: page.slug, title: page.title, ...content, published: false },
+    });
+    // Une page encore au texte provisoire reçoit le modèle ; une page rédigée n'est jamais touchée.
+    await prisma.staticPage.updateMany({
+      where: { slug: page.slug, bodyMarkdown: placeholder },
+      data: content,
     });
   }
 

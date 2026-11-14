@@ -1,0 +1,140 @@
+/* Cartes produit du back-office (traiteur, boutique), photo sur fond blanc comme sur le site. */
+.cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: var(--e-3);
+}
+
+.carte {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--filet-fin);
+  border-radius: 14px;
+  background: var(--blanc);
+  color: var(--texte);
+  transition:
+    transform var(--duree) var(--courbe),
+    box-shadow var(--duree) var(--courbe);
+}
+
+.carte:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ombre);
+}
+
+.carte[data-masque] {
+  opacity: 0.65;
+}
+
+.visuel {
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--studio);
+}
+
+.visuel img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sansPhoto {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  background: repeating-linear-gradient(135deg, var(--creme-clair) 0 10px, var(--blanc) 10px 20px);
+  color: var(--texte-s);
+  font-size: 0.85rem;
+}
+
+.corps {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+  padding: var(--e-3) var(--e-4) var(--e-4);
+}
+
+.nom {
+  font-family: var(--font-titre);
+  font-size: 1.1rem;
+  color: var(--cacao);
+}
+
+.prix {
+  font-size: 0.9rem;
+}
+
+.etiquettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.discret {
+  font-family: var(--font-texte);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--texte-s);
+}
+
+/* Lignes éditables (tailles, composition) */
+.lignes {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  gap: var(--e-2);
+  align-items: end;
+}
+
+.ligne[data-cols='4'] {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+}
+
+@media (max-width: 39.99rem) {
+  .ligne,
+  .ligne[data-cols='4'] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ligne > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.cases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.case {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.4rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--filet);
+  border-radius: var(--rayon-pilule);
+  background: var(--blanc);
+  color: var(--texte);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.case:has(input:checked) {
+  border-color: var(--terra-d);
+  background: color-mix(in srgb, var(--peche) 40%, var(--blanc));
+  color: var(--cacao);
+  font-weight: 600;
+}
+
+.case input {
+  accent-color: var(--terra-d);
+}

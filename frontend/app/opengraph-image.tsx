@@ -27,7 +27,7 @@ export default function OpengraphImage() {
       <div style={{ width: 96, height: 3, background: '#B8935A', marginBottom: 40 }} />
       <div style={{ fontSize: 76, lineHeight: 1.1 }}>{SITE_NAME}</div>
       <div style={{ marginTop: 28, fontSize: 36, color: '#5A504A', maxWidth: 900 }}>
-        Traiteur, formations et boutique d’accessoires pour créer, apprendre et se faire plaisir.
+        Traiteur et pâtisserie faits maison pour vos fêtes : buffets salés, plateaux et layer cakes.
       </div>
     </div>,
     size,

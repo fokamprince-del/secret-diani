@@ -21,7 +21,15 @@ import { ContentModule } from './content/content.module';
 import { CoursesModule } from './courses/courses.module';
 import { AppConfigService } from './config/app-config.service';
 import { HealthModule } from './health/health.module';
+import { DocumentsWorkerModule } from './documents/documents-worker.module';
+import { RevalidateWorkerModule } from './content/cache/revalidate-worker.module';
 import { JobsModule } from './jobs/jobs.module';
+import { USE_REDIS } from './jobs/queue-mode';
+import { RetentionModule } from './jobs/retention/retention.module';
+import { MailWorkerModule } from './mail/mail-worker.module';
+import { MediaWorkerModule } from './media/media-worker.module';
+import { PaymentsWorkerModule } from './payments/worker/payments.processor';
+import { ShopWorkerModule } from './shop/worker/shop-worker.module';
 import { LoggingModule } from './logging/logging.module';
 import { MailModule } from './mail/mail.module';
 import { MediaModule } from './media/media.module';
@@ -54,7 +62,8 @@ import { UsersModule } from './users/users.module';
             limit: config.get('RATE_LIMIT_MAX'),
           },
         ],
-        storage: new RedisThrottlerStorage(redis),
+        // Sans Redis : compteurs en mémoire de @nestjs/throttler (une seule instance).
+        ...(config.get('REDIS_URL') ? { storage: new RedisThrottlerStorage(redis) } : {}),
       }),
     }),
     HealthModule,
@@ -78,6 +87,18 @@ import { UsersModule } from './users/users.module';
     NewsletterModule,
     SettingsAdminModule,
     AdminModule,
+    // Sans Redis, l'API consomme elle-même ses files (pas de processus worker séparé).
+    ...(USE_REDIS
+      ? []
+      : [
+          MailWorkerModule,
+          RetentionModule,
+          MediaWorkerModule,
+          RevalidateWorkerModule,
+          ShopWorkerModule,
+          PaymentsWorkerModule,
+          DocumentsWorkerModule,
+        ]),
   ],
   providers: [
     { provide: APP_PIPE, useFactory: createValidationPipe },

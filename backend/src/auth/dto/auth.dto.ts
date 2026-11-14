@@ -24,6 +24,12 @@ export class EmailDto {
   email!: string;
 }
 
+export class ResetCodeDto extends EmailDto {
+  @ApiProperty({ example: '482913', description: 'Code à 6 chiffres reçu par e-mail' })
+  @Matches(/^\d{6}$/, { message: 'le code compte 6 chiffres' })
+  code!: string;
+}
+
 export class RegisterDto extends EmailDto {
   @ApiProperty({
     minLength: 12,

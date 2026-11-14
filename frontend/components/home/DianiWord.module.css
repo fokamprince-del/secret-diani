@@ -1,5 +1,19 @@
 .mot {
+  position: relative;
+  overflow: hidden;
   padding-block: var(--section);
+  background:
+    radial-gradient(
+      30rem 20rem at 15% 20%,
+      color-mix(in srgb, var(--mangue) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      30rem 20rem at 85% 80%,
+      color-mix(in srgb, var(--framboise) 10%, transparent),
+      transparent 70%
+    ),
+    var(--creme);
 }
 
 .contenu {
@@ -13,12 +27,13 @@
   font-family: var(--font-texte);
   font-size: var(--taille-petit);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--approche-surtitre);
   text-transform: uppercase;
   color: var(--terra-d);
 }
 
 .figure {
+  position: relative;
   display: grid;
   gap: var(--e-5);
   max-width: 44rem;
@@ -36,8 +51,34 @@
 }
 
 .signature {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-2);
   font-family: var(--font-manuscrit);
   font-size: 2.5rem;
   line-height: 1;
   color: var(--terra-d);
+}
+
+/* La signature de Diani, soulignée d'un trait de crème qui se dessine. */
+.trait {
+  width: 7rem;
+}
+
+/* Grand guillemet en filigrane derrière la citation. */
+.figure::before {
+  content: '“';
+  position: absolute;
+  top: -0.45em;
+  left: 50%;
+  font-family: var(--font-titre);
+  font-size: 12rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--mangue) 30%, transparent);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.citation {
+  position: relative;
 }

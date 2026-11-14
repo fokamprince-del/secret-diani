@@ -15,5 +15,8 @@ export class OutboxTransport implements MailTransport {
     const header = `De : ${mail.from}\nÀ : ${mail.to}\nObjet : ${mail.subject}\n\n`;
     await writeFile(`${base}.txt`, header + mail.text, 'utf8');
     await writeFile(`${base}.html`, mail.html, 'utf8');
+    for (const file of mail.attachments ?? []) {
+      await writeFile(`${base}-${file.filename.replace(/[^\w.-]/g, '_')}`, file.content);
+    }
   }
 }

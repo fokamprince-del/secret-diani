@@ -117,6 +117,8 @@ function profile(user: User): S['ProfileDto'] {
     phone: user.phone ?? '',
     emailVerified: true,
     mfaEnabled: user.role === 'admin',
+    hasPassword: true,
+    googleLinked: false,
     marketingConsent: user.marketingConsent,
     createdAt: user.createdAt,
   };
@@ -184,6 +186,11 @@ export function userIdForEmail(email: string): string | undefined {
   return users.get(email.trim().toLowerCase())?.id;
 }
 
+/** Rôle du compte connecté : les routes d'administration exigent `admin` (et le second facteur). */
+export function bearerRole(req: IncomingMessage): 'client' | 'admin' | null {
+  return bearer(req)?.user.role ?? null;
+}
+
 /** E-mail du compte connecté (commandes passées avec un compte). */
 export function bearerEmail(req: IncomingMessage): string | null {
   return bearer(req)?.user.email ?? null;
@@ -245,6 +252,19 @@ export async function handleAuth(
     send(res, 202, {
       message: 'Si un compte correspond à cette adresse, un e-mail vient de vous être envoyé.',
     });
+    return true;
+  }
+  if (method === 'POST' && path === '/auth/password/code') {
+    if (body.code !== '123456') {
+      fail(
+        res,
+        400,
+        'INVALID_RESET_CODE',
+        'Ce code est incorrect ou a expiré. Vérifiez l’e-mail reçu, ou demandez un nouveau code.',
+      );
+    } else {
+      send(res, 200, { token: 'jeton-valide' });
+    }
     return true;
   }
   if (method === 'POST' && path === '/auth/password/reset') {

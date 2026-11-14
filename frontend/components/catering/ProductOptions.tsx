@@ -113,8 +113,9 @@ export function ProductOptions({ id, name, variants, flavours, maxFlavours, what
       )}
 
       {variants.length > 1 && (
-        <p className={styles.prix} aria-live="polite">
-          <span className="visually-hidden">Prix pour la taille choisie : </span>
+        // Visible sur chaque taille ; annoncé seulement aux lecteurs d'écran (pas de prix en double).
+        <p className="visually-hidden" aria-live="polite">
+          <span>Prix pour la taille choisie : </span>
           {formatPrice(variant.priceCents)}
         </p>
       )}

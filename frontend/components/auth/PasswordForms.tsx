@@ -11,6 +11,8 @@ import {
   type NewPasswordValues,
   newPasswordSchema,
   PASSWORD_MIN_LENGTH,
+  type ResetCodeValues,
+  resetCodeSchema,
 } from '@/lib/forms';
 import { TextField } from '../forms/Field';
 import { PasswordField } from '../forms/PasswordField';
@@ -19,9 +21,15 @@ import { Button, ButtonLink } from '../ui/Button';
 import { FormStatus } from '../ui/States';
 import styles from './AuthForms.module.css';
 
-/** Mot de passe oublié : même réponse que le compte existe ou non (pas d'énumération). */
+/**
+ * Mot de passe oublié, en trois temps sur la même page : l'adresse, le code à 6 chiffres reçu par
+ * e-mail (le lien de l'e-mail reste possible), puis le nouveau mot de passe. Même réponse que le
+ * compte existe ou non (pas d'énumération).
+ */
 export function ForgotPasswordForm() {
+  const [email, setEmail] = useState<string | null>(null);
   const [sent, setSent] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const {
     register,
@@ -35,12 +43,26 @@ export function ForgotPasswordForm() {
       setSent(
         unwrap(await browserApi.POST('/api/v1/auth/password/forgot', { body: values })).message,
       );
+      setEmail(values.email);
     } catch (error) {
       setFailure(userMessage(error));
     }
   });
 
-  if (sent) return <FormStatus tone="succes">{sent}</FormStatus>;
+  if (token) return <NewPasswordForm token={token} />;
+  if (email && sent) {
+    return (
+      <ResetCodeForm
+        email={email}
+        notice={sent}
+        onVerified={setToken}
+        onRestart={() => {
+          setEmail(null);
+          setSent(null);
+        }}
+      />
+    );
+  }
   return (
     <form noValidate onSubmit={onSubmit} className={styles.formulaire}>
       <TextField
@@ -54,9 +76,70 @@ export function ForgotPasswordForm() {
       <FormStatus tone="erreur">{failure}</FormStatus>
       <div>
         <Button type="submit" loading={isSubmitting} fullWidth>
-          Recevoir le lien
+          Recevoir mon code
         </Button>
       </div>
+    </form>
+  );
+}
+
+/** Saisie du code reçu par e-mail : un code juste donne un jeton de réinitialisation. */
+function ResetCodeForm({
+  email,
+  notice,
+  onVerified,
+  onRestart,
+}: {
+  email: string;
+  notice: string;
+  onVerified: (token: string) => void;
+  onRestart: () => void;
+}) {
+  const [failure, setFailure] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ResetCodeValues>({
+    resolver: zodResolver(resetCodeSchema),
+    defaultValues: { code: '' },
+  });
+
+  const onSubmit = handleSubmit(async ({ code }) => {
+    setFailure(null);
+    try {
+      onVerified(
+        unwrap(await browserApi.POST('/api/v1/auth/password/code', { body: { email, code } }))
+          .token,
+      );
+    } catch (error) {
+      setFailure(userMessage(error));
+    }
+  });
+
+  return (
+    <form noValidate onSubmit={onSubmit} className={styles.formulaire}>
+      <FormStatus tone="succes">{notice}</FormStatus>
+      <TextField
+        label="Code reçu par e-mail"
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        maxLength={6}
+        hint="6 chiffres, valable 15 minutes. Vous pouvez aussi ouvrir le lien de l’e-mail."
+        error={errors.code?.message}
+        {...register('code')}
+      />
+      <FormStatus tone="erreur">{failure}</FormStatus>
+      <div>
+        <Button type="submit" loading={isSubmitting} fullWidth>
+          Valider le code
+        </Button>
+      </div>
+      <p>
+        <button type="button" className={styles.lienBouton} onClick={onRestart}>
+          Recevoir un nouveau code
+        </button>
+      </p>
     </form>
   );
 }
@@ -64,6 +147,19 @@ export function ForgotPasswordForm() {
 /** Nouveau mot de passe à partir du lien reçu (valable 30 minutes, usage unique). */
 export function ResetPasswordForm() {
   const token = useUrlToken();
+  if (token === undefined) return null;
+  if (!token) {
+    return (
+      <FormStatus tone="erreur">
+        Ce lien est incomplet. Ouvrez le lien reçu par e-mail tel quel, ou demandez-en un nouveau.
+      </FormStatus>
+    );
+  }
+  return <NewPasswordForm token={token} />;
+}
+
+/** Choix du nouveau mot de passe (jeton venu du lien ou du code ; 30 minutes, usage unique). */
+function NewPasswordForm({ token }: { token: string }) {
   const [done, setDone] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const {
@@ -77,7 +173,6 @@ export function ResetPasswordForm() {
   });
 
   const onSubmit = handleSubmit(async ({ password }) => {
-    if (!token) return;
     setFailure(null);
     try {
       const result = unwrap(
@@ -91,14 +186,6 @@ export function ResetPasswordForm() {
     }
   });
 
-  if (token === undefined) return null;
-  if (!token) {
-    return (
-      <FormStatus tone="erreur">
-        Ce lien est incomplet. Ouvrez le lien reçu par e-mail tel quel, ou demandez-en un nouveau.
-      </FormStatus>
-    );
-  }
   if (done) {
     return (
       <div className={styles.formulaire}>

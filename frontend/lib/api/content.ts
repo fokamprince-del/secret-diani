@@ -96,6 +96,16 @@ export async function getPage(slug: string) {
   );
 }
 
+/** Page publiée, ou `null` si elle n'existe pas encore (sans renvoyer de 404 à la place). */
+export function getPageIfPublished(slug: string) {
+  return load(`page « ${slug} »`, () =>
+    serverApi.GET('/api/v1/content/pages/{slug}', {
+      params: { path: { slug } },
+      fetch: cached(['pages', `page:${slug}`]),
+    }),
+  );
+}
+
 export function getArticleCategories() {
   return load('catégories d’articles', () =>
     serverApi.GET('/api/v1/content/article-categories', { fetch: cached(['article-categories']) }),

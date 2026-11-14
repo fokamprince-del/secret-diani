@@ -1,0 +1,92 @@
+/* Bande nude rosé, comme sur la maquette : citation à gauche, chiffres à droite. */
+.bande {
+  background:
+    radial-gradient(30rem 16rem at 0% 0%, rgb(255 251 248 / 0.25), transparent 70%), var(--nude);
+  color: var(--cacao);
+}
+
+.grille {
+  display: grid;
+  align-items: center;
+  gap: var(--e-6);
+  padding-block: var(--e-7);
+}
+
+@media (min-width: 64rem) {
+  .grille {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
+  }
+}
+
+.citation {
+  position: relative;
+  margin: 0;
+  padding-left: 2.75rem;
+}
+
+.citation::before {
+  content: '“';
+  position: absolute;
+  top: -1.25rem;
+  left: 0;
+  font-family: var(--font-titre);
+  font-size: 4.5rem;
+  line-height: 1;
+  color: var(--terra-d);
+}
+
+.citation p {
+  font-family: var(--font-titre-italique);
+  font-style: italic;
+  font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+  line-height: 1.25;
+  color: var(--cacao);
+}
+
+.liste {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--e-5) 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48rem) {
+  .liste {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.chiffre {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-1);
+  padding-inline: var(--e-3);
+  text-align: center;
+}
+
+@media (min-width: 48rem) {
+  .chiffre + .chiffre {
+    border-left: 1px solid rgb(94 47 27 / 0.2);
+  }
+}
+
+.icone {
+  margin-bottom: var(--e-1);
+  color: var(--terra-d);
+}
+
+.valeur {
+  font-family: var(--font-titre);
+  font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--cacao);
+}
+
+.libelle {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  color: var(--cacao);
+}

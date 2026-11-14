@@ -1,6 +1,7 @@
 import { Global, Inject, Logger, Module, OnApplicationShutdown } from '@nestjs/common';
 import Redis from 'ioredis';
 import { AppConfigService } from '../config/app-config.service';
+import { MemoryRedis } from './memory-redis';
 import { REDIS_CLIENT } from './redis.constants';
 import { redisOptionsFromUrl } from './redis-options';
 
@@ -12,8 +13,14 @@ import { redisOptionsFromUrl } from './redis-options';
       inject: [AppConfigService],
       useFactory: (config: AppConfigService): Redis => {
         const logger = new Logger('Redis');
+        const url = config.get('REDIS_URL');
+        if (!url) {
+          // Sans Redis : une seule instance, état en mémoire (voir memory-redis.ts).
+          logger.log('REDIS_URL absent : stockage en mémoire et tâches exécutées dans l’API.');
+          return new MemoryRedis() as unknown as Redis;
+        }
         const client = new Redis({
-          ...redisOptionsFromUrl(config.get('REDIS_URL')),
+          ...redisOptionsFromUrl(url),
           lazyConnect: true,
           connectTimeout: 5_000,
           commandTimeout: 2_000,

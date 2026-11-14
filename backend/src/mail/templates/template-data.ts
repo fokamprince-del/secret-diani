@@ -3,7 +3,14 @@ export interface MailTemplateData {
   'verify-email': { firstName: string | null; link: string };
   welcome: { firstName: string | null; siteLink: string };
   'account-exists': { loginLink: string; resetLink: string };
-  'password-reset': { firstName: string | null; link: string; expiresInMinutes: number };
+  'password-reset': {
+    firstName: string | null;
+    link: string;
+    /** Code à 6 chiffres, à saisir sur le site (alternative au lien). */
+    code: string;
+    codeExpiresInMinutes: number;
+    expiresInMinutes: number;
+  };
   'password-changed': { firstName: string | null; resetLink: string };
   'email-change-confirm': { link: string; expiresInMinutes: number };
   'email-change-notice': { firstName: string | null };
@@ -31,6 +38,7 @@ export interface MailTemplateData {
     phone: string | null;
     eventDate: string;
     guestCount: number | null;
+    occasion?: string | null;
     fulfilment: string | null;
     itemLines: string[];
     estimatedTotal: string | null;
@@ -49,7 +57,8 @@ export interface MailTemplateData {
   'order-confirmed': {
     firstName: string;
     reference: string;
-    itemLines: string[];
+    /** Lignes de la commande : libellé (quantité × article) et montant. */
+    items: { label: string; amount: string }[];
     subtotal: string;
     shipping: string;
     total: string;
@@ -57,6 +66,10 @@ export interface MailTemplateData {
     trackingLink: string;
     /** Espace membre, quand la commande contient un pack de formation. */
     coursesLink?: string | null;
+    /** Facture à joindre (le worker joint le PDF au moment de l'envoi). */
+    invoiceId?: string | null;
+    /** Posé par le worker : le PDF est bien joint. */
+    invoiceAttached?: boolean;
   };
   'order-shipped': {
     firstName: string;

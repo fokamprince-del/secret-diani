@@ -1,5 +1,10 @@
 import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
-import { CateringFulfilment, CateringRequestSource, CateringRequestStatus } from '@prisma/client';
+import {
+  CateringFulfilment,
+  CateringOccasion,
+  CateringRequestSource,
+  CateringRequestStatus,
+} from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
@@ -88,6 +93,12 @@ class RequestContactDto {
   @Min(1)
   @Max(5000)
   guestCount?: number | null;
+
+  @ApiPropertyOptional({ enum: CateringOccasion, nullable: true, description: 'Type d’événement' })
+  @IsOptional()
+  @EmptyToNull()
+  @IsEnum(CateringOccasion)
+  occasion?: CateringOccasion | null;
 
   @ApiPropertyOptional({ enum: CateringFulfilment })
   @IsOptional()
@@ -213,6 +224,7 @@ export class AdminUpdateCateringRequestDto extends PartialType(
     'phone',
     'eventDate',
     'guestCount',
+    'occasion',
     'fulfilment',
     'deliveryAddress',
     'internalNotes',
@@ -351,6 +363,9 @@ export class AdminCateringRequestSummaryDto {
 
   @ApiProperty({ nullable: true, type: Number })
   guestCount!: number | null;
+
+  @ApiProperty({ enum: CateringOccasion, nullable: true })
+  occasion!: CateringOccasion | null;
 
   @ApiProperty({ nullable: true, type: Number })
   estimatedTotalCents!: number | null;

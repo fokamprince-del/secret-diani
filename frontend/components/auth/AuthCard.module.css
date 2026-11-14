@@ -1,16 +1,177 @@
+/* ---------- Gabarit : écran partagé ---------- */
 .page {
-  padding-block: clamp(2.5rem, 2rem + 4vw, 5rem);
+  display: grid;
+  min-height: calc(100svh - var(--hauteur-header));
+  background:
+    radial-gradient(
+      36rem 26rem at 100% 0%,
+      color-mix(in srgb, var(--mangue) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      30rem 22rem at 0% 100%,
+      color-mix(in srgb, var(--framboise) 8%, transparent),
+      transparent 70%
+    ),
+    var(--creme);
+}
+
+@media (min-width: 64rem) {
+  .page {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(2rem, 1rem + 3vw, 4rem);
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  }
+}
+
+/* ---------- Panneau visuel ---------- */
+.panneau {
+  position: relative;
+  overflow: hidden;
+  height: 13rem;
+  background-color: var(--ganache);
+}
+
+.panneau video {
+  position: absolute;
+  inset: 0;
+}
+
+@media (min-width: 64rem) {
+  .panneau {
+    height: auto;
+    min-height: 36rem;
+    border-radius: calc(var(--rayon) * 2);
+    box-shadow: 0 40px 80px -40px rgb(62 36 24 / 0.6);
+  }
+}
+
+/* Voile chocolat : le texte ivoire reste lisible sur la vidéo. */
+.voile {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ganache) 20%, transparent) 0%,
+    color-mix(in srgb, var(--ganache) 55%, transparent) 45%,
+    color-mix(in srgb, var(--ganache) 92%, transparent) 100%
+  );
+}
+
+.panneauContenu {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  gap: var(--e-4);
+  padding: var(--e-5) var(--gouttiere) var(--e-7);
+  color: var(--ivoire);
+}
+
+.marque {
+  font-family: var(--font-titre);
+  font-size: 1.125rem;
+  color: color-mix(in srgb, var(--ivoire) 85%, transparent);
+}
+
+.marque span {
+  font-family: var(--font-manuscrit);
+  font-size: 1.9rem;
+  color: var(--mangue);
+}
+
+.citation,
+.avantages {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .panneauContenu {
+    padding: var(--e-7);
+  }
+
+  .citation {
+    display: block;
+    max-width: 18ch;
+    font-family: var(--font-titre);
+    font-size: clamp(1.75rem, 1rem + 1.6vw, 2.5rem);
+    line-height: 1.15;
+    color: var(--ivoire);
+  }
+
+  .avantages {
+    display: grid;
+    gap: var(--e-3);
+    margin: var(--e-2) 0 0;
+    padding: var(--e-5) 0 0;
+    border-top: 1px solid color-mix(in srgb, var(--ivoire) 25%, transparent);
+  }
+
+  .avantages li {
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+    font-size: 0.975rem;
+  }
+
+  .avantages svg {
+    flex: none;
+    padding: 3px;
+    border-radius: 50%;
+    background-color: var(--mangue);
+    color: var(--ganache);
+    box-sizing: content-box;
+  }
+}
+
+/* ---------- Colonne du formulaire ---------- */
+.colonne {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--e-4);
+  padding: 0 var(--gouttiere) var(--e-8);
+}
+
+@media (min-width: 64rem) {
+  .colonne {
+    padding: var(--e-6) 0;
+  }
 }
 
 .carte {
   display: grid;
   gap: var(--e-5);
+  width: 100%;
   max-width: 30rem;
-  margin-inline: auto;
+  margin-top: -2.5rem;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border: 1px solid color-mix(in srgb, var(--nude) 45%, transparent);
+  border-radius: calc(var(--rayon) * 1.6);
+  background-color: var(--surface);
+  box-shadow:
+    0 1px 2px rgb(94 47 27 / 0.04),
+    0 30px 60px -30px rgb(94 47 27 / 0.28);
+}
+
+@media (min-width: 64rem) {
+  .carte {
+    margin-top: 0;
+  }
+}
+
+.entete {
+  display: grid;
+  gap: var(--e-3);
 }
 
 .titre {
-  font-size: var(--t-h2);
+  font-size: clamp(1.875rem, 1.5rem + 1.2vw, 2.5rem);
+}
+
+.trait {
+  width: 8rem;
+  margin-top: calc(-1 * var(--e-2));
 }
 
 .intro {
@@ -24,4 +185,47 @@
   padding-top: var(--e-5);
   border-top: 1px solid var(--filet);
   font-size: var(--taille-petit);
+}
+
+.securite {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--texte-s);
+}
+
+/* Entrée : la carte monte doucement, le panneau se dévoile. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Le titre est l'élément LCP : la carte glisse sans partir de l'opacité 0. */
+  .carte {
+    animation: glisse 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .panneauContenu > * {
+    animation: monte 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .panneauContenu > :nth-child(2) {
+    animation-delay: 150ms;
+  }
+
+  .panneauContenu > :nth-child(3) {
+    animation-delay: 300ms;
+  }
+}
+
+@keyframes monte {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes glisse {
+  from {
+    opacity: 0.4;
+    transform: translateY(14px);
+  }
 }

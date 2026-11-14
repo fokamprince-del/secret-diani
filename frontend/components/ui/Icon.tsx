@@ -92,6 +92,67 @@ const paths = {
       <path d="M10.5 9.5v5l4-2.5z" />
     </>
   ),
+  panier: <path d="M4 10h16l-1.6 9H5.6zM8.5 10l2-5M15.5 10l-2-5M9 14v2.5M12 14v2.5M15 14v2.5" />,
+  couverts: (
+    <path d="M7 3.5v6.5a2 2 0 0 0 2 2v8.5M9 3.5V8M11 3.5v6.5a2 2 0 0 1-2 2M17 20.5V3.5c-2.2 1.2-3 3.6-3 6.5 0 1.4.9 2.5 3 2.5" />
+  ),
+  ecran: <path d="M4.5 5.5h15v10h-15zM2.5 18.5h19M10.5 9l3.5 2-3.5 2z" />,
+  accompagnement: (
+    <path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 8.6a3.7 3.7 0 0 1 7 2.1c0 5-7 9.3-7 9.3zM9.5 12.5h5" />
+  ),
+  livre: (
+    <path d="M12 6.5c-1.8-1.3-4.4-2-7.5-2v13c3.1 0 5.7.7 7.5 2 1.8-1.3 4.4-2 7.5-2v-13c-3.1 0-5.7.7-7.5 2zM12 6.5v13" />
+  ),
+  boutique: (
+    <path d="M4.5 9.5l1.2-4.5h12.6l1.2 4.5M4.5 9.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0M6 11.5v8h12v-8M10 19.5v-4.5h4v4.5" />
+  ),
+  carte: (
+    <path d="M3.5 7a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM3.5 9.5h17M7 15h3" />
+  ),
+  question: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.6M12 16.8v.2" />
+    </>
+  ),
+  camion: (
+    <path d="M3.5 6.5h10v9h-10zM13.5 9.5h4l3 3v3h-7M7 18.5a1.5 1.5 0 1 0 0-.01M17 18.5a1.5 1.5 0 1 0 0-.01" />
+  ),
+  // Administration
+  grille: <path d="M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM13.5 13.5h6v6h-6z" />,
+  reglages: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4L18 18M6 18l1.6-1.6M16.4 7.6L18 6" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" />
+    </>
+  ),
+  utilisateurs: (
+    <>
+      <circle cx="9" cy="9" r="3" />
+      <path d="M3.5 19c.7-3 2.8-4.6 5.5-4.6s4.8 1.6 5.5 4.6M15.5 6.2a3 3 0 0 1 0 5.6M17.5 14.6c1.7.5 2.7 2 3 4.4" />
+    </>
+  ),
+  document: <path d="M6.5 3.5h7.5l4 4v13h-11.5zM13.5 3.5v4.5h4.5M9 12.5h6M9 16h6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  crayon: <path d="M14.5 5.5l4 4L8.5 19.5h-4v-4zM12.5 7.5l4 4" />,
+  corbeille: <path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5M10 10.5v6M14 10.5v6" />,
+  recherche: (
+    <>
+      <circle cx="10.5" cy="10.5" r="6" />
+      <path d="M15 15l5 5" />
+    </>
+  ),
+  calendrier: <path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4v4M15.5 4v4M8 14h2M14 14h2M8 17h2" />,
+  journal: <path d="M5 5.5h14M5 10h14M5 14.5h9M5 19h6" />,
+  externe: <path d="M13.5 4.5h6v6M19.5 4.5l-8 8M17 13.5v6h-12.5v-12.5h6" />,
+  copier: <path d="M8.5 8.5h11v11h-11zM15.5 8.5v-4h-11v11h4" />,
 } as const;
 
 export type IconName = keyof typeof paths;

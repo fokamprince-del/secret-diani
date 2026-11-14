@@ -276,6 +276,7 @@ type ProductInput = {
   composition?: [string, number][];
   variants: [string, number, number?, number?][];
   maxFlavours?: number;
+  allergens?: S['CateringProductCardDto']['allergens'];
 };
 
 let variantCounter = 0;
@@ -297,6 +298,7 @@ function product(input: ProductInput): S['CateringProductCardDto'] {
     fromPriceCents: Math.min(...variants.map((variant) => variant.priceCents)),
     maxFlavours: input.maxFlavours ?? 0,
     flavours: input.maxFlavours ? flavours : [],
+    allergens: input.allergens ?? [],
     image: null,
     gallery: [],
     whatsappUrl: wa(
@@ -380,6 +382,7 @@ export const cateringCatalog: S['CateringCatalogDto'] = {
           slug: 'layer-cake',
           name: 'Layer cake',
           maxFlavours: 3,
+          allergens: ['gluten', 'eggs', 'milk'],
           variants: [
             ['Bento', 1_500],
             ['4–6 parts', 3_500, 4, 6],

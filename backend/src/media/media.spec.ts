@@ -5,6 +5,10 @@ import { detectFileType, unsupportedTypeMessage } from './file-signature';
 import { processImage } from './image-pipeline';
 import { toPublicImage } from './media.types';
 
+// L'encodage AVIF des variantes prend plusieurs secondes quand la machine est chargée (suite
+// complète en parallèle) : le délai de 5 s par défaut faisait échouer ces tests sans raison.
+jest.setTimeout(30_000);
+
 function header(...parts: (string | number[])[]): Buffer {
   const bytes = Buffer.concat(
     parts.map((part) =>

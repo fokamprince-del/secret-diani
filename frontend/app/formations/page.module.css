@@ -37,8 +37,8 @@
   display: grid;
   gap: var(--e-5);
   align-items: center;
-  padding: clamp(1.5rem, 1rem + 2vw, 3rem);
-  border-radius: var(--rayon);
+  padding: clamp(1.75rem, 1rem + 3vw, 3.5rem);
+  border-radius: calc(var(--rayon) * 1.6);
   background-color: var(--sable);
 }
 
@@ -78,11 +78,25 @@
   display: grid;
   align-content: start;
   gap: var(--e-2);
+  padding: var(--e-5);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+  transition:
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 500ms var(--courbe);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .etape:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -26px rgb(94 47 27 / 0.4);
+  }
 }
 
 .numero {
   font-family: var(--font-titre);
-  font-size: 2rem;
+  font-size: 2.5rem;
+  line-height: 1;
   color: var(--terra);
 }
 
@@ -104,4 +118,24 @@
   flex: none;
   margin-top: 0.2em;
   color: var(--terra);
+}
+
+/* Ligne de progression au-dessus des étapes (grand écran), tracée au défilement. */
+@media (min-width: 64rem) {
+  .etapes {
+    position: relative;
+    padding-top: var(--e-5);
+  }
+
+  .etapes::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--terra);
+    transform-origin: 0 50%;
+  }
 }

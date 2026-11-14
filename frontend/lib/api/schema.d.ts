@@ -129,6 +129,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auth/google': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Connexion avec Google : redirige vers Google
+     * @description `?suite=` : page du site où revenir après la connexion. Sans configuration Google, renvoie vers /connexion avec `erreur=google_indisponible`.
+     */
+    get: operations['AuthController_googleStart'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auth/2fa/enroll': {
     parameters: {
       query?: never;
@@ -262,6 +282,26 @@ export interface paths {
     put?: never;
     /** Mot de passe oublié : recevoir un lien (valable 30 minutes) */
     post: operations['AuthController_forgotPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/password/code': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Mot de passe oublié : vérifier le code à 6 chiffres reçu par e-mail
+     * @description Code juste : jeton de réinitialisation (comme celui du lien), à utiliser sur POST /auth/password/reset. 5 essais par code, 15 minutes.
+     */
+    post: operations['AuthController_verifyResetCode'];
     delete?: never;
     options?: never;
     head?: never;
@@ -3113,6 +3153,15 @@ export interface components {
       /** @description Codes de secours à usage unique : affichés une seule fois */
       backupCodes: string[];
     };
+    ResetCodeDto: {
+      /** @example cliente@example.com */
+      email: string;
+      /**
+       * @description Code à 6 chiffres reçu par e-mail
+       * @example 482913
+       */
+      code: string;
+    };
     ResetPasswordDto: {
       /** @description Jeton reçu par e-mail */
       token: string;
@@ -3152,6 +3201,10 @@ export interface components {
       phone: string | null;
       emailVerified: boolean;
       mfaEnabled: boolean;
+      /** @description Un mot de passe est défini (faux : compte créé avec Google) */
+      hasPassword: boolean;
+      /** @description Connexion avec Google reliée au compte */
+      googleLinked: boolean;
       /** @description Consentement aux e-mails d’information */
       marketingConsent: boolean;
       /** Format: date-time */
@@ -3230,8 +3283,8 @@ export interface components {
       isDefault: boolean;
     };
     DeleteAccountDto: {
-      /** @description Mot de passe actuel (confirmation) */
-      password: string;
+      /** @description Mot de passe actuel (confirmation). Compte sans mot de passe (Google) : omis, une connexion de moins de 15 minutes est exigée. */
+      password?: string;
     };
     MediaVariantDto: {
       /** @enum {string} */
@@ -3695,6 +3748,23 @@ export interface components {
       maxFlavours: number;
       /** @description Parfums proposés pour ce produit */
       flavours: components['schemas']['FlavourDto'][];
+      /** @description Allergènes majeurs présents (vide : non renseignés, liste sur demande) */
+      allergens: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Vignette (1re image) */
       image: components['schemas']['PublicImageDto'] | null;
       /** @description Galerie complète */
@@ -3758,6 +3828,23 @@ export interface components {
       maxFlavours: number;
       /** @description Parfums proposés pour ce produit */
       flavours: components['schemas']['FlavourDto'][];
+      /** @description Allergènes majeurs présents (vide : non renseignés, liste sur demande) */
+      allergens: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Vignette (1re image) */
       image: components['schemas']['PublicImageDto'] | null;
       /** @description Galerie complète */
@@ -3806,6 +3893,11 @@ export interface components {
       eventDate: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -3846,6 +3938,11 @@ export interface components {
       eventDate: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -3914,6 +4011,22 @@ export interface components {
       variants: components['schemas']['CateringVariantDto'][];
       maxFlavours: number;
       flavours: components['schemas']['FlavourDto'][];
+      allergens: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       images: components['schemas']['AdminProductImageDto'][];
       position: number;
       visible: boolean;
@@ -3961,6 +4074,23 @@ export interface components {
        * @default 0
        */
       maxFlavours: number;
+      /** @description Allergènes majeurs présents (règlement INCO) */
+      allergens?: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Parfums proposés */
       flavourIds?: string[];
       /** @description Galerie ; la première image sert de vignette */
@@ -3985,6 +4115,23 @@ export interface components {
        * @default 0
        */
       maxFlavours: number;
+      /** @description Allergènes majeurs présents (règlement INCO) */
+      allergens?: (
+        | 'gluten'
+        | 'crustaceans'
+        | 'eggs'
+        | 'fish'
+        | 'peanuts'
+        | 'soy'
+        | 'milk'
+        | 'nuts'
+        | 'celery'
+        | 'mustard'
+        | 'sesame'
+        | 'sulphites'
+        | 'lupin'
+        | 'molluscs'
+      )[];
       /** @description Parfums proposés */
       flavourIds?: string[];
       /** @description Galerie ; la première image sert de vignette */
@@ -4064,6 +4211,8 @@ export interface components {
       /** @example 2026-11-14 */
       eventDate: string;
       guestCount: number | null;
+      /** @enum {string|null} */
+      occasion: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       estimatedTotalCents: number | null;
       agreedTotalCents: number | null;
       /** Format: date-time */
@@ -4089,6 +4238,11 @@ export interface components {
       eventDate: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -4129,6 +4283,8 @@ export interface components {
       /** @example 2026-11-14 */
       eventDate: string;
       guestCount: number | null;
+      /** @enum {string|null} */
+      occasion: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       estimatedTotalCents: number | null;
       agreedTotalCents: number | null;
       /** Format: date-time */
@@ -4178,6 +4334,11 @@ export interface components {
       eventDate?: string;
       /** @example 40 */
       guestCount?: number | null;
+      /**
+       * @description Type d’événement
+       * @enum {string|null}
+       */
+      occasion?: 'wedding' | 'birthday' | 'baptism' | 'corporate' | 'other' | null;
       /** @enum {string} */
       fulfilment?: 'pickup' | 'delivery';
       /** @description Ville ou adresse (livraison seulement) */
@@ -6013,6 +6174,39 @@ export interface operations {
       };
     };
   };
+  AuthController_googleStart: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
   AuthController_startMfaEnrollment: {
     parameters: {
       query?: never;
@@ -6313,6 +6507,45 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['MessageResponseDto'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AuthController_verifyResetCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResetCodeDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TokenDto'];
         };
       };
       400: {

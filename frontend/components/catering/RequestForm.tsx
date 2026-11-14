@@ -8,7 +8,7 @@ import { fieldMessages, userMessage } from '@/lib/api/errors';
 import type { CateringConditions, CateringReceipt, CateringSlot } from '@/lib/api/types';
 import { depositHint, describeChoice, isoDateIn, selectionTotal } from '@/lib/catering';
 import { formatDate, formatPrice } from '@/lib/format';
-import { type CateringRequestValues, cateringRequestSchema } from '@/lib/forms';
+import { CATERING_OCCASIONS, type CateringRequestValues, cateringRequestSchema } from '@/lib/forms';
 import { HoneypotField, SelectField, TextAreaField, TextField } from '../forms/Field';
 import {
   CAPTCHA_PENDING_MESSAGE,
@@ -29,6 +29,7 @@ const FIELDS = [
   'phone',
   'eventDate',
   'guestCount',
+  'occasion',
   'fulfilment',
   'deliveryAddress',
   'message',
@@ -77,6 +78,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
     handleSubmit,
     setError,
     setFocus,
+    setValue,
     control,
     formState: { errors, isSubmitting },
   } = useForm<CateringRequestValues>({
@@ -88,6 +90,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
       phone: '',
       eventDate: '',
       guestCount: '',
+      occasion: '',
       fulfilment: 'pickup',
       deliveryAddress: '',
       message: '',
@@ -96,6 +99,13 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
     },
   });
   const fulfilment = useWatch({ control, name: 'fulfilment' });
+
+  // Arrivée depuis « Pour quelle occasion ? » (/traiteur?occasion=wedding#demande) : déjà choisie.
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('occasion');
+    const match = CATERING_OCCASIONS.find((option) => option.value === wanted);
+    if (match) setValue('occasion', match.value);
+  }, [setValue]);
 
   // Parcours avancé : créneaux disponibles pour le mode choisi.
   useEffect(() => {
@@ -139,6 +149,7 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
       phone: values.phone || null,
       eventDate: values.eventDate,
       guestCount: values.guestCount ? Number(values.guestCount) : null,
+      occasion: values.occasion || null,
       fulfilment: values.fulfilment,
       deliveryAddress: values.fulfilment === 'delivery' ? values.deliveryAddress : null,
       message: values.message || null,
@@ -295,6 +306,13 @@ export function RequestForm({ conditions }: { conditions: CateringConditions }) 
           hint="Pratique pour caler les détails rapidement."
           error={errors.phone?.message}
           {...register('phone')}
+        />
+        <SelectField
+          label="Votre événement"
+          optional
+          options={[{ value: '', label: 'Choisissez…' }, ...CATERING_OCCASIONS]}
+          error={errors.occasion?.message}
+          {...register('occasion')}
         />
         <TextField
           label="Date de l’événement"

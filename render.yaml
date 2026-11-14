@@ -1,0 +1,85 @@
+# Plan Render (Blueprint) : l'API des Secrets de Diani, sans Docker ni Redis.
+# Render › New › Blueprint › choisir ce dépôt. Les valeurs secrètes (sync: false) sont
+# demandées à la création ; voir docs/MISE_EN_LIGNE_RENDER_VERCEL.md pour chacune.
+services:
+  - type: web
+    name: secrets-de-diani-api
+    runtime: node
+    rootDir: backend
+    # Starter conseillé : l'offre gratuite s'endort après 15 min (premier appel lent, tâches
+    # planifiées non exécutées pendant le sommeil).
+    plan: starter
+    region: frankfurt
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
+    # Migrations appliquées à chaque déploiement (DIRECT_URL), puis l'API.
+    startCommand: npm run db:deploy && npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: '24'
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: LOG_PRETTY
+        value: 'false'
+      - key: SWAGGER_ENABLED
+        value: 'false'
+      - key: TRUST_PROXY_HOPS
+        value: '1'
+      - key: S3_AUTO_CREATE_BUCKETS
+        value: 'false'
+      - key: MAIL_TRANSPORT
+        value: resend
+      - key: CATERING_ONLINE_ORDERING
+        value: 'false'
+      - key: TERMS_VERSION
+        value: '2026-10'
+      # --- À renseigner (secrets) ---
+      - key: PUBLIC_SITE_URL
+        sync: false
+      - key: PUBLIC_API_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: FIELD_ENCRYPTION_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: MAIL_REPLY_TO
+        sync: false
+      - key: TURNSTILE_SECRET_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET_PRIVATE
+        sync: false
+      - key: S3_BUCKET_PUBLIC
+        sync: false
+      - key: S3_FORCE_PATH_STYLE
+        value: 'true'
+      - key: MEDIA_PUBLIC_BASE_URL
+        sync: false
+      - key: FRONTEND_REVALIDATE_URL
+        sync: false
+      - key: FRONTEND_REVALIDATE_SECRET
+        sync: false

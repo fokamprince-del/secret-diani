@@ -39,12 +39,17 @@ export async function dismissConsent(page: Page) {
 /** Violations axe graves ou critiques (WCAG 2.2 AA). */
 export async function seriousA11yViolations(page: Page) {
   // On juge l'état au repos : les entrées animées (fondu du hero) sont d'abord terminées.
-  // Les animations sans fin (squelettes de chargement) ne sont pas attendues.
+  // Les animations sans fin (squelettes de chargement) et celles liées au défilement (barre de
+  // progression, parallaxe) ne sont pas attendues.
   await page.evaluate(() =>
     Promise.all(
       document
         .getAnimations()
-        .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity)
+        .filter(
+          (animation) =>
+            animation.timeline === document.timeline &&
+            animation.effect?.getComputedTiming().endTime !== Infinity,
+        )
         .map((animation) => animation.finished),
     ),
   );

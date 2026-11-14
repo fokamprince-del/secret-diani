@@ -28,3 +28,58 @@
 .faq {
   max-width: 48rem;
 }
+
+/* Boutique pas encore ouverte : un encart clair et chaleureux plutôt qu'un état vide. */
+.bientot {
+  display: grid;
+  gap: var(--e-6);
+  align-items: center;
+  padding: clamp(1.75rem, 1rem + 4vw, 4rem);
+  border-radius: calc(var(--rayon) * 1.6);
+  background-color: var(--sable);
+}
+
+@media (min-width: 56rem) {
+  .bientot {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+.bientotDessin {
+  justify-self: center;
+  width: min(60vw, 15rem);
+  height: auto;
+  padding: var(--e-5);
+  overflow: visible;
+  border-radius: 50%;
+  background-color: var(--creme);
+}
+
+.bientotDessin :global(.trace) {
+  fill: none;
+  stroke: var(--terra);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bientotTexte {
+  display: grid;
+  gap: var(--e-4);
+  justify-items: start;
+}
+
+.bientotSurtitre {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: var(--approche-surtitre);
+  text-transform: uppercase;
+  color: var(--terra-d);
+}
+
+.bientotActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  margin-top: var(--e-2);
+}

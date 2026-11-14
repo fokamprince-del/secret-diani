@@ -1,0 +1,25 @@
+.aimant {
+  --mx: 0px;
+  --my: 0px;
+  display: inline-flex;
+  /* Zone d'attraction un peu plus large que le bouton. */
+  margin: -0.5rem;
+  padding: 0.5rem;
+  transform: translate3d(var(--mx), var(--my), 0);
+  transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Pendant l'attraction : suivi rapide, sans rebond. */
+.aimant[data-attire] {
+  transition: transform 160ms ease-out;
+}
+
+/* Le contenu (libellé, flèche) suit un peu plus : effet de profondeur. */
+.aimant > * {
+  transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.aimant[data-attire] > * {
+  transform: translate3d(calc(var(--mx) * 0.25), calc(var(--my) * 0.25), 0);
+  transition-duration: 160ms;
+}

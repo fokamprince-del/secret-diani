@@ -40,8 +40,8 @@ export function CookieConsent() {
           Vos cookies, votre choix
         </h2>
         <p className={styles.texte}>
-          Avec votre accord, nous mesurons l’audience du site pour l’améliorer, sans publicité ni
-          revente de données. Vous pouvez changer d’avis à tout moment depuis le pied de page.{' '}
+          Avec votre accord, nous mesurons l’audience du site, sans publicité ni revente de données.
+          Modifiable à tout moment en pied de page.{' '}
           <Link href="/confidentialite">En savoir plus</Link>
         </p>
         <div className={styles.boutons}>

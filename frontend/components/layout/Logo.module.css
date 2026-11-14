@@ -1,27 +1,94 @@
 .logo {
-  display: inline-flex;
-  align-items: baseline;
+  display: inline-grid;
+  justify-items: center;
   gap: 0.35rem;
   min-height: var(--cible);
   align-content: center;
   color: var(--cacao);
+  line-height: 0.92;
   white-space: nowrap;
-  line-height: 1;
 }
 
 .logo:hover {
   color: var(--cacao);
 }
 
-.debut {
+/* « Les » en petit, la toque à droite, « Secrets » en grand, « de Diani » dessous. */
+.marque {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'les toque'
+    'secrets secrets'
+    'diani diani';
+  align-items: end;
+  justify-items: center;
   font-family: var(--font-titre);
-  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.1875rem);
-  letter-spacing: 0.01em;
 }
 
-.nom {
-  font-family: var(--font-manuscrit);
-  font-size: clamp(1.875rem, 1.6rem + 1vw, 2.375rem);
+.les {
+  grid-area: les;
+  justify-self: end;
+  padding-right: 0.15em;
+  font-size: 0.95rem;
+}
+
+.toque {
+  grid-area: toque;
+  justify-self: start;
+  width: 1.5rem;
+  height: auto;
+  margin-bottom: -0.1rem;
+  fill: none;
+  stroke: var(--terra-d);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.secrets {
+  grid-area: secrets;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+.diani {
+  grid-area: diani;
+  font-size: 1.35rem;
   color: var(--terra-d);
-  transform: translateY(0.08em);
+}
+
+.diani em {
+  font-family: var(--font-titre-italique);
+  font-style: italic;
+  font-size: 0.85em;
+}
+
+.signature {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--texte);
+}
+
+/* Grand format (pied de page). */
+.logo[data-taille='grand'] {
+  gap: var(--e-3);
+}
+
+.logo[data-taille='grand'] .les {
+  font-size: 1.35rem;
+}
+
+.logo[data-taille='grand'] .toque {
+  width: 2.25rem;
+}
+
+.logo[data-taille='grand'] .secrets {
+  font-size: 2.5rem;
+}
+
+.logo[data-taille='grand'] .diani {
+  font-size: 2.1rem;
 }

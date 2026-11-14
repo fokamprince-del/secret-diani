@@ -7,6 +7,7 @@ import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { OfflineNotice } from '@/components/layout/OfflineNotice';
+import { Apparitions } from '@/components/ui/Apparitions';
 import { getSiteSettings } from '@/lib/api/content';
 import { publicEnv } from '@/lib/env';
 import { SITE_NAME } from '@/lib/seo';
@@ -17,11 +18,11 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(publicEnv.siteUrl),
   title: {
-    default: `${SITE_NAME} · Traiteur, formations et boutique`,
+    default: `${SITE_NAME} · Traiteur et pâtisserie faits maison`,
     template: `%s · ${SITE_NAME}`,
   },
   description:
-    'Traiteur, formations et boutique d’accessoires pour créer, apprendre et se faire plaisir.',
+    'Traiteur et pâtisserie faits maison pour vos mariages, anniversaires, baptêmes et événements d’entreprise : buffets salés, plateaux et layer cakes. Formations et kits pour apprendre.',
   applicationName: SITE_NAME,
   formatDetection: { telephone: false, email: false, address: false },
 };
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       className={[playfair, playfairItalic, dmSans, allura].map((font) => font.variable).join(' ')}
     >
       <body>
+        <div className="progression-defilement" aria-hidden="true" />
         <AuthProvider>
           <a href="#contenu" className="lien-evitement">
             Aller au contenu
@@ -52,6 +54,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <Footer settings={settings} socials={socials} />
           <CookieConsent />
           <OfflineNotice />
+          <Apparitions />
           <Analytics />
         </AuthProvider>
       </body>

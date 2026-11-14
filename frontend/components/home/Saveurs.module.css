@@ -1,0 +1,69 @@
+/* `clip` et non `hidden` : le drip doit pouvoir déborder vers le bas. */
+.bandeau {
+  position: relative;
+  z-index: 2;
+  overflow-x: clip;
+  padding-block: var(--e-5);
+  background-color: var(--ganache);
+  color: var(--ivoire);
+}
+
+.piste {
+  display: flex;
+  width: max-content;
+}
+
+.liste {
+  display: flex;
+  flex: none;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.saveur {
+  display: flex;
+  align-items: center;
+  gap: var(--e-5);
+  padding-right: var(--e-5);
+  font-family: var(--font-titre-italique);
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.875rem);
+  font-style: italic;
+  white-space: nowrap;
+  /* Fond propre : le contraste reste mesurable même pour les saveurs hors de l'écran. */
+  background-color: var(--ganache);
+}
+
+/* Séparateur : une goutte, couleur saveur à tour de rôle. */
+.saveur::after {
+  content: '';
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50% 0 50% 50%;
+  background-color: var(--mangue);
+  transform: rotate(-45deg);
+}
+
+.saveur[data-ton='1']::after {
+  background-color: var(--framboise);
+}
+
+.saveur[data-ton='2']::after {
+  background-color: var(--caramel);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .piste {
+    animation: defile 45s linear infinite;
+  }
+
+  .bandeau:hover .piste {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes defile {
+  to {
+    transform: translateX(-50%);
+  }
+}

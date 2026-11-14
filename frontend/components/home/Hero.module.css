@@ -1,114 +1,264 @@
 .hero {
   position: relative;
-  display: grid;
-  align-items: end;
-  min-height: min(88svh, 52rem);
-  overflow: hidden;
-  background-color: var(--sable);
+  isolation: isolate;
+  overflow: clip;
+  background-color: var(--creme);
 }
 
-.media {
-  position: absolute;
-  inset: 0;
-}
-
-/* L'image d'ambiance couvre toute la zone, sans arrondi. */
-.media > * {
-  height: 100%;
-  border-radius: 0;
-}
-
-/* Voile crème en bas du visuel pour garantir le contraste du texte. */
-.media::after {
+/* Halo pêche, forme organique et floue derrière le titre ; il dérive très lentement. */
+.hero::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    transparent 20%,
-    color-mix(in srgb, var(--creme) 70%, transparent) 62%,
-    var(--creme) 100%
+  top: 8%;
+  left: max(-8rem, calc((100vw - var(--largeur-max)) / 2 - 12rem));
+  z-index: -2;
+  width: min(38rem, 90vw);
+  aspect-ratio: 1.15;
+  border-radius: 62% 38% 55% 45% / 48% 58% 42% 52%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--peche) 55%, transparent),
+    transparent
   );
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* ---------- Visuel : grand, à droite, fondu dans le crème ---------- */
+.visuel {
+  position: relative;
+  z-index: -1;
+  height: min(58vh, 26rem);
+  background-color: var(--sable);
+  /* Le bas du visuel se fond dans la page (mobile). */
+  mask-image: linear-gradient(to bottom, #000 62%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+}
+
+.visuel :is(img, video, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 56rem) {
+  .visuel {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: max(44%, 30rem);
+    height: auto;
+    /* Grand écran : le bord gauche du visuel se fond dans le crème. Visuel vertical (portrait
+       de Diani, vidéo de buffet) : une colonne, pas une bande étirée. */
+    mask-image: linear-gradient(to right, transparent, #000 28%);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 28%);
+  }
+}
+
+/* ---------- Texte ---------- */
+.grille {
+  position: relative;
+  display: grid;
+  align-items: center;
+  margin-top: -4.5rem;
+  padding-bottom: var(--e-7);
+}
+
+@media (min-width: 56rem) {
+  .grille {
+    min-height: min(80vh, 40rem);
+    margin-top: 0;
+    padding-block: var(--e-8);
+  }
 }
 
 .contenu {
   position: relative;
   display: grid;
   justify-items: start;
-  gap: var(--e-5);
-  padding-block: var(--e-8) clamp(3rem, 2rem + 6vw, 6.5rem);
+  gap: var(--e-4);
+  max-width: 34rem;
 }
 
-.filet {
-  width: 3rem;
-  height: 1px;
-  background-color: var(--or);
+.note {
+  font-family: var(--font-manuscrit);
+  font-size: 1.6rem;
+  line-height: 1.05;
+  color: var(--terra-d);
+  transform: rotate(-4deg);
+}
+
+@media (min-width: 56rem) {
+  .note {
+    position: absolute;
+    top: -3.25rem;
+    left: 58%;
+    font-size: 1.65rem;
+    white-space: nowrap;
+  }
 }
 
 .titre {
-  max-width: 16ch;
-  font-size: var(--t-display);
-  line-height: 1.06;
+  display: grid;
+  font-size: clamp(3rem, 1.6rem + 5.6vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--cacao);
+}
+
+.ligne {
+  display: block;
+  /* Le masque : les mots montent depuis le bas de leur ligne. */
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  padding-bottom: 0.06em;
+}
+
+.ligneDiani {
+  color: var(--terra-d);
+}
+
+.mot {
+  display: inline-block;
+}
+
+.promesse {
+  font-family: var(--font-titre);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+  line-height: 1.15;
+  color: var(--cacao);
 }
 
 .texte {
-  max-width: 44ch;
-  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  max-width: 30rem;
+  font-size: 1.125rem;
   color: var(--texte);
 }
 
-.action {
-  margin-top: var(--e-2);
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  margin-top: var(--e-3);
 }
 
-/* Moment mémorable : entrée échelonnée du filet, du titre, du texte puis du bouton. */
+/* Bouton secondaire lisible sur le visuel. */
+.secondaire {
+  background-color: color-mix(in srgb, var(--blanc) 70%, transparent);
+}
+
+/* Devise verticale à droite (grand écran seulement). */
+.devise {
+  display: none;
+}
+
+@media (min-width: 72rem) {
+  .devise {
+    position: absolute;
+    top: 50%;
+    right: max(var(--gouttiere), calc((100vw - var(--largeur-max)) / 2 - 4rem));
+    display: grid;
+    justify-items: center;
+    font-family: var(--font-titre);
+    font-size: 1.15rem;
+    line-height: 1.25;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--blanc);
+    text-shadow: 0 1px 12px rgb(62 36 24 / 0.45);
+    transform: translateY(-50%);
+  }
+
+  .devise span {
+    margin-top: var(--e-2);
+    letter-spacing: 0;
+  }
+}
+
+/* ---------- Entrée ---------- */
 @media (prefers-reduced-motion: no-preference) {
-  .filet,
-  .titre,
+  .mot {
+    animation: mot 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(80ms + var(--i) * 110ms);
+  }
+
+  .note,
+  .promesse,
   .texte,
-  .action {
-    animation: entree 700ms var(--courbe) both;
+  .actions {
+    animation: monte 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .filet {
-    animation-name: trace;
-    transform-origin: left;
-  }
-
-  /*
-   * Le titre est l'élément LCP : il glisse sans partir de l'opacité 0 (Chrome ignore un élément
-   * invisible et retarderait la mesure jusqu'à la fin de l'animation).
-   */
-  .titre {
-    animation-name: glisse;
-    animation-delay: 0ms;
+  .promesse {
+    animation-delay: 150ms;
   }
 
   .texte {
-    animation-delay: 260ms;
+    animation-delay: 280ms;
   }
 
-  .action {
-    animation-delay: 400ms;
+  .actions {
+    animation-delay: 420ms;
+  }
+
+  .note {
+    animation-delay: 700ms;
+  }
+
+  .visuel {
+    animation: visuel 1600ms cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+
+  .hero::before {
+    animation: halo-derive 22s ease-in-out infinite alternate;
   }
 }
 
-@keyframes entree {
+@keyframes halo-derive {
+  to {
+    transform: translate(3rem, 2rem) rotate(18deg) scale(1.06);
+    border-radius: 45% 55% 40% 60% / 58% 42% 58% 42%;
+  }
+}
+
+/* Le titre (LCP) reste opaque : seuls les mots glissent hors de leur masque. */
+@keyframes mot {
+  from {
+    transform: translateY(105%) rotate(3deg);
+  }
+}
+
+@keyframes monte {
   from {
     opacity: 0;
     transform: translateY(14px);
   }
 }
 
-@keyframes glisse {
+/* Rideau : le visuel s'ouvre de droite à gauche en se posant. */
+@keyframes visuel {
   from {
-    opacity: 0.35;
-    transform: translateY(10px);
+    clip-path: inset(0 0 0 100%);
+    transform: scale(1.08);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
-@keyframes trace {
-  from {
-    transform: scaleX(0);
+/* Parallaxe au défilement : le visuel descend plus lentement que la page. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .visuel > :first-child {
+      animation: visuel-parallaxe linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 90vh;
+    }
+  }
+}
+
+@keyframes visuel-parallaxe {
+  to {
+    transform: translateY(18%) scale(1.06);
   }
 }

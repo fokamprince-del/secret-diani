@@ -1,0 +1,283 @@
+.espace {
+  --largeur-cote: 16.5rem;
+  min-height: 100dvh;
+  background:
+    radial-gradient(
+      60rem 30rem at 100% -10%,
+      color-mix(in srgb, var(--peche) 35%, transparent),
+      transparent 70%
+    ),
+    #f6efe9;
+}
+
+.attente {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--e-3);
+  min-height: 100dvh;
+  padding: var(--e-5);
+  text-align: center;
+  color: var(--texte);
+}
+
+.refusTitre {
+  font-size: 2rem;
+}
+
+.spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid var(--sable);
+  border-top-color: var(--terra-d);
+  border-radius: 50%;
+  animation: tourne 800ms linear infinite;
+}
+
+@keyframes tourne {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Colonne latérale chocolat, comme le pied de page du site. */
+.cote {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  width: var(--largeur-cote);
+  padding: var(--e-5) var(--e-3) var(--e-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(18rem 14rem at 0 0, rgb(232 185 35 / 0.1), transparent 70%),
+    linear-gradient(180deg, #4a2516 0%, var(--ganache) 100%);
+  color: var(--peche);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.15) transparent;
+}
+
+.marque {
+  display: grid;
+  margin: 0 var(--e-3) var(--e-5);
+  color: var(--blanc);
+  line-height: 1.05;
+}
+
+.marqueNom {
+  font-family: var(--font-titre);
+  font-size: 1.45rem;
+}
+
+.marqueDiani {
+  font-family: var(--font-titre-italique);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--peche);
+}
+
+.marqueRole {
+  margin-top: var(--e-2);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--or);
+}
+
+.navigation {
+  display: grid;
+  gap: var(--e-4);
+  flex: 1;
+}
+
+.section ul {
+  display: grid;
+  gap: 2px;
+}
+
+.sectionTitre {
+  margin: 0 var(--e-3) var(--e-1);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(233 205 184 / 0.55);
+}
+
+.lien {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.5rem;
+  padding: 0 var(--e-3);
+  border-radius: 10px;
+  color: #f1dccd;
+  font-size: 0.925rem;
+  transition:
+    background-color var(--duree-courte) ease,
+    color var(--duree-courte) ease;
+}
+
+.lien svg {
+  flex: none;
+  opacity: 0.75;
+}
+
+.lien:hover {
+  background: rgb(255 255 255 / 0.06);
+  color: var(--blanc);
+}
+
+.lien[aria-current='page'] {
+  background: linear-gradient(90deg, rgb(232 185 35 / 0.18), rgb(255 255 255 / 0.04));
+  box-shadow: inset 3px 0 0 var(--mangue);
+  color: var(--blanc);
+  font-weight: 600;
+}
+
+.lien[aria-current='page'] svg {
+  opacity: 1;
+  color: var(--mangue);
+}
+
+.lien:focus-visible,
+.lienPied:focus-visible,
+.burger:focus-visible {
+  outline: 2px solid var(--mangue);
+  outline-offset: 2px;
+}
+
+.pied {
+  display: grid;
+  gap: 2px;
+  margin-top: var(--e-5);
+  padding-top: var(--e-4);
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.compte {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  margin: 0 var(--e-3) var(--e-2);
+  color: var(--blanc);
+  font-size: 0.9rem;
+}
+
+.compteNom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--terra);
+  font-family: var(--font-titre);
+  color: var(--blanc);
+}
+
+.lienPied {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.25rem;
+  padding: 0 var(--e-3);
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: #e7cfc0;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.lienPied:hover {
+  background: rgb(255 255 255 / 0.06);
+  color: var(--blanc);
+}
+
+.contenu {
+  min-width: 0;
+  padding: clamp(1.25rem, 0.8rem + 2vw, 2.5rem) clamp(1rem, 0.5rem + 2.5vw, 3rem) var(--e-8);
+}
+
+.barreMobile {
+  display: none;
+}
+
+.voile {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .contenu {
+    margin-left: var(--largeur-cote);
+    max-width: calc(78rem + var(--largeur-cote));
+  }
+}
+
+/* Téléphone et tablette : barre en haut, navigation en tiroir. */
+@media (max-width: 63.99rem) {
+  .barreMobile {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+    height: 3.5rem;
+    padding: 0 var(--e-3);
+    background: var(--ganache);
+    color: var(--blanc);
+  }
+
+  .burger {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 10px;
+    background: rgb(255 255 255 / 0.08);
+    color: var(--blanc);
+    cursor: pointer;
+  }
+
+  .marqueMobile {
+    font-family: var(--font-titre);
+    font-size: 1.15rem;
+    color: var(--blanc);
+  }
+
+  .cote {
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition:
+      transform var(--duree) var(--courbe),
+      visibility 0s linear var(--duree);
+    box-shadow: var(--ombre-elevee);
+  }
+
+  .espace[data-menu-ouvert] .cote {
+    transform: none;
+    visibility: visible;
+    transition: transform var(--duree) var(--courbe);
+  }
+
+  .espace[data-menu-ouvert] .voile {
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    display: block;
+    border: 0;
+    background: rgb(40 22 14 / 0.45);
+  }
+}

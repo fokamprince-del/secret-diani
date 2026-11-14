@@ -3,7 +3,7 @@ import { contentSecurityPolicy } from './lib/csp';
 
 /** Témoin posé par le navigateur à la connexion (aucune valeur secrète, voir lib/auth/session). */
 const SESSION_HINT = 'diani_session';
-const PROTECTED = ['/espace-membre'];
+const PROTECTED = ['/espace-membre', '/admin'];
 
 /**
  * Pages privées (DECISIONS D-F05, D-F24) :
@@ -38,7 +38,7 @@ export const config = {
   matcher: [
     {
       source:
-        '/(espace-membre|connexion|inscription|mot-de-passe-oublie|reinitialiser|verifier-email|confirmer-email|panier|commande)(.*)',
+        '/(admin|espace-membre|connexion|inscription|mot-de-passe-oublie|reinitialiser|verifier-email|confirmer-email|panier|commande)(.*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

@@ -7,6 +7,8 @@ test.describe('Navigation mobile au clavier', () => {
   test.beforeEach(async ({ page }) => {
     await dismissConsent(page);
     await page.goto('/');
+    // Page interactive (hydratée) avant les touches : sinon Entrée peut tomber dans le vide.
+    await page.waitForLoadState('networkidle');
   });
 
   test('le menu s’ouvre, retient le focus, se ferme à Échap et rend le focus', async ({ page }) => {

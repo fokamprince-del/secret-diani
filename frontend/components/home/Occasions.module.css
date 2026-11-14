@@ -1,0 +1,199 @@
+.occasions {
+  padding-block: var(--section);
+  background:
+    radial-gradient(
+      50rem 22rem at 10% 0%,
+      color-mix(in srgb, var(--peche) 45%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40rem 20rem at 95% 100%,
+      color-mix(in srgb, var(--sable) 80%, transparent),
+      transparent 70%
+    );
+}
+
+.entete {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-2);
+  margin-bottom: var(--e-7);
+  text-align: center;
+}
+
+.surtitre {
+  font-family: var(--font-manuscrit);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--terra-d);
+}
+
+.grille {
+  display: grid;
+  gap: var(--e-5);
+}
+
+@media (min-width: 40rem) {
+  .grille {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .grille {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* Cartes en quinconce : un rythme de vitrine de pâtisserie. */
+  .grille > li:nth-child(even) {
+    margin-top: var(--e-7);
+  }
+}
+
+.carte {
+  --teinte: color-mix(in srgb, var(--accent) 16%, var(--blanc));
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--e-4);
+  height: 100%;
+  padding: var(--e-4) var(--e-4) var(--e-5);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 28px;
+  background: radial-gradient(120% 60% at 50% 0%, var(--teinte), transparent 75%), var(--blanc);
+  color: var(--texte);
+  box-shadow: var(--ombre);
+  transition:
+    transform var(--duree-longue) var(--courbe-douce),
+    box-shadow var(--duree-longue) var(--courbe-douce);
+}
+
+/* Fil d'or qui se dessine sous la carte au survol. */
+.carte::after {
+  content: '';
+  position: absolute;
+  inset: auto 1.5rem 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duree-longue) var(--courbe-douce);
+}
+
+.visuel {
+  display: grid;
+  place-items: center;
+  padding-top: var(--e-2);
+}
+
+/* Le gâteau dans une arche blanche, cerclée de la couleur de sa saveur. */
+.gateau,
+.photoAmbiance {
+  display: block;
+  width: min(15rem, 82%);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 999px 999px 22px 22px;
+  outline: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  outline-offset: 6px;
+  box-shadow: 0 24px 40px -28px color-mix(in srgb, var(--accent) 70%, var(--cacao));
+  transition:
+    transform var(--duree-longue) var(--courbe-douce),
+    outline-offset var(--duree-longue) var(--courbe-douce);
+}
+
+.gateau :is(picture, img),
+.photoAmbiance :is(picture, img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gateau {
+  --studio-marge: 7%;
+}
+
+.photoAmbiance img {
+  object-fit: cover;
+  transition: transform 1.2s var(--courbe-douce);
+}
+
+.texte {
+  display: grid;
+  gap: var(--e-2);
+  align-content: start;
+  text-align: center;
+}
+
+.titre {
+  font-family: var(--font-titre);
+  font-size: clamp(1.5rem, 1.3rem + 0.6vw, 1.85rem);
+  line-height: 1.1;
+  color: var(--cacao);
+}
+
+.description {
+  font-size: var(--taille-petit);
+  line-height: 1.55;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: var(--e-2);
+  color: var(--terra-d);
+  font-weight: 600;
+}
+
+.action svg {
+  transition: transform var(--duree) var(--courbe);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .carte:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--ombre-elevee);
+  }
+
+  .carte:hover::after {
+    transform: scaleX(1);
+  }
+
+  .carte:hover .gateau,
+  .carte:hover .photoAmbiance {
+    transform: translateY(-4px) scale(1.035);
+    outline-offset: 10px;
+  }
+
+  .carte:hover .photoAmbiance img {
+    transform: scale(1.08);
+  }
+
+  .carte:hover .action svg {
+    transform: translateX(4px);
+  }
+}
+
+/* Le gâteau respire doucement, chaque carte à son propre rythme. */
+@media (prefers-reduced-motion: no-preference) {
+  .gateau {
+    animation: flotte 6s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -1.4s);
+  }
+}
+
+@keyframes flotte {
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+.carte:focus-visible {
+  outline: var(--focus-anneau);
+  outline-offset: 4px;
+}

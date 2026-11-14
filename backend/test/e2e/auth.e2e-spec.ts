@@ -406,6 +406,8 @@ describe('Authentification (e2e)', () => {
 
       const mail = await inbox.last(session.email, 'password-reset');
       expect(mail.data.expiresInMinutes).toBe(30);
+      expect(mail.data.code).toMatch(/^\d{6}$/);
+      expect(mail.data.codeExpiresInMinutes).toBe(15);
       const token = tokenFromLink(mail.data.link);
       const stored = await prisma.userToken.findFirstOrThrow({
         where: { userId: session.userId, purpose: 'password_reset', usedAt: null },

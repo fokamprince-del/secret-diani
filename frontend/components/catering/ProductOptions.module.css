@@ -115,12 +115,6 @@
   color: var(--texte-s);
 }
 
-.prix {
-  font-family: var(--font-titre);
-  font-size: 1.5rem;
-  color: var(--cacao);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -158,4 +152,11 @@
 .ajoute svg {
   flex: none;
   margin-top: 0.2em;
+}
+
+/* Mobile : les deux boutons se partagent la largeur, alignés. */
+@media (max-width: 47.99rem) {
+  .actions > * {
+    flex: 1 1 100%;
+  }
 }

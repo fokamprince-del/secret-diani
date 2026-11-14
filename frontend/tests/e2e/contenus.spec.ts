@@ -44,20 +44,25 @@ test.describe('Accueil', () => {
   test('présente les trois univers sans prix, chacun avec un seul bouton', async ({ page }) => {
     const universes = page.locator('#univers');
     await expect(universes.getByRole('heading', { level: 3 })).toHaveText([
-      'Traiteur & commandes',
-      'Formations en ligne',
-      'Boutique & kits',
+      'Des saveurs qui marquent vos moments',
+      'Apprenez, cuisinez, réalisez vos rêves',
+      'Équipez-vous comme à l’atelier',
     ]);
     await expect(universes.getByText('Plateaux, bouchées et layer cakes')).toBeVisible();
     await expect(universes).not.toContainText('€');
     await expect(universes.getByRole('link')).toHaveCount(3);
-    await expect(universes.getByRole('link', { name: 'Je commande un plateau' })).toHaveAttribute(
+    await expect(universes.getByRole('link', { name: 'Passer commande' })).toHaveAttribute(
       'href',
       '/traiteur',
     );
-    // Le bouton du hero mène aux univers.
-    await page.getByRole('link', { name: 'Découvrir nos univers' }).click();
-    await expect(page).toHaveURL(/#univers$/);
+    // Les deux actions du hero mènent au traiteur : devis d'abord, puis la carte.
+    await expect(
+      page.getByRole('link', { name: 'Demander un devis', exact: true }),
+    ).toHaveAttribute('href', '/traiteur#demande');
+    await expect(page.getByRole('link', { name: 'Voir la carte du traiteur' })).toHaveAttribute(
+      'href',
+      '/traiteur',
+    );
   });
 
   test('affiche les avis traiteur de l’API, le mot de Diani et la réassurance', async ({
@@ -70,7 +75,8 @@ test.describe('Accueil', () => {
     const word = page.getByRole('region', { name: 'Le mot de Diani' });
     await expect(word).toContainText('Bienvenue dans ma cuisine.');
     await expect(word.locator('figcaption')).toHaveText('Diani');
-    await expect(page.getByRole('heading', { name: 'Paiement sécurisé' })).toBeVisible();
+    const commitments = page.getByRole('region', { name: 'Nos engagements' });
+    await expect(commitments.getByText('Paiement sécurisé')).toBeVisible();
     expect(await jsonLdTypes(page)).toContain('Organization');
   });
 
@@ -94,13 +100,27 @@ test.describe('Pages éditoriales', () => {
       .getByRole('link', { name: 'Seconde partie' })
       .click();
     await expect(page).toHaveURL(/#seconde-partie$/);
+  });
 
+  test('À propos : page composée, avec le récit saisi dans l’administration', async ({ page }) => {
+    await dismissConsent(page);
     await page.goto('/a-propos');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('À propos');
-    await expect(page.getByRole('link', { name: 'Écrire à Diani' })).toHaveAttribute(
-      'href',
-      '/contact',
-    );
+    // Le récit publié dans l'API remplace le texte par défaut.
+    await expect(
+      page.getByText('Page de démonstration sur l’histoire de la marque.'),
+    ).toBeVisible();
+    for (const [name, href] of [
+      ['Voir la carte', '/traiteur'],
+      ['Découvrir les formations', '/formations'],
+      ['Voir les kits', '/boutique'],
+      ['Écrivez-moi', '/contact'],
+    ] as const) {
+      await expect(page.getByRole('link', { name })).toHaveAttribute('href', href);
+    }
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Sortis de ma cuisine' }),
+    ).toBeVisible();
   });
 
   test('une page inconnue de l’API répond 404', async ({ page }) => {

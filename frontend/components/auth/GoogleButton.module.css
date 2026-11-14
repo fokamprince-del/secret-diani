@@ -1,0 +1,65 @@
+.bloc {
+  display: grid;
+  gap: var(--e-4);
+  margin-bottom: var(--e-5);
+}
+
+/* Bouton aux couleurs neutres demandées par Google : fond clair, logo multicolore. */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-3);
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--cacao) 25%, transparent);
+  border-radius: var(--rayon-pilule);
+  background-color: var(--blanc);
+  font-weight: 500;
+  color: var(--cacao);
+  text-decoration: none;
+  transition:
+    border-color var(--duree) var(--courbe),
+    box-shadow var(--duree) var(--courbe),
+    transform var(--duree) var(--courbe);
+}
+
+.bouton:hover {
+  border-color: var(--cacao);
+  box-shadow: var(--ombre);
+  color: var(--cacao);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bouton:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.logo {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.mention {
+  font-size: var(--taille-petit);
+  text-align: center;
+}
+
+/* Séparateur « ou » entre deux filets. */
+.ou {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  font-size: var(--taille-petit);
+  color: var(--texte);
+}
+
+.ou::before,
+.ou::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--filet);
+}

@@ -22,18 +22,22 @@ describe('Universes', () => {
   it('trois univers, un bouton chacun, aucun prix', async () => {
     const { container } = render(<Universes universes={home.universes} />);
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
-      'Traiteur & commandes',
-      'Formations en ligne',
-      'Boutique & kits',
+      'Des saveurs qui marquent vos moments',
+      'Apprenez, cuisinez, réalisez vos rêves',
+      'Équipez-vous comme à l’atelier',
     ]);
-    expect(screen.getAllByRole('link')).toHaveLength(3);
+    expect(screen.getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual([
+      '/traiteur',
+      '/formations',
+      '/boutique',
+    ]);
     expect(container.textContent).not.toContain('€');
     expect(await axeViolations(container)).toEqual([]);
   });
 
   it('reste lisible sans contenu de l’API (titres et boutons)', () => {
     render(<Universes universes={null} />);
-    expect(screen.getByRole('link', { name: 'Je choisis mon kit' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Découvrir la boutique' })).toHaveAttribute(
       'href',
       '/boutique',
     );

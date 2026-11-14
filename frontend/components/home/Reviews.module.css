@@ -5,6 +5,7 @@
 
 .entete {
   display: grid;
+  justify-items: start;
   gap: var(--e-3);
   margin-bottom: var(--e-7);
 }
@@ -38,9 +39,10 @@
     overflow: visible;
   }
 
+  /* Autant de colonnes que la largeur le permet : pas de carte orpheline seule en bas. */
   .liste {
     grid-auto-flow: row;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   }
 }
 
@@ -48,7 +50,21 @@
   scroll-snap-align: start;
 }
 
+/* Les cartes arrivent l'une après l'autre (Apparitions). */
+.carte:nth-child(2) {
+  --delai: 90ms;
+}
+
+.carte:nth-child(3) {
+  --delai: 180ms;
+}
+
+.carte:nth-child(n + 4) {
+  --delai: 270ms;
+}
+
 .figure {
+  position: relative;
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: var(--e-4);
@@ -81,4 +97,37 @@
 
 .details {
   font-size: var(--taille-petit);
+}
+
+/* Grand guillemet framboise, décoratif. */
+.figure::before {
+  content: '“';
+  position: absolute;
+  top: -0.35em;
+  right: 0.3em;
+  font-family: var(--font-titre);
+  font-size: 6rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--framboise) 55%, transparent);
+  pointer-events: none;
+}
+
+.figure {
+  transition:
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 500ms var(--courbe);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .carte:nth-child(odd) .figure:hover {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+
+  .carte:nth-child(even) .figure:hover {
+    transform: translateY(-8px) rotate(1deg);
+  }
+
+  .figure:hover {
+    box-shadow: 0 24px 40px -24px rgb(94 47 27 / 0.4);
+  }
 }

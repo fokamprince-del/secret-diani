@@ -1,5 +1,12 @@
 .rubriques {
+  position: sticky;
+  top: var(--hauteur-header);
+  z-index: 20;
   margin-bottom: var(--e-7);
+  padding-block: var(--e-2);
+  background-color: color-mix(in srgb, var(--creme) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .rubriques ul {
@@ -29,10 +36,20 @@
   white-space: nowrap;
 }
 
+.rubrique {
+  background: linear-gradient(var(--terra), var(--terra)) 50% 100% / 0% 100% no-repeat;
+  transition:
+    background-size 400ms var(--courbe),
+    color 300ms ease,
+    border-color 300ms ease,
+    transform 300ms var(--courbe);
+}
+
 .rubrique:hover {
   border-color: var(--terra);
-  background-color: var(--sable);
-  color: var(--cacao);
+  background-size: 100% 100%;
+  color: var(--blanc);
+  transform: translateY(-2px);
 }
 
 .catalogue {
@@ -44,6 +61,12 @@
 .categorie {
   display: grid;
   gap: var(--e-6);
+}
+
+/* Ancres des rubriques : le titre s'arrête sous la barre collante des rubriques, pas dessous. */
+.categorie,
+.demande {
+  scroll-margin-top: 4.5rem;
 }
 
 .entete {
@@ -73,8 +96,25 @@
 .demande {
   display: grid;
   gap: var(--e-7);
-  margin-top: var(--section);
+  margin-block: var(--section);
+  padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
   align-items: start;
+  border-radius: calc(var(--rayon) * 2);
+  background-color: var(--sable);
+}
+
+.categorie .entete h2 {
+  position: relative;
+}
+
+.categorie .entete h2::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin-top: var(--e-2);
+  border-radius: 2px;
+  background-color: var(--terra);
 }
 
 @media (min-width: 64rem) {

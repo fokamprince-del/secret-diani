@@ -55,6 +55,8 @@ model User {
   role               UserRole   @default(client)
   status             UserStatus @default(active)
   emailVerifiedAt    DateTime?  @map("email_verified_at") @db.Timestamptz(3)
+  /// Identifiant stable du compte Google (« sub » OpenID Connect) : connexion avec Google.
+  googleSubject      String?    @unique @map("google_subject") @db.VarChar(255)
   firstName          String?    @map("first_name") @db.VarChar(100)
   lastName           String?    @map("last_name") @db.VarChar(100)
   phone              String?    @db.VarChar(20)
@@ -459,23 +461,26 @@ model CateringCategory {
 
 /// MLD : produit_traiteur (plateau, à la carte ou layer cake selon la catégorie).
 model CateringProduct {
-  id             String    @id @default(uuid(7)) @db.Uuid
-  categoryId     String    @map("category_id") @db.Uuid
-  slug           String    @unique @db.VarChar(160)
-  name           String    @db.VarChar(160)
-  description    String?   @db.VarChar(2000)
+  id             String             @id @default(uuid(7)) @db.Uuid
+  categoryId     String             @map("category_id") @db.Uuid
+  slug           String             @unique @db.VarChar(160)
+  name           String             @db.VarChar(160)
+  description    String?            @db.VarChar(2000)
   /// Composition affichée : [{ label, quantity }] (ex. 5 mini burgers).
-  composition    Json      @default("[]")
+  composition    Json               @default("[]")
   /// Nombre maximal de parfums au choix (0 = pas de parfum ; layer cakes : plusieurs).
-  maxFlavours    Int       @default(0) @map("max_flavours")
-  position       Int       @default(0)
-  visible        Boolean   @default(true)
-  seoTitle       String?   @map("seo_title") @db.VarChar(70)
-  seoDescription String?   @map("seo_description") @db.VarChar(160)
-  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  maxFlavours    Int                @default(0) @map("max_flavours")
+  /// Allergènes majeurs présents (règlement INCO, 14 allergènes), saisis par Diani : affichés
+  /// sur la carte. Vide : la carte invite à demander la liste.
+  allergens      CateringAllergen[] @default([])
+  position       Int                @default(0)
+  visible        Boolean            @default(true)
+  seoTitle       String?            @map("seo_title") @db.VarChar(70)
+  seoDescription String?            @map("seo_description") @db.VarChar(160)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
   /// Suppression logique : les demandes passées gardent leurs libellés figés.
-  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedAt      DateTime?          @map("deleted_at") @db.Timestamptz(3)
 
   category CateringCategory         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   variants CateringVariant[]
@@ -563,6 +568,37 @@ enum CateringRequestStatus {
   @@map("catering_request_status")
 }
 
+/// Type d'événement d'une demande traiteur.
+enum CateringOccasion {
+  wedding
+  birthday
+  baptism
+  corporate
+  other
+
+  @@map("catering_occasion")
+}
+
+/// Les 14 allergènes à déclaration obligatoire (règlement UE 1169/2011, annexe II).
+enum CateringAllergen {
+  gluten
+  crustaceans
+  eggs
+  fish
+  peanuts
+  soy
+  milk
+  nuts
+  celery
+  mustard
+  sesame
+  sulphites
+  lupin
+  molluscs
+
+  @@map("catering_allergen")
+}
+
 enum CateringFulfilment {
   pickup
   delivery
@@ -594,6 +630,8 @@ model CateringRequest {
   phone               String?               @db.VarChar(20)
   eventDate           DateTime              @map("event_date") @db.Date
   guestCount          Int?                  @map("guest_count")
+  /// Type d'événement (mariage, anniversaire…), choisi dans le formulaire de devis.
+  occasion            CateringOccasion?
   fulfilment          CateringFulfilment?
   /// Ville ou adresse de livraison (texte libre, livraison seulement).
   deliveryAddress     String?               @map("delivery_address") @db.VarChar(300)

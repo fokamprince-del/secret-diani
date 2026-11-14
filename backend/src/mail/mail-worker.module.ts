@@ -1,17 +1,19 @@
-import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { AppConfigService } from '../config/app-config.service';
+import { MailAttachmentsService } from './mail-attachments.service';
 import { MAIL_QUEUE } from './mail.constants';
 import { MailProcessor } from './mail.processor';
 import { MAIL_TRANSPORT, type MailTransport } from './transports/mail-transport';
 import { OutboxTransport } from './transports/outbox.transport';
+import { registerQueue } from '../jobs/queue-mode';
 import { ResendTransport } from './transports/resend.transport';
 
 /** Consommateur des e-mails (worker uniquement). */
 @Module({
-  imports: [BullModule.registerQueue({ name: MAIL_QUEUE })],
+  imports: [registerQueue(MAIL_QUEUE)],
   providers: [
     MailProcessor,
+    MailAttachmentsService,
     {
       provide: MAIL_TRANSPORT,
       inject: [AppConfigService],

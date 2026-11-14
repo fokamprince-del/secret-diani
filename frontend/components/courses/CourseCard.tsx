@@ -14,7 +14,7 @@ export function CourseCard({
 }) {
   const Heading = `h${headingLevel}` as const;
   return (
-    <article className={styles.carte}>
+    <article className={styles.carte} data-apparition="monte">
       <div className={styles.visuel}>
         {course.cover ? (
           <ResponsiveImage

@@ -16,6 +16,8 @@ function origin(value: string | undefined): string | null {
 
 const apiOrigin = origin(process.env.NEXT_PUBLIC_API_URL) ?? 'http://localhost:3000';
 export const mediaOrigin = origin(process.env.NEXT_PUBLIC_MEDIA_URL);
+// Stockage S3 (R2, OVH…) : le back-office y dépose les photos par URL signée, depuis le navigateur.
+const uploadOrigin = origin(process.env.NEXT_PUBLIC_STORAGE_UPLOAD_URL);
 const analyticsOrigin = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN
   ? (origin(process.env.NEXT_PUBLIC_PLAUSIBLE_SRC) ?? 'https://plausible.io')
   : null;
@@ -34,6 +36,7 @@ const sources = (...values: (string | null | false | undefined)[]) =>
  * demande avec une CSP à nonce stricte, sans 'unsafe-inline' pour les scripts.
  */
 export const PRIVATE_PATH_PREFIXES = [
+  '/admin',
   '/espace-membre',
   '/connexion',
   '/inscription',
@@ -66,7 +69,7 @@ export function contentSecurityPolicy(nonce?: string): string {
     `style-src 'self' 'unsafe-inline'`,
     `img-src ${sources(`'self'`, 'data:', 'blob:', apiOrigin, mediaOrigin)}`,
     `font-src 'self'`,
-    `connect-src ${sources(`'self'`, apiOrigin, analyticsOrigin, captchaOrigin, ...videoOrigins, isDev && 'ws:')}`,
+    `connect-src ${sources(`'self'`, apiOrigin, uploadOrigin, analyticsOrigin, captchaOrigin, ...videoOrigins, isDev && 'ws:')}`,
     `media-src ${sources(`'self'`, 'blob:', mediaOrigin, ...videoOrigins)}`,
     `worker-src 'self' blob:`,
     `frame-src ${captchaOrigin ?? `'none'`}`,

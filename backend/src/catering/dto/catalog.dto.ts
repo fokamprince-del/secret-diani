@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CateringKind } from '@prisma/client';
+import { CateringAllergen, CateringKind } from '@prisma/client';
 import { PublicImageDto, SeoDto } from '../../content/common/content-responses.dto';
 
 export class CompositionItemDto {
@@ -68,6 +68,13 @@ export class CateringProductCardDto {
 
   @ApiProperty({ type: [FlavourDto], description: 'Parfums proposés pour ce produit' })
   flavours!: FlavourDto[];
+
+  @ApiProperty({
+    enum: CateringAllergen,
+    isArray: true,
+    description: 'Allergènes majeurs présents (vide : non renseignés, liste sur demande)',
+  })
+  allergens!: CateringAllergen[];
 
   @ApiProperty({ type: PublicImageDto, nullable: true, description: 'Vignette (1re image)' })
   image!: PublicImageDto | null;

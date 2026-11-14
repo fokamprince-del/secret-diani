@@ -25,6 +25,14 @@ export class ResendTransport implements MailTransport {
         text: mail.text,
         ...(mail.replyTo ? { reply_to: mail.replyTo } : {}),
         ...(mail.headers ? { headers: mail.headers } : {}),
+        ...(mail.attachments?.length
+          ? {
+              attachments: mail.attachments.map((file) => ({
+                filename: file.filename,
+                content: file.content.toString('base64'),
+              })),
+            }
+          : {}),
       }),
       signal: AbortSignal.timeout(10_000),
     });

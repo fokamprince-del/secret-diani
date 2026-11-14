@@ -412,6 +412,42 @@
         ]
       }
     },
+    "/api/v1/auth/google": {
+      "get": {
+        "description": "`?suite=` : page du site où revenir après la connexion. Sans configuration Google, renvoie vers /connexion avec `erreur=google_indisponible`.",
+        "operationId": "AuthController_googleStart",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Connexion avec Google : redirige vers Google",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
     "/api/v1/auth/2fa/enroll": {
       "post": {
         "operationId": "AuthController_startMfaEnrollment",
@@ -840,6 +876,59 @@
           }
         },
         "summary": "Mot de passe oublié : recevoir un lien (valable 30 minutes)",
+        "tags": [
+          "Authentification"
+        ]
+      }
+    },
+    "/api/v1/auth/password/code": {
+      "post": {
+        "description": "Code juste : jeton de réinitialisation (comme celui du lien), à utiliser sur POST /auth/password/reset. 5 essais par code, 15 minutes.",
+        "operationId": "AuthController_verifyResetCode",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Mot de passe oublié : vérifier le code à 6 chiffres reçu par e-mail",
         "tags": [
           "Authentification"
         ]
@@ -8976,6 +9065,24 @@
           "backupCodes"
         ]
       },
+      "ResetCodeDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "cliente@example.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "482913",
+            "description": "Code à 6 chiffres reçu par e-mail"
+          }
+        },
+        "required": [
+          "email",
+          "code"
+        ]
+      },
       "ResetPasswordDto": {
         "type": "object",
         "properties": {
@@ -9104,6 +9211,14 @@
           "mfaEnabled": {
             "type": "boolean"
           },
+          "hasPassword": {
+            "type": "boolean",
+            "description": "Un mot de passe est défini (faux : compte créé avec Google)"
+          },
+          "googleLinked": {
+            "type": "boolean",
+            "description": "Connexion avec Google reliée au compte"
+          },
           "marketingConsent": {
             "type": "boolean",
             "description": "Consentement aux e-mails d’information"
@@ -9122,6 +9237,8 @@
           "phone",
           "emailVerified",
           "mfaEnabled",
+          "hasPassword",
+          "googleLinked",
           "marketingConsent",
           "createdAt"
         ]
@@ -9338,12 +9455,9 @@
         "properties": {
           "password": {
             "type": "string",
-            "description": "Mot de passe actuel (confirmation)"
+            "description": "Mot de passe actuel (confirmation). Compte sans mot de passe (Google) : omis, une connexion de moins de 15 minutes est exigée."
           }
-        },
-        "required": [
-          "password"
-        ]
+        }
       },
       "MediaVariantDto": {
         "type": "object",
@@ -10827,6 +10941,29 @@
               "$ref": "#/components/schemas/FlavourDto"
             }
           },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (vide : non renseignés, liste sur demande)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "image": {
             "nullable": true,
             "description": "Vignette (1re image)",
@@ -10860,6 +10997,7 @@
           "fromPriceCents",
           "maxFlavours",
           "flavours",
+          "allergens",
           "image",
           "gallery",
           "whatsappUrl"
@@ -11031,6 +11169,29 @@
               "$ref": "#/components/schemas/FlavourDto"
             }
           },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (vide : non renseignés, liste sur demande)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "image": {
             "nullable": true,
             "description": "Vignette (1re image)",
@@ -11075,6 +11236,7 @@
           "fromPriceCents",
           "maxFlavours",
           "flavours",
+          "allergens",
           "image",
           "gallery",
           "whatsappUrl",
@@ -11175,6 +11337,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",
@@ -11282,6 +11456,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",
@@ -11496,6 +11682,28 @@
               "$ref": "#/components/schemas/FlavourDto"
             }
           },
+          "allergens": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "images": {
             "type": "array",
             "items": {
@@ -11531,6 +11739,7 @@
           "variants",
           "maxFlavours",
           "flavours",
+          "allergens",
           "images",
           "position",
           "visible",
@@ -11639,6 +11848,29 @@
             "default": 0,
             "description": "Nombre maximal de parfums au choix"
           },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (règlement INCO)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
           "flavourIds": {
             "description": "Parfums proposés",
             "type": "array",
@@ -11710,6 +11942,29 @@
             "type": "number",
             "default": 0,
             "description": "Nombre maximal de parfums au choix"
+          },
+          "allergens": {
+            "type": "array",
+            "description": "Allergènes majeurs présents (règlement INCO)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
           },
           "flavourIds": {
             "description": "Parfums proposés",
@@ -11952,6 +12207,17 @@
             "type": "number",
             "nullable": true
           },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true
+          },
           "estimatedTotalCents": {
             "type": "number",
             "nullable": true
@@ -11974,6 +12240,7 @@
           "lastName",
           "eventDate",
           "guestCount",
+          "occasion",
           "estimatedTotalCents",
           "agreedTotalCents",
           "createdAt"
@@ -12030,6 +12297,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",
@@ -12189,6 +12468,17 @@
             "type": "number",
             "nullable": true
           },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true
+          },
           "estimatedTotalCents": {
             "type": "number",
             "nullable": true
@@ -12312,6 +12602,7 @@
           "lastName",
           "eventDate",
           "guestCount",
+          "occasion",
           "estimatedTotalCents",
           "agreedTotalCents",
           "createdAt",
@@ -12367,6 +12658,18 @@
             "minimum": 1,
             "maximum": 5000,
             "example": 40
+          },
+          "occasion": {
+            "type": "string",
+            "enum": [
+              "wedding",
+              "birthday",
+              "baptism",
+              "corporate",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Type d’événement"
           },
           "fulfilment": {
             "type": "string",

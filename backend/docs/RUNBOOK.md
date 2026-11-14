@@ -186,6 +186,13 @@ Sans authentification du domaine, les e-mails (confirmations, factures, newslett
 - Campagnes : exporter les abonné·es confirmé·es (`GET /api/v1/admin/newsletter/subscribers/export`) et les importer dans l'outil d'envoi ; ne jamais réimporter une liste plus ancienne (elle contiendrait des personnes désinscrites depuis). Exporter juste avant chaque envoi.
 - Demande d'effacement d'une personne sans compte : la supprimer de la liste dans l'administration, et dans l'outil d'envoi.
 
+## Connexion avec Google : mise en place
+
+1. Console Google Cloud → créer (ou choisir) un projet → **API et services › Écran de consentement OAuth** : type « Externe », nom « Les Secrets de Diani », e-mail d'assistance, domaine du site, liens vers la politique de confidentialité et les CGU ; portées `openid`, `email`, `profile` (aucune vérification Google nécessaire pour ces portées).
+2. **Identifiants › Créer des identifiants › ID client OAuth › Application Web** ; URI de redirection autorisée : `https://<PUBLIC_API_URL ou PUBLIC_SITE_URL>/api/v1/auth/google/callback`.
+3. Renseigner `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` dans l'environnement de l'API, et `NEXT_PUBLIC_GOOGLE_AUTH=true` au build du site ; redéployer.
+4. Publier l'écran de consentement (« En production ») : en mode « Test », seuls les comptes Google ajoutés comme testeurs peuvent se connecter.
+
 ## Déploiement continu
 
 Chaque fusion sur `main` qui passe la CI est déployée automatiquement (D-091). Déroulé, visible dans l'onglet *Actions* de GitHub :

@@ -1,6 +1,6 @@
-import type { CateringFulfilment, CateringRequestStatus } from '@prisma/client';
+import type { CateringFulfilment, CateringOccasion, CateringRequestStatus } from '@prisma/client';
 import { formatEuros, formatLongDate } from '../../common/utils/money';
-import { requestReference, STATUS_LABELS } from './request-status';
+import { OCCASION_LABELS, requestReference, STATUS_LABELS } from './request-status';
 
 export interface RecapInput {
   number: number;
@@ -9,6 +9,7 @@ export interface RecapInput {
   lastName: string | null;
   eventDate: Date;
   guestCount: number | null;
+  occasion?: CateringOccasion | null;
   fulfilment: CateringFulfilment | null;
   deliveryAddress: string | null;
   estimatedTotalCents: number | null;
@@ -39,6 +40,7 @@ export function buildRecap(input: RecapInput, conditions: string[]): string {
     `Cliente : ${[input.firstName, input.lastName].filter(Boolean).join(' ')}`,
     `Date : ${formatLongDate(input.eventDate)}`,
   ];
+  if (input.occasion) lines.push(`Occasion : ${OCCASION_LABELS[input.occasion]}`);
   if (input.guestCount) lines.push(`Invités : ${input.guestCount}`);
   if (input.fulfilment) {
     const where = input.fulfilment === 'delivery' && input.deliveryAddress;

@@ -1,0 +1,109 @@
+.selecteur {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.choisies,
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: var(--e-3);
+}
+
+.vignette {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--filet);
+  border-radius: 12px;
+  background: var(--studio);
+}
+
+.vignette img,
+.choix img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sansApercu {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--nude);
+}
+
+.principale {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--rayon-pilule);
+  background: var(--cacao);
+  color: var(--blanc);
+  font-size: 0.7rem;
+}
+
+.outils {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 4px;
+}
+
+.outils button {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.92);
+  color: var(--cacao);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.15);
+  cursor: pointer;
+}
+
+.aucune {
+  color: var(--texte-s);
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.bibliotheque {
+  max-height: 22rem;
+  overflow-y: auto;
+  padding: var(--e-3);
+  border: 1px dashed var(--nude);
+  border-radius: 12px;
+  background: var(--creme-clair);
+}
+
+.choix {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: var(--studio);
+  color: var(--nude);
+  cursor: pointer;
+}
+
+.choix:hover:not(:disabled) {
+  border-color: var(--terra);
+}
+
+.choix:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
