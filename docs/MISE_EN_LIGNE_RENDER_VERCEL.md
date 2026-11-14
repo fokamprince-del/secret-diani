@@ -106,7 +106,9 @@ les clés **de test** si Stripe n'est pas encore validé.
 
 ## 7. API sur Render
 
-1. Poussez le code sur GitHub (c'est fait sur la branche du projet ; fusionnez dans `main`).
+1. Le code est sur GitHub, branche **`develop`** : choisissez cette branche dans Render et dans
+   Vercel. (Ne fusionnez pas dans `main` pour l'instant : `main` déclenche l'ancien déploiement
+   Docker par GitHub Actions, qui échouerait sans ses secrets.)
 2. Render → **New → Blueprint** → choisissez le dépôt : Render lit `render.yaml` à la racine.
 3. Renseignez les variables demandées :
 
