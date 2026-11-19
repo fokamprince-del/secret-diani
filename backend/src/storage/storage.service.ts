@@ -9,7 +9,9 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { AppException } from '../common/errors/app.exception';
+import { ErrorCode } from '../common/errors/error-codes';
 import { AppConfigService } from '../config/app-config.service';
 
 export type BucketKind = 'private' | 'public';
@@ -22,23 +24,39 @@ export const IMMUTABLE_CACHE_CONTROL = 'public, max-age=31536000, immutable';
  * Deux buckets : privé (originaux, documents — URL signées courtes uniquement) et
  * public (variantes d'images ré-encodées, servies par le CDN).
  * Les clés sont toujours générées par l'API (jamais dérivées d'un nom de fichier fourni).
+ *
+ * Stockage facultatif (variables S3 absentes) : l'API démarre, mais toute opération sur les
+ * fichiers répond 503 avec un message clair.
  */
 @Injectable()
 export class StorageService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(StorageService.name);
-  private readonly client: S3Client;
+  private readonly s3: S3Client | null = null;
   private readonly buckets: Record<BucketKind, string>;
   private readonly publicBaseUrl: string;
+  /** Faux quand le stockage n'est pas configuré. */
+  readonly enabled: boolean;
 
   constructor(private readonly config: AppConfigService) {
-    this.client = new S3Client({
-      endpoint: config.get('S3_ENDPOINT'),
+    const endpoint = config.get('S3_ENDPOINT');
+    const accessKeyId = config.get('S3_ACCESS_KEY_ID');
+    const secretAccessKey = config.get('S3_SECRET_ACCESS_KEY');
+    this.buckets = {
+      private: config.get('S3_BUCKET_PRIVATE') ?? '',
+      public: config.get('S3_BUCKET_PUBLIC') ?? '',
+    };
+    this.publicBaseUrl = (config.get('MEDIA_PUBLIC_BASE_URL') ?? '').replace(/\/$/, '');
+    // La configuration garantit le « tout ou rien » des variables S3.
+    this.enabled = Boolean(endpoint && accessKeyId && secretAccessKey);
+    if (!endpoint || !accessKeyId || !secretAccessKey) {
+      this.logger.warn('Stockage S3 non configuré : envois de fichiers et PDF indisponibles');
+      return;
+    }
+    this.s3 = new S3Client({
+      endpoint,
       region: config.get('S3_REGION'),
       forcePathStyle: config.get('S3_FORCE_PATH_STYLE'),
-      credentials: {
-        accessKeyId: config.get('S3_ACCESS_KEY_ID'),
-        secretAccessKey: config.get('S3_SECRET_ACCESS_KEY'),
-      },
+      credentials: { accessKeyId, secretAccessKey },
       // Sommes de contrôle seulement quand S3 les exige : sinon les SDK récents en ajoutent une,
       // calculée sur un corps vide, aux URL pré-signées, et les stockages compatibles (OVH,
       // SeaweedFS) refusent l'envoi (BadDigest).
@@ -47,15 +65,22 @@ export class StorageService implements OnModuleInit, OnModuleDestroy {
       requestHandler: { requestTimeout: 30_000, connectionTimeout: 5_000 },
       maxAttempts: 3,
     });
-    this.buckets = {
-      private: config.get('S3_BUCKET_PRIVATE'),
-      public: config.get('S3_BUCKET_PUBLIC'),
-    };
-    this.publicBaseUrl = config.get('MEDIA_PUBLIC_BASE_URL').replace(/\/$/, '');
+  }
+
+  /** Client S3, ou 503 si le stockage n'est pas configuré. */
+  private get client(): S3Client {
+    if (!this.s3) {
+      throw new AppException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        ErrorCode.SERVICE_UNAVAILABLE,
+        'Le stockage des fichiers n’est pas encore configuré.',
+      );
+    }
+    return this.s3;
   }
 
   async onModuleInit(): Promise<void> {
-    if (!this.config.get('S3_AUTO_CREATE_BUCKETS')) return;
+    if (!this.s3 || !this.config.get('S3_AUTO_CREATE_BUCKETS')) return;
     try {
       await this.ensureBuckets();
     } catch (error) {
@@ -64,7 +89,7 @@ export class StorageService implements OnModuleInit, OnModuleDestroy {
   }
 
   onModuleDestroy(): void {
-    this.client.destroy();
+    this.s3?.destroy();
   }
 
   /** Développement et tests uniquement (interdit en production par la configuration). */

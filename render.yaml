@@ -53,6 +53,11 @@ services:
         sync: false
       - key: RESEND_API_KEY
         sync: false
+      # Connexion avec Google (facultatif ; les deux ensemble, et NEXT_PUBLIC_GOOGLE_AUTH=true sur Vercel).
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
       - key: MAIL_FROM
         sync: false
       - key: MAIL_REPLY_TO
@@ -63,6 +68,8 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      # Stockage S3 (photos, factures PDF) : facultatif, tout ou rien. Laisser vide pour un
+      # premier déploiement : l'API tourne, seuls les envois de fichiers et les PDF attendent.
       - key: S3_ENDPOINT
         sync: false
       - key: S3_REGION

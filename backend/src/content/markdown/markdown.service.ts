@@ -63,7 +63,9 @@ export class MarkdownService {
 
   constructor(config: AppConfigService) {
     this.md = new MarkdownIt({ html: false, linkify: true, typographer: true, breaks: false });
-    this.mediaBaseUrl = `${config.get('MEDIA_PUBLIC_BASE_URL').replace(/\/$/, '')}/`;
+    // Sans stockage, aucune image ne peut venir du bucket : base de repli inatteignable.
+    const mediaBase = config.get('MEDIA_PUBLIC_BASE_URL') ?? 'https://medias.invalid';
+    this.mediaBaseUrl = `${mediaBase.replace(/\/$/, '')}/`;
     this.siteHost = new URL(config.get('PUBLIC_SITE_URL')).host;
   }
 

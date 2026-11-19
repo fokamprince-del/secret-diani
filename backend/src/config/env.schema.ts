@@ -130,19 +130,22 @@ export const envSchema = z
     MAIL_OUTBOX_DIR: z.string().min(1).default('tmp/mails'),
 
     // --- Stockage objets compatible S3 (OVH Object Storage ; MinIO en local) ---
-    S3_ENDPOINT: z.url({ protocol: /^https?$/ }),
+    // Facultatif (tout ou rien) : sans stockage, l'API tourne mais refuse les envois de fichiers
+    // (photos, supports) et ne produit pas les PDF ; les e-mails partent sans pièce jointe.
+    S3_ENDPOINT: z.url({ protocol: /^https?$/ }).optional(),
     S3_REGION: z.string().min(1).default('gra'),
-    S3_ACCESS_KEY_ID: z.string().min(3),
-    S3_SECRET_ACCESS_KEY: z.string().min(8),
+    S3_ACCESS_KEY_ID: z.string().min(3).optional(),
+    S3_SECRET_ACCESS_KEY: z.string().min(8).optional(),
     // Originaux et documents (accès par URL signée uniquement).
-    S3_BUCKET_PRIVATE: z.string().min(3),
+    S3_BUCKET_PRIVATE: z.string().min(3).optional(),
     // Variantes d'images publiques (servies par le CDN).
-    S3_BUCKET_PUBLIC: z.string().min(3),
+    S3_BUCKET_PUBLIC: z.string().min(3).optional(),
     S3_FORCE_PATH_STYLE: booleanFromEnv(true),
     // Développement et tests uniquement : crée les buckets au démarrage.
     S3_AUTO_CREATE_BUCKETS: booleanFromEnv(false),
     // URL publique du bucket public (ou du CDN devant lui), sans barre finale.
-    MEDIA_PUBLIC_BASE_URL: z.url({ protocol: /^https?$/ }),
+    // Obligatoire avec le stockage.
+    MEDIA_PUBLIC_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
 
     // --- Antivirus (facultatif) : démon clamd joignable en TCP ---
     CLAMAV_HOST: z.string().min(1).optional(),
@@ -214,6 +217,26 @@ export const envSchema = z
         message: 'Bunny Stream exige l’hôte de diffusion ET la clé de jeton',
       });
     }
+    const s3 = {
+      S3_ENDPOINT: env.S3_ENDPOINT,
+      S3_ACCESS_KEY_ID: env.S3_ACCESS_KEY_ID,
+      S3_SECRET_ACCESS_KEY: env.S3_SECRET_ACCESS_KEY,
+      S3_BUCKET_PRIVATE: env.S3_BUCKET_PRIVATE,
+      S3_BUCKET_PUBLIC: env.S3_BUCKET_PUBLIC,
+      MEDIA_PUBLIC_BASE_URL: env.MEDIA_PUBLIC_BASE_URL,
+    };
+    const s3Values = Object.values(s3);
+    if (s3Values.some(Boolean) && !s3Values.every(Boolean)) {
+      for (const [key, value] of Object.entries(s3)) {
+        if (!value) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [key],
+            message: 'le stockage S3 exige toutes ses variables (ou aucune)',
+          });
+        }
+      }
+    }
     if (env.JWT_ACCESS_SECRET_PREVIOUS === env.JWT_ACCESS_SECRET) {
       ctx.addIssue({
         code: 'custom',
@@ -282,7 +305,14 @@ export type Env = z.infer<typeof envSchema>;
  * Valide les variables d'environnement. Le message d'erreur liste les variables
  * fautives sans jamais afficher leur valeur (elles peuvent contenir des secrets).
  */
-export function validateEnv(raw: Record<string, unknown>): Env {
+export function validateEnv(input: Record<string, unknown>): Env {
+  // Une variable vide (champ laissé blanc chez l'hébergeur, `CLE=` dans un .env) vaut absente :
+  // sinon une clé facultative vide (Google, Stripe…) ferait échouer le démarrage.
+  const raw = Object.fromEntries(
+    Object.entries(input).filter(
+      ([, value]) => !(typeof value === 'string' && value.trim() === ''),
+    ),
+  );
   const result = envSchema.safeParse(raw);
   if (result.success) return result.data;
 

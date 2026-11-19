@@ -132,6 +132,32 @@ describe('validateEnv', () => {
     ).toBe(id);
   });
 
+  it('stockage S3 facultatif, mais tout ou rien', () => {
+    const sansStockage = Object.fromEntries(
+      Object.entries(base).filter(
+        ([key]) => !key.startsWith('S3_') && key !== 'MEDIA_PUBLIC_BASE_URL',
+      ),
+    );
+    expect(validateEnv(sansStockage).S3_ENDPOINT).toBeUndefined();
+    expect(() => validateEnv({ ...sansStockage, S3_ENDPOINT: 'https://s3.example.com' })).toThrow(
+      /S3_BUCKET_PRIVATE : le stockage S3 exige toutes ses variables/,
+    );
+  });
+
+  it('traite une variable vide comme absente (champ laissé blanc chez l’hébergeur)', () => {
+    const env = validateEnv({
+      ...base,
+      GOOGLE_CLIENT_ID: '',
+      GOOGLE_CLIENT_SECRET: ' ',
+      STRIPE_SECRET_KEY: '',
+    });
+    expect(env.GOOGLE_CLIENT_ID).toBeUndefined();
+    expect(env.STRIPE_SECRET_KEY).toBeUndefined();
+    expect(() => validateEnv({ ...base, DATABASE_URL: '' })).toThrow(
+      /DATABASE_URL : variable obligatoire manquante/,
+    );
+  });
+
   it('interdit la documentation Swagger en production', () => {
     expect(() => validateEnv({ ...production, SWAGGER_ENABLED: 'true' })).toThrow(
       /SWAGGER_ENABLED/,
