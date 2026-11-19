@@ -7,21 +7,26 @@ afterEach(() => {
 });
 
 /** `publicEnv` est lu au chargement du module : on le recharge après chaque réglage. */
-async function loadButton(enabled: boolean) {
-  vi.stubEnv('NEXT_PUBLIC_GOOGLE_AUTH', enabled ? 'true' : '');
+async function loadButton(flag: string) {
+  vi.stubEnv('NEXT_PUBLIC_GOOGLE_AUTH', flag);
   vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://demo.example');
   return (await import('@/components/auth/GoogleButton')).GoogleButton;
 }
 
 describe('Connexion avec Google', () => {
-  it('absente tant que la connexion Google n’est pas configurée', async () => {
-    const GoogleButton = await loadButton(false);
-    const { container } = render(<GoogleButton />);
+  it('affichée par défaut, masquée seulement par NEXT_PUBLIC_GOOGLE_AUTH=false', async () => {
+    const parDefaut = await loadButton('');
+    const { unmount } = render(parDefaut({}));
+    expect(screen.getByRole('link', { name: /Continuer avec Google/ })).toBeInTheDocument();
+    unmount();
+    vi.resetModules();
+    const masque = await loadButton('false');
+    const { container } = render(masque({}));
     expect(container).toBeEmptyDOMElement();
   });
 
   it('mène à l’API avec la page de retour demandée', async () => {
-    const GoogleButton = await loadButton(true);
+    const GoogleButton = await loadButton('true');
     render(<GoogleButton returnTo="/formations" mention />);
     expect(screen.getByRole('link', { name: 'Continuer avec Google' })).toHaveAttribute(
       'href',

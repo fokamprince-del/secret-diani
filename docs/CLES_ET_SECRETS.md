@@ -40,7 +40,7 @@ Les anciennes valeurs (`JWT_ACCESS_SECRET_PREVIOUS`, `FIELD_ENCRYPTION_KEY_PREVI
 
 ## 3. Réglages (pas secrets)
 
-`PUBLIC_SITE_URL` (https://lessecretsdediani.fr), `PUBLIC_API_URL`, `CORS_ORIGINS`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_MEDIA_URL`, `NEXT_PUBLIC_GOOGLE_AUTH=true` (si Google est configuré), `TRUST_PROXY_HOPS=2` (Cloudflare + Traefik), `DATABASE_URL`, `REDIS_URL`.
+`PUBLIC_SITE_URL` (https://lessecretsdediani.fr), `PUBLIC_API_URL`, `CORS_ORIGINS`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_MEDIA_URL`, `NEXT_PUBLIC_GOOGLE_AUTH=false` (seulement pour masquer le bouton Google, affiché par défaut), `TRUST_PROXY_HOPS=2` (Cloudflare + Traefik), `DATABASE_URL`, `REDIS_URL`.
 
 ## 4. Déploiement automatique (GitHub → serveur)
 

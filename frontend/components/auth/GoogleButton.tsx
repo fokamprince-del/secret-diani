@@ -16,7 +16,7 @@ export const GOOGLE_ERRORS: Record<string, string> = {
 
 /**
  * « Continuer avec Google » : un simple lien vers l'API, qui redirige chez Google puis revient
- * sur /connexion/google. Absent si la connexion Google n'est pas configurée.
+ * sur /connexion/google. Masqué seulement par NEXT_PUBLIC_GOOGLE_AUTH=false.
  */
 export function GoogleButton({ returnTo, mention }: { returnTo?: string; mention?: boolean }) {
   if (!publicEnv.googleAuth) return null;
