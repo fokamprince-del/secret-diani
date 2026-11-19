@@ -12,7 +12,7 @@ import { getSiteSettings } from '@/lib/api/content';
 import { publicEnv } from '@/lib/env';
 import { SITE_NAME } from '@/lib/seo';
 import { socialLinksFrom } from '@/lib/social';
-import { allura, dmSans, playfair, playfairItalic } from './fonts';
+import { garamond, garamondItalic, montserrat } from './fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html
       lang="fr"
-      className={[playfair, playfairItalic, dmSans, allura].map((font) => font.variable).join(' ')}
+      className={[garamond, garamondItalic, montserrat].map((font) => font.variable).join(' ')}
     >
       <body>
         <div className="progression-defilement" aria-hidden="true" />

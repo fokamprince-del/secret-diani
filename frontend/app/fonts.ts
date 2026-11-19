@@ -1,36 +1,31 @@
-import { Allura, DM_Sans, Playfair_Display } from 'next/font/google';
+import { EB_Garamond, Montserrat } from 'next/font/google';
 
 /**
  * Polices auto-hébergées par next/font (aucune requête vers Google côté visiteur),
- * sous-ensemble latin, `swap`. Seules les deux familles du premier écran sont préchargées ;
- * l'italique (citations) et Allura (logo) ne le sont pas (voir DECISIONS D-F06).
+ * sous-ensemble latin, `swap`. Direction « Maison » : EB Garamond pour les titres, Montserrat
+ * pour le texte. Pas Cormorant ni Cormorant Garamond : leurs fichiers latins de Google placent
+ * mal les accents (« Pâtisserie », « Baptême »). Seules les deux familles du premier écran sont
+ * préchargées ; l'italique (citations, accroches) ne l'est pas (voir DECISIONS D-F06).
  */
-export const playfair = Playfair_Display({
+export const garamond = EB_Garamond({
   subsets: ['latin'],
   display: 'swap',
   weight: ['400', '500'],
-  variable: '--font-playfair',
+  variable: '--font-garamond',
 });
 
-export const playfairItalic = Playfair_Display({
+export const garamondItalic = EB_Garamond({
   subsets: ['latin'],
   display: 'swap',
   weight: ['400'],
   style: 'italic',
   preload: false,
-  variable: '--font-playfair-italique',
+  variable: '--font-garamond-italique',
 });
 
-export const dmSans = DM_Sans({
+export const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-dm-sans',
-});
-
-export const allura = Allura({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: '400',
-  preload: false,
-  variable: '--font-allura',
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-montserrat',
 });
