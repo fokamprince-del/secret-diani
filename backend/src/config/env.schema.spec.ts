@@ -107,10 +107,16 @@ describe('validateEnv', () => {
     expect(validateEnv(base).S3_FORCE_PATH_STYLE).toBe(true);
   });
 
-  it('exige la clé anti-robot Turnstile en production', () => {
-    const { TURNSTILE_SECRET_KEY: _omitted, ...withoutCaptcha } = production;
-    expect(() => validateEnv(withoutCaptcha)).toThrow(/TURNSTILE_SECRET_KEY/);
-    expect(validateEnv(base).TURNSTILE_SECRET_KEY).toBeUndefined();
+  it('démarre en production sans Turnstile ni moyen de paiement', () => {
+    const {
+      TURNSTILE_SECRET_KEY: _captcha,
+      STRIPE_SECRET_KEY: _stripe,
+      STRIPE_WEBHOOK_SECRET: _webhook,
+      ...minimal
+    } = production;
+    const env = validateEnv(minimal);
+    expect(env.TURNSTILE_SECRET_KEY).toBeUndefined();
+    expect(env.STRIPE_SECRET_KEY).toBeUndefined();
   });
 
   it('connexion Google : identifiant et secret vont ensemble, identifiant au bon format', () => {

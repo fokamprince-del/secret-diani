@@ -102,7 +102,7 @@ export const envSchema = z
     BUNNY_STREAM_BIND_IP: booleanFromEnv(false),
 
     // --- Anti-robot des formulaires publics (Cloudflare Turnstile) ---
-    // Sans clé (développement, tests), la vérification est ignorée ; obligatoire en production.
+    // Sans clé, la vérification est ignorée (limitation de débit et piège à robots seulement).
     TURNSTILE_SECRET_KEY: z.string().min(10).optional(),
 
     // --- Authentification (phase 2) ---
@@ -259,20 +259,9 @@ export const envSchema = z
         message: 'interdit en production (la spécification est publiée dans docs/openapi.json)',
       });
     }
-    if (!env.STRIPE_SECRET_KEY && !env.PAYPAL_CLIENT_ID) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['STRIPE_SECRET_KEY'],
-        message: 'en production, au moins un moyen de paiement (Stripe ou PayPal) est requis',
-      });
-    }
-    if (!env.TURNSTILE_SECRET_KEY) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['TURNSTILE_SECRET_KEY'],
-        message: 'obligatoire en production (anti-robot des formulaires publics)',
-      });
-    }
+    // Paiement (Stripe ou PayPal) et Turnstile restent facultatifs en production : sans
+    // prestataire, le paiement en ligne est indisponible ; sans Turnstile, les formulaires
+    // publics ne gardent que la limitation de débit et le piège à robots.
     if (env.MAIL_TRANSPORT !== 'resend') {
       ctx.addIssue({
         code: 'custom',

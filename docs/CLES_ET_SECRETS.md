@@ -13,17 +13,17 @@ Liste complète de ce qu'il faut fournir, à quoi ça sert, où l'obtenir et où
 | `MAIL_REPLY_TO` | — | Adresse qui reçoit les réponses des clientes | Votre adresse de contact | Recommandé |
 | `GOOGLE_CLIENT_ID` | Google Cloud | Connexion avec Google | console.cloud.google.com → *API et services* → *Identifiants* → *ID client OAuth* (Application Web) | Non (facultatif) |
 | `GOOGLE_CLIENT_SECRET` | Google Cloud | Idem (va avec l'identifiant) | Même écran que l'identifiant | Non |
-| `STRIPE_SECRET_KEY` | Stripe | Paiement par carte (clé restreinte `rk_…` de préférence) | dashboard.stripe.com → *Développeurs* → *Clés API* | Stripe **ou** PayPal |
+| `STRIPE_SECRET_KEY` | Stripe | Paiement par carte (clé restreinte `rk_…` de préférence) | dashboard.stripe.com → *Développeurs* → *Clés API* | Non (sans paiement en ligne sinon) |
 | `STRIPE_WEBHOOK_SECRET` | Stripe | Vérifier que les notifications de paiement viennent bien de Stripe | *Développeurs* → *Webhooks* → endpoint `https://<api>/api/v1/payments/webhooks/stripe` → *Signing secret* (`whsec_…`) | Avec Stripe |
-| `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` | PayPal | Paiement PayPal | developer.paypal.com → *Apps & Credentials* → application REST | Stripe **ou** PayPal |
+| `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` | PayPal | Paiement PayPal | developer.paypal.com → *Apps & Credentials* → application REST | Non (sans paiement en ligne sinon) |
 | `PAYPAL_WEBHOOK_ID` | PayPal | Vérifier les notifications PayPal | Même application → *Webhooks* → endpoint `https://<api>/api/v1/payments/webhooks/paypal` | Avec PayPal |
 | `PAYPAL_ENVIRONMENT` | PayPal | `sandbox` pour les essais, `live` pour les vrais paiements | — | Avec PayPal |
-| `TURNSTILE_SECRET_KEY` | Cloudflare | Anti-robot des formulaires publics (côté serveur) | dash.cloudflare.com → *Turnstile* → *Add site* | Oui |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare | Même widget, clé publique (côté site) | Même écran (« Site key ») | Oui |
+| `TURNSTILE_SECRET_KEY` | Cloudflare | Anti-robot des formulaires publics (côté serveur) | dash.cloudflare.com → *Turnstile* → *Add site* | Non (recommandé) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare | Même widget, clé publique (côté site) | Même écran (« Site key ») | Non (recommandé) |
 | `BUNNY_STREAM_CDN_HOST` | Bunny.net | Diffusion protégée des vidéos de formation | bunny.net → *Stream* → bibliothèque → *API* (nom d'hôte `vz-….b-cdn.net`) | Pour les formations |
 | `BUNNY_STREAM_TOKEN_KEY` | Bunny.net | Signer les liens vidéo | Bibliothèque → *Security* → *Token authentication* | Pour les formations |
-| `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_PRIVATE`, `S3_BUCKET_PUBLIC` | OVH Object Storage (ou autre S3) | Photos, factures PDF, supports de formation, sauvegardes | Espace client OVH → *Public Cloud* → *Object Storage* → utilisateur S3 | Oui |
-| `MEDIA_PUBLIC_BASE_URL` | idem | Adresse publique des images | URL du bucket public (ou du CDN devant) | Oui |
+| `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_PRIVATE`, `S3_BUCKET_PUBLIC` | OVH Object Storage (ou autre S3) | Photos, factures PDF, supports de formation, sauvegardes | Espace client OVH → *Public Cloud* → *Object Storage* → utilisateur S3 | Non (sans envoi de fichiers ni PDF sinon) |
+| `MEDIA_PUBLIC_BASE_URL` | idem | Adresse publique des images | URL du bucket public (ou du CDN devant) | Avec le stockage |
 | `SENTRY_DSN` | Sentry | Alertes d'erreurs | sentry.io → projet → *Client Keys (DSN)* | Non (recommandé) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Plausible | Mesure d'audience respectueuse (avec consentement) | plausible.io → ajouter le site | Non |
 
