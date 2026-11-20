@@ -8,7 +8,10 @@
  * (8 % de marge blanche) : dans les cadres « studio » du site (jeton --studio), ils s'affichent
  * en entier et en grand, quelle que soit la forme du cadre. Une création sans version fond blanc n'est pas
  * publiée (bûches, retirées le 2026-10-22) ; originaux dans `medias-non-publies/originaux`.
- * Photos du 2026-11-14 détourées par `scripts/detoure-photo.mjs` ; écartées (dans un carton,
+ * Vidéos refaites le 2026-11-20 par `scripts/detoure-video.py` (vidéo stabilisée, silhouette
+ * fixe du gâteau : plus de bord qui clignote ni de flanc rongé). Photos couronne argent, couronne
+ * dorée et ruban noir refaites le même jour par `scripts/detoure-photo.py` (base coupée net, sans
+ * reste de planche) ; couronne : `scripts/detoure-photo.mjs` (2026-11-14). Écartées (dans un carton,
  * logo de club et joueur réel) : `medias-non-publies/originaux/a-ecarter`.
  *
  * Les légendes décrivent seulement ce que l'on voit à l'image : aucun parfum ni aucune

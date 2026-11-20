@@ -1,6 +1,7 @@
 // Détoure une photo de gâteau prise sur fond clair et neutre : croissance de région depuis les
 // bords sur les pixels neutres, clairs et lisses (fond, ombres, plateau), grignotage des restes,
 // fusion douce vers le blanc pur, puis recadrage serré (marge blanche de 8 %).
+// Remplacé le 2026-11-20 par detoure-photo.py pour couronne-argent, couronne-doree et ruban-noir.
 // Les originaux restent dans `medias-non-publies/originaux` ; vérifier le résultat à l'œil.
 //
 // Usage : node scripts/detoure-photo.mjs <entrée> <sortie.png> [pas=7] [chromaMax=18] [lumMin=120]
